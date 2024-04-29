@@ -17,5 +17,26 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'camelcase': 'off',
+    'curly': ['error', 'all'],
+    'no-underscore-dangle': 'off',
+    'react/jsx-props-no-spreading': 'off',
+    'react/jsx-boolean-value': 'off',
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'error',
+    'no-unused-vars': [
+      'error',
+      {
+        'varsIgnorePattern': '^_',
+        'argsIgnorePattern': '^_' // ignore unused vars and args that start with _. These vars are unsued, but named for readability/maintainability of code.
+      }
+    ],
+    'no-useless-return': 'off',
+    'jsx-a11y/label-has-associated-control': [
+      'error',
+      {
+        'assert': 'either'
+      }
+    ]
   },
 }
