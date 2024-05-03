@@ -1,8 +1,10 @@
+import { useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
-import { AppBar, Toolbar, Box, Typography, IconButton } from '@mui/material'
+import { AppBar, Toolbar, Box, Typography, IconButton, Button } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const headerStyles = makeStyles(() => ({
   appBarProperty: {
@@ -23,10 +25,25 @@ const headerStyles = makeStyles(() => ({
     borderRadius: 100,
     padding: 6,
   },
+  userPicture: {
+    borderRadius: '50%',
+    marginRight: 10,
+  },
 }))
 
 const Header = () => {
+  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  console.log('user', user)
+  console.log('isAuthenticated', isAuthenticated)
   const classes = headerStyles()
+
+  const logoutWithRedirect = () =>
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    })
+
   // const introModalStage = JSON.parse(window.sessionStorage.getItem('intro')) !== false
   // const [modalStageOpen, setModalStage] = useState(introModalStage)
   // const [anchorEl, setAnchorEl] = useState(null)
@@ -59,7 +76,20 @@ const Header = () => {
         <IconButton size="large" color="inherit">
           <MenuIcon />
         </IconButton>
-        <Typography className={classes.menuItem}>Login</Typography>
+        {!isAuthenticated && (
+          <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
+            Login
+          </Button>
+        )}
+        {isAuthenticated && (
+          <>
+            <img src={user.picture} alt="Profile" className={classes.userPicture} width="50" />
+            <Typography>{user.name}</Typography>
+            <Button className={classes.menuItem} onClick={() => logoutWithRedirect()}>
+              Logout
+            </Button>
+          </>
+        )}
       </Toolbar>
     </AppBar>
   )
