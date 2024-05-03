@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
-import { AppBar, Toolbar, Box, Typography, IconButton, Button } from '@mui/material'
+import { AppBar, Toolbar, Box, Typography, IconButton, Button, Link } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
@@ -18,12 +18,27 @@ const headerStyles = makeStyles(() => ({
   },
   menuItem: {
     margin: 10,
+    color: 'white',
   },
-  menuShare: {
+  menuShareViewBtn: {
     margin: 15,
     backgroundColor: 'orange',
+    color: 'white',
     borderRadius: 100,
     padding: 6,
+    textTransform: 'none',
+    '&:hover': {
+      backgroundColor: 'orange',
+      color: 'white',
+    },
+  },
+  logoContainer: {
+    flexGrow: 1,
+    marginTop: 5,
+    marginLeft: 5,
+  },
+  mermaidLogo: {
+    width: 150,
   },
   userPicture: {
     borderRadius: '50%',
@@ -33,8 +48,6 @@ const headerStyles = makeStyles(() => ({
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
-  console.log('user', user)
-  console.log('isAuthenticated', isAuthenticated)
   const classes = headerStyles()
 
   const logoutWithRedirect = () =>
@@ -44,35 +57,16 @@ const Header = () => {
       },
     })
 
-  // const introModalStage = JSON.parse(window.sessionStorage.getItem('intro')) !== false
-  // const [modalStageOpen, setModalStage] = useState(introModalStage)
-  // const [anchorEl, setAnchorEl] = useState(null)
-
-  // const handleClick = (event) => {
-  //   setAnchorEl(event.currentTarget)
-  // }
-
-  // const handleClose = () => {
-  //   setAnchorEl(null)
-  // }
-
-  // const modalToggleHandler = () => {
-  //   setModalStage(!modalStageOpen)
-  //   window.sessionStorage.setItem('intro', !modalStageOpen)
-  //   if (!modalStageOpen) {
-  //     setAnchorEl(null)
-  //   }
-  // }
-
   return (
     <AppBar className={classes.appBarProperty}>
       <Toolbar className={classes.toolBarProperty}>
-        <Box p={1} flexGrow={1} marginTop="5px" marginLeft="5px">
-          <img src={MermaidLogo} alt="Mermaid Logo" style={{ width: '150px' }} />
+        <Box p={1} className={classes.logoContainer}>
+          <img src={MermaidLogo} alt="Mermaid Logo" className={classes.mermaidLogo} />
         </Box>
-        {/* <IntroModal open={modalStageOpen} modalToggleHandler={modalToggleHandler} /> */}
-        <Typography className={classes.menuItem}>Launch MERMAID</Typography>
-        <Typography className={classes.menuShare}>Share this view </Typography>
+        <Link href="#" className={classes.menuItem}>
+          Launch MERMAID
+        </Link>
+        <Button className={classes.menuShareViewBtn}>Share this view</Button>
         <IconButton size="large" color="inherit">
           <MenuIcon />
         </IconButton>
