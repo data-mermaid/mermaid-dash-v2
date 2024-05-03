@@ -30,7 +30,7 @@ const useStyles = makeStyles(() => ({
     top: '65px',
     height: 'calc(100vh - 90px)',
   },
-  '@media (max-width: 600px)': {
+  '@media (max-width: 1024px)': {
     filterContainer: {
       border: '1px solid red',
       width: '80%',
