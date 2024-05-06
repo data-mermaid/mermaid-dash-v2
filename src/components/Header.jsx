@@ -82,12 +82,7 @@ const Header = () => {
         <IconButton size="large" color="inherit">
           <MenuIcon />
         </IconButton>
-        {!isAuthenticated && (
-          <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
-            Login
-          </Button>
-        )}
-        {isAuthenticated && (
+        {isAuthenticated ? (
           <>
             <Button onClick={handleUserMenu}>
               <img src={user.picture} alt="Profile" className={classes.userPicture} width="50" />
@@ -97,6 +92,10 @@ const Header = () => {
               <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
             </Menu>
           </>
+        ) : (
+          <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
+            Login
+          </Button>
         )}
       </Toolbar>
     </AppBar>
