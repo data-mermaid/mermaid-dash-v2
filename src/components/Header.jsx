@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { makeStyles } from '@mui/styles'
-import { AppBar, Toolbar, Box, Typography, IconButton, Button, Link } from '@mui/material'
+import { AppBar, Toolbar, Box, IconButton, Button, Link, Menu, MenuItem } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
@@ -47,14 +48,26 @@ const headerStyles = makeStyles(() => ({
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const userMenuOpen = Boolean(anchorEl)
   const classes = headerStyles()
 
-  const logoutWithRedirect = () =>
+  const handleUserMenu = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseUserMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleLogoutUser = () => {
+    handleCloseUserMenu()
     logout({
       logoutParams: {
         returnTo: window.location.origin,
       },
     })
+  }
 
   return (
     <AppBar className={classes.appBarProperty}>
@@ -76,11 +89,13 @@ const Header = () => {
         )}
         {isAuthenticated && (
           <>
-            <img src={user.picture} alt="Profile" className={classes.userPicture} width="50" />
-            <Typography>{user.name}</Typography>
-            <Button className={classes.menuItem} onClick={() => logoutWithRedirect()}>
-              Logout
+            <Button onClick={handleUserMenu}>
+              <img src={user.picture} alt="Profile" className={classes.userPicture} width="50" />
             </Button>
+            <Menu open={userMenuOpen} anchorEl={anchorEl} onClose={handleCloseUserMenu}>
+              <MenuItem>Logged in as {user.name}</MenuItem>
+              <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
+            </Menu>
           </>
         )}
       </Toolbar>
