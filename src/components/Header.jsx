@@ -1,4 +1,3 @@
-import { useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
 import { AppBar, Toolbar, Box, Typography, IconButton, Button, Link } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
