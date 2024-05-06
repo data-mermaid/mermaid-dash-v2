@@ -1,8 +1,10 @@
+import { useState } from 'react'
 import { makeStyles } from '@mui/styles'
-import { AppBar, Toolbar, Box, IconButton, Link, Button } from '@mui/material'
+import { AppBar, Toolbar, Box, IconButton, Button, Link, Menu, MenuItem } from '@mui/material'
 import { Menu as MenuIcon } from '@mui/icons-material'
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const headerStyles = makeStyles(() => ({
   appBarProperty: {
@@ -38,10 +40,34 @@ const headerStyles = makeStyles(() => ({
   mermaidLogo: {
     width: 150,
   },
+  userPicture: {
+    borderRadius: '50%',
+    marginRight: 10,
+  },
 }))
 
 const Header = () => {
+  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
+  const [anchorEl, setAnchorEl] = useState(null)
+  const userMenuOpen = Boolean(anchorEl)
   const classes = headerStyles()
+
+  const handleUserMenu = (event) => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleCloseUserMenu = () => {
+    setAnchorEl(null)
+  }
+
+  const handleLogoutUser = () => {
+    handleCloseUserMenu()
+    logout({
+      logoutParams: {
+        returnTo: window.location.origin,
+      },
+    })
+  }
 
   return (
     <AppBar className={classes.appBarProperty}>
@@ -56,9 +82,21 @@ const Header = () => {
         <IconButton size="large" color="inherit">
           <MenuIcon />
         </IconButton>
-        <Link href="#" className={classes.menuItem}>
-          Login
-        </Link>
+        {isAuthenticated ? (
+          <>
+            <Button onClick={handleUserMenu}>
+              <img src={user.picture} alt="Profile" className={classes.userPicture} width="50" />
+            </Button>
+            <Menu open={userMenuOpen} anchorEl={anchorEl} onClose={handleCloseUserMenu}>
+              <MenuItem>Logged in as {user.name}</MenuItem>
+              <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
+            Login
+          </Button>
+        )}
       </Toolbar>
     </AppBar>
   )

@@ -1,5 +1,7 @@
+import { useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
 import Header from './Header'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const useStyles = makeStyles(() => ({
   dashContainer: {
@@ -53,6 +55,38 @@ const useStyles = makeStyles(() => ({
 
 export default function MermaidDash() {
   const classes = useStyles()
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+
+  const fetchData = async (token = '') => {
+    try {
+      const response = await fetch(
+        'https://dev-api.datamermaid.org/v1/projectsummarysampleevent?limit=100&page=1',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
+      if (response.ok) {
+        const data = await response.json()
+        console.log(token ? 'With token Response.json():' : 'Response.json():', data)
+      } else {
+        console.error('Failed to fetch data:', response.status)
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error)
+    }
+  }
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      fetchData()
+    } else {
+      getAccessTokenSilently()
+        .then((token) => fetchData(token))
+        .catch((error) => console.error('Error getting access token:', error))
+    }
+  }, [isAuthenticated, getAccessTokenSilently])
 
   return (
     <div className={classes.dashContainer}>
