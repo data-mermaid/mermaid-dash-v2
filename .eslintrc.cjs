@@ -1,15 +1,28 @@
 module.exports = {
   root: true,
-  env: { browser: true, es2020: true },
+  env: { browser: true, es2020: true, es6: true, node: true },
   extends: [
     'eslint:recommended',
     'plugin:react/recommended',
     'plugin:react/jsx-runtime',
+    'plugin:testing-library/react',
     'plugin:react-hooks/recommended',
   ],
   ignorePatterns: ['dist', '.eslintrc.cjs'],
-  parserOptions: { ecmaVersion: 'latest', sourceType: 'module' },
-  settings: { react: { version: '18.2' } },
+  parserOptions: {
+    ecmaVersion: 'latest',
+    sourceType: 'module',
+    parser: '@babel/eslint-parser',
+    ecmaFeatures: {
+      jsx: true,
+    },
+    babelOptions: {
+      babelrc: false,
+      configFile: false,
+      presets: ['@babel/preset-react'],
+    },
+  },
+  settings: { react: { version: 'detect' } },
   plugins: ['react-refresh', 'jsx-a11y'],
   rules: {
     'react/jsx-no-target-blank': 'off',
@@ -35,5 +48,15 @@ module.exports = {
         assert: 'either',
       },
     ],
+  },
+  globals: {
+    window: true,
+    document: true,
+    localStorage: true,
+    FormData: true,
+    FileReader: true,
+    Blob: true,
+    navigator: true,
+    fetch: true,
   },
 }
