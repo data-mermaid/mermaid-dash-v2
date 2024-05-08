@@ -7,18 +7,18 @@ const useStyles = makeStyles(() => ({
   dashContainer: {
     display: 'flex',
     flexDirection: 'column',
-    height: 'calc(100vh - 20px)',
+    height: 'calc(100vh - 2rem)',
   },
   contentContainer: {
     display: 'flex',
     flexDirection: 'row',
-    marginTop: '44px',
+    marginTop: '6.5rem',
     flexGrow: 1,
-    margin: '0 -7px',
+    margin: '0 -0.7rem',
   },
   filterContainer: {
     border: '1px solid red',
-    width: '300px',
+    width: '30rem',
   },
   mapContainer: {
     border: '1px solid blue',
@@ -26,11 +26,11 @@ const useStyles = makeStyles(() => ({
   },
   metricsContainer: {
     border: '1px solid green',
-    width: '300px',
+    width: '30rem',
     position: 'absolute',
-    right: 15,
-    top: '65px',
-    height: 'calc(100vh - 90px)',
+    right: '1.5rem',
+    top: '8rem',
+    height: 'calc(100vh - 10rem)',
   },
   '@media (max-width: 1024px)': {
     filterContainer: {
@@ -45,7 +45,7 @@ const useStyles = makeStyles(() => ({
     metricsContainer: {
       border: '1px solid green',
       width: '90%',
-      top: 'calc(80% - 45px)',
+      top: 'calc(80% - 4.5rem)',
       height: '20%',
       left: '50%',
       transform: 'translateX(-50%)',

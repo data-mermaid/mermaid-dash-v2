@@ -15,6 +15,7 @@ import { Menu as MenuIcon, Close as CloseIcon, Login as LoginIcon } from '@mui/i
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
 import { useAuth0 } from '@auth0/auth0-react'
+import theme from '../theme'
 
 const sxStyles = {
   menuList: {
@@ -22,28 +23,31 @@ const sxStyles = {
   },
 }
 
-const headerStyles = makeStyles(() => ({
+const headerStyles = makeStyles({
   appBarProperty: {
     position: 'fixed',
     background: color.mermaidDarkBlue,
-    height: 49,
+    height: '6.5rem',
     justifyContent: 'center',
   },
   toolBarProperty: {
     padding: 0,
   },
   headerItem: {
-    margin: 8,
+    margin: '0.8rem',
     color: color.mermaidWhite,
     textDecoration: 'none',
+    fontSize: theme.typography.defaultFontSize,
   },
   menuShareViewBtn: {
-    margin: 8,
+    margin: '0.8rem',
     backgroundColor: color.mermaidCallout,
     color: color.mermaidWhite,
     borderRadius: '1.5rem',
-    padding: '6px 20px',
+    padding: theme.spacing.buttonPadding,
     textTransform: 'none',
+    width: '16rem',
+    fontSize: theme.typography.defaultFontSize,
     '&:hover': {
       backgroundColor: color.mermaidCallout,
       color: color.mermaidWhite,
@@ -51,32 +55,37 @@ const headerStyles = makeStyles(() => ({
   },
   logoContainer: {
     flexGrow: 1,
-    marginTop: 5,
-    marginLeft: 5,
+    marginTop: theme.spacing.small,
+    marginLeft: theme.spacing.small,
   },
   mermaidLogo: {
     width: 150,
   },
   userPicture: {
     borderRadius: '50%',
-    marginRight: 10,
+    marginRight: theme.spacing.medium,
+  },
+  overflowIcon: {
+    fontSize: '4rem',
   },
   overflowAnchor: {
     textDecoration: 'none',
     color: color.mermaidWhite,
+    fontSize: theme.typography.defaultFontSize,
   },
   loginTextContainer: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     color: color.mermaidWhite,
+    fontSize: theme.typography.defaultIconSize,
   },
   dropdownMenuItem: {
     justifyContent: 'flex-end',
     color: color.mermaidWhite,
-    fontWeight: '600',
+    fontSize: theme.typography.defaultFontSize,
   },
-}))
+})
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
@@ -166,8 +175,17 @@ const Header = () => {
           Launch MERMAID
         </Link>
         <Button className={classes.menuShareViewBtn}>Share this view</Button>
-        <IconButton size="large" color="inherit" onClick={handleOverflowMenu}>
-          {overflowMenuOpen ? <CloseIcon /> : <MenuIcon />}
+        <IconButton
+          size="large"
+          className={classes.overflowIcon}
+          color="inherit"
+          onClick={handleOverflowMenu}
+        >
+          {overflowMenuOpen ? (
+            <CloseIcon className={classes.overflowIcon} />
+          ) : (
+            <MenuIcon className={classes.overflowIcon} />
+          )}
         </IconButton>
         {renderOverflowMenu()}
         {isAuthenticated ? (
@@ -190,8 +208,8 @@ const Header = () => {
         ) : (
           <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
             <div className={classes.loginTextContainer}>
-              <LoginIcon fontSize="small" />
-              <Typography variant="body2">Login</Typography>
+              <LoginIcon fontSize="large" />
+              <Typography variant="h6">Login</Typography>
             </div>
           </Button>
         )}
