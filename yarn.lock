@@ -51,7 +51,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/core@npm:^7.23.5":
+"@babel/core@npm:^7.17.7, @babel/core@npm:^7.23.5":
   version: 7.24.5
   resolution: "@babel/core@npm:7.24.5"
   dependencies:
@@ -236,7 +236,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/plugin-syntax-jsx@npm:^7.22.5, @babel/plugin-syntax-jsx@npm:^7.23.3":
+"@babel/plugin-syntax-jsx@npm:^7.16.7, @babel/plugin-syntax-jsx@npm:^7.22.5, @babel/plugin-syntax-jsx@npm:^7.23.3":
   version: 7.24.1
   resolution: "@babel/plugin-syntax-jsx@npm:7.24.1"
   dependencies:
@@ -244,6 +244,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 10c0/6cec76fbfe6ca81c9345c2904d8d9a8a0df222f9269f0962ed6eb2eb8f3f10c2f15e993d1ef09dbaf97726bf1792b5851cf5bd9a769f966a19448df6be95d19a
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-syntax-typescript@npm:^7.16.7":
+  version: 7.24.1
+  resolution: "@babel/plugin-syntax-typescript@npm:7.24.1"
+  dependencies:
+    "@babel/helper-plugin-utils": "npm:^7.24.0"
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 10c0/7a81e277dcfe3138847e8e5944e02a42ff3c2e864aea6f33fd9b70d1556d12b0e70f0d56cc1985d353c91bcbf8fe163e6cc17418da21129b7f7f1d8b9ac00c93
   languageName: node
   linkType: hard
 
@@ -1308,7 +1319,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/babel__core@npm:^7.20.5":
+"@types/babel__core@npm:^7.1.18, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
   dependencies:
@@ -1768,7 +1779,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"babel-plugin-styled-components@npm:>= 1.12.0":
+"babel-plugin-styled-components@npm:>= 1.12.0, babel-plugin-styled-components@npm:^2.1.4":
   version: 2.1.4
   resolution: "babel-plugin-styled-components@npm:2.1.4"
   dependencies:
@@ -4012,6 +4023,7 @@ __metadata:
     "@types/react": "npm:^18.2.66"
     "@types/react-dom": "npm:^18.2.22"
     "@vitejs/plugin-react": "npm:^4.2.1"
+    babel-plugin-styled-components: "npm:^2.1.4"
     color: "npm:^4.2.3"
     eslint: "npm:8.56.0"
     eslint-plugin-jsx-a11y: "npm:^6.8.0"
@@ -4028,6 +4040,7 @@ __metadata:
     react-toastify: "npm:^10.0.5"
     styled-components: "npm:5"
     vite: "npm:^5.2.0"
+    vite-plugin-babel-macros: "npm:^1.0.6"
   languageName: unknown
   linkType: soft
 
@@ -5463,6 +5476,21 @@ __metadata:
   dependencies:
     punycode: "npm:^2.1.0"
   checksum: 10c0/4ef57b45aa820d7ac6496e9208559986c665e49447cb072744c13b66925a362d96dd5a46c4530a6b8e203e5db5fe849369444440cb22ecfc26c679359e5dfa3c
+  languageName: node
+  linkType: hard
+
+"vite-plugin-babel-macros@npm:^1.0.6":
+  version: 1.0.6
+  resolution: "vite-plugin-babel-macros@npm:1.0.6"
+  dependencies:
+    "@babel/core": "npm:^7.17.7"
+    "@babel/plugin-syntax-jsx": "npm:^7.16.7"
+    "@babel/plugin-syntax-typescript": "npm:^7.16.7"
+    "@types/babel__core": "npm:^7.1.18"
+    babel-plugin-macros: "npm:^3.1.0"
+  peerDependencies:
+    vite: ">=2"
+  checksum: 10c0/8973981486679850db166f48087c8504daa78bf80b4efef7c04def842134db3ff656a3ea1fcb489fd7d0c98a2db2f61e33febfc3d8ef28836aa90968d01f0db2
   languageName: node
   linkType: hard
 
