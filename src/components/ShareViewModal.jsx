@@ -107,7 +107,7 @@ export default function ShareViewModal() {
 
   return (
     <div>
-      <Button onClick={handleOpenModal} className={classes.menuShareViewBtn}>
+      <Button disableRipple onClick={handleOpenModal} className={classes.menuShareViewBtn}>
         Share this view
       </Button>
       <Modal
