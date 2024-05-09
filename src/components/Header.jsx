@@ -167,7 +167,9 @@ const Header = () => {
         >
           Launch MERMAID
         </StyledLink>
-        <Button className={classes.menuShareViewBtn}>Share this view</Button>
+        <Button disableRipple className={classes.menuShareViewBtn}>
+          Share this view
+        </Button>
         <IconButton
           size="large"
           className={classes.overflowIcon}
