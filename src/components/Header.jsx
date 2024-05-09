@@ -1,10 +1,19 @@
 import { useState } from 'react'
 import { makeStyles } from '@mui/styles'
-import { AppBar, Toolbar, Box, IconButton, Typography, Button, Menu, MenuItem } from '@mui/material'
+import {
+  AppBar,
+  Toolbar,
+  Box,
+  IconButton,
+  Typography,
+  Button,
+  Menu,
+  MenuItem,
+  Link,
+} from '@mui/material'
 import { Menu as MenuIcon, Close as CloseIcon, Login as LoginIcon } from '@mui/icons-material'
 import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
-import StyledLink from './ReusableComponents/StyledLink'
 import { useAuth0 } from '@auth0/auth0-react'
 import theme from '../theme'
 import ShareViewModal from './ShareViewModal'
@@ -40,7 +49,6 @@ const headerStyles = makeStyles({
     textTransform: 'none',
     width: '16rem',
     fontSize: theme.typography.defaultFontSize,
-    fontFamily: "'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'",
     '&:hover': {
       backgroundColor: color.mermaidCallout,
       color: color.mermaidWhite,
@@ -77,7 +85,6 @@ const headerStyles = makeStyles({
     justifyContent: 'flex-end',
     color: color.mermaidWhite,
     fontSize: theme.typography.defaultFontSize,
-    fontFamily: "'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'",
   },
 })
 
@@ -123,32 +130,32 @@ const Header = () => {
         MenuListProps={{ sx: sxStyles.menuList }}
       >
         <MenuItem onClick={handleCloseOverflowMenu} className={classes.dropdownMenuItem}>
-          <StyledLink
+          <Link
             href="https://datamermaid.org/terms-of-service/"
             target="_blank"
             className={classes.overflowAnchor}
           >
             Privacy
-          </StyledLink>
+          </Link>
         </MenuItem>
         <MenuItem onClick={handleCloseOverflowMenu} className={classes.dropdownMenuItem}>
-          <StyledLink
+          <Link
             href="https://datamermaid.org/contact-us/"
             target="_blank"
             className={classes.overflowAnchor}
           >
             Contact Us
-          </StyledLink>
+          </Link>
         </MenuItem>
         <MenuItem onClick={handleCloseOverflowMenu} className={classes.dropdownMenuItem}>
-          <StyledLink href="#" target="_blank" className={classes.overflowAnchor}>
+          <Link href="#" target="_blank" className={classes.overflowAnchor}>
             Data Disclaimer
-          </StyledLink>
+          </Link>
         </MenuItem>
         <MenuItem onClick={handleCloseOverflowMenu} className={classes.dropdownMenuItem}>
-          <StyledLink href="#" target="_blank" className={classes.overflowAnchor}>
+          <Link href="#" target="_blank" className={classes.overflowAnchor}>
             Dashboard Stories
-          </StyledLink>
+          </Link>
         </MenuItem>
       </Menu>
     )
@@ -160,14 +167,14 @@ const Header = () => {
         <Box p={1} className={classes.logoContainer}>
           <img src={MermaidLogo} alt="Mermaid Logo" className={classes.mermaidLogo} />
         </Box>
-        <StyledLink
+        <Link
           href="https://collect.datamermaid.org"
           variant="body1"
           target="_blank"
           className={classes.headerItem}
         >
           Launch MERMAID
-        </StyledLink>
+        </Link>
         <ShareViewModal />
         <IconButton
           size="large"

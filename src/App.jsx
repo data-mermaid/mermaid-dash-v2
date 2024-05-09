@@ -5,10 +5,17 @@ import GlobalStyle from './styles/globalStyles.js'
 
 import MermaidDash from './components/MermaidDash'
 import { Auth0Provider } from '@auth0/auth0-react'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 // import { HistogramProvider } from './context/histogramContext'
 
 function App() {
   const navigateTo = useNavigate()
+
+  const mermaidTheme = createTheme({
+    typography: {
+      fontFamily: "'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'",
+    },
+  })
 
   const onRedirectCallback = (appState) => {
     navigateTo(appState && appState.returnTo ? appState.returnTo : window.location.pathname)
@@ -26,14 +33,16 @@ function App() {
 
   return (
     <StyledEngineProvider injectFirst>
-      <Auth0Provider {...authConfig}>
-        {/* <HistogramProvider> */}
-        <GlobalStyle />
-        <Routes>
-          <Route path="/" element={<MermaidDash />} />
-        </Routes>
-        {/* </HistogramProvider> */}
-      </Auth0Provider>
+      <ThemeProvider theme={mermaidTheme}>
+        <Auth0Provider {...authConfig}>
+          {/* <HistogramProvider> */}
+          <GlobalStyle />
+          <Routes>
+            <Route path="/" element={<MermaidDash />} />
+          </Routes>
+          {/* </HistogramProvider> */}
+        </Auth0Provider>
+      </ThemeProvider>
     </StyledEngineProvider>
   )
 }
