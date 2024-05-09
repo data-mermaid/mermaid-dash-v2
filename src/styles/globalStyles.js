@@ -16,8 +16,8 @@ const GlobalStyle = createGlobalStyle`
   body {
       background-color: ${theme.color.backgroundColor};
   }
-  body, select, input, textarea, button, p, a{
-      font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'; 
+  body, select, input, textarea, button, p, a, li{
+      font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif' !important; 
       font-size: ${theme.typography.defaultFontSize};
       color: ${theme.color.textColor};
       -webkit-font-smoothing: antialiased;
