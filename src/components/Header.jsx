@@ -16,6 +16,7 @@ import MermaidLogo from '../styles/Icons/mermaid-dashboard-logo.svg'
 import { color } from '../constants/theme'
 import { useAuth0 } from '@auth0/auth0-react'
 import theme from '../theme'
+import ShareViewModal from './ShareViewModal'
 
 const sxStyles = {
   menuList: {
@@ -174,7 +175,7 @@ const Header = () => {
         >
           Launch MERMAID
         </Link>
-        <Button className={classes.menuShareViewBtn}>Share this view</Button>
+        <ShareViewModal />
         <IconButton
           size="large"
           className={classes.overflowIcon}
