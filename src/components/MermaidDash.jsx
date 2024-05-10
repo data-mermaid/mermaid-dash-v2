@@ -2,6 +2,7 @@ import { useEffect } from 'react'
 import { makeStyles } from '@mui/styles'
 import Header from './Header'
 import { useAuth0 } from '@auth0/auth0-react'
+import LeafletMap from './LeafletMap'
 
 const useStyles = makeStyles(() => ({
   dashContainer: {
@@ -23,6 +24,8 @@ const useStyles = makeStyles(() => ({
   mapContainer: {
     border: '1px solid blue',
     flexGrow: 1,
+    height: 'calc(100%-90px)',
+    width: '100%',
   },
   metricsContainer: {
     border: '1px solid green',
@@ -93,7 +96,9 @@ export default function MermaidDash() {
       <Header />
       <div className={classes.contentContainer}>
         <div className={classes.filterContainer}>Filters</div>
-        <div className={classes.mapContainer}>Map</div>
+        <div className={classes.mapContainer}>
+          <LeafletMap />
+        </div>
         <div className={classes.metricsContainer}>Metrics</div>
       </div>
     </div>
