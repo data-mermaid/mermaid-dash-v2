@@ -8,6 +8,7 @@ export const color = {
   mermaidGray: '#585858',
   mermaidWhiteGray: '#F4F4F4',
   mermaidDarkGray: '#BBB',
+  mermaidCallout: '#DB3B00',
 }
 
 export const theme = {

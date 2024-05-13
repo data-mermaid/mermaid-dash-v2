@@ -1,8 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { StyledEngineProvider } from '@mui/material'
-import { theme } from './constants/theme.js'
+import GlobalStyle from './styles/globalStyles.js'
 
 import MermaidDash from './components/MermaidDash'
 import { Auth0Provider } from '@auth0/auth0-react'
@@ -10,12 +9,6 @@ import { Auth0Provider } from '@auth0/auth0-react'
 
 function App() {
   const navigateTo = useNavigate()
-
-  const mermaidTheme = createTheme({
-    palette: {
-      ...theme,
-    },
-  })
 
   const onRedirectCallback = (appState) => {
     navigateTo(appState && appState.returnTo ? appState.returnTo : window.location.pathname)
@@ -33,15 +26,14 @@ function App() {
 
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={mermaidTheme}>
-        <Auth0Provider {...authConfig}>
-          {/* <HistogramProvider> */}
-          <Routes>
-            <Route path="/" element={<MermaidDash />} />
-          </Routes>
-          {/* </HistogramProvider> */}
-        </Auth0Provider>
-      </ThemeProvider>
+      <Auth0Provider {...authConfig}>
+        {/* <HistogramProvider> */}
+        <GlobalStyle />
+        <Routes>
+          <Route path="/" element={<MermaidDash />} />
+        </Routes>
+        {/* </HistogramProvider> */}
+      </Auth0Provider>
     </StyledEngineProvider>
   )
 }
