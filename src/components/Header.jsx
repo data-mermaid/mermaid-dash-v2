@@ -60,11 +60,19 @@ const Header = () => {
     setAnchorEl(null)
   }
 
+  const handleLoginUser = () => {
+    loginWithRedirect({
+      appState: {
+        returnTo: window.location.search,
+      },
+    })
+  }
+
   const handleLogoutUser = () => {
     handleCloseUserMenu()
     logout({
       logoutParams: {
-        returnTo: window.location.origin,
+        returnTo: window.location.href,
       },
     })
   }
@@ -93,7 +101,7 @@ const Header = () => {
             </Menu>
           </>
         ) : (
-          <Button className={classes.menuItem} onClick={() => loginWithRedirect()}>
+          <Button className={classes.menuItem} onClick={handleLoginUser}>
             Login
           </Button>
         )}
