@@ -2,9 +2,11 @@ import { useState } from 'react'
 import { makeStyles } from '@mui/styles'
 import { Box, Button, Typography, Modal, TextField } from '@mui/material'
 import { ContentCopy as ContentCopyIcon } from '@mui/icons-material'
+import { shareView } from '../constants/language'
 
 import { color } from '../constants/theme'
 import theme from '../theme'
+import styled from 'styled-components'
 
 const sxStyles = {
   modalURLTextFieldInputProps: {
@@ -12,7 +14,7 @@ const sxStyles = {
   },
 }
 
-const styles = makeStyles({
+const useStyles = makeStyles({
   menuShareViewBtn: {
     margin: '0.8rem',
     backgroundColor: color.mermaidCallout,
@@ -38,24 +40,13 @@ const styles = makeStyles({
     border: '2px solid #000',
     boxShadow: 24,
   },
-  modalBody: {
-    backgroundColor: color.mermaidWhiteGray,
-    paddingLeft: '2rem',
-    paddingRight: '2rem',
-  },
+
   modalHeader: {
     fontWeight: '60rem',
     marginTop: theme.spacing.xlarge,
     marginBottom: theme.spacing.xlarge,
   },
-  modalCopyContainer: {
-    flexDirection: 'row',
-    display: 'flex',
-    alignItems: 'stretch',
-    height: '100%',
-    marginTop: theme.spacing.xlarge,
-    marginBottom: theme.spacing.xlarge,
-  },
+
   modalURLTextField: {
     flexGrow: 1,
     '& .MuiInputBase-input': {
@@ -79,12 +70,6 @@ const styles = makeStyles({
     marginTop: theme.spacing.xlarge,
     marginBottom: theme.spacing.xlarge,
   },
-  modalFooter: {
-    backgroundColor: color.mermaidWhite,
-    padding: '1rem',
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
   modalCloseButton: {
     borderWidth: theme.spacing.borderSmall,
     borderColor: color.mermaidBlack,
@@ -95,9 +80,31 @@ const styles = makeStyles({
   },
 })
 
+const ModalBody = styled.div`
+  background-color: ${color.mermaidWhiteGray};
+  padding-left: 2rem;
+  padding-right: 2rem;
+`
+
+const ModalFooter = styled.div`
+  background-color: ${color.mermaidWhite};
+  padding: 1rem;
+  display: flex;
+  justify-content: flex-end;
+`
+
+const ModalCopyContainer = styled.div`
+  flex-direction: row;
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  margin-top: ${theme.spacing.xlarge};
+  margin-bottom: ${theme.spacing.xlarge};
+`
+
 export default function ShareViewModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const classes = styles()
+  const classes = useStyles()
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = () => setIsModalOpen(false)
 
@@ -108,7 +115,7 @@ export default function ShareViewModal() {
   return (
     <div>
       <Button disableRipple onClick={handleOpenModal} className={classes.menuShareViewBtn}>
-        Share this view
+        {shareView.headerButton}
       </Button>
       <Modal
         open={isModalOpen}
@@ -117,16 +124,16 @@ export default function ShareViewModal() {
         aria-describedby="modal-modal-description"
       >
         <Box sx={{}} className={classes.modalContainer}>
-          <div className={classes.modalBody}>
+          <ModalBody>
             <Typography variant="h3" className={classes.modalHeader}>
-              Share this view of the dashboard
+              {shareView.modalHeader}
             </Typography>
-            <div className={classes.modalCopyContainer}>
+            <ModalCopyContainer>
               <TextField
                 value={window.location.href}
                 className={classes.modalURLTextField}
                 InputProps={{ sx: sxStyles.modalURLTextFieldInputProps }}
-              ></TextField>
+              />
               <Button
                 onClick={handleCopyURL}
                 variant="contained"
@@ -135,14 +142,10 @@ export default function ShareViewModal() {
                 <ContentCopyIcon className={classes.modalCopyIcon} />
                 Copy
               </Button>
-            </div>
-            <Typography className={classes.modalDescription}>
-              Click copy to copy the current URL to your clipboard. If you are sharing sensitive
-              data, please make sure the person you are sharing with also has access to the
-              sensitive data.
-            </Typography>
-          </div>
-          <div className={classes.modalFooter}>
+            </ModalCopyContainer>
+            <Typography className={classes.modalDescription}>{shareView.modalBody}</Typography>
+          </ModalBody>
+          <ModalFooter>
             <Button
               onClick={handleCloseModal}
               variant="outlined"
@@ -150,7 +153,7 @@ export default function ShareViewModal() {
             >
               Close
             </Button>
-          </div>
+          </ModalFooter>
         </Box>
       </Modal>
     </div>
