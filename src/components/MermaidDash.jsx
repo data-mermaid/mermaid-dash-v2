@@ -1,7 +1,8 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { makeStyles } from '@mui/styles'
 import Header from './Header'
 import { useAuth0 } from '@auth0/auth0-react'
+import FilterPane from './FilterPane'
 
 const useStyles = makeStyles(() => ({
   dashContainer: {
@@ -56,6 +57,7 @@ const useStyles = makeStyles(() => ({
 export default function MermaidDash() {
   const classes = useStyles()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [projectData, setProjectData] = useState({})
 
   const fetchData = async (token = '') => {
     try {
@@ -70,6 +72,7 @@ export default function MermaidDash() {
       if (response.ok) {
         const data = await response.json()
         console.log(token ? 'With token Response.json():' : 'Response.json():', data)
+        setProjectData(data)
       } else {
         console.error('Failed to fetch data:', response.status)
       }
@@ -92,7 +95,9 @@ export default function MermaidDash() {
     <div className={classes.dashContainer}>
       <Header />
       <div className={classes.contentContainer}>
-        <div className={classes.filterContainer}>Filters</div>
+        <div className={classes.filterContainer}>
+          <FilterPane projectData={projectData} />
+        </div>
         <div className={classes.mapContainer}>Map</div>
         <div className={classes.metricsContainer}>Metrics</div>
       </div>
