@@ -1,3 +1,7 @@
+export const headerText = {
+  redirectDashboard: 'Launch MERMAID',
+}
+
 export const shareView = {
   headerButton: 'Share this view',
   modalHeader: 'Share this view of the dashboard',
