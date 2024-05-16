@@ -827,6 +827,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@iconify-icons/mdi@npm:1.1.12":
+  version: 1.1.12
+  resolution: "@iconify-icons/mdi@npm:1.1.12"
+  checksum: 10c0/ffb71c6cc4ca44d04a35adc6cebdff6c48575e25b915b039c64ae95b0f6111565d58d6c5c3c61ff98ca80cd7bf69a498b9d4f8fa001fec16e59416447e0cd291
+  languageName: node
+  linkType: hard
+
+"@iconify/react@npm:1.1.4":
+  version: 1.1.4
+  resolution: "@iconify/react@npm:1.1.4"
+  checksum: 10c0/4c4b1bb5d10c64b4eccfe9480420056d7622c598af0e41685c690a3a80d0e95e76b0633f1a9ce625a21d8fdb1a7f93ff435fee6baccfcc0cde6709b53fa86edf
+  languageName: node
+  linkType: hard
+
 "@isaacs/cliui@npm:^8.0.2":
   version: 8.0.2
   resolution: "@isaacs/cliui@npm:8.0.2"
@@ -4014,6 +4028,8 @@ __metadata:
     "@emotion/react": "npm:^11.11.4"
     "@emotion/styled": "npm:^11.11.5"
     "@fontsource/open-sans": "npm:^5.0.28"
+    "@iconify-icons/mdi": "npm:1.1.12"
+    "@iconify/react": "npm:1.1.4"
     "@mui/icons-material": "npm:^5.15.16"
     "@mui/material": "npm:^5.15.16"
     "@mui/styled-engine-sc": "npm:^6.0.0-alpha.18"

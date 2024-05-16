@@ -1,66 +1,65 @@
 import { useEffect } from 'react'
-import { makeStyles } from '@mui/styles'
-import Header from './Header'
+import styled, { css } from 'styled-components'
+import Header from './Header/Header'
 import { useAuth0 } from '@auth0/auth0-react'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 
-const useStyles = makeStyles(() => ({
-  dashContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: 'calc(100vh - 2rem)',
-  },
-  contentContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: '6.5rem',
-    flexGrow: 1,
-    margin: '0 -0.7rem',
-  },
-  filterContainer: {
-    border: '1px solid red',
-    width: '30rem',
-  },
-  mapContainer: {
-    border: '1px solid blue',
-    flexGrow: 1,
-  },
-  metricsContainer: {
-    border: '1px solid green',
-    width: '30rem',
-    position: 'absolute',
-    right: '1.5rem',
-    top: '8rem',
-    height: 'calc(100vh - 10rem)',
-  },
-  '@media (max-width: 1024px)': {
-    filterContainer: {
-      border: '1px solid red',
-      width: '80%',
-      position: 'absolute',
-      top: '10%',
-      height: '80%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-    },
-    metricsContainer: {
-      border: '1px solid green',
-      width: '90%',
-      top: 'calc(80% - 4.5rem)',
-      height: '20%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-    },
-  },
-}))
+const StyledDashboardContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 2rem);
+`
+
+const StyledContentContainer = styled('div')`
+  display: flex;
+  flex-direction: row;
+  margin-top: 4.9rem;
+  flex-grow: 1;
+`
+
+const StyledFilterContainer = styled('div')`
+  border: 1px solid red;
+  width: 30rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    border: 1px solid red;
+    width: 80%;
+    position: absolute;
+    top: 10%;
+    height: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+  `)}
+`
+
+const StyledMapContainer = styled('div')`
+  border: 1px solid blue;
+  flex-grow: 1;
+`
+
+const StyledMetricsContainer = styled('div')`
+  border: 1px solid green;
+  width: 30rem;
+  position: absolute;
+  right: 1.5rem;
+  top: 8rem;
+  height: calc(100vh - 10rem);
+  ${mediaQueryTabletLandscapeOnly(css`
+    border: 1px solid green;
+    width: 90%;
+    top: calc(80% - 4.5rem);
+    height: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+  `)}
+`
 
 export default function MermaidDash() {
-  const classes = useStyles()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
 
   const fetchData = async (token = '') => {
     try {
       const response = await fetch(
-        'https://dev-api.datamermaid.org/v1/projectsummarysampleevent?limit=100&page=1',
+        `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=100&page=1`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,13 +88,13 @@ export default function MermaidDash() {
   }, [isAuthenticated, getAccessTokenSilently])
 
   return (
-    <div className={classes.dashContainer}>
+    <StyledDashboardContainer>
       <Header />
-      <div className={classes.contentContainer}>
-        <div className={classes.filterContainer}>Filters</div>
-        <div className={classes.mapContainer}>Map</div>
-        <div className={classes.metricsContainer}>Metrics</div>
-      </div>
-    </div>
+      <StyledContentContainer>
+        <StyledFilterContainer>Filters</StyledFilterContainer>
+        <StyledMapContainer>Map</StyledMapContainer>
+        <StyledMetricsContainer>Metrics</StyledMetricsContainer>
+      </StyledContentContainer>
+    </StyledDashboardContainer>
   )
 }
