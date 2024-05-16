@@ -11,7 +11,7 @@ import {
   HeaderButtonThatLooksLikeLink,
   UserMenu,
   UserMenuButton,
-  UserMenuLinkThatLooksLikeButton,
+  MenuLink,
   UserLoginContainer,
   HeaderLoginText,
   AvatarWrapper,
@@ -22,6 +22,7 @@ import {
 import HideShow from '../HideShow/HideShow'
 import { BiggerHamburgerIcon } from './Header.styles'
 import { LoginIcon, IconDown } from '../icons'
+import { headerText } from '../../constants/language'
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
@@ -43,7 +44,7 @@ const Header = () => {
     return (
       <>
         <StyledNavLink href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK} target="_blank">
-          Launch MERMAID
+          {headerText.redirectDashboard}
         </StyledNavLink>
         <ShareViewModal />
       </>
@@ -53,15 +54,12 @@ const Header = () => {
   const renderOverflowMenu = () => {
     return (
       <UserMenu>
-        <UserMenuLinkThatLooksLikeButton
-          href="https://datamermaid.org/terms-of-service/"
-          target="_blank"
-        >
+        <MenuLink href="https://datamermaid.org/terms-of-service/" target="_blank">
           Privacy
-        </UserMenuLinkThatLooksLikeButton>
-        <UserMenuLinkThatLooksLikeButton href="https://datamermaid.org/contact-us/" target="_blank">
+        </MenuLink>
+        <MenuLink href="https://datamermaid.org/contact-us/" target="_blank">
           Contact Us
-        </UserMenuLinkThatLooksLikeButton>
+        </MenuLink>
         <UserMenuButton>Data Disclaimer</UserMenuButton>
         <UserMenuButton>Dashboard Stories</UserMenuButton>
       </UserMenu>
@@ -78,60 +76,22 @@ const Header = () => {
   }
 
   const getUserButton = () => {
-    // Avatar with user image
-    if (user && user.picture && !hasImageError) {
-      return (
-        <AvatarWrapper>
-          <CurrentUserImg src={user.picture} alt="" onError={handleImageError} />
-        </AvatarWrapper>
-      )
+    let avatarContent
+    if (user?.picture && !hasImageError) {
+      avatarContent = <CurrentUserImg src={user.picture} alt="" onError={handleImageError} />
+    } else if (user?.picturer && hasImageError) {
+      avatarContent = <BiggerIconUser />
+    } else if (user?.first_name || user?.full_name) {
+      avatarContent = `${user?.first_name || user?.full_name} ${(<IconDown />)}`
+    } else {
+      avatarContent = <BiggerIconUser />
     }
 
-    // Avatar with fallback image
-    if (user && user.picture && hasImageError) {
-      return (
-        <AvatarWrapper>
-          <BiggerIconUser />
-        </AvatarWrapper>
-      )
-    }
-
-    // First name
-    if (user && user.first_name) {
-      return (
-        <AvatarWrapper>
-          {user && user.first_name} <IconDown />
-        </AvatarWrapper>
-      )
-    }
-
-    // Full name
-    if (user && user.full_name) {
-      return (
-        <AvatarWrapper>
-          {user && user.full_name} <IconDown />
-        </AvatarWrapper>
-      )
-    }
-
-    // User icon
-    return (
-      <AvatarWrapper>
-        <BiggerIconUser />
-      </AvatarWrapper>
-    )
+    return <AvatarWrapper>{avatarContent}</AvatarWrapper>
   }
 
   const getUserDisplayName = () => {
-    if (user?.given_name) {
-      return user.given_name
-    }
-
-    if (user?.name) {
-      return user.name
-    }
-
-    return user.email
+    return user?.first_name || user?.full_name || user.email
   }
 
   return (
