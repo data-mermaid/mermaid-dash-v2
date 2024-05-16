@@ -82,7 +82,7 @@ ${(props) =>
   }
   display: flex;
   `
-export const UserMenuLinkThatLooksLikeButton = styled(StyledNavLink)`
+export const MenuLink = styled(StyledNavLink)`
   ${linkStyles}
   border-width: 0 0 3px 0;
   background: none;
