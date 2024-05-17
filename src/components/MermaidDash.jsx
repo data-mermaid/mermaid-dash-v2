@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react'
-import { makeStyles } from '@mui/styles'
-
 import styled, { css } from 'styled-components'
 import Header from './Header/Header'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -57,25 +55,36 @@ const StyledMetricsContainer = styled('div')`
 `
 
 export default function MermaidDash() {
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
 
   const fetchData = async (token = '') => {
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=100&page=1`,
-        {
+      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=10&page=1`
+
+      while (nextPageUrl !== null) {
+        const response = await fetch(nextPageUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
-      )
-      if (response.ok) {
-        const data = await response.json()
-        console.log(token ? 'With token Response.json():' : 'Response.json():', data)
-        setProjectData(data)
-      } else {
-        console.error('Failed to fetch data:', response.status)
+        })
+        if (response.ok) {
+          const data = await response.json()
+          setProjectData((prevData) => {
+            return {
+              ...prevData,
+              next: data.next,
+              previous: data.previous,
+              results: prevData.results
+                ? [...prevData.results, ...data.results]
+                : [...data.results],
+            }
+          })
+          nextPageUrl = data.next
+        } else {
+          console.error('Failed to fetch data:', response.status)
+          break
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -83,6 +92,10 @@ export default function MermaidDash() {
   }
 
   useEffect(() => {
+    if (isLoading) {
+      return
+    }
+
     if (!isAuthenticated) {
       fetchData()
     } else {
@@ -90,15 +103,15 @@ export default function MermaidDash() {
         .then((token) => fetchData(token))
         .catch((error) => console.error('Error getting access token:', error))
     }
-  }, [isAuthenticated, getAccessTokenSilently])
+  }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
   return (
     <StyledDashboardContainer>
       <Header />
       <StyledContentContainer>
-        <div className={classes.filterContainer}>
+        <StyledFilterContainer>
           <FilterPane projectData={projectData} />
-        </div>
+        </StyledFilterContainer>
         <StyledMapContainer>Map</StyledMapContainer>
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
       </StyledContentContainer>
