@@ -155,17 +155,12 @@ export default function FilterPane(props) {
         return project.records.length > 0
       })
 
-    console.log('filteredProjects  :', filteredProjects)
-
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
-    console.log('filteredIds  :', filteredIds)
-
     const leftoverProjects = projectData.results.filter((project) => {
       return !filteredIds.has(project.project_id)
     })
 
     setHiddenProjects(leftoverProjects)
-
     setDisplayedProjects(filteredProjects)
   }, [
     projectData.results,
@@ -205,6 +200,7 @@ export default function FilterPane(props) {
   return (
     <div>
       <span>Filter Pane</span>
+      <div style={{ color: 'red' }}>Projects loaded: {projectData.results?.length}</div>
       <div>Countries</div>
       <FormControl sx={{ m: 1, width: 250 }}>
         <InputLabel>Countries</InputLabel>
@@ -298,7 +294,9 @@ export default function FilterPane(props) {
           <label htmlFor="habitatcomplexity">Habitat Complexity</label>
         </div>
       </div>
-      <div>Projects matching your criteria: {displayedProjects.length} projects</div>
+      <div style={{ color: 'red' }}>
+        Projects matching your criteria: {displayedProjects.length}/{projectData.results?.length}
+      </div>
       <TextField value={projectNameFilter} onChange={handleProjectNameFilter} />
       {displayedProjects
         .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
@@ -310,7 +308,7 @@ export default function FilterPane(props) {
           )
         })}
       <div>-------------</div>
-      <div>Other projects: {hiddenProjects.length} projects</div>
+      <div style={{ color: 'red' }}>Other projects: {hiddenProjects.length} projects</div>
       {hiddenProjects
         .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
         .map((project, index) => {
@@ -318,7 +316,9 @@ export default function FilterPane(props) {
             <div key={project.project_id}>
               {index}: {project.records[0]?.project_name}
             </div>
-          ) : null
+          ) : (
+            <div key={project.project_id}>{index}: Project with no name</div>
+          )
         })}
     </div>
   )
