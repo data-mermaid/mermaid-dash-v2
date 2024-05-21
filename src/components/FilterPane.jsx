@@ -15,6 +15,18 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 import PropTypes from 'prop-types'
 import { useEffect, useState } from 'react'
 
+const collectionMethods = [
+  {
+    name: 'beltfish',
+    description: 'Fish Belt',
+  },
+  { name: 'colonies_bleached', description: 'Bleaching' },
+  { name: 'benthicpit', description: 'Benthic PIT' },
+  { name: 'benthiclit', description: 'Benthic LIT' },
+  { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
+  { name: 'habitatcomplexity', description: 'Habitat Complexity' },
+]
+
 export default function FilterPane(props) {
   const { projectData } = props
   const [countries, setCountries] = useState([])
@@ -361,60 +373,17 @@ export default function FilterPane(props) {
       </div>
       <div>Method</div>
       <div>
-        <div>
-          <input
-            type="checkbox"
-            name="beltfish"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('beltfish')}
-          />
-          <label htmlFor="beltfish">Fish Belt</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="colonies_bleached"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('colonies_bleached')}
-          />
-          <label htmlFor="colonies_bleached">Bleaching</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="benthicpit"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('benthicpit')}
-          />
-          <label htmlFor="benthicpit">Benthic PIT</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="benthiclit"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('benthiclit')}
-          />
-          <label htmlFor="benthiclit">Benthic LIT</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="quadrat_benthic_percent"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('quadrat_benthic_percent')}
-          />
-          <label htmlFor="quadrat_benthic_percent">Benthic Photo Quadrat</label>
-        </div>
-        <div>
-          <input
-            type="checkbox"
-            name="habitatcomplexity"
-            onChange={handleMethodFilter}
-            checked={methodFilters.includes('habitatcomplexity')}
-          />
-          <label htmlFor="habitatcomplexity">Habitat Complexity</label>
-        </div>
+        {collectionMethods.map((method) => (
+          <div key={method.name}>
+            <input
+              type="checkbox"
+              name={method.name}
+              onChange={handleMethodFilter}
+              checked={methodFilters.includes(method.name)}
+            />
+            <label htmlFor={method.name}>{method.description}</label>
+          </div>
+        ))}
       </div>
       <div style={{ color: 'red' }}>
         Projects matching your criteria: {displayedProjects.length}/{projectData.results?.length}
