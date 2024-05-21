@@ -8,6 +8,7 @@ import {
   Chip,
   TextField,
 } from '@mui/material'
+import dayjs from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
 
@@ -16,12 +17,11 @@ import { useEffect, useState } from 'react'
 
 export default function FilterPane(props) {
   const { projectData } = props
-
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
-  const [projectNameFilter, setProjectNameFiltere] = useState('')
+  const [projectNameFilter, setProjectNameFilter] = useState('')
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
   const [displayedProjects, setDisplayedProjects] = useState([])
@@ -67,38 +67,8 @@ export default function FilterPane(props) {
     const fallbackEndDate = new Date(Date.now())
 
     const filteredProjects = projectData.results
-      .filter((project) => {
-        // Countries
-        if (selectedCountries.length === 0) {
-          return project
-        } else {
-          return selectedCountries.includes(project.records[0]?.country_name)
-        }
-      })
-      .filter((project) => {
-        // Organization
-        if (selectedOrganizations.length === 0) {
-          return project
-        } else {
-          for (const tag of project.records[0]?.tags ?? []) {
-            if (selectedOrganizations.includes(tag.name)) {
-              return true
-            }
-          }
-        }
-      })
-      .filter((project) => {
-        // Project name
-        if (projectNameFilter === '') {
-          return project
-        } else {
-          return project.records[0]?.project_name
-            .toLowerCase()
-            .includes(projectNameFilter.toLowerCase())
-        }
-      })
       .map((project) => {
-        // Date range
+        // Filter project if sample date falls within selected date range
         if (!startDate && !endDate) {
           return project
         }
@@ -108,12 +78,12 @@ export default function FilterPane(props) {
           ...project,
           records: project.records.filter((record) => {
             const recordDate = new Date(record.sample_date)
-            return recordDate < finishDate && recordDate > beginDate
+            return recordDate <= finishDate && recordDate >= beginDate
           }),
         }
       })
       .map((project) => {
-        // Data sharing
+        // Filter projects based on data sharing policy
         if (dataSharingFilter) {
           const policies = [
             'data_policy_beltfish',
@@ -125,43 +95,65 @@ export default function FilterPane(props) {
           ]
           return {
             ...project,
-            records: project.records.filter((record) => {
-              return policies.some((policy) => {
-                return record[policy] === 'public summary'
-              })
-            }),
+            records: project.records.filter((record) =>
+              policies.some((policy) => record[policy] === 'public summary'),
+            ),
           }
         } else {
           return project
         }
       })
       .map((project) => {
-        // Method filters
+        // Filter projects based on collection method
         if (methodFilters.length === 0) {
           return project
         } else {
           return {
             ...project,
-            records: project.records.filter((record) => {
-              return methodFilters.every((method) => {
-                return Object.keys(record.protocols).includes(method)
-              })
-            }),
+            records: project.records.filter((record) =>
+              methodFilters.every((method) => Object.keys(record.protocols).includes(method)),
+            ),
           }
         }
       })
       .filter((project) => {
-        // Non empty records
-        return project.records.length > 0
+        // Filter by selected countries
+        const matchesSelectedCountries =
+          selectedCountries.length === 0 ||
+          selectedCountries.includes(project.records[0]?.country_name)
+
+        // Filter by selected organizations
+        const matchesSelectedOrganizations =
+          selectedOrganizations.length === 0 ||
+          project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
+
+        // Filter by project name
+        const matchesProjectName =
+          projectNameFilter === '' ||
+          project.records[0]?.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
+
+        // Filter out projects with empty records
+        const nonEmptyRecords = project.records.length > 0
+
+        return (
+          matchesSelectedCountries &&
+          matchesSelectedOrganizations &&
+          matchesProjectName &&
+          nonEmptyRecords
+        )
       })
 
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
-    const leftoverProjects = projectData.results.filter((project) => {
-      return !filteredIds.has(project.project_id)
-    })
+    const leftoverProjects = projectData.results
+      .filter((project) => !filteredIds.has(project.project_id))
+      .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
 
     setHiddenProjects(leftoverProjects)
-    setDisplayedProjects(filteredProjects)
+    setDisplayedProjects(
+      filteredProjects.sort((a, b) =>
+        a.records[0]?.project_name.localeCompare(b.records[0]?.project_name),
+      ),
+    )
   }, [
     projectData.results,
     selectedCountries,
@@ -173,28 +165,128 @@ export default function FilterPane(props) {
     methodFilters,
   ])
 
+  const getURLParams = () => {
+    return new URLSearchParams(window.location.search)
+  }
+
+  useEffect(() => {
+    const queryParams = getURLParams()
+    if (queryParams.has('countries')) {
+      setSelectedCountries(queryParams.getAll('countries')[0].split(','))
+    }
+    if (queryParams.has('organizations')) {
+      setSelectedOrganizations(queryParams.getAll('organizations')[0].split(','))
+    }
+    if (queryParams.has('startDate')) {
+      setStartDate(dayjs(new Date(queryParams.get('startDate'))))
+    }
+    if (queryParams.has('endDate')) {
+      setEndDate(dayjs(new Date(queryParams.get('endDate')).setHours(59, 59, 59, 999)))
+    }
+    if (queryParams.has('projectName')) {
+      setProjectNameFilter(queryParams.get('projectName'))
+    }
+    if (queryParams.has('dataSharing')) {
+      setDataSharingFilter(queryParams.get('dataSharing'))
+    }
+    if (queryParams.has('method')) {
+      setMethodFilters(queryParams.getAll('method')[0].split(','))
+    }
+  }, [])
+
+  const updateURLParams = (queryParams) => {
+    window.history.replaceState(null, '', `${window.location.pathname}?${queryParams.toString()}`)
+  }
+
   const handleSelectedCountriesChange = (event) => {
-    setSelectedCountries(event.target.value)
+    const queryParams = getURLParams()
+    const selectedCountries = event.target.value
+    if (selectedCountries.length === 0) {
+      queryParams.delete('countries')
+    } else {
+      queryParams.set('countries', selectedCountries)
+    }
+    updateURLParams(queryParams)
+    setSelectedCountries(selectedCountries)
   }
 
   const handleSelectedOrganizationsChange = (event) => {
-    setSelectedOrganizations(event.target.value)
+    const queryParams = getURLParams()
+    const selectedOrganizations = event.target.value
+    if (selectedOrganizations.length === 0) {
+      queryParams.delete('organizations')
+    } else {
+      queryParams.set('organizations', selectedOrganizations)
+    }
+    updateURLParams(queryParams)
+    setSelectedOrganizations(selectedOrganizations)
   }
 
   const handleProjectNameFilter = (event) => {
-    setProjectNameFiltere(event.target.value)
+    const queryParams = getURLParams()
+    const projectName = event.target.value
+    if (projectName.length === 0) {
+      queryParams.delete('projectName')
+    } else {
+      queryParams.set('projectName', projectName)
+    }
+    updateURLParams(queryParams)
+    setProjectNameFilter(projectName)
   }
 
   const handleDataSharingFilter = (event) => {
-    setDataSharingFilter(event.target.checked)
+    const queryParams = getURLParams()
+    const { checked } = event.target
+    if (!checked) {
+      queryParams.delete('dataSharing')
+    } else {
+      queryParams.set('dataSharing', checked)
+    }
+    updateURLParams(queryParams)
+    setDataSharingFilter(checked)
+  }
+
+  const formattedDate = (date) => {
+    return date.toLocaleDateString('en-US', {
+      month: '2-digit',
+      day: '2-digit',
+      year: 'numeric',
+    })
+  }
+
+  const handleChangeStartDate = (startDate) => {
+    const formattedStartDate = formattedDate(new Date(startDate))
+    const queryParams = getURLParams()
+    queryParams.set('startDate', formattedStartDate)
+    updateURLParams(queryParams)
+    setStartDate(startDate)
+  }
+
+  const handleChangeEndDate = (endDate) => {
+    const formattedEndDate = formattedDate(new Date(endDate).setHours(23, 59, 59, 999))
+    const queryParams = getURLParams()
+    queryParams.set('endDate', formattedEndDate)
+    updateURLParams(queryParams)
+    setEndDate(endDate)
   }
 
   const handleMethodFilter = (event) => {
-    if (event.target.checked) {
-      setMethodFilters([...methodFilters, event.target.name])
+    let updatedMethodFilters
+    const { checked, name } = event.target
+    if (checked) {
+      updatedMethodFilters = [...methodFilters, name]
     } else {
-      setMethodFilters(methodFilters.filter((method) => method !== event.target.name))
+      updatedMethodFilters = methodFilters.filter((method) => method !== name)
     }
+
+    const queryParams = getURLParams()
+    if (updatedMethodFilters.length === 0) {
+      queryParams.delete('method')
+    } else {
+      queryParams.set('method', updatedMethodFilters)
+    }
+    updateURLParams(queryParams)
+    setMethodFilters(updatedMethodFilters)
   }
 
   return (
@@ -252,14 +344,14 @@ export default function FilterPane(props) {
         <DatePicker
           label="Start Date"
           value={startDate}
-          onChange={(date) => setStartDate(date)}
-          renderInput={(params) => <TextField {...params} />}
+          onChange={handleChangeStartDate}
+          slotProps={{ textField: {} }}
         />
         <DatePicker
           label="End Date"
           value={endDate}
-          onChange={(date) => setEndDate(date)}
-          renderInput={(params) => <TextField {...params} />}
+          onChange={handleChangeEndDate}
+          slotProps={{ textField: {} }}
         />
       </LocalizationProvider>
       <div>Data sharing</div>
@@ -270,27 +362,57 @@ export default function FilterPane(props) {
       <div>Method</div>
       <div>
         <div>
-          <input type="checkbox" name="beltfish" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="beltfish"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('beltfish')}
+          />
           <label htmlFor="beltfish">Fish Belt</label>
         </div>
         <div>
-          <input type="checkbox" name="colonies_bleached" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="colonies_bleached"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('colonies_bleached')}
+          />
           <label htmlFor="colonies_bleached">Bleaching</label>
         </div>
         <div>
-          <input type="checkbox" name="benthicpit" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="benthicpit"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('benthicpit')}
+          />
           <label htmlFor="benthicpit">Benthic PIT</label>
         </div>
         <div>
-          <input type="checkbox" name="benthiclit" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="benthiclit"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('benthiclit')}
+          />
           <label htmlFor="benthiclit">Benthic LIT</label>
         </div>
         <div>
-          <input type="checkbox" name="quadrat_benthic_percent" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="quadrat_benthic_percent"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('quadrat_benthic_percent')}
+          />
           <label htmlFor="quadrat_benthic_percent">Benthic Photo Quadrat</label>
         </div>
         <div>
-          <input type="checkbox" name="habitatcomplexity" onChange={handleMethodFilter} />
+          <input
+            type="checkbox"
+            name="habitatcomplexity"
+            onChange={handleMethodFilter}
+            checked={methodFilters.includes('habitatcomplexity')}
+          />
           <label htmlFor="habitatcomplexity">Habitat Complexity</label>
         </div>
       </div>
@@ -298,28 +420,24 @@ export default function FilterPane(props) {
         Projects matching your criteria: {displayedProjects.length}/{projectData.results?.length}
       </div>
       <TextField value={projectNameFilter} onChange={handleProjectNameFilter} />
-      {displayedProjects
-        .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
-        .map((project, index) => {
-          return (
-            <div key={project.project_id}>
-              {index}: {project.records[0]?.project_name}
-            </div>
-          )
-        })}
+      {displayedProjects.map((project, index) => {
+        return (
+          <div key={project.project_id}>
+            {index}: {project.records[0]?.project_name}
+          </div>
+        )
+      })}
       <div>-------------</div>
       <div style={{ color: 'red' }}>Other projects: {hiddenProjects.length} projects</div>
-      {hiddenProjects
-        .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
-        .map((project, index) => {
-          return project.records[0]?.project_name ? (
-            <div key={project.project_id}>
-              {index}: {project.records[0]?.project_name}
-            </div>
-          ) : (
-            <div key={project.project_id}>{index}: Project with no name</div>
-          )
-        })}
+      {hiddenProjects.map((project, index) => {
+        return project.records[0]?.project_name ? (
+          <div key={project.project_id}>
+            {index}: {project.records[0]?.project_name}
+          </div>
+        ) : (
+          <div key={project.project_id}>{index}: Project with no name</div>
+        )
+      })}
     </div>
   )
 }
