@@ -9,6 +9,10 @@ export const shareView = {
     'Click copy to copy the current URL to your clipboard. If you are sharing sensitive data, please make sure the person you are sharing with also has access to the sensitive data.',
 }
 
+export const filterPane = {
+  dataSharing: 'Only show data you have access to',
+}
+
 export default {
   shareView,
 }

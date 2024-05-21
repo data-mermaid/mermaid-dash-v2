@@ -11,9 +11,22 @@ import {
 import dayjs from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { filterPane } from '../constants/language'
 
 import PropTypes from 'prop-types'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
+import styled from 'styled-components'
+import { useLocation, useNavigate } from 'react-router-dom'
+
+const URL_PARAMS = {
+  COUNTRIES: 'countries',
+  ORGANIZATIONS: 'organizations',
+  START_DATE: 'startDate',
+  END_DATE: 'endDate',
+  PROJECT_NAME: 'projectName',
+  DATA_SHARING: 'dataSharing',
+  METHOD: 'method',
+}
 
 const collectionMethods = [
   {
@@ -26,6 +39,12 @@ const collectionMethods = [
   { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
   { name: 'habitatcomplexity', description: 'Habitat Complexity' },
 ]
+
+const StyledHeader = styled('header')`
+  font-size: 1.5rem;
+  font-weight: bold;
+  padding: 0.5rem;
+`
 
 export default function FilterPane(props) {
   const { projectData } = props
@@ -40,6 +59,8 @@ export default function FilterPane(props) {
   const [hiddenProjects, setHiddenProjects] = useState([])
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
+  const navigate = useNavigate()
+  const location = useLocation()
 
   useEffect(() => {
     if (!projectData.results?.length) {
@@ -177,46 +198,51 @@ export default function FilterPane(props) {
     methodFilters,
   ])
 
-  const getURLParams = () => {
-    return new URLSearchParams(window.location.search)
-  }
+  const getURLParams = useCallback(() => {
+    return new URLSearchParams(location.search)
+  }, [location.search])
 
   useEffect(() => {
     const queryParams = getURLParams()
-    if (queryParams.has('countries')) {
-      setSelectedCountries(queryParams.getAll('countries')[0].split(','))
+    if (queryParams.has(URL_PARAMS.COUNTRIES)) {
+      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
     }
-    if (queryParams.has('organizations')) {
-      setSelectedOrganizations(queryParams.getAll('organizations')[0].split(','))
+    if (queryParams.has(URL_PARAMS.ORGANIZATIONS)) {
+      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
     }
-    if (queryParams.has('startDate')) {
-      setStartDate(dayjs(new Date(queryParams.get('startDate'))))
+    if (queryParams.has(URL_PARAMS.START_DATE)) {
+      setStartDate(dayjs(queryParams.get(URL_PARAMS.START_DATE)))
     }
-    if (queryParams.has('endDate')) {
-      setEndDate(dayjs(new Date(queryParams.get('endDate')).setHours(59, 59, 59, 999)))
+    if (queryParams.has(URL_PARAMS.END_DATE)) {
+      const endDate = dayjs(queryParams.get(URL_PARAMS.END_DATE))
+        .set('hour', 23)
+        .set('minute', 59)
+        .set('second', 59)
+        .set('millisecond', 999)
+      setEndDate(endDate)
     }
-    if (queryParams.has('projectName')) {
-      setProjectNameFilter(queryParams.get('projectName'))
+    if (queryParams.has(URL_PARAMS.END_DATE)) {
+      setProjectNameFilter(queryParams.get(URL_PARAMS.END_DATE))
     }
-    if (queryParams.has('dataSharing')) {
-      setDataSharingFilter(queryParams.get('dataSharing'))
+    if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
+      setDataSharingFilter(queryParams.get(URL_PARAMS.DATA_SHARING))
     }
-    if (queryParams.has('method')) {
-      setMethodFilters(queryParams.getAll('method')[0].split(','))
+    if (queryParams.has(URL_PARAMS.METHOD)) {
+      setMethodFilters(queryParams.getAll(URL_PARAMS.METHOD)[0].split(','))
     }
-  }, [])
+  }, [getURLParams])
 
   const updateURLParams = (queryParams) => {
-    window.history.replaceState(null, '', `${window.location.pathname}?${queryParams.toString()}`)
+    navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
   const handleSelectedCountriesChange = (event) => {
     const queryParams = getURLParams()
     const selectedCountries = event.target.value
     if (selectedCountries.length === 0) {
-      queryParams.delete('countries')
+      queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
-      queryParams.set('countries', selectedCountries)
+      queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
     }
     updateURLParams(queryParams)
     setSelectedCountries(selectedCountries)
@@ -226,9 +252,9 @@ export default function FilterPane(props) {
     const queryParams = getURLParams()
     const selectedOrganizations = event.target.value
     if (selectedOrganizations.length === 0) {
-      queryParams.delete('organizations')
+      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {
-      queryParams.set('organizations', selectedOrganizations)
+      queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
     }
     updateURLParams(queryParams)
     setSelectedOrganizations(selectedOrganizations)
@@ -238,9 +264,9 @@ export default function FilterPane(props) {
     const queryParams = getURLParams()
     const projectName = event.target.value
     if (projectName.length === 0) {
-      queryParams.delete('projectName')
+      queryParams.delete(URL_PARAMS.PROJECT_NAME)
     } else {
-      queryParams.set('projectName', projectName)
+      queryParams.set(URL_PARAMS.PROJECT_NAME, projectName)
     }
     updateURLParams(queryParams)
     setProjectNameFilter(projectName)
@@ -250,34 +276,30 @@ export default function FilterPane(props) {
     const queryParams = getURLParams()
     const { checked } = event.target
     if (!checked) {
-      queryParams.delete('dataSharing')
+      queryParams.delete(URL_PARAMS.DATA_SHARING)
     } else {
-      queryParams.set('dataSharing', checked)
+      queryParams.set(URL_PARAMS.DATA_SHARING, checked)
     }
     updateURLParams(queryParams)
     setDataSharingFilter(checked)
   }
 
   const formattedDate = (date) => {
-    return date.toLocaleDateString('en-US', {
-      month: '2-digit',
-      day: '2-digit',
-      year: 'numeric',
-    })
+    return dayjs(date).format('YYYY-MM-DD')
   }
 
   const handleChangeStartDate = (startDate) => {
     const formattedStartDate = formattedDate(new Date(startDate))
     const queryParams = getURLParams()
-    queryParams.set('startDate', formattedStartDate)
+    queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
     updateURLParams(queryParams)
     setStartDate(startDate)
   }
 
   const handleChangeEndDate = (endDate) => {
-    const formattedEndDate = formattedDate(new Date(endDate).setHours(23, 59, 59, 999))
+    const formattedEndDate = formattedDate(endDate)
     const queryParams = getURLParams()
-    queryParams.set('endDate', formattedEndDate)
+    queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
     updateURLParams(queryParams)
     setEndDate(endDate)
   }
@@ -293,9 +315,9 @@ export default function FilterPane(props) {
 
     const queryParams = getURLParams()
     if (updatedMethodFilters.length === 0) {
-      queryParams.delete('method')
+      queryParams.delete(URL_PARAMS.METHOD)
     } else {
-      queryParams.set('method', updatedMethodFilters)
+      queryParams.set(URL_PARAMS.METHOD, updatedMethodFilters)
     }
     updateURLParams(queryParams)
     setMethodFilters(updatedMethodFilters)
@@ -305,7 +327,7 @@ export default function FilterPane(props) {
     <div>
       <span>Filter Pane</span>
       <div style={{ color: 'red' }}>Projects loaded: {projectData.results?.length}</div>
-      <div>Countries</div>
+      <StyledHeader>Countries</StyledHeader>
       <FormControl sx={{ m: 1, width: 250 }}>
         <InputLabel>Countries</InputLabel>
         <Select
@@ -328,7 +350,7 @@ export default function FilterPane(props) {
           ))}
         </Select>
       </FormControl>
-      <div>Organizations</div>
+      <StyledHeader>Organizations</StyledHeader>
       <FormControl sx={{ m: 1, width: 250 }}>
         <InputLabel>Organizations</InputLabel>
         <Select
@@ -351,7 +373,7 @@ export default function FilterPane(props) {
           ))}
         </Select>
       </FormControl>
-      <div>Date Range</div>
+      <StyledHeader>Date Range</StyledHeader>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           label="Start Date"
@@ -366,12 +388,12 @@ export default function FilterPane(props) {
           slotProps={{ textField: {} }}
         />
       </LocalizationProvider>
-      <div>Data sharing</div>
+      <StyledHeader>Data sharing</StyledHeader>
       <div>
         <input type="checkbox" name="dataSharing" onChange={handleDataSharingFilter} />
-        <label htmlFor="dataSharing">Only show data you have access to</label>
+        <label htmlFor="dataSharing">{filterPane.dataSharing}</label>
       </div>
-      <div>Method</div>
+      <StyledHeader>Method</StyledHeader>
       <div>
         {collectionMethods.map((method) => (
           <div key={method.name}>
