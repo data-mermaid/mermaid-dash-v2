@@ -1,80 +1,93 @@
-import { useEffect } from 'react'
-import { makeStyles } from '@mui/styles'
-import Header from './Header'
+import { useEffect, useState } from 'react'
+import styled, { css } from 'styled-components'
+import Header from './Header/Header'
 import { useAuth0 } from '@auth0/auth0-react'
 import LeafletMap from './LeafletMap'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import FilterPane from './FilterPane'
 
-const useStyles = makeStyles(() => ({
-  dashContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    height: 'calc(100vh - 20px)',
-  },
-  contentContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    marginTop: '44px',
-    flexGrow: 1,
-    margin: '0 -7px',
-  },
-  filterContainer: {
-    border: '1px solid red',
-    width: '300px',
-  },
-  mapContainer: {
-    border: '1px solid blue',
-    flexGrow: 1,
-    height: 'calc(100%-90px)',
-    width: '100%',
-  },
-  metricsContainer: {
-    border: '1px solid green',
-    width: '300px',
-    position: 'absolute',
-    right: 15,
-    top: '65px',
-    height: 'calc(100vh - 90px)',
-  },
-  '@media (max-width: 1024px)': {
-    filterContainer: {
-      border: '1px solid red',
-      width: '80%',
-      position: 'absolute',
-      top: '10%',
-      height: '80%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-    },
-    metricsContainer: {
-      border: '1px solid green',
-      width: '90%',
-      top: 'calc(80% - 45px)',
-      height: '20%',
-      left: '50%',
-      transform: 'translateX(-50%)',
-    },
-  },
-}))
+const StyledDashboardContainer = styled('div')`
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 2rem);
+`
+
+const StyledContentContainer = styled('div')`
+  display: flex;
+  flex-direction: row;
+  margin-top: 4.9rem;
+  flex-grow: 1;
+`
+
+const StyledFilterContainer = styled('div')`
+  border: 1px solid red;
+  width: 30rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    border: 1px solid red;
+    width: 80%;
+    position: absolute;
+    top: 10%;
+    height: 80%;
+    left: 50%;
+    transform: translateX(-50%);
+  `)}
+`
+
+const StyledMapContainer = styled('div')`
+  border: 1px solid blue;
+  flex-grow: 1;
+  height: calc(100%-90px),
+  width: 100%,
+`
+
+const StyledMetricsContainer = styled('div')`
+  border: 1px solid green;
+  width: 30rem;
+  position: absolute;
+  right: 1.5rem;
+  top: 8rem;
+  height: calc(100vh - 10rem);
+  ${mediaQueryTabletLandscapeOnly(css`
+    border: 1px solid green;
+    width: 90%;
+    top: calc(80% - 4.5rem);
+    height: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+  `)}
+`
 
 export default function MermaidDash() {
-  const classes = useStyles()
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [projectData, setProjectData] = useState({})
 
   const fetchData = async (token = '') => {
     try {
-      const response = await fetch(
-        'https://dev-api.datamermaid.org/v1/projectsummarysampleevent?limit=100&page=1',
-        {
+      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=10&page=1`
+
+      while (nextPageUrl !== null) {
+        const response = await fetch(nextPageUrl, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
-      )
-      if (response.ok) {
-        const data = await response.json()
-        console.log(token ? 'With token Response.json():' : 'Response.json():', data)
-      } else {
-        console.error('Failed to fetch data:', response.status)
+        })
+        if (response.ok) {
+          const data = await response.json()
+          setProjectData((prevData) => {
+            return {
+              ...prevData,
+              next: data.next,
+              previous: data.previous,
+              results: prevData.results
+                ? [...prevData.results, ...data.results]
+                : [...data.results],
+            }
+          })
+          nextPageUrl = data.next
+        } else {
+          console.error('Failed to fetch data:', response.status)
+          break
+        }
       }
     } catch (error) {
       console.error('Error fetching data:', error)
@@ -82,6 +95,10 @@ export default function MermaidDash() {
   }
 
   useEffect(() => {
+    if (isLoading) {
+      return
+    }
+
     if (!isAuthenticated) {
       fetchData()
     } else {
@@ -89,18 +106,20 @@ export default function MermaidDash() {
         .then((token) => fetchData(token))
         .catch((error) => console.error('Error getting access token:', error))
     }
-  }, [isAuthenticated, getAccessTokenSilently])
+  }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
   return (
-    <div className={classes.dashContainer}>
+    <StyledDashboardContainer>
       <Header />
-      <div className={classes.contentContainer}>
-        <div className={classes.filterContainer}>Filters</div>
-        <div className={classes.mapContainer}>
+      <StyledContentContainer>
+        <StyledFilterContainer>
+          <FilterPane projectData={projectData} />
+        </StyledFilterContainer>
+        <StyledMapContainer>
           <LeafletMap />
-        </div>
-        <div className={classes.metricsContainer}>Metrics</div>
-      </div>
-    </div>
+        </StyledMapContainer>
+        <StyledMetricsContainer>Metrics</StyledMetricsContainer>
+      </StyledContentContainer>
+    </StyledDashboardContainer>
   )
 }

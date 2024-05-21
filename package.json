@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 3000",
+    "dev": "vite --port 3030",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -13,11 +13,18 @@
     "@auth0/auth0-react": "^2.2.4",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@fontsource/open-sans": "^5.0.28",
+    "@iconify-icons/mdi": "1.1.12",
+    "@iconify/react": "1.1.4",
     "@mui/icons-material": "^5.15.16",
     "@mui/material": "^5.15.16",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
     "@mui/styles": "^5.15.16",
     "@mui/system": "^5.15.15",
+    "@mui/x-date-pickers": "^7.4.0",
+    "babel-plugin-styled-components": "^2.1.4",
+    "color": "^4.2.3",
+    "dayjs": "^1.11.11",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-testing-library": "^6.2.2",
     "leaflet": "^1.9.4",
@@ -26,9 +33,13 @@
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",
     "react-router-dom": "^6.23.0",
-    "styled-components": "^6.1.8"
+    "react-toastify": "^10.0.5",
+    "styled-components": "5",
+    "vite-plugin-babel-macros": "^1.0.6"
   },
   "devDependencies": {
+    "@babel/preset-react": "^7.24.1",
+    "@rollup/plugin-babel": "^6.0.4",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
     "@vitejs/plugin-react": "^4.2.1",
