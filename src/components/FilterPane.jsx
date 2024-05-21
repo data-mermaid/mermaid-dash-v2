@@ -221,8 +221,8 @@ export default function FilterPane(props) {
         .set('millisecond', 999)
       setEndDate(endDate)
     }
-    if (queryParams.has(URL_PARAMS.END_DATE)) {
-      setProjectNameFilter(queryParams.get(URL_PARAMS.END_DATE))
+    if (queryParams.has(URL_PARAMS.PROJECT_NAME)) {
+      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT_NAME))
     }
     if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
       setDataSharingFilter(queryParams.get(URL_PARAMS.DATA_SHARING))
