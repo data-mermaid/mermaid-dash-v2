@@ -5,6 +5,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
+import LoadingIndicator from './LoadingIndicator'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -79,6 +80,7 @@ export default function MermaidDash() {
           setProjectData((prevData) => {
             return {
               ...prevData,
+              count: data.count,
               next: data.next,
               previous: data.previous,
               results: prevData.results
@@ -128,6 +130,7 @@ export default function MermaidDash() {
           <LeafletMap displayedProjects={displayedProjects} />
         </StyledMapContainer>
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
+        <LoadingIndicator projectData={projectData} />
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
