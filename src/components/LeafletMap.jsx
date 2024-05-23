@@ -76,13 +76,13 @@ export default function LeafletMap(props) {
       displayedProjects.forEach((project) => {
         project.records.forEach((record) => {
           const { latitude, longitude, sample_event_id } = record
-          let alreadyExist = false
+          let markerAlreadyExists = false
           markersRef.current.getLayers().forEach((layer) => {
             if (layer.options.sample_event_id === sample_event_id) {
-              alreadyExist = true
+              markerAlreadyExists = true
             }
           })
-          if (!alreadyExist) {
+          if (!markerAlreadyExists) {
             const defaultMarker = L.circleMarker([latitude, longitude], {
               color: 'white',
               fillColor: 'red',
@@ -120,10 +120,10 @@ export default function LeafletMap(props) {
     if (markersRef.current) {
       // Remove any existing markers/sample events that are not in the displayedProjects
       markersRef.current.getLayers().forEach((layer) => {
-        let exists = displayedProjects.some((project) => {
+        let sampleEventExists = displayedProjects.some((project) => {
           project.records.some((record) => record.sample_event_id === layer.options.sample_event_id)
         })
-        if (!exists) {
+        if (!sampleEventExists) {
           markersRef.current.removeLayer(layer)
         }
       })
