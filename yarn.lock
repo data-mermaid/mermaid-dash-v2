@@ -3968,6 +3968,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"leaflet.markercluster@npm:^1.5.3":
+  version: 1.5.3
+  resolution: "leaflet.markercluster@npm:1.5.3"
+  peerDependencies:
+    leaflet: ^1.3.1
+  checksum: 10c0/ce2d4065da00c727f5b05fe4568e5239ebd2556e45d859307ff9c44a6f7ecb9658cd91d055f5723d93f3e491c48949cf78109f50533b0b36b9a226e4d339213f
+  languageName: node
+  linkType: hard
+
 "leaflet@npm:^1.9.4":
   version: 1.9.4
   resolution: "leaflet@npm:1.9.4"
@@ -4172,6 +4181,7 @@ __metadata:
     husky: "npm:^9.0.11"
     leaflet: "npm:^1.9.4"
     leaflet-minimap: "npm:^3.6.1"
+    leaflet.markercluster: "npm:^1.5.3"
     lint-staged: "npm:^15.2.2"
     prettier: "npm:^3.2.5"
     react: "npm:^18.2.0"
