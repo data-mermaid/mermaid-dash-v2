@@ -47,7 +47,7 @@ export default function ShareViewModal() {
     <ModalBody>
       <ModalCopyContainer>
         <ModalURLContainer>
-          <Input value={window.location.href} disabled></Input>
+          <Input value={window.location.href} readonly></Input>
         </ModalURLContainer>
         <ButtonPrimary onClick={handleCopyURL}>
           <IconCopy /> Copy
