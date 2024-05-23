@@ -35,6 +35,7 @@ export default function LeafletMap(props) {
   const initialMapZoom = parseInt(queryParams.get('zoom')) || defaultMapZoom
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
+  const [selectedMarker, setSelectedMarker] = useState(null)
   const markersRef = useRef(null)
 
   function MapEventListener() {
@@ -59,6 +60,10 @@ export default function LeafletMap(props) {
       markersRef.current = new L.MarkerClusterGroup({
         spiderfyOnMaxZoom: false,
       })
+
+      markersRef.current.on('clusterclick', function (a) {
+        console.log(a.layer.getAllChildMarkers().map((marker) => marker.options.sample_event_id))
+      })
     }
 
     addNewMarkers()
@@ -78,31 +83,38 @@ export default function LeafletMap(props) {
             }
           })
           if (!alreadyExist) {
-            const customIconMarker = L.marker([latitude, longitude], { icon: selectedIcon }).on(
-              'click',
-              function () {
-                markersRef.current.addLayer(marker)
-                markersRef.current.removeLayer(customIconMarker)
-              },
-            )
-
-            const marker = L.circleMarker([latitude, longitude], {
+            const defaultMarker = L.circleMarker([latitude, longitude], {
               color: 'white',
               fillColor: 'red',
               fillOpacity: 1,
               radius: 8,
               sample_event_id,
             }).on('click', function () {
-              markersRef.current.removeLayer(marker)
+              const customIconMarker = L.marker([latitude, longitude], {
+                icon: selectedIcon,
+                sample_event_id,
+              })
               markersRef.current.addLayer(customIconMarker)
+              markersRef.current.removeLayer(defaultMarker)
+              setSelectedMarker(customIconMarker)
             })
 
-            markersRef.current.addLayer(marker)
+            const customMarker = L.marker([latitude, longitude], {
+              icon: selectedIcon,
+              sample_event_id,
+            })
+
+            const displayedMarker =
+              selectedMarker?.options.sample_event_id === sample_event_id
+                ? customMarker
+                : defaultMarker
+
+            markersRef.current.addLayer(displayedMarker)
           }
         })
       })
     }
-  }, [displayedProjects, markersRef])
+  }, [displayedProjects, markersRef, selectedMarker?.options.sample_event_id])
 
   useEffect(() => {
     if (markersRef.current) {
@@ -120,7 +132,7 @@ export default function LeafletMap(props) {
   }, [displayedProjects, addNewMarkers])
 
   return (
-    <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={14}>
+    <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
       <MapEventListener />
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
