@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import Header from './Header/Header'
 import { useAuth0 } from '@auth0/auth0-react'
+import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 
@@ -19,10 +20,10 @@ const StyledContentContainer = styled('div')`
 `
 
 const StyledFilterContainer = styled('div')`
-  border: 1px solid red;
-  width: 30rem;
+  z-index: 2;
+  overflow-y: scroll;
+  height: calc(100vh - 5rem);
   ${mediaQueryTabletLandscapeOnly(css`
-    border: 1px solid red;
     width: 80%;
     position: absolute;
     top: 10%;
@@ -33,8 +34,10 @@ const StyledFilterContainer = styled('div')`
 `
 
 const StyledMapContainer = styled('div')`
-  border: 1px solid blue;
   flex-grow: 1;
+  height: calc(100%-90px);
+  width: 100%;
+  z-index: 1;
 `
 
 const StyledMetricsContainer = styled('div')`
@@ -44,6 +47,7 @@ const StyledMetricsContainer = styled('div')`
   right: 1.5rem;
   top: 8rem;
   height: calc(100vh - 10rem);
+  z-index: 2;
   ${mediaQueryTabletLandscapeOnly(css`
     border: 1px solid green;
     width: 90%;
@@ -57,6 +61,8 @@ const StyledMetricsContainer = styled('div')`
 export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
+  const [displayedProjects, setDisplayedProjects] = useState([])
+  const [hiddenProjects, setHiddenProjects] = useState([])
 
   const fetchData = async (token = '') => {
     try {
@@ -110,9 +116,17 @@ export default function MermaidDash() {
       <Header />
       <StyledContentContainer>
         <StyledFilterContainer>
-          <FilterPane projectData={projectData} />
+          <FilterPane
+            projectData={projectData}
+            displayedProjects={displayedProjects}
+            setDisplayedProjects={setDisplayedProjects}
+            hiddenProjects={hiddenProjects}
+            setHiddenProjects={setHiddenProjects}
+          />
         </StyledFilterContainer>
-        <StyledMapContainer>Map</StyledMapContainer>
+        <StyledMapContainer>
+          <LeafletMap displayedProjects={displayedProjects} />
+        </StyledMapContainer>
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
       </StyledContentContainer>
     </StyledDashboardContainer>

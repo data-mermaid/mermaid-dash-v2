@@ -13,6 +13,7 @@ import { IconCopy } from './icons'
 const ModalBody = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
+  z-index: 2;
 `
 
 const ModalCopyContainer = styled.div`

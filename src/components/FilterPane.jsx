@@ -47,7 +47,13 @@ const StyledHeader = styled('header')`
 `
 
 export default function FilterPane(props) {
-  const { projectData } = props
+  const {
+    projectData,
+    displayedProjects,
+    setDisplayedProjects,
+    hiddenProjects,
+    setHiddenProjects,
+  } = props
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
@@ -55,8 +61,6 @@ export default function FilterPane(props) {
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [startDate, setStartDate] = useState(null)
   const [endDate, setEndDate] = useState(null)
-  const [displayedProjects, setDisplayedProjects] = useState([])
-  const [hiddenProjects, setHiddenProjects] = useState([])
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const navigate = useNavigate()
@@ -196,6 +200,8 @@ export default function FilterPane(props) {
     endDate,
     dataSharingFilter,
     methodFilters,
+    setHiddenProjects,
+    setDisplayedProjects,
   ])
 
   const getURLParams = useCallback(() => {
@@ -435,4 +441,8 @@ export default function FilterPane(props) {
 
 FilterPane.propTypes = {
   projectData: PropTypes.object.isRequired,
+  displayedProjects: PropTypes.array.isRequired,
+  setDisplayedProjects: PropTypes.func.isRequired,
+  hiddenProjects: PropTypes.array.isRequired,
+  setHiddenProjects: PropTypes.func.isRequired,
 }
