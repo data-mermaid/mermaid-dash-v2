@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
   width: 10rem;
-  left: 38.5rem;
+  left: 27%;
   bottom: 1.5rem;
   z-index: 2;
   display: flex;

@@ -26,6 +26,7 @@ const StyledFilterContainer = styled('div')`
   z-index: 2;
   overflow-y: scroll;
   height: calc(100vh - 5rem);
+  width: 35%;
   ${mediaQueryTabletLandscapeOnly(css`
     width: 80%;
     position: absolute;
