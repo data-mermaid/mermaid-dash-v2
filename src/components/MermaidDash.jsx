@@ -68,6 +68,8 @@ const StyledMetricsContainer = styled('div')`
   `)}
 `
 
+const mobileWidthThreshold = 960
+
 export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
@@ -127,7 +129,11 @@ export default function MermaidDash() {
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
     if (queryParams.has('view')) {
-      setView(queryParams.get('view'))
+      if (window.innerWidth <= mobileWidthThreshold) {
+        setView('mapView')
+      } else {
+        setView(queryParams.get('view'))
+      }
     }
   }, [location.search])
 
@@ -153,7 +159,9 @@ export default function MermaidDash() {
         )}
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
-        <ViewToggle view={view} setView={setView} />
+        {window.innerWidth > mobileWidthThreshold ? (
+          <ViewToggle view={view} setView={setView} />
+        ) : null}
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
