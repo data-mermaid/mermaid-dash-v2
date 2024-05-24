@@ -63,6 +63,6 @@ export default function ViewToggle(props) {
 }
 
 ViewToggle.propTypes = {
-  view: PropTypes.string.isRequired,
+  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
