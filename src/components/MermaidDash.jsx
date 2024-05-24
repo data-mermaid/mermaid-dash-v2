@@ -6,6 +6,8 @@ import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
+import ViewToggle from './ViewToggle'
+import { useLocation } from 'react-router-dom'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -41,6 +43,12 @@ const StyledMapContainer = styled('div')`
   z-index: 1;
 `
 
+const StyledTableContainer = styled('div')`
+  flex-grow: 1;
+  height: calc(100%-90px);
+  width: 100%;
+`
+
 const StyledMetricsContainer = styled('div')`
   border: 1px solid green;
   width: 30rem;
@@ -64,6 +72,8 @@ export default function MermaidDash() {
   const [projectData, setProjectData] = useState({})
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [hiddenProjects, setHiddenProjects] = useState([])
+  const [view, setView] = useState('mapView')
+  const location = useLocation()
 
   const fetchData = async (token = '') => {
     try {
@@ -113,6 +123,13 @@ export default function MermaidDash() {
     }
   }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search)
+    if (queryParams.has('view')) {
+      setView(queryParams.get('view'))
+    }
+  }, [location.search])
+
   return (
     <StyledDashboardContainer>
       <Header />
@@ -126,11 +143,16 @@ export default function MermaidDash() {
             setHiddenProjects={setHiddenProjects}
           />
         </StyledFilterContainer>
-        <StyledMapContainer>
-          <LeafletMap displayedProjects={displayedProjects} />
-        </StyledMapContainer>
+        {view === 'mapView' ? (
+          <StyledMapContainer>
+            <LeafletMap displayedProjects={displayedProjects} />
+          </StyledMapContainer>
+        ) : (
+          <StyledTableContainer />
+        )}
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
+        <ViewToggle view={view} setView={setView} />
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
