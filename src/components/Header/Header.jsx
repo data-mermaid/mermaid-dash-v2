@@ -22,7 +22,7 @@ import {
 import HideShow from '../HideShow/HideShow'
 import { BiggerHamburgerIcon } from './Header.styles'
 import { LoginIcon, IconDown } from '../icons'
-import { headerText } from '../../constants/language'
+import { headerText, dataDisclaimer } from '../../constants/language'
 import DataDisclaimer from '../DataDisclaimer'
 
 const Header = () => {
@@ -69,7 +69,7 @@ const Header = () => {
         <MenuLink href="https://datamermaid.org/contact-us/" target="_blank">
           Contact Us
         </MenuLink>
-        <UserMenuButton onClick={handleOpenDisclaimer}>Data Disclaimer</UserMenuButton>
+        <UserMenuButton onClick={handleOpenDisclaimer}>{dataDisclaimer.title}</UserMenuButton>
         <UserMenuButton>Dashboard Stories</UserMenuButton>
       </UserMenu>
     )
