@@ -13,6 +13,12 @@ export const filterPane = {
   dataSharing: 'Only show data you have access to',
 }
 
+export const dataDisclaimer = {
+  title: 'Data Disclaimer',
+  content:
+    'Do not assume data are representative. Some projects have survey sites in geographies to address specific questions (e.g., land-based impacts of reefs, recovery rates from cyclone impacts). Summary data may not reflect overall national statistics.',
+}
+
 export default {
   shareView,
 }
