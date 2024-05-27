@@ -5,6 +5,8 @@ import menuDown from '@iconify-icons/mdi/menu-down'
 import user from '@iconify-icons/mdi/user'
 import closeIcon from '@iconify-icons/mdi/close'
 import copy from '@iconify-icons/mdi/content-copy'
+import mapOutline from '@iconify-icons/mdi/map-outline'
+import table from '@iconify-icons/mdi/table'
 
 export const HamburgerMenu = (props) => <InlineIcon icon={hamburgerMenu} {...props} />
 export const LoginIcon = (props) => <InlineIcon icon={login} {...props} />
@@ -12,3 +14,5 @@ export const IconUser = (props) => <InlineIcon icon={user} {...props} />
 export const IconDown = (props) => <InlineIcon icon={menuDown} {...props} />
 export const IconClose = (props) => <InlineIcon icon={closeIcon} {...props} />
 export const IconCopy = (props) => <InlineIcon icon={copy} {...props} />
+export const IconMapOutline = (props) => <InlineIcon icon={mapOutline} {...props} />
+export const IconTable = (props) => <InlineIcon icon={table} {...props} />

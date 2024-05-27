@@ -6,6 +6,8 @@ import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
+import ViewToggle from './ViewToggle'
+import { useLocation } from 'react-router-dom'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -24,6 +26,7 @@ const StyledFilterContainer = styled('div')`
   z-index: 2;
   overflow-y: scroll;
   height: calc(100vh - 5rem);
+  width: 35%;
   ${mediaQueryTabletLandscapeOnly(css`
     width: 80%;
     position: absolute;
@@ -39,6 +42,12 @@ const StyledMapContainer = styled('div')`
   height: calc(100%-90px);
   width: 100%;
   z-index: 1;
+`
+
+const StyledTableContainer = styled('div')`
+  flex-grow: 1;
+  height: calc(100%-90px);
+  width: 100%;
 `
 
 const StyledMetricsContainer = styled('div')`
@@ -59,11 +68,15 @@ const StyledMetricsContainer = styled('div')`
   `)}
 `
 
+const mobileWidthThreshold = 960
+
 export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [hiddenProjects, setHiddenProjects] = useState([])
+  const [view, setView] = useState('mapView')
+  const location = useLocation()
 
   const fetchData = async (token = '') => {
     try {
@@ -113,6 +126,17 @@ export default function MermaidDash() {
     }
   }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
+  useEffect(() => {
+    const queryParams = new URLSearchParams(location.search)
+    if (queryParams.has('view')) {
+      if (window.innerWidth <= mobileWidthThreshold) {
+        setView('mapView')
+      } else {
+        setView(queryParams.get('view'))
+      }
+    }
+  }, [location.search])
+
   return (
     <StyledDashboardContainer>
       <Header />
@@ -126,11 +150,18 @@ export default function MermaidDash() {
             setHiddenProjects={setHiddenProjects}
           />
         </StyledFilterContainer>
-        <StyledMapContainer>
-          <LeafletMap displayedProjects={displayedProjects} />
-        </StyledMapContainer>
+        {view === 'mapView' ? (
+          <StyledMapContainer>
+            <LeafletMap displayedProjects={displayedProjects} />
+          </StyledMapContainer>
+        ) : (
+          <StyledTableContainer />
+        )}
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
+        {window.innerWidth > mobileWidthThreshold ? (
+          <ViewToggle view={view} setView={setView} />
+        ) : null}
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
