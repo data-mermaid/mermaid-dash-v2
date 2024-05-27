@@ -4,6 +4,7 @@ import theme from '../theme'
 import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
 import { IconMapOutline, IconTable } from './icons'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { formatProjectDataHelper } from '../utils'
 
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
@@ -15,8 +16,13 @@ const StyledViewToggleContainer = styled('div')`
   flex-direction: row;
   background-color: ${theme.color.grey1};
 `
+
+const ButtonPrimaryWithMargin = styled(ButtonPrimary)`
+  margin-left: 0.1rem;
+`
+
 export default function ViewToggle(props) {
-  const { view, setView } = props
+  const { view, setView, displayedProjects, tableHeaders } = props
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
@@ -31,6 +37,24 @@ export default function ViewToggle(props) {
     setView('tableView')
     queryParams.set('view', 'tableView')
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+  }
+
+  const downloadTableData = () => {
+    const tableContent = displayedProjects.map((project) => {
+      const { projectName, formattedYears, countries, organizations, siteCount } =
+        formatProjectDataHelper(project)
+      return `"${projectName}","${formattedYears}","${countries}","${organizations}",${project.records.length},${siteCount}`
+    })
+
+    const csvContent =
+      'data:text/csv;charset=utf-8,' + [tableHeaders.join(','), ...tableContent].join('\n')
+
+    const link = document.createElement('a')
+    link.setAttribute('href', csvContent)
+    link.setAttribute('download', 'table_data.csv')
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
   }
 
   return (
@@ -56,6 +80,7 @@ export default function ViewToggle(props) {
             <IconTable />
             Table
           </ButtonPrimary>
+          <ButtonPrimaryWithMargin onClick={downloadTableData}>DOWNLOAD</ButtonPrimaryWithMargin>
         </>
       )}
     </StyledViewToggleContainer>
@@ -65,4 +90,6 @@ export default function ViewToggle(props) {
 ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
+  displayedProjects: PropTypes.array.isRequired,
+  tableHeaders: PropTypes.array,
 }
