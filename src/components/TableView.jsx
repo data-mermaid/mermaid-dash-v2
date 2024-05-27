@@ -4,7 +4,7 @@ import { Table, Tr, Th } from './generic/table'
 import theme from '../theme'
 import { useAuth0 } from '@auth0/auth0-react'
 import { IconPersonCircle } from './icons'
-import { formatProjectDataHelper } from '../utils/formatProjectDataHelper'
+import { formatProjectDataHelper } from '../utils/'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
