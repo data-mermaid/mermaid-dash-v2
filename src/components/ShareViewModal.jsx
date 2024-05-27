@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { shareView } from '../constants/language'
-
 import { color } from '../constants/theme'
 import theme from '../theme'
 import styled from 'styled-components'
@@ -36,7 +35,7 @@ const ModalURLContainer = styled.div`
 export default function ShareViewModal() {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const handleOpenModal = () => setIsModalOpen(true)
-  const handleCloseModal = () => setIsModalOpen(false)
+  const handleCloseModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen])
 
   const handleCopyURL = () => {
     navigator.clipboard.writeText(window.location.href)
@@ -47,7 +46,7 @@ export default function ShareViewModal() {
     <ModalBody>
       <ModalCopyContainer>
         <ModalURLContainer>
-          <Input value={window.location.href} readonly></Input>
+          <Input value={window.location.href} readOnly></Input>
         </ModalURLContainer>
         <ButtonPrimary onClick={handleCopyURL}>
           <IconCopy /> Copy
@@ -62,6 +61,20 @@ export default function ShareViewModal() {
       <ButtonSecondary onClick={handleCloseModal}>Close</ButtonSecondary>
     </RightFooter>
   )
+
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleCloseModal()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleCloseModal])
 
   return (
     <div>
