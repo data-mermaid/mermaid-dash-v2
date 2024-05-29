@@ -9,18 +9,25 @@ import { formatProjectDataHelper } from '../utils'
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
   width: 10rem;
-  left: 27%;
-  bottom: 1.5rem;
+  left: ${(props) => (props.view === 'mapView' ? '27%' : '40%')};
+  bottom: 1.8rem;
   z-index: 2;
   display: flex;
   flex-direction: row;
   background-color: ${theme.color.grey1};
 `
 
-const ButtonPrimaryWithMargin = styled(ButtonPrimary)`
-  margin-left: 0.1rem;
+const OpaquePrimaryButton = styled(ButtonPrimary)`
+  opacity: 0.3;
 `
 
+const OpaqueSecondaryButton = styled(ButtonSecondary)`
+  opacity: 0.3;
+`
+
+const OpaqueButtonPrimaryWithMargin = styled(OpaquePrimaryButton)`
+  margin-left: 0.1rem;
+`
 export default function ViewToggle(props) {
   const { view, setView, displayedProjects, tableHeaders } = props
   const location = useLocation()
@@ -58,7 +65,7 @@ export default function ViewToggle(props) {
   }
 
   return (
-    <StyledViewToggleContainer>
+    <StyledViewToggleContainer view={view}>
       {view === 'mapView' ? (
         <>
           <ButtonPrimary onClick={handleMapView}>
@@ -72,15 +79,17 @@ export default function ViewToggle(props) {
         </>
       ) : (
         <>
-          <ButtonSecondary onClick={handleMapView}>
+          <OpaqueSecondaryButton onClick={handleMapView}>
             <IconMapOutline />
             Map
-          </ButtonSecondary>
-          <ButtonPrimary onClick={handleTableView}>
+          </OpaqueSecondaryButton>
+          <OpaquePrimaryButton onClick={handleTableView}>
             <IconTable />
             Table
-          </ButtonPrimary>
-          <ButtonPrimaryWithMargin onClick={downloadTableData}>DOWNLOAD</ButtonPrimaryWithMargin>
+          </OpaquePrimaryButton>
+          <OpaqueButtonPrimaryWithMargin onClick={downloadTableData}>
+            DOWNLOAD
+          </OpaqueButtonPrimaryWithMargin>
         </>
       )}
     </StyledViewToggleContainer>
