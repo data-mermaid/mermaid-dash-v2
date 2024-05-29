@@ -68,7 +68,6 @@ const TableView = (props) => {
         Header: 'Project Name',
         accessor: 'projectName',
         sortType: reactTableNaturalSort,
-        width: 200,
       },
       {
         Header: 'Years',
