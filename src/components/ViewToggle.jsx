@@ -81,11 +81,11 @@ export default function ViewToggle(props) {
         <>
           <OpaqueSecondaryButton onClick={handleMapView}>
             <IconMapOutline />
-            Map
+            <div>Map</div>
           </OpaqueSecondaryButton>
           <OpaquePrimaryButton onClick={handleTableView}>
             <IconTable />
-            Table
+            <div>Table</div>
           </OpaquePrimaryButton>
           <OpaqueButtonPrimaryWithMargin onClick={downloadTableData}>
             DOWNLOAD
