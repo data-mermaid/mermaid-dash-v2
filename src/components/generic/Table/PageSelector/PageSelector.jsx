@@ -1,13 +1,8 @@
 import PropTypes from 'prop-types'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-// import { hoverState } from '../../../../library/styling/mediaQueries'
-// import { hoverState } from '../../styles/mediaQueries'
 import { hoverState } from '../../../../styles/mediaQueries'
-// import { ButtonThatLooksLikeLink } from '../../buttons'
-// import { ButtonThatLooksLikeLink } from '../buttons'
 import { ButtonThatLooksLikeLink } from '../../buttons'
-// import theme from '../../../../theme'
 import theme from '../../../../theme'
 
 const PaginationButtonStyles = css`
@@ -69,22 +64,19 @@ const PageSelector = ({
   useEffect(() => {
     const pageButtonPropsThatChangeLess = { currentPageIndex, onGoToPage }
 
-    const getNotTooManyButtons = () => {
-      const buttons = []
-
-      for (let page = 1; page <= pageCount; page += 1) {
+    const renderEightOrLessPageButtons = () => {
+      return Array.from({ length: pageCount }, (_, index) => {
         const buttonProps = {
           ...pageButtonPropsThatChangeLess,
-          pageIndex: page - 1,
+          pageIndex: index,
         }
-        const key = `pagination-button-${page}`
+        const key = `pagination-button-${index + 1}`
 
-        buttons.push(<PageButton key={key} {...buttonProps} />)
-      }
-
-      return buttons
+        return <PageButton key={key} {...buttonProps} />
+      })
     }
-    const getTooManyButtons = () => {
+
+    const renderMoreThanEightPageButtons = () => {
       const middleButtons = []
 
       const lastPage = pageCount
@@ -146,9 +138,9 @@ const PageSelector = ({
     }
 
     if (pageCount > 8) {
-      setPageButtons(getTooManyButtons())
+      setPageButtons(renderMoreThanEightPageButtons())
     } else {
-      setPageButtons(getNotTooManyButtons())
+      setPageButtons(renderEightOrLessPageButtons())
     }
   }, [pageCount, currentPageIndex, onGoToPage])
 
