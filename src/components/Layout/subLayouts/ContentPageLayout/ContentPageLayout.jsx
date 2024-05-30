@@ -1,15 +1,8 @@
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-// import { subNavNodePropTypes } from '../../../SubNavMenuRecordName/subNavNodePropTypes'
-// import { useSyncStatus } from '../../../../App/mermaidData/syncApiDataIntoOfflineStorage/SyncStatusContext'
 import { mediaQueryPhoneOnly, mediaQueryTabletLandscapeOnly } from '../../../../styles/mediaQueries'
 import theme from '../../../../theme'
 import { Column } from '../../../generic/positioning'
-// import LoadingIndicator from '../../../LoadingIndicator/LoadingIndicator'
-// import NavMenu from '../../../NavMenu'
-// import ProjectName from '../../../ProjectName'
-// import ErrorBoundary from '../../../ErrorBoundary'
-import ErrorBoundary from '../../../ErrorBoundary/ErrorBoundary'
 
 const contentPadding = theme.spacing.xsmall
 const MainContentPageLayout = styled('div')`
@@ -69,38 +62,21 @@ const ContentPageLayout = ({
   isToolbarSticky = false,
   subNavNode = null,
 }) => {
-  // const { isSyncInProgress } = useSyncStatus()
-
   return (
     <>
-      <ErrorBoundary>
-        <MainContentPageLayout>
-          {/* <ProjectName /> */}
-          <ErrorBoundary>
-            <NavAndContentLayout>
-              <ErrorBoundary>
-                <Column>{/* <NavMenu subNavNode={subNavNode} /> */}</Column>
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <ContentWrapper>
-                  {/* {isPageContentLoading || isSyncInProgress ? (
-                    <LoadingIndicator aria-label="project pages loading indicator" />
-                  ) : ( */}
-                  <>
-                    {toolbar && (
-                      <ContentToolbar isToolbarSticky={isToolbarSticky}>{toolbar}</ContentToolbar>
-                    )}
-                    <ErrorBoundary>
-                      <Content>{content}</Content>
-                    </ErrorBoundary>
-                  </>
-                  {/* )} */}
-                </ContentWrapper>
-              </ErrorBoundary>
-            </NavAndContentLayout>
-          </ErrorBoundary>
-        </MainContentPageLayout>
-      </ErrorBoundary>
+      <MainContentPageLayout>
+        <NavAndContentLayout>
+          <Column></Column>
+          <ContentWrapper>
+            <>
+              {toolbar && (
+                <ContentToolbar isToolbarSticky={isToolbarSticky}>{toolbar}</ContentToolbar>
+              )}
+              <Content>{content}</Content>
+            </>
+          </ContentWrapper>
+        </NavAndContentLayout>
+      </MainContentPageLayout>
     </>
   )
 }
@@ -110,7 +86,6 @@ ContentPageLayout.propTypes = {
   isPageContentLoading: PropTypes.bool,
   toolbar: PropTypes.node,
   isToolbarSticky: PropTypes.bool,
-  // subNavNode: subNavNodePropTypes,
 }
 
 export default ContentPageLayout

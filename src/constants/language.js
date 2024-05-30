@@ -28,10 +28,6 @@ export const pages = {
   },
 }
 
-export const error = {
-  errorBoundaryTryAgain: 'Try Again',
-}
-
 export const table = {
   sortAscendingTitle: 'Sort ascending',
   sortDescendingTitle: 'Sort descending',

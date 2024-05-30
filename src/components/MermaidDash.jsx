@@ -70,7 +70,6 @@ const StyledMetricsContainer = styled('div')`
 `
 
 const mobileWidthThreshold = 960
-const tableHeaders = ['Project Name', 'Years', 'Countries', 'Organizations', 'Transects', 'Sites']
 
 export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
@@ -168,18 +167,13 @@ export default function MermaidDash() {
           </StyledMapContainer>
         ) : (
           <StyledTableContainer>
-            <TableView displayedProjects={displayedProjects} tableHeaders={tableHeaders} />
+            <TableView displayedProjects={displayedProjects} />
           </StyledTableContainer>
         )}
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
         {window.innerWidth > mobileWidthThreshold ? (
-          <ViewToggle
-            view={view}
-            setView={setView}
-            displayedProjects={displayedProjects}
-            tableHeaders={tableHeaders}
-          />
+          <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
         ) : null}
       </StyledContentContainer>
     </StyledDashboardContainer>

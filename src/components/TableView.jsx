@@ -36,7 +36,6 @@ const TableView = (props) => {
   const { displayedProjects } = props
   const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
-  const [tableSortedBy, setTableSortedBy] = useState({ column: null, desc: false })
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects.map((project, i) => {
