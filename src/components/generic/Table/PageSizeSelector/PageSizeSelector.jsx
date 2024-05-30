@@ -26,14 +26,12 @@ const PageSizeSelector = ({
 
   const _findFilteredAmountToDisplay = useEffect(() => {
     // the search results will be method filtered already, which is not the case the opposite way around
-    if (isSearchFilterEnabled && isMethodFilterEnabled) {
-      return setFilteredAmountToDisplay(searchFilteredRowLength)
-    }
-    if (!isSearchFilterEnabled && isMethodFilterEnabled) {
-      return setFilteredAmountToDisplay(methodFilteredRowLength)
-    }
-    if (isSearchFilterEnabled && !isMethodFilterEnabled) {
-      return setFilteredAmountToDisplay(searchFilteredRowLength)
+    if (isSearchFilterEnabled) {
+      setFilteredAmountToDisplay(searchFilteredRowLength)
+    } else if (isMethodFilterEnabled) {
+      setFilteredAmountToDisplay(methodFilteredRowLength)
+    } else {
+      setFilteredAmountToDisplay(unfilteredRowLength)
     }
 
     return setFilteredAmountToDisplay(unfilteredRowLength)
@@ -46,22 +44,13 @@ const PageSizeSelector = ({
   ])
 
   const _findPageOptionsToDisplay = useEffect(() => {
-    let pageOptionsLessThanRowLength = pageSizeOptions.filter(
-      (option) => option < filteredAmountToDisplay,
-    )
+    let pageOptions = pageSizeOptions.filter((option) => option < filteredAmountToDisplay)
 
-    if (pageOptionsLessThanRowLength.length === 0) {
-      // show the exact number of items as the only selection in the drop down
-      pageOptionsLessThanRowLength = [filteredAmountToDisplay]
-    } else if (
-      pageOptionsLessThanRowLength[pageOptionsLessThanRowLength.length - 1] <
-      filteredAmountToDisplay
-    ) {
-      // show the exact number of items as the last selection in the drop down
-      pageOptionsLessThanRowLength.push(filteredAmountToDisplay)
+    if (pageOptions.length === 0 || pageOptions[pageOptions.length - 1] < filteredAmountToDisplay) {
+      pageOptions.push(filteredAmountToDisplay)
     }
 
-    setPageOptionsToDisplay(pageOptionsLessThanRowLength)
+    setPageOptionsToDisplay(pageOptions)
   }, [pageSizeOptions, filteredAmountToDisplay])
 
   return (
