@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types'
-import { useEffect, useMemo, useState, useCallback } from 'react'
-import { usePagination, useSortBy, useGlobalFilter, useTable } from 'react-table'
+import { useEffect, useMemo, useState } from 'react'
+import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './Layout/subLayouts/ContentPageLayout/ContentPageLayout'
-import FilterSearchToolbar from './FilterSearchToolbar/FilterSearchToolbar'
 import { getTableColumnHeaderProps } from '../library/getTableColumnHeaderProps'
-import { getTableFilteredRows } from '../library/getTableFilteredRows'
 import { H2 } from './generic/text'
 import PageSelector from './generic/Table/PageSelector/PageSelector'
 import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
@@ -14,8 +12,6 @@ import {
   reactTableNaturalSort,
   ReactTableCustomYearSort,
 } from './generic/Table/reactTableNaturalSort'
-import { splitSearchQueryStrings } from '../library/splitSearchQueryStrings'
-import { ToolBarRow } from './generic/positioning'
 import {
   Tr,
   Th,
@@ -40,7 +36,6 @@ const TableView = (props) => {
   const { displayedProjects } = props
   const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
-  const [searchFilteredRowsLength, setSearchFilteredRowsLength] = useState(null)
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects.map((project, i) => {
@@ -125,24 +120,6 @@ const TableView = (props) => {
     })
   }, [tableData])
 
-  const tableGlobalFilters = useCallback(
-    (rows, id, query) => {
-      const keys = ['values.name.props.children', 'values.type', 'values.year']
-
-      const queryTerms = splitSearchQueryStrings(query)
-      const filteredRows =
-        !queryTerms || !queryTerms.length ? rows : getTableFilteredRows(rows, keys, queryTerms)
-
-      const filteredRowIds = filteredRows.map((row) => row.original.id)
-      const filteredTableData = tableData.filter((data) => filteredRowIds.includes(data.id))
-
-      setSearchFilteredRowsLength(filteredTableData.length)
-
-      return filteredRows
-    },
-    [tableData],
-  )
-
   const {
     canNextPage,
     canPreviousPage,
@@ -156,8 +133,7 @@ const TableView = (props) => {
     prepareRow,
     previousPage,
     setPageSize,
-    state: { pageIndex, pageSize, globalFilter },
-    setGlobalFilter,
+    state: { pageIndex, pageSize },
   } = useTable(
     {
       columns: tableColumns,
@@ -166,15 +142,12 @@ const TableView = (props) => {
         pageSize: PAGE_SIZE_DEFAULT,
       },
     },
-    useGlobalFilter,
     useSortBy,
     usePagination,
   )
   const handleRowsNumberChange = (e) => {
     setPageSize(Number(e.target.value))
   }
-
-  const handleGlobalFilterChange = (value) => setGlobalFilter(value)
 
   const table = tableData.length ? (
     <>
@@ -246,8 +219,6 @@ const TableView = (props) => {
           pageSizeOptions={[15, 50, 100]}
           pageType="site"
           unfilteredRowLength={tableData.length}
-          searchFilteredRowLength={searchFilteredRowsLength}
-          isSearchFilterEnabled={!!globalFilter?.length}
         />
         <PageSelector
           onPreviousClick={previousPage}
@@ -270,14 +241,6 @@ const TableView = (props) => {
         toolbar={
           <>
             <H2>Projects</H2>
-            <ToolBarRow>
-              <FilterSearchToolbar
-                name="Search"
-                disabled={tableData.length === 0}
-                globalSearchText={globalFilter || ''}
-                handleGlobalFilterChange={handleGlobalFilterChange}
-              />
-            </ToolBarRow>
           </>
         }
         content={table}
