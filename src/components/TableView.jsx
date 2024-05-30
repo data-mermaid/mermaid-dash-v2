@@ -20,7 +20,6 @@ import {
   StickyTableOverflowWrapper,
   GenericStickyTable,
 } from './generic/table'
-import { IconSortUp, IconSortDown } from './icons'
 import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
 import { formatProjectDataHelper } from '../utils'
 
@@ -175,15 +174,9 @@ const TableView = (props) => {
                           {column.render('Header')}
                           {column.isSorted ? (
                             column.isSortedDesc ? (
-                              <span>
-                                {' '}
-                                <IconSortDown />
-                              </span>
+                              <span> &#9660;</span>
                             ) : (
-                              <span>
-                                {' '}
-                                <IconSortUp />
-                              </span>
+                              <span> &#9650;</span>
                             )
                           ) : (
                             ''
