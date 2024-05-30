@@ -1,10 +1,12 @@
 import PropTypes from 'prop-types'
+import { useRef } from 'react'
 import styled from 'styled-components'
 import theme from '../theme'
 import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
 import { IconMapOutline, IconTable } from './icons'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatProjectDataHelper } from '../utils'
+import { CSVLink } from 'react-csv'
 
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
@@ -28,11 +30,17 @@ const OpaqueSecondaryButton = styled(ButtonSecondary)`
 const OpaqueButtonPrimaryWithMargin = styled(OpaquePrimaryButton)`
   margin-left: 0.1rem;
 `
+
+const StyledCSVLink = styled(CSVLink)`
+  display: none;
+`
+
 export default function ViewToggle(props) {
-  const { view, setView, displayedProjects, tableHeaders } = props
+  const { view, setView, displayedProjects } = props
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
+  const csvLinkRef = useRef()
 
   const handleMapView = () => {
     setView('mapView')
@@ -46,22 +54,47 @@ export default function ViewToggle(props) {
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
-  const downloadTableData = () => {
-    const tableContent = displayedProjects.map((project) => {
-      const { projectName, formattedYears, countries, organizations, siteCount } =
-        formatProjectDataHelper(project)
-      return `"${projectName}","${formattedYears}","${countries}","${organizations}",${project.records.length},${siteCount}`
-    })
+  // const downloadTableData = () => {
+  //   const tableContent = displayedProjects.map((project) => {
+  //     const { projectName, formattedYears, countries, organizations, siteCount } =
+  //       formatProjectDataHelper(project)
+  //     return `"${projectName}","${formattedYears}","${countries}","${organizations}",${project.records.length},${siteCount}`
+  //   })
 
-    const csvContent =
-      'data:text/csv;charset=utf-8,' + [tableHeaders.join(','), ...tableContent].join('\n')
+  //   const csvContent = [tableHeaders.join(','), ...tableContent].join('\n')
+  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
+  //   const url = URL.createObjectURL(blob)
+  //   const link = document.createElement('a')
+  //   link.href = url
+  //   link.download = 'table_data.csv'
+  //   link.click()
+  //   URL.revokeObjectURL(url)
+  // }
 
-    const link = document.createElement('a')
-    link.setAttribute('href', csvContent)
-    link.setAttribute('download', 'table_data.csv')
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+  const tableHeaders = [
+    { label: 'Project Name', key: 'projectName' },
+    { label: 'Years', key: 'formattedYears' },
+    { label: 'Countries', key: 'countries' },
+    { label: 'Organizations', key: 'organizations' },
+    { label: 'Transects', key: 'transects' },
+    { label: 'Sites', key: 'siteCount' },
+  ]
+
+  const tableContent = displayedProjects.map((project) => {
+    const { projectName, formattedYears, countries, organizations, siteCount } =
+      formatProjectDataHelper(project)
+    return {
+      projectName,
+      formattedYears,
+      countries,
+      organizations,
+      recordCount: project.records.length,
+      siteCount,
+    }
+  })
+
+  const handleDownload = () => {
+    csvLinkRef.current.link.click()
   }
 
   return (
@@ -87,9 +120,15 @@ export default function ViewToggle(props) {
             <IconTable />
             <div>Table</div>
           </OpaquePrimaryButton>
-          <OpaqueButtonPrimaryWithMargin onClick={downloadTableData}>
+          <OpaqueButtonPrimaryWithMargin onClick={handleDownload}>
             DOWNLOAD
           </OpaqueButtonPrimaryWithMargin>
+          <StyledCSVLink
+            data={tableContent}
+            headers={tableHeaders}
+            filename="project_data.csv"
+            ref={csvLinkRef}
+          />
         </>
       )}
     </StyledViewToggleContainer>
@@ -100,5 +139,4 @@ ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
   displayedProjects: PropTypes.array.isRequired,
-  tableHeaders: PropTypes.array,
 }
