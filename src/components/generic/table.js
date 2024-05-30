@@ -51,6 +51,7 @@ export const Th = styled.th(
 )
 
 export const Tr = styled.tr`
+  cursor: pointer;
   border: 1px solid ${theme.color.tableBorderColor};
   &:nth-child(odd) {
     background-color: ${theme.color.tableRowOdd};
@@ -65,7 +66,6 @@ export const Tr = styled.tr`
 
 export const Td = styled.td(
   (props) => css`
-    cursor: pointer;
     text-align: ${props.align || 'left'};
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
