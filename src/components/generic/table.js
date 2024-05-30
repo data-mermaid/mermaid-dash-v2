@@ -31,6 +31,7 @@ export const Table = styled('table')`
   of the spans in the Td
   */
   height: 1px;
+  width: 100%;
 `
 
 export const Th = styled.th(
@@ -39,8 +40,8 @@ export const Th = styled.th(
     padding: ${theme.spacing.medium};
     background: ${theme.color.white};
     vertical-align: top;
-    font-weight: 500;
-    border: 1px solid black;
+    font-weight: bold;
+    border: 1px solid ${theme.color.tableBorderColor};
     &::after {
       content: ${props.isSortingEnabled ? ' \u25b2' : ''};
       font-size: small;
@@ -50,7 +51,7 @@ export const Th = styled.th(
 )
 
 export const Tr = styled.tr`
-  border: 1px solid black;
+  border: 1px solid ${theme.color.tableBorderColor};
   &:nth-child(odd) {
     background-color: ${theme.color.tableRowOdd};
   }
@@ -64,6 +65,7 @@ export const Tr = styled.tr`
 
 export const Td = styled.td(
   (props) => css`
+    cursor: pointer;
     text-align: ${props.align || 'left'};
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
