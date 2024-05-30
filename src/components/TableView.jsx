@@ -20,6 +20,7 @@ import {
   StickyTableOverflowWrapper,
   GenericStickyTable,
 } from './generic/table'
+import { IconSortUp, IconSortDown } from './icons'
 import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
 import { formatProjectDataHelper } from '../utils'
 
@@ -36,6 +37,7 @@ const TableView = (props) => {
   const { displayedProjects } = props
   const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
+  const [tableSortedBy, setTableSortedBy] = useState({ column: null, desc: false })
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects.map((project, i) => {
@@ -169,7 +171,24 @@ const TableView = (props) => {
 
                     return (
                       <Th key={columnKey} {...restColumnProps}>
-                        <span>{column.render('Header')}</span>
+                        <span>
+                          {column.render('Header')}
+                          {column.isSorted ? (
+                            column.isSortedDesc ? (
+                              <span>
+                                {' '}
+                                <IconSortDown />
+                              </span>
+                            ) : (
+                              <span>
+                                {' '}
+                                <IconSortUp />
+                              </span>
+                            )
+                          ) : (
+                            ''
+                          )}
+                        </span>
                       </Th>
                     )
                   })}
