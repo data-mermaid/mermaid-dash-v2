@@ -7,6 +7,7 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
 import ViewToggle from './ViewToggle'
+import TableView from './TableView'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 const StyledDashboardContainer = styled('div')`
@@ -46,8 +47,8 @@ const StyledMapContainer = styled('div')`
 
 const StyledTableContainer = styled('div')`
   flex-grow: 1;
-  height: calc(100%-90px);
   width: 100%;
+  overflow: auto;
 `
 
 const StyledMetricsContainer = styled('div')`
@@ -145,6 +146,16 @@ export default function MermaidDash() {
     updateURLParams(queryParams)
   }, [location.search, updateURLParams])
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth <= mobileWidthThreshold) {
+        setView('mapView')
+      }
+    }
+    window.addEventListener('resize', handleResize)
+    return () => window.removeEventListener('resize', handleResize)
+  }, [])
+
   return (
     <StyledDashboardContainer>
       <Header />
@@ -158,17 +169,19 @@ export default function MermaidDash() {
             setHiddenProjects={setHiddenProjects}
           />
         </StyledFilterContainer>
-        {view === 'mapView' ? (
+        {window.innerWidth <= mobileWidthThreshold || view === 'mapView' ? (
           <StyledMapContainer>
             <LeafletMap displayedProjects={displayedProjects} />
           </StyledMapContainer>
         ) : (
-          <StyledTableContainer />
+          <StyledTableContainer>
+            <TableView displayedProjects={displayedProjects} />
+          </StyledTableContainer>
         )}
         <StyledMetricsContainer>Metrics</StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
         {window.innerWidth > mobileWidthThreshold ? (
-          <ViewToggle view={view} setView={setView} />
+          <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
         ) : null}
       </StyledContentContainer>
     </StyledDashboardContainer>
