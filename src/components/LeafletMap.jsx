@@ -20,6 +20,14 @@ const selectedIcon = L.icon({
   popupAnchor: [0, 0],
 })
 
+const isValidLatLng = (lat, lng) => {
+  return lat >= -90 && lat <= 90 && lat !== null && lng >= -180 && lng <= 180 && lng !== null
+}
+
+const isValidZoom = (zoom) => {
+  return zoom >= 0 && zoom <= 20
+}
+
 export default function LeafletMap(props) {
   const { displayedProjects } = props
   const location = useLocation()
@@ -28,11 +36,13 @@ export default function LeafletMap(props) {
   const getURLParams = () => new URLSearchParams(location.search)
 
   const queryParams = getURLParams()
-  const paramsMapCenter = [queryParams.get('lat'), queryParams.get('lng')]
-  const initialMapCenter = paramsMapCenter.every((coord) => coord !== null)
-    ? paramsMapCenter
+  const queryParamsLat = queryParams.get('lat')
+  const queryParamsLng = queryParams.get('lng')
+  const queryParamsZoom = queryParams.get('zoom')
+  const initialMapCenter = isValidLatLng(queryParamsLat, queryParamsLng)
+    ? [queryParamsLat, queryParamsLng]
     : defaultMapCenter
-  const initialMapZoom = parseInt(queryParams.get('zoom')) || defaultMapZoom
+  const initialMapZoom = isValidZoom(queryParamsZoom) ? queryParamsZoom : defaultMapZoom
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
   const [selectedMarker, setSelectedMarker] = useState(null)
