@@ -128,13 +128,11 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.has('view')) {
-      if (window.innerWidth <= mobileWidthThreshold) {
-        setView('mapView')
-      } else {
-        setView(queryParams.get('view'))
-      }
+    if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
+      setView('tableView')
+      return
     }
+    setView('mapView')
   }, [location.search])
 
   return (

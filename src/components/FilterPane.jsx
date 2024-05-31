@@ -46,6 +46,37 @@ const StyledHeader = styled('header')`
   padding: 0.5rem;
 `
 
+const isValidDateFormat = (dateString) => {
+  // Regular expression to match the date format YYYY-MM-DD
+  const regex = /^(\d{4})-(\d{2})-(\d{2})$/
+  const match = dateString.match(regex)
+
+  if (!match) {
+    return false
+  }
+
+  const year = parseInt(match[1], 10)
+  const month = parseInt(match[2], 10)
+  const day = parseInt(match[3], 10)
+
+  const currentYear = new Date().getFullYear()
+  if (year < 1900 || year > currentYear) {
+    return false
+  }
+
+  if (month < 1 || month > 12) {
+    return false
+  }
+
+  // Check if the day is valid for the given month and year
+  const date = new Date(year, month - 1, day)
+  if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
+    return false
+  }
+
+  return true
+}
+
 export default function FilterPane(props) {
   const {
     projectData,
@@ -208,6 +239,13 @@ export default function FilterPane(props) {
     return new URLSearchParams(location.search)
   }, [location.search])
 
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
+
   useEffect(() => {
     const queryParams = getURLParams()
     if (queryParams.has(URL_PARAMS.COUNTRIES)) {
@@ -217,10 +255,22 @@ export default function FilterPane(props) {
       setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
     }
     if (queryParams.has(URL_PARAMS.START_DATE)) {
-      setStartDate(dayjs(queryParams.get(URL_PARAMS.START_DATE)))
+      const queryParamsStartDate = queryParams.get(URL_PARAMS.START_DATE)
+      if (isValidDateFormat(queryParamsStartDate)) {
+        setStartDate(dayjs(queryParamsStartDate))
+      } else {
+        queryParams.delete(URL_PARAMS.START_DATE)
+        updateURLParams(queryParams)
+      }
     }
     if (queryParams.has(URL_PARAMS.END_DATE)) {
-      const endDate = dayjs(queryParams.get(URL_PARAMS.END_DATE))
+      const queryParamsEndDate = queryParams.get(URL_PARAMS.END_DATE)
+      if (!isValidDateFormat(queryParamsEndDate)) {
+        queryParams.delete(URL_PARAMS.END_DATE)
+        updateURLParams(queryParams)
+        return
+      }
+      const endDate = dayjs(queryParamsEndDate)
         .set('hour', 23)
         .set('minute', 59)
         .set('second', 59)
@@ -231,16 +281,27 @@ export default function FilterPane(props) {
       setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT_NAME))
     }
     if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
-      setDataSharingFilter(queryParams.get(URL_PARAMS.DATA_SHARING))
+      if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
+        setDataSharingFilter(true)
+      } else {
+        queryParams.delete(URL_PARAMS.DATA_SHARING)
+        updateURLParams(queryParams)
+      }
     }
     if (queryParams.has(URL_PARAMS.METHOD)) {
-      setMethodFilters(queryParams.getAll(URL_PARAMS.METHOD)[0].split(','))
+      const queryParamsMethods = queryParams.getAll(URL_PARAMS.METHOD)[0].split(',')
+      const validMethods = queryParamsMethods.filter((method) => {
+        return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
+      })
+      setMethodFilters(validMethods)
+      if (validMethods.length === 0) {
+        queryParams.delete(URL_PARAMS.METHOD)
+      } else {
+        queryParams.set(URL_PARAMS.METHOD, validMethods)
+      }
+      updateURLParams(queryParams)
     }
-  }, [getURLParams])
-
-  const updateURLParams = (queryParams) => {
-    navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
-  }
+  }, [getURLParams, updateURLParams])
 
   const handleSelectedCountriesChange = (event) => {
     const queryParams = getURLParams()
@@ -396,7 +457,12 @@ export default function FilterPane(props) {
       </LocalizationProvider>
       <StyledHeader>Data sharing</StyledHeader>
       <div>
-        <input type="checkbox" name="dataSharing" onChange={handleDataSharingFilter} />
+        <input
+          type="checkbox"
+          name="dataSharing"
+          onChange={handleDataSharingFilter}
+          checked={dataSharingFilter}
+        />
         <label htmlFor="dataSharing">{filterPane.dataSharing}</label>
       </div>
       <StyledHeader>Method</StyledHeader>
