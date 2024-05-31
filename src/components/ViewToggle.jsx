@@ -54,23 +54,6 @@ export default function ViewToggle(props) {
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
-  // const downloadTableData = () => {
-  //   const tableContent = displayedProjects.map((project) => {
-  //     const { projectName, formattedYears, countries, organizations, siteCount } =
-  //       formatProjectDataHelper(project)
-  //     return `"${projectName}","${formattedYears}","${countries}","${organizations}",${project.records.length},${siteCount}`
-  //   })
-
-  //   const csvContent = [tableHeaders.join(','), ...tableContent].join('\n')
-  //   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' })
-  //   const url = URL.createObjectURL(blob)
-  //   const link = document.createElement('a')
-  //   link.href = url
-  //   link.download = 'table_data.csv'
-  //   link.click()
-  //   URL.revokeObjectURL(url)
-  // }
-
   const tableHeaders = [
     { label: 'Project Name', key: 'projectName' },
     { label: 'Years', key: 'formattedYears' },
@@ -83,7 +66,7 @@ export default function ViewToggle(props) {
   const tableContent = displayedProjects.map((project) => {
     const { projectName, formattedYears, countries, organizations, siteCount } =
       formatProjectDataHelper(project)
-    return {
+    const formattedTableRowData = {
       projectName,
       formattedYears,
       countries,
@@ -91,6 +74,7 @@ export default function ViewToggle(props) {
       recordCount: project.records.length,
       siteCount,
     }
+    return formattedTableRowData
   })
 
   const handleDownload = () => {
