@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import Header from './Header/Header'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -7,7 +7,7 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
 import ViewToggle from './ViewToggle'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -77,6 +77,7 @@ export default function MermaidDash() {
   const [hiddenProjects, setHiddenProjects] = useState([])
   const [view, setView] = useState('mapView')
   const location = useLocation()
+  const navigate = useNavigate()
 
   const fetchData = async (token = '') => {
     try {
@@ -126,6 +127,13 @@ export default function MermaidDash() {
     }
   }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
+
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
     if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
@@ -133,7 +141,9 @@ export default function MermaidDash() {
       return
     }
     setView('mapView')
-  }, [location.search])
+    queryParams.delete('view')
+    updateURLParams(queryParams)
+  }, [location.search, updateURLParams])
 
   return (
     <StyledDashboardContainer>
