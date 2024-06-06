@@ -25,7 +25,7 @@ const isValidLatLng = (lat, lng) => {
 }
 
 const isValidZoom = (zoom) => {
-  return zoom >= 0 && zoom <= 20
+  return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
 export default function LeafletMap(props) {
@@ -45,14 +45,27 @@ export default function LeafletMap(props) {
   const initialMapZoom = isValidZoom(queryParamsZoom) ? queryParamsZoom : defaultMapZoom
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
-  const [selectedMarker, setSelectedMarker] = useState(null)
+  const queryParamsSampleEventId = queryParams.get('sample_event_id')
+  const initialSelectedMarker =
+    queryParamsSampleEventId !== null
+      ? {
+          options: {
+            sample_event_id: queryParamsSampleEventId,
+          },
+        }
+      : null
+  const [selectedMarker, setSelectedMarker] = useState(initialSelectedMarker)
   const markersRef = useRef(null)
+
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
 
   function MapEventListener() {
     const map = useMap()
-    const updateURLParams = (queryParams) => {
-      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
-    }
 
     map.on('moveend', () => {
       const { lat, lng } = map.getCenter()
@@ -100,6 +113,9 @@ export default function LeafletMap(props) {
               radius: 8,
               sample_event_id,
             }).on('click', function () {
+              console.log('TODO: display sample event in metrics pane', record)
+              queryParams.set('sample_event_id', sample_event_id)
+              updateURLParams(queryParams)
               const customIconMarker = L.marker([latitude, longitude], {
                 icon: selectedIcon,
                 sample_event_id,
@@ -124,7 +140,13 @@ export default function LeafletMap(props) {
         })
       })
     }
-  }, [displayedProjects, markersRef, selectedMarker?.options.sample_event_id])
+  }, [
+    displayedProjects,
+    markersRef,
+    selectedMarker?.options.sample_event_id,
+    queryParams,
+    updateURLParams,
+  ])
 
   useEffect(() => {
     if (markersRef.current) {
