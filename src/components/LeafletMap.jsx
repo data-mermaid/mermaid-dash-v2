@@ -115,6 +115,7 @@ export default function LeafletMap(props) {
             }).on('click', function () {
               console.log('TODO: display sample event in metrics pane', record)
               queryParams.set('sample_event_id', sample_event_id)
+              queryParams.delete('project_id')
               updateURLParams(queryParams)
               const customIconMarker = L.marker([latitude, longitude], {
                 icon: selectedIcon,

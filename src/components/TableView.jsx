@@ -22,6 +22,7 @@ import {
 } from './generic/table'
 import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
 import { formatProjectDataHelper } from '../utils'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
@@ -36,6 +37,11 @@ const TableView = (props) => {
   const { displayedProjects } = props
   const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
+  const location = useLocation()
+  const navigate = useNavigate()
+  const getURLParams = () => new URLSearchParams(location.search)
+  const queryParams = getURLParams()
+  const queryParamsProjectId = queryParams.get('project_id')
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects.map((project, i) => {
@@ -145,9 +151,35 @@ const TableView = (props) => {
     useSortBy,
     usePagination,
   )
+
   const handleRowsNumberChange = (e) => {
     setPageSize(Number(e.target.value))
   }
+
+  const updateURLParams = (queryParams) => {
+    navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+  }
+
+  const handleTableRowClick = (projectData) => {
+    console.log('TODO: display project data in metrics pane', projectData)
+    queryParams.delete('sample_event_id')
+    if (queryParamsProjectId !== projectData.project_id) {
+      queryParams.set('project_id', projectData.project_id)
+      location.search = queryParams.toString()
+    } else {
+      queryParams.delete('project_id')
+    }
+    updateURLParams(queryParams)
+  }
+
+  useEffect(() => {
+    if (queryParamsProjectId) {
+      const selectedProject = displayedProjects.find(
+        (project) => project.project_id === queryParamsProjectId,
+      )
+      console.log('TODO: display the initially selected project in metrics pane', selectedProject)
+    }
+  }, [displayedProjects])
 
   const table = tableData.length ? (
     <>
@@ -206,12 +238,7 @@ const TableView = (props) => {
                         key={cellKey}
                         {...restCellProps}
                         align={cell.column.align}
-                        onClick={() =>
-                          console.log(
-                            'TODO: display project data in metrics pane: ',
-                            cell.row.original.rawProjectData,
-                          )
-                        }
+                        onClick={() => handleTableRowClick(cell.row.original.rawProjectData)}
                       >
                         {cell.render('Cell')}
                       </Td>
