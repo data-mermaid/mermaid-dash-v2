@@ -386,17 +386,11 @@ export default function FilterPane(props) {
   }
 
   const handleClearStartDate = () => {
-    const queryParams = getURLParams()
-    queryParams.delete(URL_PARAMS.START_DATE)
-    updateURLParams(queryParams)
-    setStartDate(null)
+    handleChangeStartDate(null)
   }
 
   const handleClearEndDate = () => {
-    const queryParams = getURLParams()
-    queryParams.delete(URL_PARAMS.END_DATE)
-    updateURLParams(queryParams)
-    setEndDate(null)
+    handleChangeEndDate(null)
   }
 
   const handleMethodFilter = (event) => {
