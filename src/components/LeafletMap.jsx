@@ -25,7 +25,7 @@ const isValidLatLng = (lat, lng) => {
 }
 
 const isValidZoom = (zoom) => {
-  return zoom >= 0 && zoom <= 20
+  return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
 export default function LeafletMap(props) {
