@@ -165,7 +165,6 @@ const TableView = (props) => {
     queryParams.delete('sample_event_id')
     if (queryParamsProjectId !== projectData.project_id) {
       queryParams.set('project_id', projectData.project_id)
-      location.search = queryParams.toString()
     } else {
       queryParams.delete('project_id')
     }
@@ -179,7 +178,7 @@ const TableView = (props) => {
       )
       console.log('TODO: display the initially selected project in metrics pane', selectedProject)
     }
-  }, [displayedProjects])
+  }, [displayedProjects, queryParamsProjectId])
 
   const table = tableData.length ? (
     <>
