@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect, useRef, useCallback } from 'react'
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { MapContainer, TileLayer, useMapEvents } from 'react-leaflet'
 import { useLocation, useNavigate } from 'react-router-dom'
 import L from 'leaflet'
 import 'leaflet.markercluster'
@@ -9,6 +9,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
+import usePrevious from '../library/usePrevious'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -30,6 +31,8 @@ const isValidZoom = (zoom) => {
 
 export default function LeafletMap(props) {
   const { displayedProjects } = props
+  const prevDisplayedProjects = usePrevious(displayedProjects)
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -55,6 +58,7 @@ export default function LeafletMap(props) {
         }
       : null
   const [selectedMarker, setSelectedMarker] = useState(initialSelectedMarker)
+  const prevSelectedMarker = usePrevious(selectedMarker)
   const markersRef = useRef(null)
 
   const updateURLParams = useCallback(
@@ -65,35 +69,40 @@ export default function LeafletMap(props) {
   )
 
   function MapEventListener() {
-    const map = useMap()
-
-    map.on('moveend', () => {
-      const { lat, lng } = map.getCenter()
-      const zoom = map.getZoom()
-      const queryParams = getURLParams()
-      queryParams.set('lat', lat)
-      queryParams.set('lng', lng)
-      queryParams.set('zoom', zoom)
-      updateURLParams(queryParams)
-      setMapCenter([lat, lng])
-      setMapZoom(zoom)
-    })
-
     if (!markersRef.current) {
       markersRef.current = new L.MarkerClusterGroup({
         spiderfyOnMaxZoom: false,
       })
-
-      markersRef.current.on('clusterclick', function (a) {
-        console.log(a.layer.getAllChildMarkers().map((marker) => marker.options.sample_event_id))
-      })
     }
 
-    addNewMarkers()
+    const map = useMapEvents({
+      moveend: () => {
+        const { lat, lng } = map.getCenter()
+        const zoom = map.getZoom()
+        const queryParams = getURLParams()
+        queryParams.set('lat', lat)
+        queryParams.set('lng', lng)
+        queryParams.set('zoom', zoom)
+        updateURLParams(queryParams)
+        setMapCenter([lat, lng])
+        setMapZoom(zoom)
+      },
+      clusterClick: () => {
+        markersRef.current.on('clusterclick', function (event) {
+          console.log(event.layer.getAllChildMarkers().map((marker) => marker.options.sample_event_id))
+        })
+      }
+    })
+
+    if (map.hasLayer(markersRef.current)) {return} 
+
     map.addLayer(markersRef.current)
+
     return null
   }
 
+  // TODO: Consider creating a react-leaflet component as a marker layer: e.g. https://react-leaflet.js.org/docs/example-other-layers/
+  // A third party library like https://github.com/akursat/react-leaflet-cluster could be useful for handling clustering
   const addNewMarkers = useCallback(() => {
     if (markersRef.current) {
       displayedProjects.forEach((project) => {
@@ -139,16 +148,16 @@ export default function LeafletMap(props) {
           }
         })
       })
-    }
-  }, [
-    displayedProjects,
-    markersRef,
-    selectedMarker?.options.sample_event_id,
-    queryParams,
-    updateURLParams,
-  ])
+    }}, [displayedProjects, selectedMarker?.options.sample_event_id, queryParams, updateURLParams])
+
+
 
   useEffect(() => {
+    const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
+    const selectedMarkerChanged = selectedMarker !== prevSelectedMarker
+
+    if (!displayedProjectsChanged && !selectedMarkerChanged) {return}
+
     if (markersRef.current) {
       // Remove any existing markers/sample events that are not in the displayedProjects
       markersRef.current.getLayers().forEach((layer) => {
@@ -161,7 +170,7 @@ export default function LeafletMap(props) {
       })
       addNewMarkers()
     }
-  }, [displayedProjects, addNewMarkers])
+  }, [displayedProjects, prevDisplayedProjects, addNewMarkers, selectedMarker, prevSelectedMarker])
 
   return (
     <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
