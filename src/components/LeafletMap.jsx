@@ -106,13 +106,13 @@ export default function LeafletMap(props) {
         return isSelected ? (
           <Marker
             key={`${index}-${record.sample_event_id}`}
-            position={[record.longitude, record.latitude]}
+            position={[record.latitude, record.longitude]}
             title={record.sample_event_id}
             icon={selectedIcon}
           ></Marker>) : (
           <CircleMarker
             key={`${index}-${record.sample_event_id}`}
-            center={[record.longitude, record.latitude]}
+            center={[record.latitude, record.longitude]}
             pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1}}
             radius={8}
             eventHandlers={{
