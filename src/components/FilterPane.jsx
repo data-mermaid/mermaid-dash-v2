@@ -17,6 +17,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { IconClose } from './icons'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -75,6 +76,11 @@ const isValidDateFormat = (dateString) => {
   }
 
   return true
+}
+
+const deleteIconSize = {
+  height: '15px',
+  width: '15px',
 }
 
 export default function FilterPane(props) {
@@ -356,19 +362,35 @@ export default function FilterPane(props) {
   }
 
   const handleChangeStartDate = (startDate) => {
-    const formattedStartDate = formattedDate(new Date(startDate))
     const queryParams = getURLParams()
-    queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
+    if (startDate === null) {
+      queryParams.delete(URL_PARAMS.START_DATE)
+    } else {
+      const formattedStartDate = formattedDate(new Date(startDate))
+      queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
+    }
     updateURLParams(queryParams)
     setStartDate(startDate)
   }
 
   const handleChangeEndDate = (endDate) => {
-    const formattedEndDate = formattedDate(endDate)
     const queryParams = getURLParams()
-    queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
+    if (endDate === null) {
+      queryParams.delete(URL_PARAMS.END_DATE)
+    } else {
+      const formattedEndDate = formattedDate(endDate)
+      queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
+    }
     updateURLParams(queryParams)
     setEndDate(endDate)
+  }
+
+  const handleClearStartDate = () => {
+    handleChangeStartDate(null)
+  }
+
+  const handleClearEndDate = () => {
+    handleChangeEndDate(null)
   }
 
   const handleMethodFilter = (event) => {
@@ -390,6 +412,34 @@ export default function FilterPane(props) {
     setMethodFilters(updatedMethodFilters)
   }
 
+  const handleDeleteCountry = (country) => {
+    const updatedCountries = selectedCountries.filter(
+      (selectedCountry) => selectedCountry !== country,
+    )
+    setSelectedCountries(updatedCountries)
+    const queryParams = getURLParams()
+    if (updatedCountries.length === 0) {
+      queryParams.delete(URL_PARAMS.COUNTRIES)
+    } else {
+      queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
+    }
+    updateURLParams(queryParams)
+  }
+
+  const handleDeleteOrganization = (organization) => {
+    const updatedOrganizations = selectedOrganizations.filter(
+      (selectedOrganization) => selectedOrganization !== organization,
+    )
+    setSelectedOrganizations(updatedOrganizations)
+    const queryParams = getURLParams()
+    if (updatedOrganizations.length === 0) {
+      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
+    } else {
+      queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
+    }
+    updateURLParams(queryParams)
+  }
+
   return (
     <div>
       <span>Filter Pane</span>
@@ -405,7 +455,17 @@ export default function FilterPane(props) {
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
-                <Chip key={value} label={value} />
+                <Chip
+                  key={value}
+                  label={value}
+                  onDelete={() => handleDeleteCountry(value)}
+                  deleteIcon={
+                    <IconClose
+                      onMouseDown={(event) => event.stopPropagation()}
+                      {...deleteIconSize}
+                    />
+                  }
+                />
               ))}
             </Box>
           )}
@@ -428,7 +488,17 @@ export default function FilterPane(props) {
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
-                <Chip key={value} label={value} />
+                <Chip
+                  key={value}
+                  label={value}
+                  onDelete={() => handleDeleteOrganization(value)}
+                  deleteIcon={
+                    <IconClose
+                      onMouseDown={(event) => event.stopPropagation()}
+                      {...deleteIconSize}
+                    />
+                  }
+                />
               ))}
             </Box>
           )}
@@ -446,13 +516,13 @@ export default function FilterPane(props) {
           label="Start Date"
           value={startDate}
           onChange={handleChangeStartDate}
-          slotProps={{ textField: {} }}
+          slotProps={{ textField: { clearable: true, onClear: handleClearStartDate } }}
         />
         <DatePicker
           label="End Date"
           value={endDate}
           onChange={handleChangeEndDate}
-          slotProps={{ textField: {} }}
+          slotProps={{ textField: { clearable: true, onClear: handleClearEndDate } }}
         />
       </LocalizationProvider>
       <StyledHeader>Data sharing</StyledHeader>
