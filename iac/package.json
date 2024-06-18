@@ -1,0 +1,24 @@
+{
+  "name": "mermaid-dashboard-iac",
+  "version": "1.0.0",
+  "description": "Infrastructure for an HTTPS static site using S3 and CloudFront",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "cdk": "cdk",
+    "cdk-synth-dev": "cdk --profile mermaid synth -c domain=dashboard3.datamermaid.org -c subdomain=dev -c accountId=1234567890"
+  },
+  "devDependencies": {
+    "@types/node": "20.12.11",
+    "@types/prettier": "2.7.3",
+    "aws-cdk": "^2.140.0",
+    "ts-node": "^10.9.2",
+    "typescript": "~5.4.5"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "2.140.0",
+    "cdk": "^2.140.0",
+    "constructs": "^10.3.0",
+    "source-map-support": "^0.5.21"
+  }
+}
