@@ -105,9 +105,7 @@ const Header = () => {
 
   return (
     <StyledHeader>
-      <Link to="https://collect.datamermaid.org">
-        <LogoImg src={MermaidLogo} alt="MERMAID Logo" />
-      </Link>
+      <LogoImg src={MermaidLogo} alt="MERMAID Logo" />
       <GlobalNav>
         <div className="desktop">
           <GlobalLinks />
