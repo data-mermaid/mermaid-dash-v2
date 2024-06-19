@@ -653,7 +653,7 @@ export default function FilterPane(props) {
         {displayedProjects.map((project) => {
           return (
             <div key={project.project_id}>
-              <input type="checkbox" /> {project.records[0]?.project_name}
+              <input type="checkbox" checked="true" /> {project.records[0]?.project_name}
             </div>
           )
         })}
