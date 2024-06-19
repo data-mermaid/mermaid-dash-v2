@@ -8,12 +8,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
-import {
-  IconClose,
-  IconCheckboxOutline,
-  IconCheckboxBlankOutline,
-  IconFormatListChecks,
-} from './icons'
+import { IconClose } from './icons'
 import theme from '../theme'
 
 const URL_PARAMS = {
@@ -80,6 +75,11 @@ const StyledHeader = styled('header')`
   padding: 1rem 0.5rem;
 `
 
+const StyledProjectsHeader = styled(StyledHeader)`
+  display: flex;
+  justify-content: space-between;
+`
+
 const StyledFilterPaneContainer = styled('div')`
   padding: 1rem;
 `
@@ -130,30 +130,56 @@ const StyledProjectNameFilter = styled(TextField)`
   fieldset {
     border-radius: 0;
   }
-`
-
-const CheckedProjectControlsContainer = styled('div')`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  background-color: ${theme.color.white};
-  border-left: 1px solid ${theme.color.grey1};
-  border-right: 1px solid ${theme.color.grey1};
-`
-
-const ProjectControl = styled('div')`
-  padding: 0.5rem 1rem;
+  input {
+    padding: 0.5rem 0 0.5rem 1rem;
+    font-size: 1.5rem;
+  }
+  & input::placeholder {
+    font-style: italic;
+  }
+  &.MuiFormControl-root {
+    border: 1px solid ${theme.color.grey0};
+    border-bottom: none;
+  }
 `
 
 const StyledProjectListContainer = styled('div')`
   background-color: ${theme.color.white};
-  border: 1px solid ${theme.color.grey1};
+  border: 1px solid ${theme.color.grey0};
 `
 
 const StyledShowOtherProjects = styled('span')`
   margin: 1.5rem 0;
   cursor: pointer;
   text-decoration: underline;
+`
+
+const StyledInput = styled.input.attrs({ type: 'checkbox' })`
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid black;
+  border-radius: 3px;
+  position: relative;
+  cursor: pointer;
+  outline: none;
+
+  &:checked {
+    background-color: ${theme.color.white};
+    border: 1px solid ${theme.color.grey0};
+  }
+
+  &:checked::after {
+    content: '';
+    position: absolute;
+    top: 1px;
+    left: 5px;
+    width: 5px;
+    height: 10px;
+    border: solid ${theme.color.primary};
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
 `
 
 export default function FilterPane(props) {
@@ -524,6 +550,17 @@ export default function FilterPane(props) {
           value={selectedCountries}
           onChange={handleSelectedCountriesChange}
           input={<StyledOutlinedInput />}
+          sx={{
+            '&.MuiInputBase-root': {
+              minHeight: '3.5rem',
+            },
+            '& .MuiSelect-select': {
+              paddingRight: '1rem',
+              paddingLeft: '1rem',
+              paddingTop: '0.5rem',
+              paddingBottom: '0.5rem',
+            },
+          }}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
@@ -556,6 +593,17 @@ export default function FilterPane(props) {
           value={selectedOrganizations}
           onChange={handleSelectedOrganizationsChange}
           input={<StyledOutlinedInput />}
+          sx={{
+            '&.MuiInputBase-root': {
+              minHeight: '3.5rem',
+            },
+            '& .MuiSelect-select': {
+              paddingRight: '1rem',
+              paddingLeft: '1rem',
+              paddingTop: '0.5rem',
+              paddingBottom: '0.5rem',
+            },
+          }}
           renderValue={(selected) => (
             <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
               {selected.map((value) => (
@@ -627,44 +675,35 @@ export default function FilterPane(props) {
           </div>
         </ShowMoreFiltersContainer>
       ) : null}
-      <StyledHeader>
-        Projects based on filters: {displayedProjects.length}/{projectData.results?.length}
-      </StyledHeader>
+      <StyledProjectsHeader>
+        <span>Projects</span>
+        <span>
+          {displayedProjects.length}/{projectData.results?.length}
+        </span>
+      </StyledProjectsHeader>
       <StyledProjectNameFilter
         value={projectNameFilter}
-        placeholder="Search by project name"
+        placeholder="Type to filter projects"
         onChange={handleProjectNameFilter}
       />
-      <CheckedProjectControlsContainer>
-        <ProjectControl>
-          <IconCheckboxOutline />
-          All
-        </ProjectControl>
-        <ProjectControl>
-          <IconCheckboxBlankOutline />
-          None
-        </ProjectControl>
-        <ProjectControl>
-          <IconFormatListChecks />
-          Invert
-        </ProjectControl>
-      </CheckedProjectControlsContainer>
       <StyledProjectListContainer>
         {displayedProjects.map((project) => {
           return (
             <div key={project.project_id}>
-              <input type="checkbox" checked="true" /> {project.records[0]?.project_name}
+              <StyledInput type="checkbox" checked="true" /> {project.records[0]?.project_name}
             </div>
           )
         })}
       </StyledProjectListContainer>
-      <StyledHeader>
-        Other projects: {hiddenProjects.length} projects{' '}
-        <StyledShowOtherProjects onClick={() => setShowOtherProjects(!showOtherProjects)}>
-          {' '}
-          {showOtherProjects ? 'Hide' : 'Show'}
-        </StyledShowOtherProjects>
-      </StyledHeader>
+      <StyledProjectsHeader>
+        <span>Other projects </span>
+        <div>
+          <StyledShowOtherProjects onClick={() => setShowOtherProjects(!showOtherProjects)}>
+            {showOtherProjects ? 'Hide' : 'Show'}
+          </StyledShowOtherProjects>{' '}
+          {hiddenProjects.length}/{projectData.results?.length}
+        </div>
+      </StyledProjectsHeader>
       {showOtherProjects ? (
         <StyledProjectListContainer>
           {hiddenProjects.map((project, index) => {
