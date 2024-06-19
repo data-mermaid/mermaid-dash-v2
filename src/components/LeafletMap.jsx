@@ -1,7 +1,8 @@
 import PropTypes from 'prop-types'
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { MapContainer, TileLayer, useMap } from 'react-leaflet'
+import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
@@ -9,6 +10,7 @@ import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
 import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
+import usePrevious from '../library/usePrevious'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -30,6 +32,8 @@ const isValidZoom = (zoom) => {
 
 export default function LeafletMap(props) {
   const { displayedProjects } = props
+  const prevDisplayedProjects = usePrevious(displayedProjects)
+
   const location = useLocation()
   const navigate = useNavigate()
 
@@ -54,8 +58,9 @@ export default function LeafletMap(props) {
           },
         }
       : null
-  const [selectedMarker, setSelectedMarker] = useState(initialSelectedMarker)
-  const markersRef = useRef(null)
+  const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+  const prevSelectedMarkerId = usePrevious(selectedMarkerId)
+  const [markers, setMarkers] = useState(null)
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -65,108 +70,81 @@ export default function LeafletMap(props) {
   )
 
   function MapEventListener() {
-    const map = useMap()
-
-    map.on('moveend', () => {
-      const { lat, lng } = map.getCenter()
-      const zoom = map.getZoom()
-      const queryParams = getURLParams()
-      queryParams.set('lat', lat)
-      queryParams.set('lng', lng)
-      queryParams.set('zoom', zoom)
-      updateURLParams(queryParams)
-      setMapCenter([lat, lng])
-      setMapZoom(zoom)
+    const map = useMapEvents({
+      moveend: () => {
+        const { lat, lng } = map.getCenter()
+        const zoom = map.getZoom()
+        const queryParams = getURLParams()
+        queryParams.set('lat', lat)
+        queryParams.set('lng', lng)
+        queryParams.set('zoom', zoom)
+        updateURLParams(queryParams)
+        setMapCenter([lat, lng])
+        setMapZoom(zoom)
+      },
     })
 
-    if (!markersRef.current) {
-      markersRef.current = new L.MarkerClusterGroup({
-        spiderfyOnMaxZoom: false,
-      })
-
-      markersRef.current.on('clusterclick', function (a) {
-        console.log(a.layer.getAllChildMarkers().map((marker) => marker.options.sample_event_id))
-      })
-    }
-
-    addNewMarkers()
-    map.addLayer(markersRef.current)
     return null
   }
 
-  const addNewMarkers = useCallback(() => {
-    if (markersRef.current) {
-      displayedProjects.forEach((project) => {
-        project.records.forEach((record) => {
-          const { latitude, longitude, sample_event_id } = record
-          let markerAlreadyExists = false
-          markersRef.current.getLayers().forEach((layer) => {
-            if (layer.options.sample_event_id === sample_event_id) {
-              markerAlreadyExists = true
-            }
-          })
-          if (!markerAlreadyExists) {
-            const defaultMarker = L.circleMarker([latitude, longitude], {
-              color: 'white',
-              fillColor: 'red',
-              fillOpacity: 1,
-              radius: 8,
-              sample_event_id,
-            }).on('click', function () {
-              console.log('TODO: display sample event in metrics pane', record)
-              queryParams.set('sample_event_id', sample_event_id)
-              queryParams.delete('project_id')
-              updateURLParams(queryParams)
-              const customIconMarker = L.marker([latitude, longitude], {
-                icon: selectedIcon,
-                sample_event_id,
-              })
-              markersRef.current.addLayer(customIconMarker)
-              markersRef.current.removeLayer(defaultMarker)
-              setSelectedMarker(customIconMarker)
-            })
+  useEffect(() => {
+    const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
+    const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
 
-            const customMarker = L.marker([latitude, longitude], {
-              icon: selectedIcon,
-              sample_event_id,
-            })
-
-            const displayedMarker =
-              selectedMarker?.options.sample_event_id === sample_event_id
-                ? customMarker
-                : defaultMarker
-
-            markersRef.current.addLayer(displayedMarker)
+    if (displayedProjectsChanged || selectedMarkerChanged) {
+      const records = displayedProjects.flatMap((project) => {
+        return project.records.map((record) => {
+          return {
+            ...record
           }
         })
       })
-    }
-  }, [
-    displayedProjects,
-    markersRef,
-    selectedMarker?.options.sample_event_id,
-    queryParams,
-    updateURLParams,
-  ])
+      
+      const recordMarkers = records.map((record, index) => {
+        const isSelected = selectedMarkerId === record.sample_event_id
 
-  useEffect(() => {
-    if (markersRef.current) {
-      // Remove any existing markers/sample events that are not in the displayedProjects
-      markersRef.current.getLayers().forEach((layer) => {
-        let sampleEventExists = displayedProjects.some((project) => {
-          project.records.some((record) => record.sample_event_id === layer.options.sample_event_id)
-        })
-        if (!sampleEventExists) {
-          markersRef.current.removeLayer(layer)
-        }
+        return isSelected ? (
+          <Marker
+            key={`${index}-${record.sample_event_id}`}
+            position={[record.latitude, record.longitude]}
+            title={record.sample_event_id}
+            icon={selectedIcon}
+          ></Marker>) : (
+          <CircleMarker
+            key={`${index}-${record.sample_event_id}`}
+            center={[record.latitude, record.longitude]}
+            pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1}}
+            radius={8}
+            eventHandlers={{
+              click: () => {
+                queryParams.set('sample_event_id', record.sample_event_id)
+                updateURLParams(queryParams)
+                setSelectedMarkerId(record.sample_event_id)
+                console.log('TODO: display sample event in metrics pane', record)
+              },
+            }}
+          ></CircleMarker>
+        )
       })
-      addNewMarkers()
+      
+      setMarkers(recordMarkers)
     }
-  }, [displayedProjects, addNewMarkers])
+  }, [displayedProjects, prevDisplayedProjects, queryParams, selectedMarkerId, prevSelectedMarkerId, updateURLParams])
 
   return (
     <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
       <MapEventListener />
+      <MarkerClusterGroup
+        // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
+        chunkedLoading
+        spiderfyOnMaxZoom={false}
+        onClick={(event) => {
+          console.log("Click marker cluster group", event)
+          // Add a click event handler here if required
+        }}
+      >
+        {markers}
+      </MarkerClusterGroup>
       <TileLayer
         url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
         attribution="Tiles &copy; Esri"
@@ -176,5 +154,6 @@ export default function LeafletMap(props) {
 }
 
 LeafletMap.propTypes = {
-  displayedProjects: PropTypes.array.isRequired,
+  // TODO: Add more detail here. What is the shape of the objects in the array?
+  displayedProjects: PropTypes.array,
 }
