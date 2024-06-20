@@ -6,12 +6,10 @@ import {
   OutlinedInput,
   Chip,
   TextField,
-  InputAdornment,
   IconButton,
 } from '@mui/material'
 import dayjs from 'dayjs'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
-import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
+import { DatePicker } from '@mui/x-date-pickers'
 import { filterPane } from '../constants/language'
 
 import PropTypes from 'prop-types'
@@ -79,7 +77,21 @@ const deleteIconSize = {
   width: '15px',
 }
 
-const StyledHeader = styled('h1')`
+const selectCustomStyles = {
+  '&.MuiInputBase-root': {
+    minHeight: '3.5rem',
+  },
+  '& .MuiSelect-select': {
+    paddingRight: '1rem',
+    paddingLeft: '1rem',
+    paddingTop: '0.5rem',
+    paddingBottom: '0.5rem',
+  },
+}
+
+const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
+
+const StyledHeader = styled('h2')`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
 `
@@ -103,6 +115,9 @@ const StyledOutlinedInput = styled(OutlinedInput)`
   &.MuiOutlinedInput-root {
     background-color: ${theme.color.white};
   }
+  .MuiChip-label {
+    font-size: ${theme.typography.smallFontSize};
+  }
 `
 
 const StyledChip = styled(Chip)`
@@ -113,10 +128,13 @@ const StyledChip = styled(Chip)`
   }
 `
 
-const StyledExpandFilters = styled('div')`
+const StyledExpandFilters = styled('button')`
   margin: 1.5rem 0;
   cursor: pointer;
   text-decoration: underline;
+  border: none;
+  background: none;
+  padding: 0;
 `
 
 const ShowMoreFiltersContainer = styled('div')`
@@ -130,6 +148,9 @@ const StyledDatePicker = styled(DatePicker)`
   &.MuiFormControl-root {
     margin-bottom: 1rem;
     margin-right: 0.3rem;
+  }
+  .MuiInputBase-input {
+    font-size: ${theme.typography.smallFontSize};
   }
 `
 
@@ -171,6 +192,29 @@ const StyledUnorderedList = styled('ul')`
   margin: 0;
 `
 
+const StyledDateInput = styled.div`
+  position: relative;
+  width: calc(50% - 0.3rem);
+  margin-bottom: 1rem;
+  margin-right: 0.3rem;
+  input {
+    width: 100%;
+    padding: 0.5rem;
+    background-color: ${theme.color.white};
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  .clear-button {
+    position: absolute;
+    right: 1.8rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+  }
+`
+
 export default function FilterPane(props) {
   const {
     projectData,
@@ -185,8 +229,8 @@ export default function FilterPane(props) {
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [projectNameFilter, setProjectNameFilter] = useState('')
-  const [startDate, setStartDate] = useState(null)
-  const [endDate, setEndDate] = useState(null)
+  const [startDate, setStartDate] = useState('')
+  const [endDate, setEndDate] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const [showOtherProjects, setShowOtherProjects] = useState(false)
@@ -243,7 +287,7 @@ export default function FilterPane(props) {
           ...project,
           records: project.records.filter((record) => {
             const recordDate = new Date(record.sample_date)
-            return recordDate <= finishDate && recordDate >= beginDate
+            return recordDate <= new Date(finishDate) && recordDate >= new Date(beginDate)
           }),
         }
       })
@@ -344,6 +388,10 @@ export default function FilterPane(props) {
     [navigate, location.pathname],
   )
 
+  const formatEndDate = (date) => {
+    return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
+  }
+
   useEffect(() => {
     const queryParams = getURLParams()
     if (queryParams.has(URL_PARAMS.COUNTRIES)) {
@@ -355,7 +403,7 @@ export default function FilterPane(props) {
     if (queryParams.has(URL_PARAMS.START_DATE)) {
       const queryParamsStartDate = queryParams.get(URL_PARAMS.START_DATE)
       if (isValidDateFormat(queryParamsStartDate)) {
-        setStartDate(dayjs(queryParamsStartDate))
+        setStartDate(formattedDate(dayjs(queryParamsStartDate)))
       } else {
         queryParams.delete(URL_PARAMS.START_DATE)
         updateURLParams(queryParams)
@@ -368,12 +416,7 @@ export default function FilterPane(props) {
         updateURLParams(queryParams)
         return
       }
-      const endDate = dayjs(queryParamsEndDate)
-        .set('hour', 23)
-        .set('minute', 59)
-        .set('second', 59)
-        .set('millisecond', 999)
-      setEndDate(endDate)
+      setEndDate(formatEndDate(queryParamsEndDate))
     }
     if (queryParams.has(URL_PARAMS.PROJECT_NAME)) {
       setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT_NAME))
@@ -450,39 +493,41 @@ export default function FilterPane(props) {
   }
 
   const formattedDate = (date) => {
-    return dayjs(date).format('YYYY-MM-DD')
+    return !date ? '' : dayjs(date).format('YYYY-MM-DD')
   }
 
   const handleChangeStartDate = (startDate) => {
     const queryParams = getURLParams()
-    if (startDate === null) {
+    if (startDate === '') {
       queryParams.delete(URL_PARAMS.START_DATE)
+      setStartDate('')
     } else {
-      const formattedStartDate = formattedDate(new Date(startDate))
+      const formattedStartDate = formattedDate(startDate)
       queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
+      setStartDate(dayjs(startDate))
     }
     updateURLParams(queryParams)
-    setStartDate(startDate)
   }
 
   const handleChangeEndDate = (endDate) => {
     const queryParams = getURLParams()
-    if (endDate === null) {
+    if (endDate === '') {
       queryParams.delete(URL_PARAMS.END_DATE)
+      setEndDate('')
     } else {
       const formattedEndDate = formattedDate(endDate)
       queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
+      setEndDate(formatEndDate(endDate))
     }
     updateURLParams(queryParams)
-    setEndDate(endDate)
   }
 
   const handleClearStartDate = () => {
-    handleChangeStartDate(null)
+    handleChangeStartDate('')
   }
 
   const handleClearEndDate = () => {
-    handleChangeEndDate(null)
+    handleChangeEndDate('')
   }
 
   const handleMethodFilter = (event) => {
@@ -548,19 +593,9 @@ export default function FilterPane(props) {
           value={selectedCountries}
           onChange={handleSelectedCountriesChange}
           input={<StyledOutlinedInput />}
-          sx={{
-            '&.MuiInputBase-root': {
-              minHeight: '3.5rem',
-            },
-            '& .MuiSelect-select': {
-              paddingRight: '1rem',
-              paddingLeft: '1rem',
-              paddingTop: '0.5rem',
-              paddingBottom: '0.5rem',
-            },
-          }}
+          sx={selectCustomStyles}
           renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
                 <StyledChip
                   key={value}
@@ -591,19 +626,9 @@ export default function FilterPane(props) {
           value={selectedOrganizations}
           onChange={handleSelectedOrganizationsChange}
           input={<StyledOutlinedInput />}
-          sx={{
-            '&.MuiInputBase-root': {
-              minHeight: '3.5rem',
-            },
-            '& .MuiSelect-select': {
-              paddingRight: '1rem',
-              paddingLeft: '1rem',
-              paddingTop: '0.5rem',
-              paddingBottom: '0.5rem',
-            },
-          }}
+          sx={selectCustomStyles}
           renderValue={(selected) => (
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+            <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
                 <StyledChip
                   key={value}
@@ -633,49 +658,45 @@ export default function FilterPane(props) {
       {showMoreFilters ? (
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <StyledDatePicker
-              label="From"
-              value={startDate}
-              onChange={handleChangeStartDate}
-              slotProps={{
-                textField: {
-                  InputProps: {
-                    startAdornment: (
-                      <InputAdornment>
-                        <IconButton aria-label="clear date" onClick={handleClearStartDate}>
-                          <IconClose />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                },
-              }}
+          <StyledDateInput>
+            <input
+              type="date"
+              value={formattedDate(startDate)}
+              onChange={(e) => handleChangeStartDate(e.target.value)}
             />
-            <StyledDatePicker
-              label="To"
-              value={endDate}
-              onChange={handleChangeEndDate}
-              slotProps={{
-                textField: {
-                  InputProps: {
-                    startAdornment: (
-                      <InputAdornment>
-                        <IconButton aria-label="clear date" onClick={handleClearEndDate}>
-                          <IconClose />
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  },
-                },
-              }}
+            {startDate && (
+              <IconButton
+                aria-label="clear date"
+                onClick={handleClearStartDate}
+                className="clear-button"
+              >
+                <IconClose />
+              </IconButton>
+            )}
+          </StyledDateInput>
+
+          <StyledDateInput>
+            <input
+              type="date"
+              value={formattedDate(endDate)}
+              onChange={(e) => handleChangeEndDate(e.target.value)}
             />
-          </LocalizationProvider>
+            {endDate && (
+              <IconButton
+                aria-label="clear date"
+                onClick={handleClearEndDate}
+                className="clear-button"
+              >
+                <IconClose />
+              </IconButton>
+            )}
+          </StyledDateInput>
           <StyledHeader>Data sharing</StyledHeader>
           <div>
             <input
               type="checkbox"
               name="dataSharing"
+              id="dataSharing"
               onChange={handleDataSharingFilter}
               checked={dataSharingFilter}
             />
@@ -715,11 +736,14 @@ export default function FilterPane(props) {
             return (
               <li key={project.project_id}>
                 <input
+                  id={`checkbox-${project.project_id}`}
                   type="checkbox"
                   checked={checkedProjects.includes(project.project_id)}
                   onChange={() => handleCheckProject(project.project_id)}
                 />{' '}
-                {project.records[0]?.project_name}
+                <label htmlFor={`checkbox-${project.project_id}`}>
+                  {project.records[0]?.project_name}
+                </label>
               </li>
             )
           })}
