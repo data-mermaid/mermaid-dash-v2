@@ -165,34 +165,6 @@ const StyledShowOtherProjects = styled('span')`
   text-decoration: underline;
 `
 
-const StyledInput = styled.input.attrs({ type: 'checkbox' })`
-  appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 2px solid ${theme.color.grey0};
-  border-radius: 3px;
-  position: relative;
-  cursor: pointer;
-  outline: none;
-
-  &:checked {
-    background-color: ${theme.color.white};
-    border: 2px solid ${theme.color.grey0};
-  }
-
-  &:checked::after {
-    content: '';
-    position: absolute;
-    top: 1px;
-    left: 4px;
-    width: 5px;
-    height: 10px;
-    border: solid ${theme.color.primary};
-    border-width: 0 2px 2px 0;
-    transform: rotate(45deg);
-  }
-`
-
 const StyledUnorderedList = styled('ul')`
   list-style-type: none;
   padding: 0;
@@ -742,7 +714,7 @@ export default function FilterPane(props) {
           {displayedProjects.map((project) => {
             return (
               <li key={project.project_id}>
-                <StyledInput
+                <input
                   type="checkbox"
                   checked={checkedProjects.includes(project.project_id)}
                   onChange={() => handleCheckProject(project.project_id)}
