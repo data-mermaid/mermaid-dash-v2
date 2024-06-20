@@ -1,4 +1,14 @@
-import { FormControl, MenuItem, Select, Box, OutlinedInput, Chip, TextField } from '@mui/material'
+import {
+  FormControl,
+  MenuItem,
+  Select,
+  Box,
+  OutlinedInput,
+  Chip,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from '@mui/material'
 import dayjs from 'dayjs'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers'
@@ -69,10 +79,9 @@ const deleteIconSize = {
   width: '15px',
 }
 
-const StyledHeader = styled('header')`
-  font-size: 1.5rem;
+const StyledHeader = styled('h1')`
+  font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
-  padding: 1rem 0.5rem;
 `
 
 const StyledProjectsHeader = styled(StyledHeader)`
@@ -132,7 +141,7 @@ const StyledProjectNameFilter = styled(TextField)`
   }
   input {
     padding: 0.5rem 0 0.5rem 1rem;
-    font-size: 1.5rem;
+    font-size: ${theme.typography.defaultFontSize};
   }
   & input::placeholder {
     font-style: italic;
@@ -146,6 +155,8 @@ const StyledProjectNameFilter = styled(TextField)`
 const StyledProjectListContainer = styled('div')`
   background-color: ${theme.color.white};
   border: 1px solid ${theme.color.grey0};
+  word-break: break-word;
+  overflow-wrap: break-word;
 `
 
 const StyledShowOtherProjects = styled('span')`
@@ -158,7 +169,7 @@ const StyledInput = styled.input.attrs({ type: 'checkbox' })`
   appearance: none;
   width: 16px;
   height: 16px;
-  border: 2px solid black;
+  border: 2px solid ${theme.color.grey0};
   border-radius: 3px;
   position: relative;
   cursor: pointer;
@@ -166,20 +177,26 @@ const StyledInput = styled.input.attrs({ type: 'checkbox' })`
 
   &:checked {
     background-color: ${theme.color.white};
-    border: 1px solid ${theme.color.grey0};
+    border: 2px solid ${theme.color.grey0};
   }
 
   &:checked::after {
     content: '';
     position: absolute;
     top: 1px;
-    left: 5px;
+    left: 4px;
     width: 5px;
     height: 10px;
     border: solid ${theme.color.primary};
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
   }
+`
+
+const StyledUnorderedList = styled('ul')`
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 `
 
 export default function FilterPane(props) {
@@ -201,6 +218,7 @@ export default function FilterPane(props) {
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const [showOtherProjects, setShowOtherProjects] = useState(false)
+  const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -286,7 +304,7 @@ export default function FilterPane(props) {
           return {
             ...project,
             records: project.records.filter((record) =>
-              methodFilters.every((method) => Object.keys(record.protocols).includes(method)),
+              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
             ),
           }
         }
@@ -329,6 +347,7 @@ export default function FilterPane(props) {
         a.records[0]?.project_name.localeCompare(b.records[0]?.project_name),
       ),
     )
+    setCheckedProjects([...filteredIds])
   }, [
     projectData.results,
     selectedCountries,
@@ -541,6 +560,13 @@ export default function FilterPane(props) {
     updateURLParams(queryParams)
   }
 
+  const handleCheckProject = (projectId) => {
+    const updatedCheckedProjects = checkedProjects.includes(projectId)
+      ? checkedProjects.filter((checkedProject) => checkedProject !== projectId)
+      : [...checkedProjects, projectId]
+    setCheckedProjects(updatedCheckedProjects)
+  }
+
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
@@ -640,13 +666,37 @@ export default function FilterPane(props) {
               label="From"
               value={startDate}
               onChange={handleChangeStartDate}
-              slotProps={{ textField: { clearable: true, onClear: handleClearStartDate } }}
+              slotProps={{
+                textField: {
+                  InputProps: {
+                    startAdornment: (
+                      <InputAdornment>
+                        <IconButton aria-label="clear date" onClick={handleClearStartDate}>
+                          <IconClose />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                },
+              }}
             />
             <StyledDatePicker
               label="To"
               value={endDate}
               onChange={handleChangeEndDate}
-              slotProps={{ textField: { clearable: true, onClear: handleClearEndDate } }}
+              slotProps={{
+                textField: {
+                  InputProps: {
+                    startAdornment: (
+                      <InputAdornment>
+                        <IconButton aria-label="clear date" onClick={handleClearEndDate}>
+                          <IconClose />
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  },
+                },
+              }}
             />
           </LocalizationProvider>
           <StyledHeader>Data sharing</StyledHeader>
@@ -659,20 +709,21 @@ export default function FilterPane(props) {
             />
             <label htmlFor="dataSharing">{filterPane.dataSharing}</label>
           </div>
-          <StyledHeader>Method</StyledHeader>
-          <div>
+          <StyledHeader>Methods</StyledHeader>
+          <StyledUnorderedList>
             {collectionMethods.map((method) => (
-              <div key={method.name}>
+              <li key={method.name}>
                 <input
+                  id={method.name}
                   type="checkbox"
                   name={method.name}
                   onChange={handleMethodFilter}
                   checked={methodFilters.includes(method.name)}
                 />
                 <label htmlFor={method.name}>{method.description}</label>
-              </div>
+              </li>
             ))}
-          </div>
+          </StyledUnorderedList>
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledProjectsHeader>
@@ -687,13 +738,20 @@ export default function FilterPane(props) {
         onChange={handleProjectNameFilter}
       />
       <StyledProjectListContainer>
-        {displayedProjects.map((project) => {
-          return (
-            <div key={project.project_id}>
-              <StyledInput type="checkbox" checked="true" /> {project.records[0]?.project_name}
-            </div>
-          )
-        })}
+        <StyledUnorderedList>
+          {displayedProjects.map((project) => {
+            return (
+              <li key={project.project_id}>
+                <StyledInput
+                  type="checkbox"
+                  checked={checkedProjects.includes(project.project_id)}
+                  onChange={() => handleCheckProject(project.project_id)}
+                />{' '}
+                {project.records[0]?.project_name}
+              </li>
+            )
+          })}
+        </StyledUnorderedList>
       </StyledProjectListContainer>
       <StyledProjectsHeader>
         <span>Other projects </span>
