@@ -215,14 +215,13 @@ const StyledDateInput = styled.div`
   }
 `
 
-export default function FilterPane(props) {
-  const {
-    projectData,
-    displayedProjects,
-    setDisplayedProjects,
-    hiddenProjects,
-    setHiddenProjects,
-  } = props
+export default function FilterPane({
+  projectData,
+  displayedProjects,
+  setDisplayedProjects,
+  hiddenProjects,
+  setHiddenProjects,
+}) {
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
@@ -238,7 +237,7 @@ export default function FilterPane(props) {
   const navigate = useNavigate()
   const location = useLocation()
 
-  useEffect(() => {
+  const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
       return
     }
@@ -267,7 +266,7 @@ export default function FilterPane(props) {
     setOrganizations(uniqueOrganizations)
   }, [projectData.results])
 
-  useEffect(() => {
+  const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
     }
@@ -392,7 +391,7 @@ export default function FilterPane(props) {
     return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
   }
 
-  useEffect(() => {
+  const _getUrlParams = useEffect(() => {
     const queryParams = getURLParams()
     if (queryParams.has(URL_PARAMS.COUNTRIES)) {
       setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
