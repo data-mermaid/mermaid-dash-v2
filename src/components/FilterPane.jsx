@@ -613,6 +613,7 @@ export default function FilterPane({
         >
           {countries.map((country) => (
             <MenuItem key={country} value={country}>
+              <input type="checkbox" checked={selectedCountries.includes(country)} />
               {country}
             </MenuItem>
           ))}
@@ -646,6 +647,7 @@ export default function FilterPane({
         >
           {organizations.map((organization) => (
             <MenuItem key={organization} value={organization}>
+              <input type="checkbox" checked={selectedOrganizations.includes(organization)} />
               {organization}
             </MenuItem>
           ))}
