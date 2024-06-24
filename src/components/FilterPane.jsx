@@ -9,7 +9,6 @@ import {
   IconButton,
 } from '@mui/material'
 import dayjs from 'dayjs'
-import { DatePicker } from '@mui/x-date-pickers'
 import { filterPane } from '../constants/language'
 
 import PropTypes from 'prop-types'
@@ -18,6 +17,7 @@ import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose } from './icons'
 import theme from '../theme'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -142,18 +142,6 @@ const ShowMoreFiltersContainer = styled('div')`
   padding-left: 0.8rem;
 `
 
-const StyledDatePicker = styled(DatePicker)`
-  width: calc(50% - 0.3rem);
-  background-color: ${theme.color.white};
-  &.MuiFormControl-root {
-    margin-bottom: 1rem;
-    margin-right: 0.3rem;
-  }
-  .MuiInputBase-input {
-    font-size: ${theme.typography.smallFontSize};
-  }
-`
-
 const StyledProjectNameFilter = styled(TextField)`
   width: 100%;
   background-color: ${theme.color.white};
@@ -236,6 +224,7 @@ export default function FilterPane({
   const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth0()
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -291,21 +280,29 @@ export default function FilterPane({
         }
       })
       .map((project) => {
-        // Filter projects based on data sharing policy
+        // If user does not have access to private data, hide private data
         if (dataSharingFilter) {
-          const policies = [
-            'data_policy_beltfish',
-            'data_policy_benthiclit',
-            'data_policy_benthicpit',
-            'data_policy_benthicpqt',
-            'data_policy_bleachingqc',
-            'data_policy_habitatcomplexity',
-          ]
+          const loggedInUsersFullName = user?.name
+          let userHasAccessToProject = false
+          project.records[0]?.project_admins.forEach((admin) => {
+            if (admin.name === loggedInUsersFullName) {
+              userHasAccessToProject = true
+            }
+          })
+
           return {
             ...project,
-            records: project.records.filter((record) =>
-              policies.some((policy) => record[policy] === 'public summary'),
-            ),
+            records: project.records
+              .map((record) => {
+                for (const protocol in record.protocols) {
+                  if (record[`data_policy_${protocol}`] === 'private' && !userHasAccessToProject) {
+                    delete record.protocols[protocol]
+                  }
+                }
+
+                return Object.values(record.protocols).length === 0 ? undefined : record
+              })
+              .filter((record) => record !== undefined),
           }
         } else {
           return project
@@ -374,6 +371,7 @@ export default function FilterPane({
     methodFilters,
     setHiddenProjects,
     setDisplayedProjects,
+    user?.name,
   ])
 
   const getURLParams = useCallback(() => {
