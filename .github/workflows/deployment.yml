@@ -15,10 +15,15 @@ jobs:
       environment: dev
       domain: dev.dashboard3.datamermaid.org
       vite_react_app_auth0_domain: datamermaid.auth0.com
-      vite_react_app_auth0_client_id: 4AHcVFcwxHb7p1VFB9sFWG52WL7pdNm5
-      vite_react_app_auth0_audience: https://dev-api.datamermaid.org
-      vite_react_app_mermaid_dashboard_link: https://dev-dashboard.datamermaid.org
-      vite_react_app_mermaid_api_endcpoint: https://dev-api.datamermaid.org/v1/projectsummarysampleevents
+      vite_react_app_auth0_client_id: Yahf5mGpQDyYOqbvQlaKE1WqBnUeFPj0
+      vite_react_app_auth0_audience: https://api.datamermaid.org
+      vite_react_app_mermaid_dashboard_link: https://app.datamermaid.org
+      vite_react_app_mermaid_api_endcpoint: https://api.datamermaid.org/v1/projectsummarysampleevents
+      # vite_react_app_auth0_domain: datamermaid.auth0.com
+      # vite_react_app_auth0_client_id: 4AHcVFcwxHb7p1VFB9sFWG52WL7pdNm5
+      # vite_react_app_auth0_audience: https://dev-api.datamermaid.org
+      # vite_react_app_mermaid_dashboard_link: https://dev-dashboard.datamermaid.org
+      # vite_react_app_mermaid_api_endcpoint: https://dev-api.datamermaid.org/v1/projectsummarysampleevents
 
   deploy_production:
     if: startsWith(github.ref, 'refs/tags/v')
