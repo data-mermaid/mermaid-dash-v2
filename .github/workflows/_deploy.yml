@@ -9,6 +9,22 @@ on:
       domain:
         required: true
         type: string
+      vite_react_app_auth0_domain:
+        required: true
+        type: string
+      vite_react_app_auth0_client_id:
+        required: true
+        type: string
+      vite_react_app_auth0_audience:
+        required: true
+        type: string
+      vite_react_app_mermaid_dashboard_link:
+        required: true
+        type: string
+      vite_react_app_mermaid_api_endcpoint:
+        required: true
+        type: string
+      
 
 jobs:
   deploy:
@@ -31,7 +47,13 @@ jobs:
 
       - name: Build
         run: yarn run build
-
+        env:
+          VITE_REACT_APP_AUTH0_DOMAIN: ${{ inputs.vite_react_app_auth0_domain }}
+          VITE_REACT_APP_AUTH0_CLIENT_ID: ${{ inputs.vite_react_app_auth0_client_id }}
+          VITE_REACT_APP_AUTH0_AUDIENCE: ${{ inputs.vite_react_app_auth0_audience }}
+          VITE_REACT_APP_MERMAID_DASHBOARD_LINK: ${{ inputs.vite_react_app_mermaid_dashboard_link }}
+          VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
+          
       - name: Deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:
