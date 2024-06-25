@@ -4,12 +4,13 @@ import { hoverState } from './mediaQueries'
 import '@fontsource/open-sans'
 import '@fontsource/open-sans/700.css'
 
+// Different from webapp - inline import because this app uses vite
 const toastifyCssPromise = import('react-toastify/dist/ReactToastify.css').then(
   (module) => module.default,
 )
 
 const GlobalStyle = createGlobalStyle`
-  ${await toastifyCssPromise}
+  ${await toastifyCssPromise} // different from webapp - add await
   :root {
       font-size: 62.5%;
   }
@@ -22,21 +23,24 @@ const GlobalStyle = createGlobalStyle`
       color: ${theme.color.textColor};
       -webkit-font-smoothing: antialiased;
   
-  }
-  select, input, textarea, p, a, button{
-      line-height: ${theme.typography.lineHeight};
-  }
-  svg {
-  }
-  *,*::before,*::after {
-      box-sizing: border-box;
-  } 
-  a{
-      text-decoration: underline;
-      ${hoverState(css`
-        text-decoration: none;
-      `)}
-  }
+    }
+    select, input, textarea, p, a, button{
+        line-height: ${theme.typography.lineHeight};
+
+    }
+    svg {
+        width: ${theme.typography.defaultIconSize}; // different from webapp - removed props parameter
+        height: ${theme.typography.defaultIconSize}; // different from webapp - removed props parameter
+    }
+    *,*::before,*::after {
+        box-sizing: border-box;
+    } 
+    a{
+        text-decoration: underline;
+        ${hoverState(css`
+          text-decoration: none;
+        `)}
+    }
 `
 
 export default GlobalStyle
