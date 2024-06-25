@@ -55,13 +55,6 @@ import user from '@iconify-icons/mdi/user'
 import usersAndTransects from '@iconify-icons/mdi/account-box-multiple-outline'
 import theme from '../theme'
 
-// Icons only used in Dashboard V2
-import hamburgerMenu from '@iconify-icons/mdi/hamburger-menu'
-import login from '@iconify-icons/mdi/login'
-import mapOutline from '@iconify-icons/mdi/map-outline'
-import table from '@iconify-icons/mdi/table'
-import personCircle from '@iconify-icons/mdi/person-circle'
-
 const WarningIcon = styled(InlineIcon)`
   color: ${theme.color.warningColor};
 `
@@ -125,10 +118,3 @@ export const IconExcel = (props) => <InlineIcon icon={excel} {...props} />
 export const IconManagementRegimesOverview = (props) => (
   <InlineIcon icon={multiFileTable} {...props} />
 )
-
-// Icons only used in Dashboard V2
-export const HamburgerMenu = (props) => <InlineIcon icon={hamburgerMenu} {...props} />
-export const LoginIcon = (props) => <InlineIcon icon={login} {...props} />
-export const IconMapOutline = (props) => <InlineIcon icon={mapOutline} {...props} />
-export const IconTable = (props) => <InlineIcon icon={table} {...props} />
-export const IconPersonCircle = (props) => <InlineIcon icon={personCircle} {...props} />
