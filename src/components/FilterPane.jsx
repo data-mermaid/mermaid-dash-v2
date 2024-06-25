@@ -87,6 +87,13 @@ const selectCustomStyles = {
     paddingTop: '0.5rem',
     paddingBottom: '0.5rem',
   },
+  MenuProps: {
+    PaperProps: {
+      sx: {
+        maxHeight: '50vh',
+      },
+    },
+  },
 }
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
@@ -124,7 +131,7 @@ const StyledChip = styled(Chip)`
   &.MuiChip-root {
     border-radius: 0.5rem;
     border: 0.5px solid ${theme.color.black};
-    text-transform: uppercase;
+    font-size: ${theme.typography.defaultFontSize};
   }
 `
 
@@ -212,6 +219,12 @@ const StyledDateInput = styled.div`
     background: none;
     border: none;
     cursor: pointer;
+  }
+`
+
+const StyledMenuItem = styled(MenuItem)`
+  &.MuiMenuItem-root {
+    font-size: ${theme.typography.defaultFontSize};
   }
 `
 
@@ -593,6 +606,7 @@ export default function FilterPane({
           onChange={handleSelectedCountriesChange}
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
+          MenuProps={selectCustomStyles.MenuProps}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
@@ -612,10 +626,10 @@ export default function FilterPane({
           )}
         >
           {countries.map((country) => (
-            <MenuItem key={country} value={country}>
-              <input type="checkbox" checked={selectedCountries.includes(country)} />
+            <StyledMenuItem key={country} value={country}>
+              <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
               {country}
-            </MenuItem>
+            </StyledMenuItem>
           ))}
         </Select>
       </StyledFormControl>
@@ -627,6 +641,7 @@ export default function FilterPane({
           onChange={handleSelectedOrganizationsChange}
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
+          MenuProps={selectCustomStyles.MenuProps}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
@@ -646,10 +661,14 @@ export default function FilterPane({
           )}
         >
           {organizations.map((organization) => (
-            <MenuItem key={organization} value={organization}>
-              <input type="checkbox" checked={selectedOrganizations.includes(organization)} />
+            <StyledMenuItem key={organization} value={organization}>
+              <input
+                type="checkbox"
+                checked={selectedOrganizations.includes(organization)}
+                readOnly
+              />
               {organization}
-            </MenuItem>
+            </StyledMenuItem>
           ))}
         </Select>
       </StyledFormControl>
