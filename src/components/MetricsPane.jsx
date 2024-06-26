@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
-const Container = styled('div')`
+const Container = styled('section')`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,13 +53,23 @@ export default function MetricsPane(props) {
 
   return (
     <Container>
-      <div>Projects: {displayedProjects.length}</div>
+      <div>
+        <span>Projects: {displayedProjects.length}</span>
+      </div>
       <SitesAndTransectsContainer>
-        <div>Sites: {numSites}</div>
-        <div>Transects: {numTransects}</div>
+        <div>
+          <span>Sites: {numSites}</span>
+        </div>
+        <div>
+          <span>Transects: {numTransects}</span>
+        </div>
       </SitesAndTransectsContainer>
-      <div>{yearRange}</div>
-      <div>{numUniqueCountries} countries</div>
+      <div>
+        <span>{yearRange}</span>
+      </div>
+      <div>
+        <span>{numUniqueCountries} countries</span>
+      </div>
     </Container>
   )
 }
