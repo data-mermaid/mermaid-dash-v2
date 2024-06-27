@@ -171,7 +171,9 @@ export default function MermaidDash() {
         </StyledFilterContainer>
         {window.innerWidth <= mobileWidthThreshold || view === 'mapView' ? (
           <StyledMapContainer>
-            <LeafletMap displayedProjects={displayedProjects} />
+            <LeafletMap
+              displayedProjects={displayedProjects}
+            />
           </StyledMapContainer>
         ) : (
           <StyledTableContainer>
