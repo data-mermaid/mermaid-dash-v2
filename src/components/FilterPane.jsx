@@ -20,11 +20,11 @@ import { IconClose } from './icons'
 import theme from '../theme'
 
 const URL_PARAMS = {
-  COUNTRIES: 'countries',
-  ORGANIZATIONS: 'organizations',
-  START_DATE: 'startDate',
-  END_DATE: 'endDate',
-  PROJECT_NAME: 'projectName',
+  COUNTRY: 'country',
+  ORGANIZATION: 'organization',
+  SAMPLE_DATE_AFTER: 'sample_date_after',
+  SAMPLE_DATE_BEFORE: 'sample_date_before',
+  PROJECT: 'project',
   DATA_SHARING: 'dataSharing',
   METHOD: 'method',
 }
@@ -241,8 +241,8 @@ export default function FilterPane({
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [projectNameFilter, setProjectNameFilter] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [sampleDateAfter, setSampleDateAfter] = useState('')
+  const [sampleDateBefore, setSampleDateBefore] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const [showOtherProjects, setShowOtherProjects] = useState(false)
@@ -284,17 +284,17 @@ export default function FilterPane({
       return
     }
 
-    const fallbackStartDate = new Date('1970-01-01')
-    const fallbackEndDate = new Date(Date.now())
+    const fallbackSampleDateAfter = new Date('1970-01-01')
+    const fallbackSampleDateBefore = new Date(Date.now())
 
     const filteredProjects = projectData.results
       .map((project) => {
         // Filter project if sample date falls within selected date range
-        if (!startDate && !endDate) {
+        if (!sampleDateAfter && !sampleDateBefore) {
           return project
         }
-        const beginDate = startDate || fallbackStartDate
-        const finishDate = endDate || fallbackEndDate
+        const beginDate = sampleDateAfter || fallbackSampleDateAfter
+        const finishDate = sampleDateBefore || fallbackSampleDateBefore
         return {
           ...project,
           records: project.records.filter((record) => {
@@ -381,8 +381,8 @@ export default function FilterPane({
     selectedCountries,
     selectedOrganizations,
     projectNameFilter,
-    startDate,
-    endDate,
+    sampleDateAfter,
+    sampleDateBefore,
     dataSharingFilter,
     methodFilters,
     setHiddenProjects,
@@ -406,32 +406,32 @@ export default function FilterPane({
 
   const _getUrlParams = useEffect(() => {
     const queryParams = getURLParams()
-    if (queryParams.has(URL_PARAMS.COUNTRIES)) {
-      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
+    if (queryParams.has(URL_PARAMS.COUNTRY)) {
+      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRY)[0].split(','))
     }
-    if (queryParams.has(URL_PARAMS.ORGANIZATIONS)) {
-      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
+    if (queryParams.has(URL_PARAMS.ORGANIZATION)) {
+      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATION)[0].split(','))
     }
-    if (queryParams.has(URL_PARAMS.START_DATE)) {
-      const queryParamsStartDate = queryParams.get(URL_PARAMS.START_DATE)
-      if (isValidDateFormat(queryParamsStartDate)) {
-        setStartDate(formattedDate(dayjs(queryParamsStartDate)))
+    if (queryParams.has(URL_PARAMS.SAMPLE_DATE_AFTER)) {
+      const queryParamsSampleDateAfter = queryParams.get(URL_PARAMS.SAMPLE_DATE_AFTER)
+      if (isValidDateFormat(queryParamsSampleDateAfter)) {
+        setSampleDateAfter(formattedDate(dayjs(queryParamsSampleDateAfter)))
       } else {
-        queryParams.delete(URL_PARAMS.START_DATE)
+        queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
         updateURLParams(queryParams)
       }
     }
-    if (queryParams.has(URL_PARAMS.END_DATE)) {
-      const queryParamsEndDate = queryParams.get(URL_PARAMS.END_DATE)
-      if (!isValidDateFormat(queryParamsEndDate)) {
-        queryParams.delete(URL_PARAMS.END_DATE)
+    if (queryParams.has(URL_PARAMS.SAMPLE_DATE_BEFORE)) {
+      const queryParamsSampleDateBefore = queryParams.get(URL_PARAMS.SAMPLE_DATE_BEFORE)
+      if (!isValidDateFormat(queryParamsSampleDateBefore)) {
+        queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
         updateURLParams(queryParams)
         return
       }
-      setEndDate(formatEndDate(queryParamsEndDate))
+      setSampleDateBefore(formatEndDate(queryParamsSampleDateBefore))
     }
-    if (queryParams.has(URL_PARAMS.PROJECT_NAME)) {
-      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT_NAME))
+    if (queryParams.has(URL_PARAMS.PROJECT)) {
+      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT))
     }
     if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
       if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
@@ -460,9 +460,9 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const selectedCountries = event.target.value
     if (selectedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
+      queryParams.delete(URL_PARAMS.COUNTRY)
     } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
+      queryParams.set(URL_PARAMS.COUNTRY, selectedCountries)
     }
     updateURLParams(queryParams)
     setSelectedCountries(selectedCountries)
@@ -472,9 +472,9 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const selectedOrganizations = event.target.value
     if (selectedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
+      queryParams.delete(URL_PARAMS.ORGANIZATION)
     } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
+      queryParams.set(URL_PARAMS.ORGANIZATION, selectedOrganizations)
     }
     updateURLParams(queryParams)
     setSelectedOrganizations(selectedOrganizations)
@@ -484,9 +484,9 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const projectName = event.target.value
     if (projectName.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECT_NAME)
+      queryParams.delete(URL_PARAMS.PROJECT)
     } else {
-      queryParams.set(URL_PARAMS.PROJECT_NAME, projectName)
+      queryParams.set(URL_PARAMS.PROJECT, projectName)
     }
     updateURLParams(queryParams)
     setProjectNameFilter(projectName)
@@ -508,38 +508,38 @@ export default function FilterPane({
     return !date ? '' : dayjs(date).format('YYYY-MM-DD')
   }
 
-  const handleChangeStartDate = (startDate) => {
+  const handleChangeSampleDateAfter = (sampleDateAfter) => {
     const queryParams = getURLParams()
-    if (startDate === '') {
-      queryParams.delete(URL_PARAMS.START_DATE)
-      setStartDate('')
+    if (sampleDateAfter === '') {
+      queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
+      setSampleDateAfter('')
     } else {
-      const formattedStartDate = formattedDate(startDate)
-      queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
-      setStartDate(dayjs(startDate))
+      const formattedSampleDateAfter = formattedDate(sampleDateAfter)
+      queryParams.set(URL_PARAMS.SAMPLE_DATE_AFTER, formattedSampleDateAfter)
+      setSampleDateAfter(dayjs(sampleDateAfter))
     }
     updateURLParams(queryParams)
   }
 
-  const handleChangeEndDate = (endDate) => {
+  const handleChangeSampleDateBefore = (sampleDateBefore) => {
     const queryParams = getURLParams()
-    if (endDate === '') {
-      queryParams.delete(URL_PARAMS.END_DATE)
-      setEndDate('')
+    if (sampleDateBefore === '') {
+      queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
+      setSampleDateBefore('')
     } else {
-      const formattedEndDate = formattedDate(endDate)
-      queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
-      setEndDate(formatEndDate(endDate))
+      const formattedSampleDateBefore = formattedDate(sampleDateBefore)
+      queryParams.set(URL_PARAMS.SAMPLE_DATE_BEFORE, formattedSampleDateBefore)
+      setSampleDateBefore(formatEndDate(sampleDateBefore))
     }
     updateURLParams(queryParams)
   }
 
-  const handleClearStartDate = () => {
-    handleChangeStartDate('')
+  const handleClearSampleDateAfter = () => {
+    handleChangeSampleDateAfter('')
   }
 
-  const handleClearEndDate = () => {
-    handleChangeEndDate('')
+  const handleClearSampleDateBefore = () => {
+    handleChangeSampleDateBefore('')
   }
 
   const handleMethodFilter = (event) => {
@@ -568,9 +568,9 @@ export default function FilterPane({
     setSelectedCountries(updatedCountries)
     const queryParams = getURLParams()
     if (updatedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
+      queryParams.delete(URL_PARAMS.COUNTRY)
     } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
+      queryParams.set(URL_PARAMS.COUNTRY, updatedCountries)
     }
     updateURLParams(queryParams)
   }
@@ -582,9 +582,9 @@ export default function FilterPane({
     setSelectedOrganizations(updatedOrganizations)
     const queryParams = getURLParams()
     if (updatedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
+      queryParams.delete(URL_PARAMS.ORGANIZATION)
     } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
+      queryParams.set(URL_PARAMS.ORGANIZATION, updatedOrganizations)
     }
     updateURLParams(queryParams)
   }
@@ -681,13 +681,13 @@ export default function FilterPane({
           <StyledDateInput>
             <input
               type="date"
-              value={formattedDate(startDate)}
-              onChange={(e) => handleChangeStartDate(e.target.value)}
+              value={formattedDate(sampleDateAfter)}
+              onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
             />
-            {startDate && (
+            {sampleDateAfter && (
               <IconButton
                 aria-label="clear date"
-                onClick={handleClearStartDate}
+                onClick={handleClearSampleDateAfter}
                 className="clear-button"
               >
                 <IconClose />
@@ -698,13 +698,13 @@ export default function FilterPane({
           <StyledDateInput>
             <input
               type="date"
-              value={formattedDate(endDate)}
-              onChange={(e) => handleChangeEndDate(e.target.value)}
+              value={formattedDate(sampleDateBefore)}
+              onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
             />
-            {endDate && (
+            {sampleDateBefore && (
               <IconButton
                 aria-label="clear date"
-                onClick={handleClearEndDate}
+                onClick={handleClearSampleDateBefore}
                 className="clear-button"
               >
                 <IconClose />
