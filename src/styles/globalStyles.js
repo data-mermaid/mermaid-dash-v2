@@ -10,14 +10,14 @@ const toastifyCssPromise = import('react-toastify/dist/ReactToastify.css').then(
 )
 
 const GlobalStyle = createGlobalStyle`
-  ${await toastifyCssPromise} // different from webapp - add await
+  ${await toastifyCssPromise} // different from Collect - add await
   :root {
       font-size: 62.5%;
   }
   body {
       background-color: ${theme.color.backgroundColor};
   }
-  body, select, input, textarea, button, p, a, li{
+  body, select, input, textarea, button, a{
       font-family: 'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif' !important; 
       font-size: ${theme.typography.defaultFontSize};
       color: ${theme.color.textColor};
@@ -29,8 +29,8 @@ const GlobalStyle = createGlobalStyle`
 
     }
     svg {
-        width: ${theme.typography.defaultIconSize}; // different from webapp - removed props parameter
-        height: ${theme.typography.defaultIconSize}; // different from webapp - removed props parameter
+        width: ${theme.typography.defaultIconSize}; // different from Collect - removed props parameter
+        height: ${theme.typography.defaultIconSize}; // different from Collect - removed props parameter
     }
     *,*::before,*::after {
         box-sizing: border-box;
