@@ -11,10 +11,58 @@ import 'leaflet/dist/leaflet.css'
 import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../library/usePrevious'
+import theme from '../theme'
+import styled from 'styled-components'
+import { ButtonSecondary } from './generic/buttons'
+import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
+import zoomToFiltered from '../styles//Icons/zoom_to_filtered.svg'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
 
+const Tooltip = styled.div`
+  visibility: hidden;
+  width: max-content;
+  background-color: ${theme.color.primaryColor};
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 0.7rem;
+  position: absolute;
+  z-index: 4;
+  bottom: -4.5rem;
+  left: 50%;
+  margin-left: -8rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+  white-space: nowrap;
+  font-size: ${theme.typography.defaultFontSize};
+`
+
+const TooltipContainer = styled.div`
+  display: inline-block;
+  height: 6rem;
+  &:hover ${Tooltip} {
+    visibility: visible;
+    opacity: 1;
+  }
+`
+const ZoomToSecondaryButton = styled(ButtonSecondary)`
+  padding-top: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin-left: 0.5rem;
+  height: 100%;
+`
+const ControlContainer = styled.div`
+  position: absolute;
+  top: 1.1rem;
+  left: 17rem;
+  width: 10rem;
+  z-index: 400;
+  display: flex;
+  flex-direction: row;
+`
 const selectedIcon = L.icon({
   iconUrl: customIcon,
   iconSize: [25, 25],
@@ -33,12 +81,9 @@ const isValidZoom = (zoom) => {
 export default function LeafletMap(props) {
   const { displayedProjects } = props
   const prevDisplayedProjects = usePrevious(displayedProjects)
-
   const location = useLocation()
   const navigate = useNavigate()
-
   const getURLParams = () => new URLSearchParams(location.search)
-
   const queryParams = getURLParams()
   const queryParamsLat = queryParams.get('lat')
   const queryParamsLng = queryParams.get('lng')
@@ -61,6 +106,7 @@ export default function LeafletMap(props) {
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [markers, setMarkers] = useState(null)
+  const [map, setMap] = useState(null)
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -68,6 +114,62 @@ export default function LeafletMap(props) {
     },
     [navigate, location.pathname],
   )
+
+  const handleZoomToFilteredData = () => {
+    if (!displayedProjects || displayedProjects.length === 0) {
+      return
+    }
+    const coordinates = displayedProjects.flatMap((project) =>
+      project.records.map((record) => [record.latitude, record.longitude]),
+    )
+    if (coordinates.length === 0) {
+      return
+    }
+    const bounds = L.latLngBounds(coordinates)
+    map.fitBounds(bounds)
+  }
+
+  const handleZoomToSelectedSite = () => {
+    const queryParams = new URLSearchParams(location.search)
+    if (queryParams.has('sample_event_id')) {
+      const sample_event_id = queryParams.get('sample_event_id')
+      const foundSampleEvent = displayedProjects
+        .map((project) =>
+          project.records.find((record) => record.sample_event_id === sample_event_id),
+        )
+        .find((record) => record !== undefined)
+      if (!foundSampleEvent) {
+        return
+      }
+      const { latitude, longitude } = foundSampleEvent
+      map.setView([latitude, longitude], 6)
+    }
+  }
+
+  const isAnyActiveFilters = () => {
+    const queryParams = new URLSearchParams(location.search)
+    const filterKeys = [
+      'countries',
+      'organizations',
+      'startDate',
+      'endDate',
+      'method',
+      'dataSharing',
+      'projectName',
+    ]
+
+    for (const key of queryParams.keys()) {
+      if (filterKeys.includes(key)) {
+        return false
+      }
+    }
+    return true
+  }
+
+  const hasSelectedSite = () => {
+    const queryParams = new URLSearchParams(location.search)
+    return !queryParams.has('sample_event_id')
+  }
 
   function MapEventListener() {
     const map = useMapEvents({
@@ -84,10 +186,39 @@ export default function LeafletMap(props) {
       },
     })
 
-    return null
+    return (
+      <ControlContainer>
+        <TooltipContainer>
+          <ZoomToSecondaryButton onClick={handleZoomToFilteredData} disabled={isAnyActiveFilters()}>
+            <img src={zoomToFiltered} />
+          </ZoomToSecondaryButton>
+          <Tooltip>Zoom to filtered data</Tooltip>
+        </TooltipContainer>
+        <TooltipContainer>
+          <ZoomToSecondaryButton onClick={handleZoomToSelectedSite} disabled={hasSelectedSite()}>
+            <img src={zoomToSelectedSites} />
+          </ZoomToSecondaryButton>
+          <Tooltip>Zoom to selected site</Tooltip>
+        </TooltipContainer>
+      </ControlContainer>
+    )
   }
 
-  useEffect(() => {
+  const fitMapExtentBasedOnDisplayedData = useEffect(() => {
+    if (!displayedProjects || displayedProjects.length === 0 || !map) {
+      return
+    }
+    const coordinates = displayedProjects.flatMap((project) =>
+      project.records.map((record) => [record.latitude, record.longitude]),
+    )
+    if (coordinates.length === 0) {
+      return
+    }
+    const bounds = L.latLngBounds(coordinates)
+    map.fitBounds(bounds)
+  }, [displayedProjects, map])
+
+  const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
 
@@ -95,11 +226,11 @@ export default function LeafletMap(props) {
       const records = displayedProjects.flatMap((project) => {
         return project.records.map((record) => {
           return {
-            ...record
+            ...record,
           }
         })
       })
-      
+
       const recordMarkers = records.map((record, index) => {
         const isSelected = selectedMarkerId === record.sample_event_id
 
@@ -109,11 +240,12 @@ export default function LeafletMap(props) {
             position={[record.latitude, record.longitude]}
             title={record.sample_event_id}
             icon={selectedIcon}
-          ></Marker>) : (
+          ></Marker>
+        ) : (
           <CircleMarker
             key={`${index}-${record.sample_event_id}`}
             center={[record.latitude, record.longitude]}
-            pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1}}
+            pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1 }}
             radius={8}
             eventHandlers={{
               click: () => {
@@ -126,30 +258,45 @@ export default function LeafletMap(props) {
           ></CircleMarker>
         )
       })
-      
+
       setMarkers(recordMarkers)
     }
-  }, [displayedProjects, prevDisplayedProjects, queryParams, selectedMarkerId, prevSelectedMarkerId, updateURLParams])
+  }, [
+    displayedProjects,
+    prevDisplayedProjects,
+    queryParams,
+    selectedMarkerId,
+    prevSelectedMarkerId,
+    updateURLParams,
+  ])
 
   return (
-    <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
-      <MapEventListener />
-      <MarkerClusterGroup
-        // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
-        chunkedLoading
-        spiderfyOnMaxZoom={false}
-        onClick={(event) => {
-          console.log("Click marker cluster group", event)
-          // Add a click event handler here if required
-        }}
+    <>
+      <MapContainer
+        center={mapCenter}
+        zoom={mapZoom}
+        scrollWheelZoom={true}
+        maxZoom={20}
+        ref={setMap}
       >
-        {markers}
-      </MarkerClusterGroup>
-      <TileLayer
-        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-        attribution="Tiles &copy; Esri"
-      />
-    </MapContainer>
+        <MapEventListener />
+        <MarkerClusterGroup
+          // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
+          chunkedLoading
+          spiderfyOnMaxZoom={false}
+          onClick={(event) => {
+            console.log('Click marker cluster group', event)
+            // Add a click event handler here if required
+          }}
+        >
+          {markers}
+        </MarkerClusterGroup>
+        <TileLayer
+          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          attribution="Tiles &copy; Esri"
+        />
+      </MapContainer>
+    </>
   )
 }
 
