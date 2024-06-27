@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
@@ -22,14 +22,15 @@ export default function MetricsPane(props) {
   const { displayedProjects } = props
   const [numSites, setNumSites] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
-  const [yearRange, setYearRange] = useState('')
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
+  const [yearRange, setYearRange] = useState('')
 
-  useEffect(() => {
+  const calculateMetrics = useMemo(() => {
     let sites = new Set()
     let transects = 0
     let countries = new Set()
     let years = new Set()
+
     displayedProjects.forEach((project) => {
       project.records.forEach((record) => {
         countries.add(record.country_name)
@@ -37,19 +38,30 @@ export default function MetricsPane(props) {
         years.add(record.sample_date.split('-')[0])
       })
     })
-    let sortedYears = Array.from(years).sort()
-    setNumSites(sites.size)
-    setNumTransects(transects)
-    setNumUniqueCountries(countries.size)
-    if (sortedYears.length === 0) {
-      setYearRange('No data to obtain year range')
-    } else if (sortedYears.length === 1) {
-      setYearRange(`Showing data from ${sortedYears[0]}`)
-    } else {
-      setYearRange(`Showing data from ${sortedYears[0]} to ${sortedYears[sortedYears.length - 1]}`)
-      return
+
+    const sortedYears = Array.from(years).sort()
+    const yearRange =
+      sortedYears.length === 0
+        ? 'No data to obtain year range'
+        : sortedYears.length === 1
+          ? `Showing data from ${sortedYears[0]}`
+          : `Showing data from ${sortedYears[0]} to ${sortedYears[sortedYears.length - 1]}`
+
+    return {
+      numSites: sites.size,
+      numTransects: transects,
+      numUniqueCountries: countries.size,
+      yearRange,
     }
   }, [displayedProjects])
+
+  useEffect(() => {
+    const { numSites, numTransects, numUniqueCountries, yearRange } = calculateMetrics
+    setNumSites(numSites)
+    setNumTransects(numTransects)
+    setNumUniqueCountries(numUniqueCountries)
+    setYearRange(yearRange)
+  }, [calculateMetrics])
 
   return (
     <Container>
@@ -75,5 +87,11 @@ export default function MetricsPane(props) {
 }
 
 MetricsPane.propTypes = {
-  displayedProjects: PropTypes.array.isRequired,
+  displayedProjects: PropTypes.arrayOf(
+    PropTypes.shape({
+      created_on: PropTypes.string.isRequired,
+      project_id: PropTypes.string.isRequired,
+      records: PropTypes.array.isRequired,
+    }),
+  ).isRequired,
 }
