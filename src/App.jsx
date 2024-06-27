@@ -11,7 +11,6 @@ function App() {
   const theme = createTheme(mermaidThemeConfig)
 
   const onRedirectCallback = (appState) => {
-    console.log('appState', appState)
     navigateTo(appState && appState.returnTo ? appState.returnTo : window.location.pathname)
   }
 
