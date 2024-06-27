@@ -11,8 +11,8 @@ import { CSVLink } from 'react-csv'
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
   width: 10rem;
-  left: ${(props) => (props.view === 'mapView' ? '27%' : '40%')};
-  bottom: 1.8rem;
+  left: ${(props) => (props.view === 'mapView' ? '30%' : '40%')};
+  ${(props) => (props.view === 'mapView' ? 'top: 6rem' : 'bottom: 1.8rem')};
   z-index: 2;
   display: flex;
   flex-direction: row;
