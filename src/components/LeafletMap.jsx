@@ -204,19 +204,23 @@ export default function LeafletMap(props) {
     )
   }
 
-  const fitMapExtentBasedOnDisplayedData = useEffect(() => {
-    if (!displayedProjects || displayedProjects.length === 0 || !map) {
-      return
-    }
-    const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.latitude, record.longitude]),
-    )
-    if (coordinates.length === 0) {
-      return
-    }
-    const bounds = L.latLngBounds(coordinates)
-    map.fitBounds(bounds)
-  }, [displayedProjects, map])
+  // const fitMapExtentBasedOnDisplayedData = useEffect(() => {
+  //   if (displayedProjects === prevDisplayedProjects) {
+  //     return
+  //   }
+
+  //   if (!displayedProjects || displayedProjects.length === 0 || !map) {
+  //     return
+  //   }
+  //   const coordinates = displayedProjects.flatMap((project) =>
+  //     project.records.map((record) => [record.latitude, record.longitude]),
+  //   )
+  //   if (coordinates.length === 0) {
+  //     return
+  //   }
+  //   const bounds = L.latLngBounds(coordinates)
+  //   map.fitBounds(bounds)
+  // }, [displayedProjects, prevDisplayedProjects, map])
 
   const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
