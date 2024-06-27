@@ -91,7 +91,13 @@ MetricsPane.propTypes = {
     PropTypes.shape({
       created_on: PropTypes.string.isRequired,
       project_id: PropTypes.string.isRequired,
-      records: PropTypes.array.isRequired,
+      records: PropTypes.arrayOf(
+        PropTypes.shape({
+          country_name: PropTypes.string.isRequired,
+          site_name: PropTypes.string.isRequired,
+          sample_date: PropTypes.string.isRequired,
+        }),
+      ).isRequired,
     }),
   ).isRequired,
 }
