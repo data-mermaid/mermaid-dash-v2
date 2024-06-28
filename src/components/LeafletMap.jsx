@@ -15,28 +15,39 @@ import theme from '../theme'
 import styled from 'styled-components'
 import { ButtonSecondary } from './generic/buttons'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
-import zoomToFiltered from '../styles//Icons/zoom_to_filtered.svg'
+import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
 
-const Tooltip = styled.div`
+const Tooltip = styled.span`
   visibility: hidden;
   width: max-content;
   background-color: ${theme.color.primaryColor};
-  color: #fff;
+  color: ${theme.color.white};
   text-align: center;
   border-radius: 6px;
   padding: 0.7rem;
-  position: absolute;
+  position: relative;
   z-index: 4;
-  bottom: -4.5rem;
-  left: 50%;
-  margin-left: -8rem;
-  opacity: 0;
+  bottom: -2.5rem;
+  left: 150%;
+  margin-left: -15rem;
   transition: opacity 0.3s;
   white-space: nowrap;
   font-size: ${theme.typography.defaultFontSize};
+  width: 20rem;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: -4rem;
+    left: 39%;
+    margin-left: -0rem;
+    border-width: 2rem;
+    border-style: solid;
+    border-color: transparent transparent ${theme.color.primaryColor} transparent;
+  }
 `
 
 const TooltipContainer = styled.div`
@@ -44,7 +55,6 @@ const TooltipContainer = styled.div`
   height: 6rem;
   &:hover ${Tooltip} {
     visibility: visible;
-    opacity: 1;
   }
 `
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
@@ -56,13 +66,19 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 const ControlContainer = styled.div`
   position: absolute;
-  top: 1.1rem;
-  left: 17rem;
+  top: 1.3rem;
+  left: 16.5rem;
   width: 10rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
 `
+
+const CircleMarkerPathOptions = {
+  color: `${theme.color.white}`,
+  fillColor: '#A53434',
+  fillOpacity: 1,
+}
 const selectedIcon = L.icon({
   iconUrl: customIcon,
   iconSize: [25, 25],
@@ -79,7 +95,7 @@ const isValidZoom = (zoom) => {
 }
 
 export default function LeafletMap(props) {
-  const { displayedProjects } = props
+  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = props
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -94,16 +110,6 @@ export default function LeafletMap(props) {
   const initialMapZoom = isValidZoom(queryParamsZoom) ? queryParamsZoom : defaultMapZoom
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
-  const queryParamsSampleEventId = queryParams.get('sample_event_id')
-  const initialSelectedMarker =
-    queryParamsSampleEventId !== null
-      ? {
-          options: {
-            sample_event_id: queryParamsSampleEventId,
-          },
-        }
-      : null
-  const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
@@ -142,7 +148,7 @@ export default function LeafletMap(props) {
         return
       }
       const { latitude, longitude } = foundSampleEvent
-      map.setView([latitude, longitude], 6)
+      map.setView([latitude, longitude], 18)
     }
   }
 
@@ -160,15 +166,15 @@ export default function LeafletMap(props) {
 
     for (const key of queryParams.keys()) {
       if (filterKeys.includes(key)) {
-        return false
+        return true
       }
     }
-    return true
+    return false
   }
 
   const hasSelectedSite = () => {
     const queryParams = new URLSearchParams(location.search)
-    return !queryParams.has('sample_event_id')
+    return queryParams.has('sample_event_id')
   }
 
   function MapEventListener() {
@@ -188,39 +194,25 @@ export default function LeafletMap(props) {
 
     return (
       <ControlContainer>
-        <TooltipContainer>
-          <ZoomToSecondaryButton onClick={handleZoomToFilteredData} disabled={isAnyActiveFilters()}>
-            <img src={zoomToFiltered} />
-          </ZoomToSecondaryButton>
-          <Tooltip>Zoom to filtered data</Tooltip>
-        </TooltipContainer>
-        <TooltipContainer>
-          <ZoomToSecondaryButton onClick={handleZoomToSelectedSite} disabled={hasSelectedSite()}>
-            <img src={zoomToSelectedSites} />
-          </ZoomToSecondaryButton>
-          <Tooltip>Zoom to selected site</Tooltip>
-        </TooltipContainer>
+        {isAnyActiveFilters() ? (
+          <TooltipContainer>
+            <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
+              <img src={zoomToFiltered} alt="Zoom to filtered data" />
+            </ZoomToSecondaryButton>
+            <Tooltip>Zoom to filtered data</Tooltip>
+          </TooltipContainer>
+        ) : null}
+        {hasSelectedSite() ? (
+          <TooltipContainer>
+            <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
+              <img src={zoomToSelectedSites} alt="Zoom to selected site" />
+            </ZoomToSecondaryButton>
+            <Tooltip>Zoom to selected site</Tooltip>
+          </TooltipContainer>
+        ) : null}
       </ControlContainer>
     )
   }
-
-  // const fitMapExtentBasedOnDisplayedData = useEffect(() => {
-  //   if (displayedProjects === prevDisplayedProjects) {
-  //     return
-  //   }
-
-  //   if (!displayedProjects || displayedProjects.length === 0 || !map) {
-  //     return
-  //   }
-  //   const coordinates = displayedProjects.flatMap((project) =>
-  //     project.records.map((record) => [record.latitude, record.longitude]),
-  //   )
-  //   if (coordinates.length === 0) {
-  //     return
-  //   }
-  //   const bounds = L.latLngBounds(coordinates)
-  //   map.fitBounds(bounds)
-  // }, [displayedProjects, prevDisplayedProjects, map])
 
   const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
@@ -237,8 +229,11 @@ export default function LeafletMap(props) {
 
       const recordMarkers = records.map((record, index) => {
         const isSelected = selectedMarkerId === record.sample_event_id
+        const recordPassesAllFilters = records.find(
+          (record) => record.sample_event_id === selectedMarkerId,
+        )
 
-        return isSelected ? (
+        return isSelected && recordPassesAllFilters ? (
           <Marker
             key={`${index}-${record.sample_event_id}`}
             position={[record.latitude, record.longitude]}
@@ -249,7 +244,7 @@ export default function LeafletMap(props) {
           <CircleMarker
             key={`${index}-${record.sample_event_id}`}
             center={[record.latitude, record.longitude]}
-            pathOptions={{ color: 'white', fillColor: 'red', fillOpacity: 1 }}
+            pathOptions={CircleMarkerPathOptions}
             radius={8}
             eventHandlers={{
               click: () => {
