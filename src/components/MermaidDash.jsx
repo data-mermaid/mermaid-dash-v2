@@ -82,7 +82,7 @@ export default function MermaidDash() {
 
   const fetchData = async (token = '') => {
     try {
-      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=10&page=1`
+      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
 
       while (nextPageUrl !== null) {
         const response = await fetch(nextPageUrl, {

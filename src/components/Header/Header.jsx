@@ -38,7 +38,7 @@ const Header = () => {
   const handleLogoutUser = () => {
     logout({
       logoutParams: {
-        returnTo: window.location.origin,
+        returnTo: window.location.href,
       },
     })
   }
