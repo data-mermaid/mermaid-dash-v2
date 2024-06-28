@@ -9,6 +9,7 @@ import LoadingIndicator from './LoadingIndicator'
 import ViewToggle from './ViewToggle'
 import TableView from './TableView'
 import { useLocation, useNavigate } from 'react-router-dom'
+import MetricsPane from './MetricsPane'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -53,10 +54,8 @@ const StyledTableContainer = styled('div')`
 
 const StyledMetricsContainer = styled('div')`
   border: 1px solid green;
-  width: 30rem;
-  position: absolute;
-  right: 1.5rem;
-  top: 8rem;
+  width: 40%;
+  overflow-y: scroll;
   height: calc(100vh - 10rem);
   z-index: 2;
   ${mediaQueryTabletLandscapeOnly(css`
@@ -180,7 +179,9 @@ export default function MermaidDash() {
             <TableView displayedProjects={displayedProjects} />
           </StyledTableContainer>
         )}
-        <StyledMetricsContainer>Metrics</StyledMetricsContainer>
+        <StyledMetricsContainer>
+          <MetricsPane displayedProjects={displayedProjects} />
+        </StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
         {window.innerWidth > mobileWidthThreshold ? (
           <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
