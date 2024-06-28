@@ -11,12 +11,11 @@ import { CSVLink } from 'react-csv'
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
   width: 10rem;
-  left: ${(props) => (props.view === 'mapView' ? '30%' : '40%')};
-  ${(props) => (props.view === 'mapView' ? 'top: 6rem' : 'bottom: 1.8rem')};
-  z-index: 2;
+  left: ${(props) => (props.view === 'mapView' ? '5rem' : '53rem')};
+  ${(props) => (props.view === 'mapView' ? 'top: 1.3rem' : 'bottom: 1.8rem')};
+  z-index: 400;
   display: flex;
   flex-direction: row;
-  background-color: ${theme.color.grey1};
 `
 
 const OpaquePrimaryButton = styled(ButtonPrimary)`
