@@ -20,13 +20,13 @@ import { IconClose } from './icons'
 import theme from '../theme'
 
 const URL_PARAMS = {
-  COUNTRY: 'country',
-  ORGANIZATION: 'organization',
+  COUNTRIES: 'countries',
+  ORGANIZATIONS: 'organizations',
   SAMPLE_DATE_AFTER: 'sample_date_after',
   SAMPLE_DATE_BEFORE: 'sample_date_before',
-  PROJECT: 'project',
+  PROJECTS: 'projects',
   DATA_SHARING: 'dataSharing',
-  METHOD: 'method',
+  METHODS: 'methods',
 }
 
 const collectionMethods = [
@@ -406,11 +406,15 @@ export default function FilterPane({
 
   const _getUrlParams = useEffect(() => {
     const queryParams = getURLParams()
-    if (queryParams.has(URL_PARAMS.COUNTRY)) {
-      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRY)[0].split(','))
+    if (queryParams.has(URL_PARAMS.COUNTRIES)) {
+      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
+    } else if (queryParams.has('country')) {
+      setSelectedCountries(queryParams.getAll('country')[0].split(','))
     }
-    if (queryParams.has(URL_PARAMS.ORGANIZATION)) {
-      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATION)[0].split(','))
+    if (queryParams.has(URL_PARAMS.ORGANIZATIONS)) {
+      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
+    } else if (queryParams.has('organization')) {
+      setSelectedOrganizations(queryParams.getAll('organization')[0].split(','))
     }
     if (queryParams.has(URL_PARAMS.SAMPLE_DATE_AFTER)) {
       const queryParamsSampleDateAfter = queryParams.get(URL_PARAMS.SAMPLE_DATE_AFTER)
@@ -430,8 +434,10 @@ export default function FilterPane({
       }
       setSampleDateBefore(formatEndDate(queryParamsSampleDateBefore))
     }
-    if (queryParams.has(URL_PARAMS.PROJECT)) {
-      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT))
+    if (queryParams.has(URL_PARAMS.PROJECTS)) {
+      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
+    } else if (queryParams.has('project')) {
+      setProjectNameFilter(queryParams.get('project'))
     }
     if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
       if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
@@ -441,16 +447,19 @@ export default function FilterPane({
         updateURLParams(queryParams)
       }
     }
-    if (queryParams.has(URL_PARAMS.METHOD)) {
-      const queryParamsMethods = queryParams.getAll(URL_PARAMS.METHOD)[0].split(',')
+    if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
+      const queryParamsMethods = queryParams.has('method')
+        ? queryParams.getAll('method')[0].split(',')
+        : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
       const validMethods = queryParamsMethods.filter((method) => {
         return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
       })
       setMethodFilters(validMethods)
       if (validMethods.length === 0) {
-        queryParams.delete(URL_PARAMS.METHOD)
+        queryParams.delete('method')
+        queryParams.delete(URL_PARAMS.METHODS)
       } else {
-        queryParams.set(URL_PARAMS.METHOD, validMethods)
+        queryParams.set(URL_PARAMS.METHODS, validMethods)
       }
       updateURLParams(queryParams)
     }
@@ -460,10 +469,11 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const selectedCountries = event.target.value
     if (selectedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRY)
+      queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
-      queryParams.set(URL_PARAMS.COUNTRY, selectedCountries)
+      queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
     }
+    queryParams.delete('country')
     updateURLParams(queryParams)
     setSelectedCountries(selectedCountries)
   }
@@ -472,10 +482,11 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const selectedOrganizations = event.target.value
     if (selectedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATION)
+      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {
-      queryParams.set(URL_PARAMS.ORGANIZATION, selectedOrganizations)
+      queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
     }
+    queryParams.delete('organization')
     updateURLParams(queryParams)
     setSelectedOrganizations(selectedOrganizations)
   }
@@ -484,10 +495,11 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const projectName = event.target.value
     if (projectName.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECT)
+      queryParams.delete(URL_PARAMS.PROJECTS)
     } else {
-      queryParams.set(URL_PARAMS.PROJECT, projectName)
+      queryParams.set(URL_PARAMS.PROJECTS, projectName)
     }
+    queryParams.delete('project')
     updateURLParams(queryParams)
     setProjectNameFilter(projectName)
   }
@@ -553,10 +565,11 @@ export default function FilterPane({
 
     const queryParams = getURLParams()
     if (updatedMethodFilters.length === 0) {
-      queryParams.delete(URL_PARAMS.METHOD)
+      queryParams.delete(URL_PARAMS.METHODS)
     } else {
-      queryParams.set(URL_PARAMS.METHOD, updatedMethodFilters)
+      queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
     }
+    queryParams.delete('method')
     updateURLParams(queryParams)
     setMethodFilters(updatedMethodFilters)
   }
@@ -568,9 +581,10 @@ export default function FilterPane({
     setSelectedCountries(updatedCountries)
     const queryParams = getURLParams()
     if (updatedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRY)
+      queryParams.delete('country')
+      queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
-      queryParams.set(URL_PARAMS.COUNTRY, updatedCountries)
+      queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
     }
     updateURLParams(queryParams)
   }
@@ -582,9 +596,10 @@ export default function FilterPane({
     setSelectedOrganizations(updatedOrganizations)
     const queryParams = getURLParams()
     if (updatedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATION)
+      queryParams.delete('organization')
+      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {
-      queryParams.set(URL_PARAMS.ORGANIZATION, updatedOrganizations)
+      queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
     }
     updateURLParams(queryParams)
   }
