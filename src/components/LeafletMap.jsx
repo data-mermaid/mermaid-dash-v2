@@ -19,6 +19,8 @@ import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
+const tileLayerUrl =
+  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 
 const Tooltip = styled.span`
   visibility: hidden;
@@ -140,10 +142,8 @@ export default function LeafletMap(props) {
     if (queryParams.has('sample_event_id')) {
       const sample_event_id = queryParams.get('sample_event_id')
       const foundSampleEvent = displayedProjects
-        .map((project) =>
-          project.records.find((record) => record.sample_event_id === sample_event_id),
-        )
-        .find((record) => record !== undefined)
+        .flatMap((project) => project.records)
+        .find((record) => record.sample_event_id === sample_event_id)
       if (!foundSampleEvent) {
         return
       }
@@ -164,12 +164,7 @@ export default function LeafletMap(props) {
       'projectName',
     ]
 
-    for (const key of queryParams.keys()) {
-      if (filterKeys.includes(key)) {
-        return true
-      }
-    }
-    return false
+    return filterKeys.some((key) => queryParams.has(key))
   }
 
   const hasSelectedSite = () => {
@@ -290,10 +285,7 @@ export default function LeafletMap(props) {
         >
           {markers}
         </MarkerClusterGroup>
-        <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution="Tiles &copy; Esri"
-        />
+        <TileLayer url={tileLayerUrl} attribution="Tiles &copy; Esri" />
       </MapContainer>
     </>
   )
