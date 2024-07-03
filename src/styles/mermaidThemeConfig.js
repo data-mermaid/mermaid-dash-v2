@@ -1,13 +1,15 @@
+import theme from '../theme'
+
 export default {
   palette: {
     primary: {
-      main: '#174b82',
+      main: `${theme.color.primaryColor}`,
     },
     secondary: {
-      main: '#DDDCE4',
+      main: `${theme.color.secondaryColor}`,
     },
     callout: {
-      main: '#DB3B00',
+      main: `${theme.color.callout}`,
     },
   },
 }

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
 import { shareView } from '../constants/language'
-import { color } from '../constants/theme'
 import theme from '../theme'
 import styled from 'styled-components'
 import { ShareViewButton } from './Header/Header.styles'
@@ -25,7 +24,7 @@ const ModalCopyContainer = styled.div`
 `
 
 const ModalDescription = styled.div`
-  color: ${color.mermaidBlack};
+  color: ${theme.color.black};
 `
 
 const ModalURLContainer = styled.div`
