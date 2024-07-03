@@ -1,5 +1,6 @@
 import styled, { css } from 'styled-components'
-import { HamburgerMenu, IconUser } from '../icons'
+import { HamburgerMenu } from '../dashboardOnlyIcons'
+import { IconUser } from '../icons'
 import theme from '../../theme'
 import { ButtonThatLooksLikeLink } from '../generic/buttons'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
