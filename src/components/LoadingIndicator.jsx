@@ -7,13 +7,19 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 const StyledLoadingContainer = styled('div')`
   position: absolute;
   width: ${(props) => (props.showLoadingBar ? '20rem' : '14rem')};
-  right: 33rem;
-  top: 8rem;
+  bottom: 1.5rem;
+  left: 1.5rem;
   padding: 0.8rem 1rem;
-  z-index: 2;
+  z-index: 400;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
     right: 3rem;
+    display: flex;
+    flex-direction: row;
+    width: 90vw;
+    justify-content: center;
+    background-color: ${theme.color.white};
+    justify-self: center;
   `)}
 `
 
@@ -24,6 +30,9 @@ const StyledProgressBarContainer = styled('div')`
   border-radius: 0;
   margin: 0.5rem 0;
   overflow: hidden;
+  ${mediaQueryTabletLandscapeOnly(css`
+    width: 15rem;
+  `)}
 `
 
 const StyledProgressBar = styled('div')`
@@ -31,6 +40,12 @@ const StyledProgressBar = styled('div')`
   background-color: ${theme.color.primaryColor};
   height: 100%;
   transition: width 0.3s ease-in-out;
+`
+
+const StyledHeader = styled('header')`
+  ${mediaQueryTabletLandscapeOnly(css`
+    width: 15rem;
+  `)}
 `
 
 export default function LoadingIndicator(props) {
@@ -57,11 +72,11 @@ export default function LoadingIndicator(props) {
 
   return showLoadingIndicator === true ? (
     <StyledLoadingContainer showLoadingBar={showLoadingBar}>
-      <header>
+      <StyledHeader>
         {loadingProgressValue === 100
           ? 'All sites loaded'
           : `Loading sites ${loadingProgressValue}%`}
-      </header>
+      </StyledHeader>
       {showLoadingBar === true ? (
         <StyledProgressBarContainer>
           <StyledProgressBar value={loadingProgressValue} />

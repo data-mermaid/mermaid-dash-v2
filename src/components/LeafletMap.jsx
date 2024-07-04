@@ -12,66 +12,38 @@ import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../library/usePrevious'
 import theme from '../theme'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ButtonSecondary } from './generic/buttons'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
+const mobileWidthThreshold = 960
 
-const Tooltip = styled.span`
-  visibility: hidden;
-  width: max-content;
-  background-color: ${theme.color.primaryColor};
-  color: ${theme.color.white};
-  text-align: center;
-  border-radius: 6px;
-  padding: 0.7rem;
-  position: relative;
-  z-index: 4;
-  bottom: -2.5rem;
-  left: 150%;
-  margin-left: -15rem;
-  transition: opacity 0.3s;
-  white-space: nowrap;
-  font-size: ${theme.typography.defaultFontSize};
-  width: 20rem;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4rem;
-    left: 39%;
-    margin-left: -0rem;
-    border-width: 2rem;
-    border-style: solid;
-    border-color: transparent transparent ${theme.color.primaryColor} transparent;
-  }
-`
-
-const TooltipContainer = styled.div`
-  display: inline-block;
-  height: 6rem;
-  &:hover ${Tooltip} {
-    visibility: visible;
-  }
-`
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
-  padding-top: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
   margin-left: 0.5rem;
-  height: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
+  ${mediaQueryTabletLandscapeOnly(css``)}
 `
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
   left: 16.5rem;
-  width: 10rem;
+  height: 6rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
+  ${mediaQueryTabletLandscapeOnly(css`
+    top: 1rem;
+    left: 8rem;
+  `)}
 `
 
 const CircleMarkerPathOptions = {
@@ -192,23 +164,21 @@ export default function LeafletMap(props) {
       },
     })
 
+    map.zoomControl.setPosition('bottomright')
+
     return (
       <ControlContainer>
         {isAnyActiveFilters() ? (
-          <TooltipContainer>
-            <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
-              <img src={zoomToFiltered} alt="Zoom to filtered data" />
-            </ZoomToSecondaryButton>
-            <Tooltip>Zoom to filtered data</Tooltip>
-          </TooltipContainer>
+          <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
+            <img src={zoomToFiltered} alt="Zoom to filtered data" />
+            {window.innerWidth > mobileWidthThreshold ? <span>Filtered Data</span> : null}
+          </ZoomToSecondaryButton>
         ) : null}
         {hasSelectedSite() ? (
-          <TooltipContainer>
-            <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
-              <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-            </ZoomToSecondaryButton>
-            <Tooltip>Zoom to selected site</Tooltip>
-          </TooltipContainer>
+          <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
+            <img src={zoomToSelectedSites} alt="Zoom to selected site" />
+            {window.innerWidth > mobileWidthThreshold ? <span>Selected Site</span> : null}
+          </ZoomToSecondaryButton>
         ) : null}
       </ControlContainer>
     )

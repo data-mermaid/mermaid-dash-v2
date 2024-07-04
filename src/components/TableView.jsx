@@ -26,11 +26,11 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
-  margin-right: 31.5rem;
   flex-grow: 1;
   overflow: scroll;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 const TableView = (props) => {
@@ -274,15 +274,7 @@ const TableView = (props) => {
 
   return (
     <StyledTableContainer>
-      <ContentPageLayout
-        toolbar={
-          <>
-            <H2>Projects</H2>
-          </>
-        }
-        content={table}
-        isPageContentLoading={isLoading}
-      />
+      <ContentPageLayout toolbar={<H2>"</H2>} content={table} isPageContentLoading={isLoading} />
     </StyledTableContainer>
   )
 }
