@@ -406,63 +406,74 @@ export default function FilterPane({
 
   const _getUrlParams = useEffect(() => {
     const queryParams = getURLParams()
-    if (queryParams.has(URL_PARAMS.COUNTRIES)) {
-      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
-    } else if (queryParams.has('country')) {
-      setSelectedCountries(queryParams.getAll('country')[0].split(','))
+
+    const setFilterValue = (primaryKey, secondaryKey, setValue) => {
+      if (queryParams.has(primaryKey)) {
+        setValue(queryParams.getAll(primaryKey)[0].split(','))
+      } else if (queryParams.has(secondaryKey)) {
+        setValue(queryParams.getAll(secondaryKey)[0].split(','))
+      }
     }
-    if (queryParams.has(URL_PARAMS.ORGANIZATIONS)) {
-      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
-    } else if (queryParams.has('organization')) {
-      setSelectedOrganizations(queryParams.getAll('organization')[0].split(','))
+
+    const handleDateFilter = (key, setDate, formatFn) => {
+      if (queryParams.has(key)) {
+        const dateValue = queryParams.get(key)
+        if (isValidDateFormat(dateValue)) {
+          setDate(formatFn(dateValue))
+        } else {
+          queryParams.delete(key)
+          updateURLParams(queryParams)
+        }
+      }
     }
-    if (queryParams.has(URL_PARAMS.SAMPLE_DATE_AFTER)) {
-      const queryParamsSampleDateAfter = queryParams.get(URL_PARAMS.SAMPLE_DATE_AFTER)
-      if (isValidDateFormat(queryParamsSampleDateAfter)) {
-        setSampleDateAfter(formattedDate(dayjs(queryParamsSampleDateAfter)))
-      } else {
-        queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
+
+    const handleMethodsFilter = () => {
+      if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
+        const queryParamsMethods = queryParams.has('method')
+          ? queryParams.getAll('method')[0].split(',')
+          : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
+        const validMethods = queryParamsMethods.filter((method) => {
+          return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
+        })
+        setMethodFilters(validMethods)
+        if (validMethods.length === 0) {
+          queryParams.delete('method')
+          queryParams.delete(URL_PARAMS.METHODS)
+        } else {
+          queryParams.set(URL_PARAMS.METHODS, validMethods)
+        }
         updateURLParams(queryParams)
       }
     }
-    if (queryParams.has(URL_PARAMS.SAMPLE_DATE_BEFORE)) {
-      const queryParamsSampleDateBefore = queryParams.get(URL_PARAMS.SAMPLE_DATE_BEFORE)
-      if (!isValidDateFormat(queryParamsSampleDateBefore)) {
-        queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
-        updateURLParams(queryParams)
-        return
-      }
-      setSampleDateBefore(formatEndDate(queryParamsSampleDateBefore))
-    }
-    if (queryParams.has(URL_PARAMS.PROJECTS)) {
-      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
-    } else if (queryParams.has('project')) {
-      setProjectNameFilter(queryParams.get('project'))
-    }
-    if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
-      if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
-        setDataSharingFilter(true)
-      } else {
-        queryParams.delete(URL_PARAMS.DATA_SHARING)
-        updateURLParams(queryParams)
+
+    const handleProjectNameFilter = () => {
+      if (queryParams.has(URL_PARAMS.PROJECTS)) {
+        setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
+      } else if (queryParams.has('project')) {
+        setProjectNameFilter(queryParams.get('project'))
       }
     }
-    if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
-      const queryParamsMethods = queryParams.has('method')
-        ? queryParams.getAll('method')[0].split(',')
-        : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
-      const validMethods = queryParamsMethods.filter((method) => {
-        return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
-      })
-      setMethodFilters(validMethods)
-      if (validMethods.length === 0) {
-        queryParams.delete('method')
-        queryParams.delete(URL_PARAMS.METHODS)
-      } else {
-        queryParams.set(URL_PARAMS.METHODS, validMethods)
+
+    const handleDataSharingFilter = () => {
+      if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
+        if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
+          setDataSharingFilter(true)
+        } else {
+          queryParams.delete(URL_PARAMS.DATA_SHARING)
+          updateURLParams(queryParams)
+        }
       }
-      updateURLParams(queryParams)
     }
+
+    setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
+    setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
+      formattedDate(dayjs(date)),
+    )
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
+    handleMethodsFilter()
+    handleProjectNameFilter()
+    handleDataSharingFilter()
   }, [getURLParams, updateURLParams])
 
   const handleSelectedCountriesChange = (event) => {
