@@ -1,4 +1,4 @@
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import GlobalStyle from './styles/globalStyles.js'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
@@ -9,9 +9,10 @@ import { Auth0Provider } from '@auth0/auth0-react'
 function App() {
   const navigateTo = useNavigate()
   const theme = createTheme(mermaidThemeConfig)
+  const location = useLocation()
 
   const onRedirectCallback = (appState) => {
-    navigateTo(appState && appState.returnTo ? appState.returnTo : window.location.pathname)
+    navigateTo(appState && appState.returnTo ? appState.returnTo : location.pathname)
   }
 
   const authConfig = {
