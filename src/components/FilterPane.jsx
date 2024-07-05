@@ -792,7 +792,7 @@ export default function FilterPane({
       <StyledProjectsHeader>
         <span>Projects</span>
         <span>
-          {displayedProjects.length}/{projectData.results?.length}
+          {displayedProjects.length}/{projectData.count}
         </span>
       </StyledProjectsHeader>
       <StyledProjectNameFilter
