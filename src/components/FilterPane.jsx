@@ -9,15 +9,14 @@ import {
   IconButton,
 } from '@mui/material'
 import dayjs from 'dayjs'
-import { DatePicker } from '@mui/x-date-pickers'
 import { filterPane } from '../constants/language'
-
 import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose } from './icons'
+import { IconClose, IconUser } from './icons'
 import theme from '../theme'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -149,18 +148,6 @@ const ShowMoreFiltersContainer = styled('div')`
   padding-left: 0.8rem;
 `
 
-const StyledDatePicker = styled(DatePicker)`
-  width: calc(50% - 0.3rem);
-  background-color: ${theme.color.white};
-  &.MuiFormControl-root {
-    margin-bottom: 1rem;
-    margin-right: 0.3rem;
-  }
-  .MuiInputBase-input {
-    font-size: ${theme.typography.smallFontSize};
-  }
-`
-
 const StyledProjectNameFilter = styled(TextField)`
   width: 100%;
   background-color: ${theme.color.white};
@@ -250,6 +237,7 @@ export default function FilterPane({
   const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuth0()
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -646,6 +634,15 @@ export default function FilterPane({
     setCheckedProjects(updatedCheckedProjects)
   }
 
+  const userIsAdminOfProject = (userName, project) => {
+    if (!userName) {
+      return false
+    }
+
+    const projectAdmins = project.records[0]?.project_admins.map((admin) => admin.name)
+    return projectAdmins.includes(userName)
+  }
+
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
@@ -812,7 +809,8 @@ export default function FilterPane({
                   onChange={() => handleCheckProject(project.project_id)}
                 />{' '}
                 <label htmlFor={`checkbox-${project.project_id}`}>
-                  {project.records[0]?.project_name}
+                  {project.records[0]?.project_name}{' '}
+                  {userIsAdminOfProject(user?.name, project) && <IconUser />}
                 </label>
               </li>
             )
