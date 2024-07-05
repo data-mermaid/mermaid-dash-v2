@@ -75,7 +75,6 @@ export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
   const [displayedProjects, setDisplayedProjects] = useState([])
-  const [hiddenProjects, setHiddenProjects] = useState([])
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -176,8 +175,6 @@ export default function MermaidDash() {
             projectData={projectData}
             displayedProjects={displayedProjects}
             setDisplayedProjects={setDisplayedProjects}
-            hiddenProjects={hiddenProjects}
-            setHiddenProjects={setHiddenProjects}
             setSelectedMarkerId={setSelectedMarkerId}
           />
         </StyledFilterContainer>
