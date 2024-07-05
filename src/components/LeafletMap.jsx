@@ -19,8 +19,6 @@ import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
-const tileLayerUrl =
-  'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
 
 const Tooltip = styled.span`
   visibility: hidden;
@@ -285,7 +283,10 @@ export default function LeafletMap(props) {
         >
           {markers}
         </MarkerClusterGroup>
-        <TileLayer url={tileLayerUrl} attribution="Tiles &copy; Esri" />
+        <TileLayer
+          url={import.meta.env.VITE_REACT_APP_ESRI_TILES_URL}
+          attribution="Tiles &copy; Esri"
+        />
       </MapContainer>
     </>
   )
