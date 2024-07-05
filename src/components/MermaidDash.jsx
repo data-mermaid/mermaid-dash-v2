@@ -29,6 +29,7 @@ const StyledContentContainer = styled('div')`
 
 const StyledFilterWrapper = styled('div')`
   display: flex;
+  flex-direction: column;
   position: relative;
   ${(props) => props.showFilterPane === true && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
@@ -75,32 +76,6 @@ const StyledTableContainer = styled('div')`
   position: relative;
 `
 
-const StyledMetricsWrapper = styled('div')`
-  ${(props) => props.showMetricsPane === true && 'width: 40%;'}
-  position: relative;
-  ${mediaQueryTabletLandscapeOnly(css`
-    position: absolute;
-    z-index: 5;
-    background-color: ${theme.color.grey1};
-    border: 1px solid green;
-    width: 90%;
-    bottom: 8rem;
-    height: 20%;
-    left: 50%;
-    transform: translateX(-50%);
-  `)}
-`
-
-const StyledMetricsContainer = styled('div')`
-  width: 100%;
-  overflow-y: scroll;
-  height: calc(100vh - 10rem);
-  z-index: 2;
-  ${mediaQueryTabletLandscapeOnly(css`
-    height: 100%;
-  `)}
-`
-
 const BiggerFilterIcon = styled(IconFilter)`
   width: ${theme.typography.largeIconSize};
   height: ${theme.typography.largeIconSize};
@@ -108,7 +83,7 @@ const BiggerFilterIcon = styled(IconFilter)`
   position: relative;
 `
 
-const StyledToggleFilterPaneButton = styled('button')`
+const DesktopToggleFilterPaneButton = styled('button')`
   position: absolute;
   top: 1.3rem;
   right: -4rem;
@@ -136,18 +111,12 @@ const StyledMobileToggleFilterPaneButton = styled(ButtonSecondary)`
   `)};
 `
 
-const StyledToggleMetricsPaneButton = styled('button')`
-  position: absolute;
-  top: 1.3rem;
-  left: -4rem;
-  height: 6rem;
-  z-index: 5;
-  width: 4rem;
-  border: none;
-  cursor: pointer;
-  background-color: ${theme.color.grey1};
+const MobileCloseFilterPaneButton = styled(ButtonSecondary)`
+  display: none;
   ${mediaQueryTabletLandscapeOnly(css`
-    display: none;
+    display: block;
+    margin: 1rem;
+    cursor: pointer;
   `)}
 `
 
@@ -174,6 +143,9 @@ export default function MermaidDash() {
         }
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+
+  const isMobileView = () => window.innerWidth <= mobileWidthThreshold
+  const isDesktopView = () => !isMobileView()
 
   const fetchData = async (token = '') => {
     try {
@@ -232,7 +204,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
+    if (queryParams.get('view') === 'tableView' && isDesktopView) {
       setView('tableView')
       return
     }
@@ -243,7 +215,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= mobileWidthThreshold) {
+      if (isMobileView) {
         setView('mapView')
       }
     }
@@ -255,9 +227,60 @@ export default function MermaidDash() {
     setShowFilterPane((prevState) => !prevState)
   }
 
-  const handleShowMetricsPane = () => {
-    setShowMetricsPane((prevState) => !prevState)
-  }
+  const renderFilter = () => (
+    <StyledFilterWrapper showFilterPane={showFilterPane}>
+      {showFilterPane ? (
+        <StyledFilterContainer>
+          <FilterPane
+            projectData={projectData}
+            displayedProjects={displayedProjects}
+            setDisplayedProjects={setDisplayedProjects}
+            hiddenProjects={hiddenProjects}
+            setHiddenProjects={setHiddenProjects}
+            setSelectedMarkerId={setSelectedMarkerId}
+          />
+        </StyledFilterContainer>
+      ) : null}
+      <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
+        {showFilterPane ? String.fromCharCode(10094) : String.fromCharCode(10095)}{' '}
+      </DesktopToggleFilterPaneButton>
+      <MobileCloseFilterPaneButton onClick={handleShowFilterPane}>
+        Close
+      </MobileCloseFilterPaneButton>
+    </StyledFilterWrapper>
+  )
+
+  const renderMap = () => (
+    <StyledMapContainer>
+      <LeafletMap
+        displayedProjects={displayedProjects}
+        selectedMarkerId={selectedMarkerId}
+        setSelectedMarkerId={setSelectedMarkerId}
+      />
+      {isDesktopView() ? (
+        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
+      ) : null}
+      <LoadingIndicator projectData={projectData} />
+    </StyledMapContainer>
+  )
+
+  const renderTable = () => (
+    <StyledTableContainer>
+      <TableView displayedProjects={displayedProjects} />
+      {isDesktopView() ? (
+        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
+      ) : null}
+      <LoadingIndicator projectData={projectData} />
+    </StyledTableContainer>
+  )
+
+  const renderMetrics = () => (
+    <MetricsPane
+      displayedProjects={displayedProjects}
+      showMetricsPane={showMetricsPane}
+      setShowMetricsPane={setShowMetricsPane}
+    />
+  )
 
   return (
     <StyledDashboardContainer>
@@ -266,55 +289,9 @@ export default function MermaidDash() {
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
-        <StyledFilterWrapper showFilterPane={showFilterPane}>
-          {showFilterPane ? (
-            <StyledFilterContainer>
-              <FilterPane
-                projectData={projectData}
-                displayedProjects={displayedProjects}
-                setDisplayedProjects={setDisplayedProjects}
-                hiddenProjects={hiddenProjects}
-                setHiddenProjects={setHiddenProjects}
-                setSelectedMarkerId={setSelectedMarkerId}
-              />
-            </StyledFilterContainer>
-          ) : null}
-
-          <StyledToggleFilterPaneButton onClick={handleShowFilterPane}>
-            {showFilterPane ? String.fromCharCode(10094) : String.fromCharCode(10095)}{' '}
-          </StyledToggleFilterPaneButton>
-        </StyledFilterWrapper>
-        {window.innerWidth <= mobileWidthThreshold || view === 'mapView' ? (
-          <StyledMapContainer>
-            <LeafletMap
-              displayedProjects={displayedProjects}
-              selectedMarkerId={selectedMarkerId}
-              setSelectedMarkerId={setSelectedMarkerId}
-            />
-            {window.innerWidth > mobileWidthThreshold ? (
-              <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-            ) : null}
-            <LoadingIndicator projectData={projectData} />
-          </StyledMapContainer>
-        ) : (
-          <StyledTableContainer>
-            <TableView displayedProjects={displayedProjects} />
-            {window.innerWidth > mobileWidthThreshold ? (
-              <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-            ) : null}
-            <LoadingIndicator projectData={projectData} />
-          </StyledTableContainer>
-        )}
-        <StyledMetricsWrapper showMetricsPane={showMetricsPane}>
-          {showMetricsPane ? (
-            <StyledMetricsContainer>
-              <MetricsPane displayedProjects={displayedProjects} />
-            </StyledMetricsContainer>
-          ) : null}
-          <StyledToggleMetricsPaneButton onClick={handleShowMetricsPane}>
-            {showMetricsPane ? String.fromCharCode(10095) : String.fromCharCode(10094)}{' '}
-          </StyledToggleMetricsPaneButton>
-        </StyledMetricsWrapper>
+        {renderFilter()}
+        {isMobileView || view === 'mapView' ? renderMap() : renderTable()}
+        {renderMetrics()}
       </StyledContentContainer>
     </StyledDashboardContainer>
   )

@@ -21,6 +21,7 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
 const mobileWidthThreshold = 960
+const isDesktopView = window.innerWidth > mobileWidthThreshold
 
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
   padding-left: 2rem;
@@ -171,13 +172,13 @@ export default function LeafletMap(props) {
         {isAnyActiveFilters() ? (
           <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
             <img src={zoomToFiltered} alt="Zoom to filtered data" />
-            {window.innerWidth > mobileWidthThreshold ? <span>Filtered Data</span> : null}
+            {isDesktopView ? <span>Filtered Data</span> : null}
           </ZoomToSecondaryButton>
         ) : null}
         {hasSelectedSite() ? (
           <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
             <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-            {window.innerWidth > mobileWidthThreshold ? <span>Selected Site</span> : null}
+            {isDesktopView ? <span>Selected Site</span> : null}
           </ZoomToSecondaryButton>
         ) : null}
       </ControlContainer>
