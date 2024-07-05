@@ -22,11 +22,11 @@ import theme from '../theme'
 const URL_PARAMS = {
   COUNTRIES: 'countries',
   ORGANIZATIONS: 'organizations',
-  START_DATE: 'startDate',
-  END_DATE: 'endDate',
-  PROJECT_NAME: 'projectName',
+  SAMPLE_DATE_AFTER: 'sample_date_after',
+  SAMPLE_DATE_BEFORE: 'sample_date_before',
+  PROJECTS: 'projects',
   DATA_SHARING: 'dataSharing',
-  METHOD: 'method',
+  METHODS: 'methods',
 }
 
 const collectionMethods = [
@@ -242,8 +242,8 @@ export default function FilterPane({
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const [projectNameFilter, setProjectNameFilter] = useState('')
-  const [startDate, setStartDate] = useState('')
-  const [endDate, setEndDate] = useState('')
+  const [sampleDateAfter, setSampleDateAfter] = useState('')
+  const [sampleDateBefore, setSampleDateBefore] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const [showOtherProjects, setShowOtherProjects] = useState(false)
@@ -285,17 +285,17 @@ export default function FilterPane({
       return
     }
 
-    const fallbackStartDate = new Date('1970-01-01')
-    const fallbackEndDate = new Date(Date.now())
+    const fallbackSampleDateAfter = new Date('1970-01-01')
+    const fallbackSampleDateBefore = new Date(Date.now())
 
     const filteredProjects = projectData.results
       .map((project) => {
         // Filter project if sample date falls within selected date range
-        if (!startDate && !endDate) {
+        if (!sampleDateAfter && !sampleDateBefore) {
           return project
         }
-        const beginDate = startDate || fallbackStartDate
-        const finishDate = endDate || fallbackEndDate
+        const beginDate = sampleDateAfter || fallbackSampleDateAfter
+        const finishDate = sampleDateBefore || fallbackSampleDateBefore
         return {
           ...project,
           records: project.records.filter((record) => {
@@ -370,19 +370,7 @@ export default function FilterPane({
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
 
-    let displaySelectedSampleEvent = false
-    filteredProjects.forEach((project) => {
-      project.records.forEach((record) => {
-        if (record.sample_event_id === paramsSampleEventId) {
-          displaySelectedSampleEvent = true
-        }
-      })
-    })
-    if (!displaySelectedSampleEvent) {
-      queryParams.delete('sample_event_id')
-      setSelectedMarkerId(null)
-      updateURLParams(queryParams)
-    }
+    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
 
     const leftoverProjects = projectData.results
       .filter((project) => !filteredIds.has(project.project_id))
@@ -400,13 +388,30 @@ export default function FilterPane({
     selectedCountries,
     selectedOrganizations,
     projectNameFilter,
-    startDate,
-    endDate,
+    sampleDateAfter,
+    sampleDateBefore,
     dataSharingFilter,
     methodFilters,
     setHiddenProjects,
     setDisplayedProjects,
   ])
+
+  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
+    const queryParams = getURLParams()
+    let displaySelectedSampleEvent = false
+    filteredProjects.forEach((project) => {
+      project.records.forEach((record) => {
+        if (record.sample_event_id === sampleEventId) {
+          displaySelectedSampleEvent = true
+        }
+      })
+    })
+    if (!displaySelectedSampleEvent) {
+      queryParams.delete('sample_event_id')
+      setSelectedMarkerId(null)
+      updateURLParams(queryParams)
+    }
+  }
 
   const getURLParams = useCallback(() => {
     return new URLSearchParams(location.search)
@@ -425,54 +430,74 @@ export default function FilterPane({
 
   const _getUrlParams = useEffect(() => {
     const queryParams = getURLParams()
-    if (queryParams.has(URL_PARAMS.COUNTRIES)) {
-      setSelectedCountries(queryParams.getAll(URL_PARAMS.COUNTRIES)[0].split(','))
+
+    const setFilterValue = (primaryKey, secondaryKey, setValue) => {
+      if (queryParams.has(primaryKey)) {
+        setValue(queryParams.getAll(primaryKey)[0].split(','))
+      } else if (queryParams.has(secondaryKey)) {
+        setValue(queryParams.getAll(secondaryKey)[0].split(','))
+      }
     }
-    if (queryParams.has(URL_PARAMS.ORGANIZATIONS)) {
-      setSelectedOrganizations(queryParams.getAll(URL_PARAMS.ORGANIZATIONS)[0].split(','))
+
+    const handleDateFilter = (key, setDate, formatFn) => {
+      if (queryParams.has(key)) {
+        const dateValue = queryParams.get(key)
+        if (isValidDateFormat(dateValue)) {
+          setDate(formatFn(dateValue))
+        } else {
+          queryParams.delete(key)
+          updateURLParams(queryParams)
+        }
+      }
     }
-    if (queryParams.has(URL_PARAMS.START_DATE)) {
-      const queryParamsStartDate = queryParams.get(URL_PARAMS.START_DATE)
-      if (isValidDateFormat(queryParamsStartDate)) {
-        setStartDate(formattedDate(dayjs(queryParamsStartDate)))
-      } else {
-        queryParams.delete(URL_PARAMS.START_DATE)
+
+    const handleMethodsFilter = () => {
+      if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
+        const queryParamsMethods = queryParams.has('method')
+          ? queryParams.getAll('method')[0].split(',')
+          : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
+        const validMethods = queryParamsMethods.filter((method) => {
+          return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
+        })
+        setMethodFilters(validMethods)
+        if (validMethods.length === 0) {
+          queryParams.delete('method')
+          queryParams.delete(URL_PARAMS.METHODS)
+        } else {
+          queryParams.set(URL_PARAMS.METHODS, validMethods)
+        }
         updateURLParams(queryParams)
       }
     }
-    if (queryParams.has(URL_PARAMS.END_DATE)) {
-      const queryParamsEndDate = queryParams.get(URL_PARAMS.END_DATE)
-      if (!isValidDateFormat(queryParamsEndDate)) {
-        queryParams.delete(URL_PARAMS.END_DATE)
-        updateURLParams(queryParams)
-        return
-      }
-      setEndDate(formatEndDate(queryParamsEndDate))
-    }
-    if (queryParams.has(URL_PARAMS.PROJECT_NAME)) {
-      setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECT_NAME))
-    }
-    if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
-      if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
-        setDataSharingFilter(true)
-      } else {
-        queryParams.delete(URL_PARAMS.DATA_SHARING)
-        updateURLParams(queryParams)
+
+    const handleProjectNameFilter = () => {
+      if (queryParams.has(URL_PARAMS.PROJECTS)) {
+        setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
+      } else if (queryParams.has('project')) {
+        setProjectNameFilter(queryParams.get('project'))
       }
     }
-    if (queryParams.has(URL_PARAMS.METHOD)) {
-      const queryParamsMethods = queryParams.getAll(URL_PARAMS.METHOD)[0].split(',')
-      const validMethods = queryParamsMethods.filter((method) => {
-        return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
-      })
-      setMethodFilters(validMethods)
-      if (validMethods.length === 0) {
-        queryParams.delete(URL_PARAMS.METHOD)
-      } else {
-        queryParams.set(URL_PARAMS.METHOD, validMethods)
+
+    const handleDataSharingFilter = () => {
+      if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
+        if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
+          setDataSharingFilter(true)
+        } else {
+          queryParams.delete(URL_PARAMS.DATA_SHARING)
+          updateURLParams(queryParams)
+        }
       }
-      updateURLParams(queryParams)
     }
+
+    setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
+    setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
+      formattedDate(dayjs(date)),
+    )
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
+    handleMethodsFilter()
+    handleProjectNameFilter()
+    handleDataSharingFilter()
   }, [getURLParams, updateURLParams])
 
   const handleSelectedCountriesChange = (event) => {
@@ -483,6 +508,7 @@ export default function FilterPane({
     } else {
       queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
     }
+    queryParams.delete('country')
     updateURLParams(queryParams)
     setSelectedCountries(selectedCountries)
   }
@@ -495,6 +521,7 @@ export default function FilterPane({
     } else {
       queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
     }
+    queryParams.delete('organization')
     updateURLParams(queryParams)
     setSelectedOrganizations(selectedOrganizations)
   }
@@ -503,10 +530,11 @@ export default function FilterPane({
     const queryParams = getURLParams()
     const projectName = event.target.value
     if (projectName.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECT_NAME)
+      queryParams.delete(URL_PARAMS.PROJECTS)
     } else {
-      queryParams.set(URL_PARAMS.PROJECT_NAME, projectName)
+      queryParams.set(URL_PARAMS.PROJECTS, projectName)
     }
+    queryParams.delete('project')
     updateURLParams(queryParams)
     setProjectNameFilter(projectName)
   }
@@ -527,38 +555,38 @@ export default function FilterPane({
     return !date ? '' : dayjs(date).format('YYYY-MM-DD')
   }
 
-  const handleChangeStartDate = (startDate) => {
+  const handleChangeSampleDateAfter = (sampleDateAfter) => {
     const queryParams = getURLParams()
-    if (startDate === '') {
-      queryParams.delete(URL_PARAMS.START_DATE)
-      setStartDate('')
+    if (sampleDateAfter === '') {
+      queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
+      setSampleDateAfter('')
     } else {
-      const formattedStartDate = formattedDate(startDate)
-      queryParams.set(URL_PARAMS.START_DATE, formattedStartDate)
-      setStartDate(dayjs(startDate))
+      const formattedSampleDateAfter = formattedDate(sampleDateAfter)
+      queryParams.set(URL_PARAMS.SAMPLE_DATE_AFTER, formattedSampleDateAfter)
+      setSampleDateAfter(dayjs(sampleDateAfter))
     }
     updateURLParams(queryParams)
   }
 
-  const handleChangeEndDate = (endDate) => {
+  const handleChangeSampleDateBefore = (sampleDateBefore) => {
     const queryParams = getURLParams()
-    if (endDate === '') {
-      queryParams.delete(URL_PARAMS.END_DATE)
-      setEndDate('')
+    if (sampleDateBefore === '') {
+      queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
+      setSampleDateBefore('')
     } else {
-      const formattedEndDate = formattedDate(endDate)
-      queryParams.set(URL_PARAMS.END_DATE, formattedEndDate)
-      setEndDate(formatEndDate(endDate))
+      const formattedSampleDateBefore = formattedDate(sampleDateBefore)
+      queryParams.set(URL_PARAMS.SAMPLE_DATE_BEFORE, formattedSampleDateBefore)
+      setSampleDateBefore(formatEndDate(sampleDateBefore))
     }
     updateURLParams(queryParams)
   }
 
-  const handleClearStartDate = () => {
-    handleChangeStartDate('')
+  const handleClearSampleDateAfter = () => {
+    handleChangeSampleDateAfter('')
   }
 
-  const handleClearEndDate = () => {
-    handleChangeEndDate('')
+  const handleClearSampleDateBefore = () => {
+    handleChangeSampleDateBefore('')
   }
 
   const handleMethodFilter = (event) => {
@@ -572,10 +600,11 @@ export default function FilterPane({
 
     const queryParams = getURLParams()
     if (updatedMethodFilters.length === 0) {
-      queryParams.delete(URL_PARAMS.METHOD)
+      queryParams.delete(URL_PARAMS.METHODS)
     } else {
-      queryParams.set(URL_PARAMS.METHOD, updatedMethodFilters)
+      queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
     }
+    queryParams.delete('method')
     updateURLParams(queryParams)
     setMethodFilters(updatedMethodFilters)
   }
@@ -587,6 +616,7 @@ export default function FilterPane({
     setSelectedCountries(updatedCountries)
     const queryParams = getURLParams()
     if (updatedCountries.length === 0) {
+      queryParams.delete('country')
       queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
       queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
@@ -601,6 +631,7 @@ export default function FilterPane({
     setSelectedOrganizations(updatedOrganizations)
     const queryParams = getURLParams()
     if (updatedOrganizations.length === 0) {
+      queryParams.delete('organization')
       queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {
       queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
@@ -700,13 +731,13 @@ export default function FilterPane({
           <StyledDateInput>
             <input
               type="date"
-              value={formattedDate(startDate)}
-              onChange={(e) => handleChangeStartDate(e.target.value)}
+              value={formattedDate(sampleDateAfter)}
+              onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
             />
-            {startDate && (
+            {sampleDateAfter && (
               <IconButton
                 aria-label="clear date"
-                onClick={handleClearStartDate}
+                onClick={handleClearSampleDateAfter}
                 className="clear-button"
               >
                 <IconClose />
@@ -717,13 +748,13 @@ export default function FilterPane({
           <StyledDateInput>
             <input
               type="date"
-              value={formattedDate(endDate)}
-              onChange={(e) => handleChangeEndDate(e.target.value)}
+              value={formattedDate(sampleDateBefore)}
+              onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
             />
-            {endDate && (
+            {sampleDateBefore && (
               <IconButton
                 aria-label="clear date"
-                onClick={handleClearEndDate}
+                onClick={handleClearSampleDateBefore}
                 className="clear-button"
               >
                 <IconClose />
