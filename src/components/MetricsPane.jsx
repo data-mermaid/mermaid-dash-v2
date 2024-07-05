@@ -169,8 +169,8 @@ export default function MetricsPane(props) {
 
   return (
     <StyledMetricsWrapper showMetricsPane={showMetricsPane}>
-      {isMobileView() || showMetricsPane ? (
-        <SummarizedMetrics isDesktopView={isDesktopView()}>
+      {window.innerWidth <= mobileWidthThreshold || showMetricsPane ? (
+        <SummarizedMetrics isDesktopView={window.innerWidth > mobileWidthThreshold ? true : false}>
           <MetricsCard>
             <H4>{displayedProjects.length}</H4>
             <H3>Projects </H3>
@@ -185,7 +185,7 @@ export default function MetricsPane(props) {
               <H3>Transects</H3>
             </MetricsCard>
           </SitesAndTransectsContainer>
-          {isDesktopView() ? (
+          {window.innerWidth > mobileWidthThreshold ? (
             <MetricsCard>
               <H3>{yearRange}</H3>
             </MetricsCard>
@@ -197,10 +197,10 @@ export default function MetricsPane(props) {
           </MetricsCard>
         </SummarizedMetrics>
       ) : null}
-      {isMobileView() && showMobileExpandedMetricsPane ? (
+      {window.innerWidth <= mobileWidthThreshold && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
       ) : null}
-      {isDesktopView() ? (
+      {window.innerWidth > mobileWidthThreshold ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
           {showMetricsPane ? String.fromCharCode(10095) : String.fromCharCode(10094)}{' '}
         </DesktopToggleMetricsPaneButton>

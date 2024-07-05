@@ -144,9 +144,6 @@ export default function MermaidDash() {
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
 
-  const isMobileView = () => window.innerWidth <= mobileWidthThreshold
-  const isDesktopView = () => !isMobileView()
-
   const fetchData = async (token = '') => {
     try {
       let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
@@ -204,7 +201,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && isDesktopView) {
+    if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
       setView('tableView')
       return
     }
@@ -215,7 +212,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (isMobileView) {
+      if (window.innerWidth <= mobileWidthThreshold) {
         setView('mapView')
       }
     }
@@ -257,7 +254,7 @@ export default function MermaidDash() {
         selectedMarkerId={selectedMarkerId}
         setSelectedMarkerId={setSelectedMarkerId}
       />
-      {isDesktopView() ? (
+      {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
       <LoadingIndicator projectData={projectData} />
@@ -267,7 +264,7 @@ export default function MermaidDash() {
   const renderTable = () => (
     <StyledTableContainer>
       <TableView displayedProjects={displayedProjects} />
-      {isDesktopView() ? (
+      {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
       <LoadingIndicator projectData={projectData} />
@@ -290,7 +287,9 @@ export default function MermaidDash() {
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
         {renderFilter()}
-        {isMobileView || view === 'mapView' ? renderMap() : renderTable()}
+        {window.innerWidth <= mobileWidthThreshold || view === 'mapView'
+          ? renderMap()
+          : renderTable()}
         {renderMetrics()}
       </StyledContentContainer>
     </StyledDashboardContainer>
