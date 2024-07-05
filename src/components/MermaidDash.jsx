@@ -44,6 +44,7 @@ const StyledMapContainer = styled('div')`
   height: calc(100%-90px);
   width: 100%;
   z-index: 1;
+  position: relative;
 `
 
 const StyledTableContainer = styled('div')`
@@ -78,6 +79,17 @@ export default function MermaidDash() {
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
+  const queryParams = new URLSearchParams(location.search)
+  const queryParamsSampleEventId = queryParams.get('sample_event_id')
+  const initialSelectedMarker =
+    queryParamsSampleEventId !== null
+      ? {
+          options: {
+            sample_event_id: queryParamsSampleEventId,
+          },
+        }
+      : null
+  const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
 
   const fetchData = async (token = '') => {
     try {
@@ -166,24 +178,32 @@ export default function MermaidDash() {
             setDisplayedProjects={setDisplayedProjects}
             hiddenProjects={hiddenProjects}
             setHiddenProjects={setHiddenProjects}
+            setSelectedMarkerId={setSelectedMarkerId}
           />
         </StyledFilterContainer>
         {window.innerWidth <= mobileWidthThreshold || view === 'mapView' ? (
           <StyledMapContainer>
-            <LeafletMap displayedProjects={displayedProjects} />
+            <LeafletMap
+              displayedProjects={displayedProjects}
+              selectedMarkerId={selectedMarkerId}
+              setSelectedMarkerId={setSelectedMarkerId}
+            />
+            {window.innerWidth > mobileWidthThreshold ? (
+              <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
+            ) : null}
           </StyledMapContainer>
         ) : (
           <StyledTableContainer>
             <TableView displayedProjects={displayedProjects} />
+            {window.innerWidth > mobileWidthThreshold ? (
+              <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
+            ) : null}
           </StyledTableContainer>
         )}
         <StyledMetricsContainer>
           <MetricsPane displayedProjects={displayedProjects} />
         </StyledMetricsContainer>
         <LoadingIndicator projectData={projectData} />
-        {window.innerWidth > mobileWidthThreshold ? (
-          <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-        ) : null}
       </StyledContentContainer>
     </StyledDashboardContainer>
   )

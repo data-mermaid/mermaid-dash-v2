@@ -234,6 +234,7 @@ export default function FilterPane({
   setDisplayedProjects,
   hiddenProjects,
   setHiddenProjects,
+  setSelectedMarkerId,
 }) {
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
@@ -365,6 +366,12 @@ export default function FilterPane({
       })
 
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
+    const queryParams = new URLSearchParams(location.search)
+    const paramsSampleEventId =
+      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+
+    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+
     const leftoverProjects = projectData.results
       .filter((project) => !filteredIds.has(project.project_id))
       .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
@@ -388,6 +395,23 @@ export default function FilterPane({
     setHiddenProjects,
     setDisplayedProjects,
   ])
+
+  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
+    const queryParams = getURLParams()
+    let displaySelectedSampleEvent = false
+    filteredProjects.forEach((project) => {
+      project.records.forEach((record) => {
+        if (record.sample_event_id === sampleEventId) {
+          displaySelectedSampleEvent = true
+        }
+      })
+    })
+    if (!displaySelectedSampleEvent) {
+      queryParams.delete('sample_event_id')
+      setSelectedMarkerId(null)
+      updateURLParams(queryParams)
+    }
+  }
 
   const getURLParams = useCallback(() => {
     return new URLSearchParams(location.search)
