@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import MermaidLogo from '../../styles/Icons/mermaid-dashboard-logo.svg'
 import { useAuth0 } from '@auth0/auth0-react'
@@ -51,7 +50,7 @@ const Header = () => {
   const handleLogoutUser = () => {
     logout({
       logoutParams: {
-        returnTo: window.location.origin,
+        returnTo: window.location.href,
       },
     })
   }
@@ -117,6 +116,10 @@ const Header = () => {
     return user?.first_name || user?.full_name || user.email
   }
 
+  const handleLogin = () => {
+    loginWithRedirect({ appState: { returnTo: location.search } })
+  }
+
   return (
     <StyledHeader>
       <LogoImg src={MermaidLogo} alt="MERMAID Logo" />
@@ -138,7 +141,7 @@ const Header = () => {
               contents={UserAccountMenu()}
             />
           ) : (
-            <HeaderButtonThatLooksLikeLink onClick={loginWithRedirect}>
+            <HeaderButtonThatLooksLikeLink onClick={handleLogin}>
               <UserLoginContainer>
                 <LoginIcon />
                 <HeaderLoginText>Login</HeaderLoginText>
