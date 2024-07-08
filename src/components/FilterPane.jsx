@@ -218,8 +218,6 @@ export default function FilterPane({
   projectData,
   displayedProjects,
   setDisplayedProjects,
-  hiddenProjects,
-  setHiddenProjects,
   setSelectedMarkerId,
   mermaidUserData,
 }) {
@@ -233,7 +231,6 @@ export default function FilterPane({
   const [sampleDateBefore, setSampleDateBefore] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
-  const [showOtherProjects, setShowOtherProjects] = useState(false)
   const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
@@ -359,11 +356,6 @@ export default function FilterPane({
 
     doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
 
-    const leftoverProjects = projectData.results
-      .filter((project) => !filteredIds.has(project.project_id))
-      .sort((a, b) => a.records[0]?.project_name.localeCompare(b.records[0]?.project_name))
-
-    setHiddenProjects(leftoverProjects)
     setDisplayedProjects(
       filteredProjects.sort((a, b) =>
         a.records[0]?.project_name.localeCompare(b.records[0]?.project_name),
@@ -379,7 +371,6 @@ export default function FilterPane({
     sampleDateBefore,
     dataSharingFilter,
     methodFilters,
-    setHiddenProjects,
     setDisplayedProjects,
   ])
 
@@ -784,7 +775,7 @@ export default function FilterPane({
       <StyledProjectsHeader>
         <span>Projects</span>
         <span>
-          {displayedProjects.length}/{projectData.results?.length}
+          {displayedProjects.length}/{projectData.count}
         </span>
       </StyledProjectsHeader>
       <StyledProjectNameFilter
@@ -812,28 +803,6 @@ export default function FilterPane({
           })}
         </StyledUnorderedList>
       </StyledProjectListContainer>
-      <StyledProjectsHeader>
-        <span>Other projects </span>
-        <div>
-          <StyledShowOtherProjects onClick={() => setShowOtherProjects(!showOtherProjects)}>
-            {showOtherProjects ? 'Hide' : 'Show'}
-          </StyledShowOtherProjects>{' '}
-          {hiddenProjects.length}/{projectData.results?.length}
-        </div>
-      </StyledProjectsHeader>
-      {showOtherProjects ? (
-        <StyledProjectListContainer>
-          {hiddenProjects.map((project, index) => {
-            return project.records[0]?.project_name ? (
-              <div key={project.project_id}>
-                {index}: {project.records[0]?.project_name}
-              </div>
-            ) : (
-              <div key={project.project_id}>{index}: Project with no name</div>
-            )
-          })}
-        </StyledProjectListContainer>
-      ) : null}
     </StyledFilterPaneContainer>
   )
 }
