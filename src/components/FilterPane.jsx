@@ -16,7 +16,6 @@ import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose, IconUser } from './icons'
 import theme from '../theme'
-import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -222,6 +221,7 @@ export default function FilterPane({
   hiddenProjects,
   setHiddenProjects,
   setSelectedMarkerId,
+  mermaidUserData,
 }) {
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
@@ -237,7 +237,6 @@ export default function FilterPane({
   const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
-  const { user } = useAuth0()
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -634,13 +633,9 @@ export default function FilterPane({
     setCheckedProjects(updatedCheckedProjects)
   }
 
-  const userIsAdminOfProject = (userName, project) => {
-    if (!userName) {
-      return false
-    }
-
-    const projectAdmins = project.records[0]?.project_admins.map((admin) => admin.name)
-    return projectAdmins.includes(userName)
+  const userIsMemberOfProject = (projectId) => {
+    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+    return projectsUserIsMemberOf.includes(projectId)
   }
 
   return (
@@ -810,7 +805,7 @@ export default function FilterPane({
                 />{' '}
                 <label htmlFor={`checkbox-${project.project_id}`}>
                   {project.records[0]?.project_name}{' '}
-                  {userIsAdminOfProject(user?.name, project) && <IconUser />}
+                  {userIsMemberOfProject(project.project_id) && <IconUser />}
                 </label>
               </li>
             )
@@ -849,4 +844,5 @@ FilterPane.propTypes = {
   setDisplayedProjects: PropTypes.func.isRequired,
   hiddenProjects: PropTypes.array.isRequired,
   setHiddenProjects: PropTypes.func.isRequired,
+  mermaidUserData: PropTypes.object.isRequired,
 }

@@ -90,8 +90,9 @@ export default function MermaidDash() {
         }
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+  const [mermaidUserData, setMermaidUserData] = useState({})
 
-  const fetchData = async (token = '') => {
+  const fetchData = async (token) => {
     try {
       let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
 
@@ -125,18 +126,43 @@ export default function MermaidDash() {
     }
   }
 
+  const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
+    headers: {
+      Authorization: `Bearer ${await getAccessTokenSilently()}`,
+    },
+  })
+
+  const fetchUserProfile = async () => {
+    try {
+      const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
+      const response = await fetch(
+        profileEndpoint,
+        await getAuthorizationHeaders(getAccessTokenSilently),
+      )
+      const parsedResponse = await response.json()
+      setMermaidUserData(parsedResponse)
+    } catch (e) {
+      console.error('Error fetching user profile:', e)
+    }
+  }
+
   useEffect(() => {
+    const handleFetchData = async () => {
+      try {
+        const token = isAuthenticated ? await getAccessTokenSilently() : ''
+        fetchData(token)
+        if (isAuthenticated) {
+          fetchUserProfile()
+        }
+      } catch (e) {
+        console.error('Error fetching data:', e)
+      }
+    }
+
     if (isLoading) {
       return
     }
-
-    if (!isAuthenticated) {
-      fetchData()
-    } else {
-      getAccessTokenSilently()
-        .then((token) => fetchData(token))
-        .catch((error) => console.error('Error getting access token:', error))
-    }
+    handleFetchData()
   }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
   const updateURLParams = useCallback(
@@ -179,6 +205,7 @@ export default function MermaidDash() {
             hiddenProjects={hiddenProjects}
             setHiddenProjects={setHiddenProjects}
             setSelectedMarkerId={setSelectedMarkerId}
+            mermaidUserData={mermaidUserData}
           />
         </StyledFilterContainer>
         {window.innerWidth <= mobileWidthThreshold || view === 'mapView' ? (
