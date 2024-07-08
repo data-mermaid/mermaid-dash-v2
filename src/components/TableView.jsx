@@ -87,14 +87,14 @@ const TableView = (props) => {
         sortType: reactTableNaturalSort,
       },
       {
-        Header: 'Transects',
-        accessor: 'transects',
+        Header: 'Sites',
+        accessor: 'siteCount',
         sortType: reactTableNaturalSort,
         align: 'right',
       },
       {
-        Header: 'Sites',
-        accessor: 'siteCount',
+        Header: 'Transects',
+        accessor: 'transects',
         sortType: reactTableNaturalSort,
         align: 'right',
       },
@@ -109,8 +109,8 @@ const TableView = (props) => {
         formattedYears,
         countries,
         organizations,
-        transects,
         siteCount,
+        transects,
         rawProjectData,
       } = data
 
@@ -119,8 +119,8 @@ const TableView = (props) => {
         formattedYears,
         countries,
         organizations,
-        transects,
         siteCount,
+        transects,
         rawProjectData,
       }
     })
