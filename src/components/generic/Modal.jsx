@@ -22,7 +22,7 @@ const StyledDialog = styled('div')`
   padding: 0;
   margin: 0;
   min-width: 30rem;
-  width: 50vw;
+  width: ${(props) => props.modalCustomWidth};
   max-width: 96rem;
   background: ${theme.color.tableRowEven};
   max-height: 98vh;
@@ -54,7 +54,7 @@ const ModalContent = styled.div`
     css`
       overflow: auto;
     `}
-  max-height: 80vh;
+  max-height: ${(props) => props.modalContentCustomHeight};
   padding: ${theme.spacing.medium};
   padding-bottom: 3rem;
 `
@@ -119,6 +119,9 @@ const Modal = ({
   footerContent,
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
+  modalCustomWidth = '50vw',
+  modalOmitTitle = false,
+  modalContentCustomHeight = '80vh',
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
     const close = (event) => {
@@ -135,15 +138,26 @@ const Modal = ({
   return (
     isOpen && (
       <StyledDialogOverlay aria-label={`${title} Modal`}>
-        <StyledDialog role="dialog" aria-labelledby="modal-title" aria-describedby="modal-content">
-          <ModalTitle>
-            <h2 id="modal-title">{title}</h2>
-            <CloseButton type="button" className="close-button" onClick={onDismiss}>
-              <IconClose aria-label="close" />
-            </CloseButton>
-          </ModalTitle>
+        <StyledDialog
+          role="dialog"
+          aria-labelledby="modal-title"
+          aria-describedby="modal-content"
+          modalCustomWidth={modalCustomWidth}
+        >
+          {modalOmitTitle ? null : (
+            <ModalTitle>
+              <h2 id="modal-title">{title}</h2>
+              <CloseButton type="button" className="close-button" onClick={onDismiss}>
+                <IconClose aria-label="close" />
+              </CloseButton>
+            </ModalTitle>
+          )}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
-          <ModalContent contentOverflowIsVisible={contentOverflowIsVisible} id="modal-content">
+          <ModalContent
+            contentOverflowIsVisible={contentOverflowIsVisible}
+            id="modal-content"
+            modalContentCustomHeight={modalContentCustomHeight}
+          >
             {mainContent}
           </ModalContent>
           <ModalFooter>{footerContent}</ModalFooter>
