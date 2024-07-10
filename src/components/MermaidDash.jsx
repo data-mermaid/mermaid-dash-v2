@@ -18,7 +18,7 @@ import Modal from './generic/Modal'
 const StyledDashboardContainer = styled('div')`
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 100dvh;
 `
 
 const StyledContentContainer = styled('div')`
@@ -32,6 +32,7 @@ const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
+  border: 1px solid red;
   ${(props) => props.showFilterPane === true && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
@@ -49,8 +50,9 @@ const StyledFilterWrapper = styled('div')`
 const StyledFilterContainer = styled('div')`
   z-index: 2;
   overflow-y: scroll;
-  height: calc(100vh - 5rem);
+  height: calc(100dvh - 5rem);
   width: 100%;
+  border: 1px solid green;
 
   /* Hide scrollbar */
   &::-webkit-scrollbar {
@@ -149,6 +151,7 @@ export default function MermaidDash() {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
 
   const fetchData = async (token = '') => {
+    console.log('fetching')
     try {
       let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
 
@@ -159,6 +162,7 @@ export default function MermaidDash() {
           },
         })
         if (response.ok) {
+          console.log('fetched')
           const data = await response.json()
           setProjectData((prevData) => {
             return {
@@ -258,7 +262,7 @@ export default function MermaidDash() {
         mainContent={modalContent}
         footerContent={footerContent}
         modalCustomWidth={'auto'}
-        modalContentCustomHeight={'100vh'}
+        modalContentCustomHeight={'90dvh'}
         modalOmitTitle={true}
       />
     ) : (

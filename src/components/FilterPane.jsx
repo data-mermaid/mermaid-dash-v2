@@ -16,6 +16,8 @@ import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose } from './icons'
 import theme from '../theme'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import { css } from 'styled-components'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -109,6 +111,10 @@ const StyledProjectsHeader = styled(StyledHeader)`
 const StyledFilterPaneContainer = styled('div')`
   padding: 1rem;
   min-width: 35rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    min-width: 80vw;
+    min-height: 85dvh;
+  `)}
 `
 
 const StyledFormControl = styled(FormControl)`

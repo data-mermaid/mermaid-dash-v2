@@ -9,7 +9,7 @@ import { mediaQueryPhoneOnly } from '../../styles/mediaQueries'
 const StyledDialogOverlay = styled('div')`
   background: rgba(0, 0, 0, 0.5);
   width: 100vw;
-  height: 100vh;
+  height: 100dvh;
   top: 0;
   left: 0;
   position: fixed;
