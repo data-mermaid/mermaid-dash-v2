@@ -32,7 +32,6 @@ const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
-  border: 1px solid red;
   ${(props) => props.showFilterPane === true && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
@@ -52,7 +51,6 @@ const StyledFilterContainer = styled('div')`
   overflow-y: scroll;
   height: calc(100dvh - 5rem);
   width: 100%;
-  border: 1px solid green;
 
   /* Hide scrollbar */
   &::-webkit-scrollbar {
@@ -151,7 +149,6 @@ export default function MermaidDash() {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
 
   const fetchData = async (token = '') => {
-    console.log('fetching')
     try {
       let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
 
@@ -162,7 +159,6 @@ export default function MermaidDash() {
           },
         })
         if (response.ok) {
-          console.log('fetched')
           const data = await response.json()
           setProjectData((prevData) => {
             return {
