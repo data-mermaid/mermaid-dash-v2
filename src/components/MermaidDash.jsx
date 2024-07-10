@@ -287,6 +287,8 @@ export default function MermaidDash() {
         displayedProjects={displayedProjects}
         selectedMarkerId={selectedMarkerId}
         setSelectedMarkerId={setSelectedMarkerId}
+        showFilterPane={showFilterPane}
+        showMetricsPane={showMetricsPane}
       />
       {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />

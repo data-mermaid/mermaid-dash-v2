@@ -66,7 +66,13 @@ const isValidZoom = (zoom) => {
 }
 
 export default function LeafletMap(props) {
-  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = props
+  const {
+    displayedProjects,
+    selectedMarkerId,
+    setSelectedMarkerId,
+    showFilterPane,
+    showMetricsPane,
+  } = props
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -82,6 +88,8 @@ export default function LeafletMap(props) {
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
+  const prevShowFilterPane = usePrevious(showFilterPane)
+  const prevShowMetricsPane = usePrevious(showMetricsPane)
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
 
@@ -166,6 +174,22 @@ export default function LeafletMap(props) {
       },
     })
 
+    if (window.innerWidth >= mobileWidthThreshold) {
+      map.attributionControl.setPrefix('Leaflet')
+    } else {
+      map.attributionControl.setPrefix(false)
+    }
+
+    const showFilterPaneChanged = showFilterPane !== prevShowFilterPane
+    const showMetricsPaneChanged = showMetricsPane !== prevShowMetricsPane
+
+    if (showFilterPaneChanged || showMetricsPaneChanged) {
+      // Force map to load more tiles when panes are shown/hidden. A timeout is required
+      setTimeout(() => {
+        map.invalidateSize()
+      }, 10)
+    }
+
     toggleMapZoomControls(map)
 
     return (
@@ -248,33 +272,27 @@ export default function LeafletMap(props) {
   ])
 
   return (
-    <>
-      <MapContainer
-        center={mapCenter}
-        zoom={mapZoom}
-        scrollWheelZoom={true}
-        maxZoom={20}
-        ref={setMap}
-        attributionControl={false}
+    <MapContainer
+      center={mapCenter}
+      zoom={mapZoom}
+      scrollWheelZoom={true}
+      maxZoom={20}
+      ref={setMap}
+    >
+      <MapEventListener />
+      <MarkerClusterGroup
+        // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
+        chunkedLoading
+        spiderfyOnMaxZoom={false}
+        onClick={(event) => {
+          console.log('Click marker cluster group', event)
+          // Add a click event handler here if required
+        }}
       >
-        <MapEventListener />
-        <MarkerClusterGroup
-          // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
-          chunkedLoading
-          spiderfyOnMaxZoom={false}
-          onClick={(event) => {
-            console.log('Click marker cluster group', event)
-            // Add a click event handler here if required
-          }}
-        >
-          {markers}
-        </MarkerClusterGroup>
-        <TileLayer
-          url={import.meta.env.VITE_REACT_APP_ESRI_TILES_URL}
-          attribution="Tiles &copy; Esri"
-        />
-      </MapContainer>
-    </>
+        {markers}
+      </MarkerClusterGroup>
+      <TileLayer url={import.meta.env.VITE_REACT_APP_ESRI_TILES_URL} />
+    </MapContainer>
   )
 }
 
@@ -283,4 +301,6 @@ LeafletMap.propTypes = {
   displayedProjects: PropTypes.array,
   selectedMarkerId: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
   setSelectedMarkerId: PropTypes.func.isRequired,
+  showFilterPane: PropTypes.bool.isRequired,
+  showMetricsPane: PropTypes.bool.isRequired,
 }
