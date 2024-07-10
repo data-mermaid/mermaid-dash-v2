@@ -9,9 +9,7 @@ import {
   IconButton,
 } from '@mui/material'
 import dayjs from 'dayjs'
-import { DatePicker } from '@mui/x-date-pickers'
 import { filterPane } from '../constants/language'
-
 import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
@@ -110,6 +108,7 @@ const StyledProjectsHeader = styled(StyledHeader)`
 
 const StyledFilterPaneContainer = styled('div')`
   padding: 1rem;
+  min-width: 35rem;
 `
 
 const StyledFormControl = styled(FormControl)`
@@ -149,18 +148,6 @@ const ShowMoreFiltersContainer = styled('div')`
   padding-left: 0.8rem;
 `
 
-const StyledDatePicker = styled(DatePicker)`
-  width: calc(50% - 0.3rem);
-  background-color: ${theme.color.white};
-  &.MuiFormControl-root {
-    margin-bottom: 1rem;
-    margin-right: 0.3rem;
-  }
-  .MuiInputBase-input {
-    font-size: ${theme.typography.smallFontSize};
-  }
-`
-
 const StyledProjectNameFilter = styled(TextField)`
   width: 100%;
   background-color: ${theme.color.white};
@@ -185,12 +172,6 @@ const StyledProjectListContainer = styled('div')`
   border: 1px solid ${theme.color.grey0};
   word-break: break-word;
   overflow-wrap: break-word;
-`
-
-const StyledShowOtherProjects = styled('span')`
-  margin: 1.5rem 0;
-  cursor: pointer;
-  text-decoration: underline;
 `
 
 const StyledUnorderedList = styled('ul')`
@@ -818,5 +799,4 @@ FilterPane.propTypes = {
   projectData: PropTypes.object.isRequired,
   displayedProjects: PropTypes.array.isRequired,
   setDisplayedProjects: PropTypes.func.isRequired,
-  hiddenProjects: PropTypes.array.isRequired,
 }
