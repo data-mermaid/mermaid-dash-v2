@@ -30,7 +30,6 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   flex-direction: row;
   gap: 0.5rem;
   align-items: center;
-  ${mediaQueryTabletLandscapeOnly(css``)}
 `
 const ControlContainer = styled.div`
   position: absolute;
@@ -142,6 +141,15 @@ export default function LeafletMap(props) {
     return queryParams.has('sample_event_id')
   }
 
+  const toggleMapZoomControls = (map) => {
+    if (window.innerWidth > mobileWidthThreshold) {
+      map.zoomControl.setPosition('bottomright')
+      map.zoomControl.addTo(map)
+    } else {
+      map.zoomControl.remove()
+    }
+  }
+
   function MapEventListener() {
     const map = useMapEvents({
       moveend: () => {
@@ -154,21 +162,28 @@ export default function LeafletMap(props) {
         updateURLParams(queryParams)
         setMapCenter([lat, lng])
         setMapZoom(zoom)
+        toggleMapZoomControls(map)
       },
     })
 
-    map.zoomControl.setPosition('bottomright')
+    toggleMapZoomControls(map)
 
     return (
       <ControlContainer>
         {isAnyActiveFilters() ? (
-          <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
+          <ZoomToSecondaryButton
+            onClick={handleZoomToFilteredData}
+            aria-labelledby="Zoom to filtered data button"
+          >
             <img src={zoomToFiltered} alt="Zoom to filtered data" />
             {window.innerWidth > mobileWidthThreshold ? <span>Filtered Data</span> : null}
           </ZoomToSecondaryButton>
         ) : null}
         {hasSelectedSite() ? (
-          <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
+          <ZoomToSecondaryButton
+            onClick={handleZoomToSelectedSite}
+            aria-labelledby="Zoom to selected site button"
+          >
             <img src={zoomToSelectedSites} alt="Zoom to selected site" />
             {window.innerWidth > mobileWidthThreshold ? <span>Selected Site</span> : null}
           </ZoomToSecondaryButton>
@@ -240,6 +255,7 @@ export default function LeafletMap(props) {
         scrollWheelZoom={true}
         maxZoom={20}
         ref={setMap}
+        attributionControl={false}
       >
         <MapEventListener />
         <MarkerClusterGroup
@@ -265,4 +281,6 @@ export default function LeafletMap(props) {
 LeafletMap.propTypes = {
   // TODO: Add more detail here. What is the shape of the objects in the array?
   displayedProjects: PropTypes.array,
+  selectedMarkerId: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
+  setSelectedMarkerId: PropTypes.func.isRequired,
 }
