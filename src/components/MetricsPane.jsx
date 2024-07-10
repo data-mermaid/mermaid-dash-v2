@@ -122,9 +122,10 @@ const H3 = styled('h3')`
   margin: 0.5rem;
 `
 
-const H4 = styled('h4')`
+const P = styled('p')`
   padding: 0;
   margin: 0.5rem;
+  font-size: ${theme.typography.defaultFontSize};
 `
 
 const MobileExpandedMetricsPane = styled('div')`
@@ -208,27 +209,27 @@ export default function MetricsPane(props) {
           showLoadingIndicator={showLoadingIndicator}
         >
           <MetricsCard>
-            <H4>{displayedProjects.length}</H4>
+            <P>{displayedProjects.length}</P>
             <H3>Projects </H3>
           </MetricsCard>
           <SitesAndTransectsContainer>
             <MetricsCard>
-              <H4>{numSites}</H4>
+              <P>{numSites}</P>
               <H3>Sites</H3>
             </MetricsCard>
             <MetricsCard>
-              <H4>{numTransects}</H4>
+              <P>{numTransects}</P>
               <H3>Transects</H3>
             </MetricsCard>
           </SitesAndTransectsContainer>
           {window.innerWidth > mobileWidthThreshold ? (
             <MetricsCard>
-              <H3>{yearRange}</H3>
+              <P>{yearRange}</P>
             </MetricsCard>
           ) : null}
 
           <MetricsCard>
-            <H4>{numUniqueCountries}</H4>
+            <P>{numUniqueCountries}</P>
             <H3>{numUniqueCountries === 1 ? 'Country' : 'Countries'}</H3>
           </MetricsCard>
         </SummarizedMetrics>
