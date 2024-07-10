@@ -13,11 +13,12 @@ import MetricsPane from './MetricsPane'
 import theme from '../theme'
 import { IconFilter } from './icons'
 import { ButtonSecondary } from './generic/buttons'
+import Modal from './generic/Modal'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
   flex-direction: column;
-  height: calc(100vh - 2rem);
+  height: 100vh;
 `
 
 const StyledContentContainer = styled('div')`
@@ -51,22 +52,21 @@ const StyledFilterContainer = styled('div')`
   height: calc(100vh - 5rem);
   width: 100%;
 
-  /* Hide scrollbar for WebKit browsers */
+  /* Hide scrollbar */
   &::-webkit-scrollbar {
     display: none;
   }
-
-  /* Hide scrollbar for IE, Edge, and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 `
 
 const StyledMapContainer = styled('div')`
   flex-grow: 2;
-  height: calc(100%-90px);
+  height: 100%;
   width: 100%;
   z-index: 1;
   position: relative;
+  display: grid;
 `
 
 const StyledTableContainer = styled('div')`
@@ -83,7 +83,7 @@ const BiggerFilterIcon = styled(IconFilter)`
   position: relative;
 `
 
-const DesktopToggleFilterPaneButton = styled('button')`
+const DesktopToggleFilterPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
   right: -4rem;
@@ -91,7 +91,6 @@ const DesktopToggleFilterPaneButton = styled('button')`
   z-index: 5;
   width: 4rem;
   border: none;
-  cursor: pointer;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
     display: none;
@@ -112,12 +111,16 @@ const StyledMobileToggleFilterPaneButton = styled(ButtonSecondary)`
 `
 
 const MobileCloseFilterPaneButton = styled(ButtonSecondary)`
-  display: none;
-  ${mediaQueryTabletLandscapeOnly(css`
-    display: block;
-    margin: 1rem;
-    cursor: pointer;
-  `)}
+  display: block;
+  cursor: pointer;
+  width: calc(100% - 2rem);
+  margin: 1rem;
+`
+
+const MobileFooterContainer = styled('div')`
+  background-color: ${theme.color.grey1};
+  margin: -1rem;
+  padding-left: 2rem;
 `
 
 const mobileWidthThreshold = 960
@@ -127,6 +130,7 @@ export default function MermaidDash() {
   const [projectData, setProjectData] = useState({})
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [showFilterPane, setShowFilterPane] = useState(true)
+  const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
   const [view, setView] = useState('mapView')
   const location = useLocation()
@@ -142,6 +146,7 @@ export default function MermaidDash() {
         }
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
 
   const fetchData = async (token = '') => {
     try {
@@ -223,26 +228,58 @@ export default function MermaidDash() {
     setShowFilterPane((prevState) => !prevState)
   }
 
-  const renderFilter = () => (
-    <StyledFilterWrapper showFilterPane={showFilterPane}>
-      {showFilterPane ? (
-        <StyledFilterContainer>
-          <FilterPane
-            projectData={projectData}
-            displayedProjects={displayedProjects}
-            setDisplayedProjects={setDisplayedProjects}
-            setSelectedMarkerId={setSelectedMarkerId}
-          />
-        </StyledFilterContainer>
-      ) : null}
-      <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-        {showFilterPane ? String.fromCharCode(10094) : String.fromCharCode(10095)}{' '}
-      </DesktopToggleFilterPaneButton>
-      <MobileCloseFilterPaneButton onClick={handleShowFilterPane}>
-        Close
-      </MobileCloseFilterPaneButton>
-    </StyledFilterWrapper>
-  )
+  const handleShowFilterModal = () => {
+    setShowFilterModal((prevState) => !prevState)
+  }
+
+  const renderFilter = () => {
+    const modalContent = (
+      <FilterPane
+        projectData={projectData}
+        displayedProjects={displayedProjects}
+        setDisplayedProjects={setDisplayedProjects}
+        setSelectedMarkerId={setSelectedMarkerId}
+      />
+    )
+
+    const footerContent = (
+      <MobileFooterContainer>
+        <MobileCloseFilterPaneButton onClick={handleShowFilterModal}>
+          Close
+        </MobileCloseFilterPaneButton>
+      </MobileFooterContainer>
+    )
+
+    return window.innerWidth <= mobileWidthThreshold ? (
+      <Modal
+        isOpen={showFilterModal}
+        onDismiss={handleShowFilterModal}
+        title=""
+        mainContent={modalContent}
+        footerContent={footerContent}
+        modalCustomWidth={'auto'}
+        modalContentCustomHeight={'100vh'}
+        modalOmitTitle={true}
+      />
+    ) : (
+      <StyledFilterWrapper showFilterPane={showFilterPane}>
+        {showFilterPane ? (
+          <StyledFilterContainer>
+            <FilterPane
+              projectData={projectData}
+              displayedProjects={displayedProjects}
+              setDisplayedProjects={setDisplayedProjects}
+              setSelectedMarkerId={setSelectedMarkerId}
+            />
+          </StyledFilterContainer>
+        ) : null}
+
+        <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
+          {showFilterPane ? String.fromCharCode(10094) : String.fromCharCode(10095)}{' '}
+        </DesktopToggleFilterPaneButton>
+      </StyledFilterWrapper>
+    )
+  }
 
   const renderMap = () => (
     <StyledMapContainer>
@@ -254,7 +291,11 @@ export default function MermaidDash() {
       {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
-      <LoadingIndicator projectData={projectData} />
+      <LoadingIndicator
+        projectData={projectData}
+        showLoadingIndicator={showLoadingIndicator}
+        setShowLoadingIndicator={setShowLoadingIndicator}
+      />
     </StyledMapContainer>
   )
 
@@ -264,7 +305,11 @@ export default function MermaidDash() {
       {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
-      <LoadingIndicator projectData={projectData} />
+      <LoadingIndicator
+        projectData={projectData}
+        showLoadingIndicator={showLoadingIndicator}
+        setShowLoadingIndicator={setShowLoadingIndicator}
+      />
     </StyledTableContainer>
   )
 
@@ -273,13 +318,14 @@ export default function MermaidDash() {
       displayedProjects={displayedProjects}
       showMetricsPane={showMetricsPane}
       setShowMetricsPane={setShowMetricsPane}
+      showLoadingIndicator={showLoadingIndicator}
     />
   )
 
   return (
     <StyledDashboardContainer>
       <Header />
-      <StyledMobileToggleFilterPaneButton onClick={handleShowFilterPane}>
+      <StyledMobileToggleFilterPaneButton onClick={handleShowFilterModal}>
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
