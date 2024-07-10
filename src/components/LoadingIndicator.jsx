@@ -13,12 +13,14 @@ const StyledLoadingContainer = styled('div')`
   z-index: 400;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
-    right: 3rem;
+    left: auto;
     display: flex;
     flex-direction: row;
     width: 90vw;
     justify-content: center;
     background-color: ${theme.color.white};
+    justify-self: center;
+    bottom: 0.5rem;
     justify-self: center;
   `)}
 `
@@ -49,9 +51,8 @@ const StyledHeader = styled('header')`
 `
 
 export default function LoadingIndicator(props) {
-  const { projectData } = props
+  const { projectData, showLoadingIndicator, setShowLoadingIndicator } = props
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
   useEffect(() => {
