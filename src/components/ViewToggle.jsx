@@ -9,8 +9,7 @@ import { formatProjectDataHelper } from '../utils'
 import { CSVLink } from 'react-csv'
 
 const StyledViewToggleContainer = styled('div')`
-  position: absolute;
-  width: 10rem;
+  width: 12.5rem;
   left: 5rem;
   top: 1.3rem;
   z-index: 400;
@@ -19,7 +18,6 @@ const StyledViewToggleContainer = styled('div')`
 `
 
 const ButtonSecondaryWithMargin = styled(ButtonSecondary)`
-  margin-left: 0.1rem;
   display: flex;
   flex-direction: row;
   align-items: center;
