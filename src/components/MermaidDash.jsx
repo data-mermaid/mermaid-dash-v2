@@ -309,9 +309,6 @@ export default function MermaidDash() {
         setView={setView}
         projectDataCount={projectData?.count || 0}
       />
-      {/* {window.innerWidth > mobileWidthThreshold ? (
-        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null} */}
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}

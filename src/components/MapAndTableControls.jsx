@@ -25,7 +25,6 @@ const ControlContainer = styled.div`
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
   padding-left: 2rem;
   padding-right: 2rem;
-  // margin-left: 0.5rem;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
