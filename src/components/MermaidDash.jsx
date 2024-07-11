@@ -289,10 +289,10 @@ export default function MermaidDash() {
         setSelectedMarkerId={setSelectedMarkerId}
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
+        view={view}
+        setView={setView}
+        projectDataCount={projectData?.count || 0}
       />
-      {window.innerWidth > mobileWidthThreshold ? (
-        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}
@@ -303,10 +303,15 @@ export default function MermaidDash() {
 
   const renderTable = () => (
     <StyledTableContainer>
-      <TableView displayedProjects={displayedProjects} />
-      {window.innerWidth > mobileWidthThreshold ? (
+      <TableView
+        displayedProjects={displayedProjects}
+        view={view}
+        setView={setView}
+        projectDataCount={projectData?.count || 0}
+      />
+      {/* {window.innerWidth > mobileWidthThreshold ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
+      ) : null} */}
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}

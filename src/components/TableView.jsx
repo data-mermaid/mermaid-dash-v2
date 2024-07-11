@@ -23,6 +23,7 @@ import {
 import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
 import { formatProjectDataHelper } from '../utils'
 import { useLocation, useNavigate } from 'react-router-dom'
+import MapAndTableControls from './MapAndTableControls'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
@@ -34,7 +35,7 @@ const StyledTableContainer = styled('div')`
 `
 
 const TableView = (props) => {
-  const { displayedProjects } = props
+  const { displayedProjects, view, setView, projectDataCount } = props
   const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
@@ -275,6 +276,12 @@ const TableView = (props) => {
   return (
     <StyledTableContainer>
       <ContentPageLayout toolbar={<H2>"</H2>} content={table} isPageContentLoading={isLoading} />
+      <MapAndTableControls
+        displayedProjects={displayedProjects}
+        view={view}
+        setView={setView}
+        projectDataCount={projectDataCount}
+      />
     </StyledTableContainer>
   )
 }
