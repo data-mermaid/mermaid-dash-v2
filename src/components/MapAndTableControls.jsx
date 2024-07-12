@@ -18,7 +18,7 @@ const ControlContainer = styled.div`
   gap: 0.5rem;
   ${mediaQueryTabletLandscapeOnly(css`
     top: 1rem;
-    left: 8rem;
+    left: 8.5rem;
   `)}
 `
 
@@ -93,17 +93,12 @@ export default function MapAndTableControls(props) {
     return queryParams.has('sample_event_id')
   }
 
-  const clearFilters = () => {
-    console.log('clearing filters')
-  }
-
   return (
     <ControlContainer>
       {isAnyActiveFilters() ? (
         <FilterIndicatorPill
           searchFilteredRowLength={displayedProjects.length}
           unfilteredRowLength={projectDataCount}
-          clearFilters={clearFilters}
         />
       ) : null}
       {window.innerWidth > mobileWidthThreshold ? (
