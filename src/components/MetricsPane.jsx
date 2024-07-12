@@ -4,6 +4,7 @@ import PropTypes from 'prop-types'
 import { mediaQueryTabletLandscapeOnly, hoverState } from '../styles/mediaQueries'
 import theme from '../theme'
 import { ButtonSecondary } from './generic/buttons'
+import { IconCaretUp, IconCaretDown } from './dashboardOnlyIcons'
 
 const mobileWidthThreshold = 960
 
@@ -55,6 +56,20 @@ const SummarizedMetrics = styled('div')`
   `)}
 `
 
+const BiggerIconCaretUp = styled(IconCaretUp)`
+  width: ${theme.typography.largeIconSize};
+  height: ${theme.typography.largeIconSize};
+  top: 0.7rem;
+  position: relative;
+`
+
+const BiggerIconCaretDown = styled(IconCaretDown)`
+  width: ${theme.typography.largeIconSize};
+  height: ${theme.typography.largeIconSize};
+  top: 0.7rem;
+  position: relative;
+`
+
 const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
@@ -71,6 +86,13 @@ const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
 
 const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   display: none;
+  ${hoverState(css`
+    ${(props) =>
+      props.showMobileExpandedMetricsPane
+        ? `background-color: ${theme.color.grey1};`
+        : 'background-color: transparent'}
+  `)}
+
   ${mediaQueryTabletLandscapeOnly(css`
     font-size: ${theme.typography.largeIconSize};
     display: block;
@@ -245,8 +267,9 @@ export default function MetricsPane(props) {
         <MobileExpandMetricsPaneButton
           onClick={handleShowMobileExpandedMetricsPane}
           showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+          aria-label={showMobileExpandedMetricsPane ? 'Collapse Metrics' : 'Expand Metrics'}
         >
-          {showMobileExpandedMetricsPane ? String.fromCharCode(8964) : String.fromCharCode(8963)}
+          {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}
         </MobileExpandMetricsPaneButton>
       )}
     </StyledMetricsWrapper>
