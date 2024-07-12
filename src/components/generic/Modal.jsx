@@ -25,7 +25,7 @@ const StyledDialog = styled('div')`
   width: ${(props) => props.modalCustomWidth};
   max-width: 96rem;
   background: ${theme.color.tableRowEven};
-  max-height: 98vh;
+  ${(props) => props.modalCustomHeight !== '' && `height: ${props.modalCustomHeight};`}
   display: grid;
   grid-template-rows: auto auto 1fr auto;
 `
@@ -44,6 +44,8 @@ const ModalTitle = styled.div`
     justify-self: end;
   }
 `
+
+const EmptyModalTitle = styled.div``
 
 const ModalToolbar = styled.div`
   padding: 0 ${theme.spacing.medium};
@@ -122,6 +124,7 @@ const Modal = ({
   modalCustomWidth = '50vw',
   modalOmitTitle = false,
   modalContentCustomHeight = '80vh',
+  modalCustomHeight = '',
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
     const close = (event) => {
@@ -143,8 +146,11 @@ const Modal = ({
           aria-labelledby="modal-title"
           aria-describedby="modal-content"
           modalCustomWidth={modalCustomWidth}
+          modalCustomHeight={modalCustomHeight}
         >
-          {modalOmitTitle ? null : (
+          {modalOmitTitle ? (
+            <EmptyModalTitle></EmptyModalTitle>
+          ) : (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
               <CloseButton type="button" className="close-button" onClick={onDismiss}>

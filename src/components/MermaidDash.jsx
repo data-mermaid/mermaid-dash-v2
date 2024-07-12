@@ -257,9 +257,10 @@ export default function MermaidDash() {
         title=""
         mainContent={modalContent}
         footerContent={footerContent}
-        modalCustomWidth={'auto'}
+        modalCustomWidth={'100vw'}
         modalContentCustomHeight={'90dvh'}
         modalOmitTitle={true}
+        modalCustomHeight={'100dvh'}
       />
     ) : (
       <StyledFilterWrapper showFilterPane={showFilterPane}>
