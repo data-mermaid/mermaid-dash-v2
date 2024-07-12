@@ -13,6 +13,7 @@ import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../library/usePrevious'
 import theme from '../theme'
 import MapAndTableControls from './MapAndTableControls'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -39,16 +40,8 @@ const isValidZoom = (zoom) => {
 }
 
 export default function LeafletMap(props) {
-  const {
-    displayedProjects,
-    selectedMarkerId,
-    setSelectedMarkerId,
-    showFilterPane,
-    showMetricsPane,
-    view,
-    setView,
-    projectDataCount,
-  } = props
+  const { showFilterPane, showMetricsPane, view, setView, projectDataCount } = props
+  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -67,7 +60,6 @@ export default function LeafletMap(props) {
   const prevShowFilterPane = usePrevious(showFilterPane)
   const prevShowMetricsPane = usePrevious(showMetricsPane)
   const [markers, setMarkers] = useState(null)
-  const [map, setMap] = useState(null)
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -186,13 +178,7 @@ export default function LeafletMap(props) {
   ])
 
   return (
-    <MapContainer
-      center={mapCenter}
-      zoom={mapZoom}
-      scrollWheelZoom={true}
-      maxZoom={20}
-      ref={setMap}
-    >
+    <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
       <MapEventListener />
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
@@ -212,9 +198,6 @@ export default function LeafletMap(props) {
 
 LeafletMap.propTypes = {
   // TODO: Add more detail here. What is the shape of the objects in the array?
-  displayedProjects: PropTypes.array,
-  selectedMarkerId: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
-  setSelectedMarkerId: PropTypes.func.isRequired,
   showFilterPane: PropTypes.bool.isRequired,
   showMetricsPane: PropTypes.bool.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,

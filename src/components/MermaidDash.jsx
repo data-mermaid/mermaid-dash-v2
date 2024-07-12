@@ -1,12 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import Header from './Header/Header'
-import { useAuth0 } from '@auth0/auth0-react'
 import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
-import ViewToggle from './ViewToggle'
 import TableView from './TableView'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MetricsPane from './MetricsPane'
@@ -14,6 +12,7 @@ import theme from '../theme'
 import { IconFilter } from './icons'
 import { ButtonSecondary } from './generic/buttons'
 import Modal from './generic/Modal'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -126,75 +125,14 @@ const MobileFooterContainer = styled('div')`
 const mobileWidthThreshold = 960
 
 export default function MermaidDash() {
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [projectData, setProjectData] = useState({})
-  const [displayedProjects, setDisplayedProjects] = useState([])
+  const { projectData, displayedProjects } = useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
-  const queryParams = new URLSearchParams(location.search)
-  const queryParamsSampleEventId = queryParams.get('sample_event_id')
-  const initialSelectedMarker =
-    queryParamsSampleEventId !== null
-      ? {
-          options: {
-            sample_event_id: queryParamsSampleEventId,
-          },
-        }
-      : null
-  const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
-
-  const fetchData = async (token = '') => {
-    try {
-      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
-
-      while (nextPageUrl !== null) {
-        const response = await fetch(nextPageUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        if (response.ok) {
-          const data = await response.json()
-          setProjectData((prevData) => {
-            return {
-              ...prevData,
-              count: data.count,
-              next: data.next,
-              previous: data.previous,
-              results: prevData.results
-                ? [...prevData.results, ...data.results]
-                : [...data.results],
-            }
-          })
-          nextPageUrl = data.next
-        } else {
-          console.error('Failed to fetch data:', response.status)
-          break
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
-  }
-
-  useEffect(() => {
-    if (isLoading) {
-      return
-    }
-
-    if (!isAuthenticated) {
-      fetchData()
-    } else {
-      getAccessTokenSilently()
-        .then((token) => fetchData(token))
-        .catch((error) => console.error('Error getting access token:', error))
-    }
-  }, [isLoading, isAuthenticated, getAccessTokenSilently])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -233,14 +171,7 @@ export default function MermaidDash() {
   }
 
   const renderFilter = () => {
-    const modalContent = (
-      <FilterPane
-        projectData={projectData}
-        displayedProjects={displayedProjects}
-        setDisplayedProjects={setDisplayedProjects}
-        setSelectedMarkerId={setSelectedMarkerId}
-      />
-    )
+    const modalContent = <FilterPane />
 
     const footerContent = (
       <MobileFooterContainer>
@@ -265,12 +196,7 @@ export default function MermaidDash() {
       <StyledFilterWrapper showFilterPane={showFilterPane}>
         {showFilterPane ? (
           <StyledFilterContainer>
-            <FilterPane
-              projectData={projectData}
-              displayedProjects={displayedProjects}
-              setDisplayedProjects={setDisplayedProjects}
-              setSelectedMarkerId={setSelectedMarkerId}
-            />
+            <FilterPane />
           </StyledFilterContainer>
         ) : null}
 
@@ -284,9 +210,6 @@ export default function MermaidDash() {
   const renderMap = () => (
     <StyledMapContainer>
       <LeafletMap
-        displayedProjects={displayedProjects}
-        selectedMarkerId={selectedMarkerId}
-        setSelectedMarkerId={setSelectedMarkerId}
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
         view={view}

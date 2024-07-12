@@ -8,9 +8,7 @@ import {
   TextField,
   IconButton,
 } from '@mui/material'
-import dayjs from 'dayjs'
 import { filterPane } from '../constants/language'
-import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -18,6 +16,7 @@ import { IconClose } from './icons'
 import theme from '../theme'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { css } from 'styled-components'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -40,37 +39,6 @@ const collectionMethods = [
   { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
   { name: 'habitatcomplexity', description: 'Habitat Complexity' },
 ]
-
-const isValidDateFormat = (dateString) => {
-  // Regular expression to match the date format YYYY-MM-DD
-  const regex = /^(\d{4})-(\d{2})-(\d{2})$/
-  const match = dateString.match(regex)
-
-  if (!match) {
-    return false
-  }
-
-  const year = parseInt(match[1], 10)
-  const month = parseInt(match[2], 10)
-  const day = parseInt(match[3], 10)
-
-  const currentYear = new Date().getFullYear()
-  if (year < 1900 || year > currentYear) {
-    return false
-  }
-
-  if (month < 1 || month > 12) {
-    return false
-  }
-
-  // Check if the day is valid for the given month and year
-  const date = new Date(year, month - 1, day)
-  if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
-    return false
-  }
-
-  return true
-}
 
 const deleteIconSize = {
   height: '15px',
@@ -215,25 +183,35 @@ const StyledMenuItem = styled(MenuItem)`
   }
 `
 
-export default function FilterPane({
-  projectData,
-  displayedProjects,
-  setDisplayedProjects,
-  setSelectedMarkerId,
-}) {
+export default function FilterPane() {
   const [countries, setCountries] = useState([])
-  const [selectedCountries, setSelectedCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
-  const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
-  const [projectNameFilter, setProjectNameFilter] = useState('')
-  const [sampleDateAfter, setSampleDateAfter] = useState('')
-  const [sampleDateBefore, setSampleDateBefore] = useState('')
-  const [dataSharingFilter, setDataSharingFilter] = useState(false)
-  const [methodFilters, setMethodFilters] = useState([])
-  const [checkedProjects, setCheckedProjects] = useState([])
   const navigate = useNavigate()
   const location = useLocation()
+  const {
+    projectData,
+    displayedProjects,
+    selectedCountries,
+    setSelectedCountries,
+    selectedOrganizations,
+    setSelectedOrganizations,
+    sampleDateAfter,
+    sampleDateBefore,
+    dataSharingFilter,
+    methodFilters,
+    projectNameFilter,
+    checkedProjects,
+    setCheckedProjects,
+    handleSelectedCountriesChange,
+    handleSelectedOrganizationsChange,
+    formattedDate,
+    handleChangeSampleDateAfter,
+    handleChangeSampleDateBefore,
+    handleDataSharingFilter,
+    handleMethodFilter,
+    handleProjectNameFilter,
+  } = useFilterProjectsContext()
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -264,133 +242,6 @@ export default function FilterPane({
     setOrganizations(uniqueOrganizations)
   }, [projectData.results])
 
-  const _filterProjectRecords = useEffect(() => {
-    if (!projectData.results) {
-      return
-    }
-
-    const fallbackSampleDateAfter = new Date('1970-01-01')
-    const fallbackSampleDateBefore = new Date(Date.now())
-
-    const filteredProjects = projectData.results
-      .map((project) => {
-        // Filter project if sample date falls within selected date range
-        if (!sampleDateAfter && !sampleDateBefore) {
-          return project
-        }
-        const beginDate = sampleDateAfter || fallbackSampleDateAfter
-        const finishDate = sampleDateBefore || fallbackSampleDateBefore
-        return {
-          ...project,
-          records: project.records.filter((record) => {
-            const recordDate = new Date(record.sample_date)
-            return recordDate <= new Date(finishDate) && recordDate >= new Date(beginDate)
-          }),
-        }
-      })
-      .map((project) => {
-        // Filter projects based on data sharing policy
-        if (dataSharingFilter) {
-          const policies = [
-            'data_policy_beltfish',
-            'data_policy_benthiclit',
-            'data_policy_benthicpit',
-            'data_policy_benthicpqt',
-            'data_policy_bleachingqc',
-            'data_policy_habitatcomplexity',
-          ]
-          return {
-            ...project,
-            records: project.records.filter((record) =>
-              policies.some((policy) => record[policy] === 'public summary'),
-            ),
-          }
-        } else {
-          return project
-        }
-      })
-      .map((project) => {
-        // Filter projects based on collection method
-        if (methodFilters.length === 0) {
-          return project
-        } else {
-          return {
-            ...project,
-            records: project.records.filter((record) =>
-              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
-            ),
-          }
-        }
-      })
-      .filter((project) => {
-        // Filter by selected countries
-        const matchesSelectedCountries =
-          selectedCountries.length === 0 ||
-          selectedCountries.includes(project.records[0]?.country_name)
-
-        // Filter by selected organizations
-        const matchesSelectedOrganizations =
-          selectedOrganizations.length === 0 ||
-          project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
-
-        // Filter by project name
-        const matchesProjectName =
-          projectNameFilter === '' ||
-          project.records[0]?.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
-
-        // Filter out projects with empty records
-        const nonEmptyRecords = project.records.length > 0
-
-        return (
-          matchesSelectedCountries &&
-          matchesSelectedOrganizations &&
-          matchesProjectName &&
-          nonEmptyRecords
-        )
-      })
-
-    const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
-    const queryParams = new URLSearchParams(location.search)
-    const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
-
-    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
-
-    setDisplayedProjects(
-      filteredProjects.sort((a, b) =>
-        a.records[0]?.project_name.localeCompare(b.records[0]?.project_name),
-      ),
-    )
-    setCheckedProjects([...filteredIds])
-  }, [
-    projectData.results,
-    selectedCountries,
-    selectedOrganizations,
-    projectNameFilter,
-    sampleDateAfter,
-    sampleDateBefore,
-    dataSharingFilter,
-    methodFilters,
-    setDisplayedProjects,
-  ])
-
-  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
-    const queryParams = getURLParams()
-    let displaySelectedSampleEvent = false
-    filteredProjects.forEach((project) => {
-      project.records.forEach((record) => {
-        if (record.sample_event_id === sampleEventId) {
-          displaySelectedSampleEvent = true
-        }
-      })
-    })
-    if (!displaySelectedSampleEvent) {
-      queryParams.delete('sample_event_id')
-      setSelectedMarkerId(null)
-      updateURLParams(queryParams)
-    }
-  }
-
   const getURLParams = useCallback(() => {
     return new URLSearchParams(location.search)
   }, [location.search])
@@ -402,189 +253,12 @@ export default function FilterPane({
     [navigate, location.pathname],
   )
 
-  const formatEndDate = (date) => {
-    return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
-  }
-
-  const _getUrlParams = useEffect(() => {
-    const queryParams = getURLParams()
-
-    const setFilterValue = (primaryKey, secondaryKey, setValue) => {
-      if (queryParams.has(primaryKey)) {
-        setValue(queryParams.getAll(primaryKey)[0].split(','))
-      } else if (queryParams.has(secondaryKey)) {
-        setValue(queryParams.getAll(secondaryKey)[0].split(','))
-      }
-    }
-
-    const handleDateFilter = (key, setDate, formatFn) => {
-      if (queryParams.has(key)) {
-        const dateValue = queryParams.get(key)
-        if (isValidDateFormat(dateValue)) {
-          setDate(formatFn(dateValue))
-        } else {
-          queryParams.delete(key)
-          updateURLParams(queryParams)
-        }
-      }
-    }
-
-    const handleMethodsFilter = () => {
-      if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
-        const queryParamsMethods = queryParams.has('method')
-          ? queryParams.getAll('method')[0].split(',')
-          : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
-        const validMethods = queryParamsMethods.filter((method) => {
-          return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
-        })
-        setMethodFilters(validMethods)
-        if (validMethods.length === 0) {
-          queryParams.delete('method')
-          queryParams.delete(URL_PARAMS.METHODS)
-        } else {
-          queryParams.set(URL_PARAMS.METHODS, validMethods)
-        }
-        updateURLParams(queryParams)
-      }
-    }
-
-    const handleProjectNameFilter = () => {
-      if (queryParams.has(URL_PARAMS.PROJECTS)) {
-        setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
-      } else if (queryParams.has('project')) {
-        setProjectNameFilter(queryParams.get('project'))
-      }
-    }
-
-    const handleDataSharingFilter = () => {
-      if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
-        if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
-          setDataSharingFilter(true)
-        } else {
-          queryParams.delete(URL_PARAMS.DATA_SHARING)
-          updateURLParams(queryParams)
-        }
-      }
-    }
-
-    setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
-    setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
-    handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
-      formattedDate(dayjs(date)),
-    )
-    handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
-    handleMethodsFilter()
-    handleProjectNameFilter()
-    handleDataSharingFilter()
-  }, [getURLParams, updateURLParams])
-
-  const handleSelectedCountriesChange = (event) => {
-    const queryParams = getURLParams()
-    const selectedCountries = event.target.value
-    if (selectedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
-    } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
-    }
-    queryParams.delete('country')
-    updateURLParams(queryParams)
-    setSelectedCountries(selectedCountries)
-  }
-
-  const handleSelectedOrganizationsChange = (event) => {
-    const queryParams = getURLParams()
-    const selectedOrganizations = event.target.value
-    if (selectedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
-    } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
-    }
-    queryParams.delete('organization')
-    updateURLParams(queryParams)
-    setSelectedOrganizations(selectedOrganizations)
-  }
-
-  const handleProjectNameFilter = (event) => {
-    const queryParams = getURLParams()
-    const projectName = event.target.value
-    if (projectName.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECTS)
-    } else {
-      queryParams.set(URL_PARAMS.PROJECTS, projectName)
-    }
-    queryParams.delete('project')
-    updateURLParams(queryParams)
-    setProjectNameFilter(projectName)
-  }
-
-  const handleDataSharingFilter = (event) => {
-    const queryParams = getURLParams()
-    const { checked } = event.target
-    if (!checked) {
-      queryParams.delete(URL_PARAMS.DATA_SHARING)
-    } else {
-      queryParams.set(URL_PARAMS.DATA_SHARING, checked)
-    }
-    updateURLParams(queryParams)
-    setDataSharingFilter(checked)
-  }
-
-  const formattedDate = (date) => {
-    return !date ? '' : dayjs(date).format('YYYY-MM-DD')
-  }
-
-  const handleChangeSampleDateAfter = (sampleDateAfter) => {
-    const queryParams = getURLParams()
-    if (sampleDateAfter === '') {
-      queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
-      setSampleDateAfter('')
-    } else {
-      const formattedSampleDateAfter = formattedDate(sampleDateAfter)
-      queryParams.set(URL_PARAMS.SAMPLE_DATE_AFTER, formattedSampleDateAfter)
-      setSampleDateAfter(dayjs(sampleDateAfter))
-    }
-    updateURLParams(queryParams)
-  }
-
-  const handleChangeSampleDateBefore = (sampleDateBefore) => {
-    const queryParams = getURLParams()
-    if (sampleDateBefore === '') {
-      queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
-      setSampleDateBefore('')
-    } else {
-      const formattedSampleDateBefore = formattedDate(sampleDateBefore)
-      queryParams.set(URL_PARAMS.SAMPLE_DATE_BEFORE, formattedSampleDateBefore)
-      setSampleDateBefore(formatEndDate(sampleDateBefore))
-    }
-    updateURLParams(queryParams)
-  }
-
   const handleClearSampleDateAfter = () => {
     handleChangeSampleDateAfter('')
   }
 
   const handleClearSampleDateBefore = () => {
     handleChangeSampleDateBefore('')
-  }
-
-  const handleMethodFilter = (event) => {
-    let updatedMethodFilters
-    const { checked, name } = event.target
-    if (checked) {
-      updatedMethodFilters = [...methodFilters, name]
-    } else {
-      updatedMethodFilters = methodFilters.filter((method) => method !== name)
-    }
-
-    const queryParams = getURLParams()
-    if (updatedMethodFilters.length === 0) {
-      queryParams.delete(URL_PARAMS.METHODS)
-    } else {
-      queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
-    }
-    queryParams.delete('method')
-    updateURLParams(queryParams)
-    setMethodFilters(updatedMethodFilters)
   }
 
   const handleDeleteCountry = (country) => {
@@ -799,10 +473,4 @@ export default function FilterPane({
       </StyledProjectListContainer>
     </StyledFilterPaneContainer>
   )
-}
-
-FilterPane.propTypes = {
-  projectData: PropTypes.object.isRequired,
-  displayedProjects: PropTypes.array.isRequired,
-  setDisplayedProjects: PropTypes.func.isRequired,
 }
