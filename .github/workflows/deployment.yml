@@ -5,7 +5,7 @@ on:
     branches:
       - develop
     tags:
-      - "v*.*.*"
+      - 'v*.*.*'
 jobs:
   deploy_develop:
     if: github.ref == 'refs/heads/develop'
@@ -24,6 +24,7 @@ jobs:
       # vite_react_app_auth0_audience: https://dev-api.datamermaid.org
       # vite_react_app_mermaid_dashboard_link: https://dev-dashboard.datamermaid.org
       # vite_react_app_mermaid_api_endcpoint: https://dev-api.datamermaid.org/v1/projectsummarysampleevents
+      vite_react_app_esri_tiles_url: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
 
   deploy_production:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -37,3 +38,4 @@ jobs:
       vite_react_app_auth0_audience: https://api.datamermaid.org
       vite_react_app_mermaid_dashboard_link: https://app.datamermaid.org
       vite_react_app_mermaid_api_endcpoint: https://api.datamermaid.org/v1/projectsummarysampleevents
+      vite_react_app_esri_tiles_url: https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}
