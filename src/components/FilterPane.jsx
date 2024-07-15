@@ -14,7 +14,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose } from './icons'
+import { IconClose, IconUser } from './icons'
 import theme from '../theme'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { css } from 'styled-components'
@@ -220,6 +220,7 @@ export default function FilterPane({
   displayedProjects,
   setDisplayedProjects,
   setSelectedMarkerId,
+  mermaidUserData,
 }) {
   const [countries, setCountries] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
@@ -624,6 +625,11 @@ export default function FilterPane({
     setCheckedProjects(updatedCheckedProjects)
   }
 
+  const userIsMemberOfProject = (projectId) => {
+    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+    return projectsUserIsMemberOf.includes(projectId)
+  }
+
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
@@ -790,7 +796,8 @@ export default function FilterPane({
                   onChange={() => handleCheckProject(project.project_id)}
                 />{' '}
                 <label htmlFor={`checkbox-${project.project_id}`}>
-                  {project.records[0]?.project_name}
+                  {project.records[0]?.project_name}{' '}
+                  {userIsMemberOfProject(project.project_id) && <IconUser />}
                 </label>
               </li>
             )
