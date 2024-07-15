@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import MermaidLogo from '../../styles/Icons/mermaid-dashboard-logo.svg'
 import { useAuth0 } from '@auth0/auth0-react'
 import ShareViewModal from '../ShareViewModal'
@@ -24,13 +24,24 @@ import { LoginIcon } from '../dashboardOnlyIcons'
 import { IconDown } from '../icons'
 import { headerText, dataDisclaimer } from '../../constants/language'
 import DataDisclaimer from '../DataDisclaimer'
-import { useLocation } from 'react-router-dom'
 
 const Header = () => {
-  const { user, isAuthenticated, loginWithRedirect, logout } = useAuth0()
-  const location = useLocation()
+  const { user, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0()
   const [hasImageError, setHasImageError] = useState(false)
   const [showDisclaimer, setShowDisclaimer] = useState(false)
+
+  useEffect(() => {
+    const silentAuth = async () => {
+      try {
+        await getAccessTokenSilently()
+      } catch (error) {
+        console.error('Silent authentication error:', error)
+      }
+    }
+    if (!isAuthenticated) {
+      silentAuth()
+    }
+  }, [isAuthenticated, getAccessTokenSilently, loginWithRedirect])
 
   const handleImageError = () => {
     setHasImageError(true)
