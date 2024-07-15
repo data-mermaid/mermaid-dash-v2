@@ -52,8 +52,6 @@ jobs:
           VITE_REACT_APP_AUTH0_AUDIENCE: ${{ inputs.vite_react_app_auth0_audience }}
           VITE_REACT_APP_MERMAID_DASHBOARD_LINK: ${{ inputs.vite_react_app_mermaid_dashboard_link }}
           VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
-          VITE_REACT_APP_ESRI_TILES_URL: ${{ inputs.vite_react_app_esri_tiles_url }}
-
       - name: Deploy
         uses: youyo/aws-cdk-github-actions@v2
         with:

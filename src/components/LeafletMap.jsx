@@ -291,7 +291,7 @@ export default function LeafletMap(props) {
       >
         {markers}
       </MarkerClusterGroup>
-      <TileLayer url={import.meta.env.VITE_REACT_APP_ESRI_TILES_URL} />
+      <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
     </MapContainer>
   )
 }
