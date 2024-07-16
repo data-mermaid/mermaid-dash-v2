@@ -26,14 +26,15 @@ const StyledDialog = styled('div')`
   max-width: 96rem;
   background: ${theme.color.tableRowEven};
   ${(props) => props.modalCustomHeight !== '' && `height: ${props.modalCustomHeight};`}
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  display: flex;
+  flex-direction: column;
 `
 const ModalTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 3rem ${theme.spacing.medium} 0 3rem;
-  display: grid;
   color: ${theme.color.textColor};
-  grid-template-columns: auto auto;
   h2 {
     justify-self: start;
     align-self: center;
@@ -45,8 +46,6 @@ const ModalTitle = styled.div`
   }
 `
 
-const EmptyModalTitle = styled.div``
-
 const ModalToolbar = styled.div`
   padding: 0 ${theme.spacing.medium};
 `
@@ -56,9 +55,9 @@ const ModalContent = styled.div`
     css`
       overflow: auto;
     `}
-  max-height: ${(props) => props.modalContentCustomHeight};
   padding: ${theme.spacing.medium};
   padding-bottom: 3rem;
+  flex-grow: 1;
 `
 const ModalFooter = styled.div`
   padding: ${theme.spacing.medium};
@@ -122,7 +121,6 @@ const Modal = ({
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
   modalCustomWidth = '50vw',
-  modalOmitTitle = false,
   modalContentCustomHeight = '80vh',
   modalCustomHeight = '',
 }) => {
@@ -148,16 +146,14 @@ const Modal = ({
           modalCustomWidth={modalCustomWidth}
           modalCustomHeight={modalCustomHeight}
         >
-          {modalOmitTitle ? (
-            <EmptyModalTitle></EmptyModalTitle>
-          ) : (
+          {title ? (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
               <CloseButton type="button" className="close-button" onClick={onDismiss}>
                 <IconClose aria-label="close" />
               </CloseButton>
             </ModalTitle>
-          )}
+          ) : null}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
           <ModalContent
             contentOverflowIsVisible={contentOverflowIsVisible}
