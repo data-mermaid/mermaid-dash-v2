@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
+import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import 'leaflet.markercluster'
@@ -17,10 +17,10 @@ import { ButtonSecondary } from './generic/buttons'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import useResponsive from '../library/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
-const mobileWidthThreshold = 960
 
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
   padding-left: 2rem;
@@ -92,6 +92,7 @@ export default function LeafletMap(props) {
   const prevShowMetricsPane = usePrevious(showMetricsPane)
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
+  const { isMobileWidth, isDesktopWidth } = useResponsive()
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -149,15 +150,6 @@ export default function LeafletMap(props) {
     return queryParams.has('sample_event_id')
   }
 
-  const toggleMapZoomControls = (map) => {
-    if (window.innerWidth > mobileWidthThreshold) {
-      map.zoomControl.setPosition('bottomright')
-      map.zoomControl.addTo(map)
-    } else {
-      map.zoomControl.remove()
-    }
-  }
-
   function MapEventListener() {
     const map = useMapEvents({
       moveend: () => {
@@ -170,28 +162,42 @@ export default function LeafletMap(props) {
         updateURLParams(queryParams)
         setMapCenter([lat, lng])
         setMapZoom(zoom)
-        toggleMapZoomControls(map)
       },
     })
+    return null
+  }
 
-    if (window.innerWidth >= mobileWidthThreshold) {
-      map.attributionControl.setPrefix('Leaflet')
-    } else {
-      map.attributionControl.setPrefix(false)
+  const MapResizeListener = () => {
+    const map = useMap()
+
+    const toggleMapZoomControls = (map) => {
+      if (isDesktopWidth) {
+        map.zoomControl.setPosition('bottomright')
+        map.zoomControl.addTo(map)
+      } else {
+        map.zoomControl.remove()
+      }
     }
 
-    const showFilterPaneChanged = showFilterPane !== prevShowFilterPane
-    const showMetricsPaneChanged = showMetricsPane !== prevShowMetricsPane
+    const toggleMapAttribution = (map) => {
+      if (isDesktopWidth) {
+        map.attributionControl.setPrefix('Leaflet')
+      } else {
+        map.attributionControl.setPrefix(false)
+      }
+    }
 
-    if (showFilterPaneChanged || showMetricsPaneChanged) {
-      // Force map to load more tiles when panes are shown/hidden. A timeout is required
+    const _forceLoadMoreTiles = useEffect(() => {
       setTimeout(() => {
         map.invalidateSize()
-      }, 10)
-    }
+      })
+    }, [showFilterPane, showMetricsPane])
 
     toggleMapZoomControls(map)
+    toggleMapAttribution(map)
+  }
 
+  const MapAndTableControlsWrapper = () => {
     return (
       <ControlContainer>
         {isAnyActiveFilters() ? (
@@ -200,7 +206,7 @@ export default function LeafletMap(props) {
             aria-labelledby="Zoom to filtered data button"
           >
             <img src={zoomToFiltered} alt="Zoom to filtered data" />
-            {window.innerWidth > mobileWidthThreshold ? <span>Filtered Data</span> : null}
+            {isDesktopWidth ? <span>Filtered Data</span> : null}
           </ZoomToSecondaryButton>
         ) : null}
         {hasSelectedSite() ? (
@@ -209,7 +215,7 @@ export default function LeafletMap(props) {
             aria-labelledby="Zoom to selected site button"
           >
             <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-            {window.innerWidth > mobileWidthThreshold ? <span>Selected Site</span> : null}
+            {isDesktopWidth ? <span>Selected Site</span> : null}
           </ZoomToSecondaryButton>
         ) : null}
       </ControlContainer>
@@ -280,6 +286,8 @@ export default function LeafletMap(props) {
       ref={setMap}
     >
       <MapEventListener />
+      <MapResizeListener />
+      <MapAndTableControlsWrapper />
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
         chunkedLoading
