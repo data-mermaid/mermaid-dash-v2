@@ -93,7 +93,7 @@ export default function LeafletMap(props) {
   const { isDesktopWidth } = useResponsive()
 
   const _loadTilesWhenPanelsToggled = useEffect(() => {
-      map?.invalidateSize()
+    map?.invalidateSize()
   }, [map, showFilterPane, showMetricsPane])
 
   const updateURLParams = useCallback(
@@ -152,7 +152,19 @@ export default function LeafletMap(props) {
     return queryParams.has('sample_event_id')
   }
 
-  function MapEventListener() {
+  const toggleMapZoomControlAndAttribution = () => {
+    if (!map) return
+    if (isDesktopWidth) {
+      map.attributionControl.setPrefix('Leaflet')
+      map.zoomControl.setPosition('bottomright')
+      map.zoomControl.addTo(map)
+    } else {
+      map.attributionControl.setPrefix(false)
+      map.zoomControl.remove()
+    }
+  }
+
+  const MapEventListener = () => {
     const map = useMapEvents({
       moveend: () => {
         const { lat, lng } = map.getCenter()
@@ -166,20 +178,11 @@ export default function LeafletMap(props) {
         setMapZoom(zoom)
       },
       resize: () => {
-        if (isDesktopWidth) {
-          map.zoomControl.setPosition('bottomright')
-          map.zoomControl.addTo(map)
-        } else {
-          map.zoomControl.remove()
-        }
-
-        if (isDesktopWidth) {
-          map.attributionControl.setPrefix('Leaflet')
-        } else {
-          map.attributionControl.setPrefix(false)
-        }
-      }
+        toggleMapZoomControlAndAttribution()
+      },
     })
+
+    toggleMapZoomControlAndAttribution()
     return null
   }
 
@@ -261,6 +264,7 @@ export default function LeafletMap(props) {
     selectedMarkerId,
     prevSelectedMarkerId,
     updateURLParams,
+    setSelectedMarkerId,
   ])
 
   return (
