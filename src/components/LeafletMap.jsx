@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { CircleMarker, MapContainer, Marker, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { CircleMarker, MapContainer, Marker, TileLayer, useMapEvents } from 'react-leaflet'
 import MarkerClusterGroup from 'react-leaflet-cluster'
 import L from 'leaflet'
 import 'leaflet.markercluster'
@@ -88,11 +88,13 @@ export default function LeafletMap(props) {
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
-  const prevShowFilterPane = usePrevious(showFilterPane)
-  const prevShowMetricsPane = usePrevious(showMetricsPane)
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
-  const { isMobileWidth, isDesktopWidth } = useResponsive()
+  const { isDesktopWidth } = useResponsive()
+
+  const _loadTilesWhenPanelsToggled = useEffect(() => {
+      map?.invalidateSize()
+  }, [map, showFilterPane, showMetricsPane])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -163,38 +165,22 @@ export default function LeafletMap(props) {
         setMapCenter([lat, lng])
         setMapZoom(zoom)
       },
+      resize: () => {
+        if (isDesktopWidth) {
+          map.zoomControl.setPosition('bottomright')
+          map.zoomControl.addTo(map)
+        } else {
+          map.zoomControl.remove()
+        }
+
+        if (isDesktopWidth) {
+          map.attributionControl.setPrefix('Leaflet')
+        } else {
+          map.attributionControl.setPrefix(false)
+        }
+      }
     })
     return null
-  }
-
-  const MapResizeListener = () => {
-    const map = useMap()
-
-    const toggleMapZoomControls = (map) => {
-      if (isDesktopWidth) {
-        map.zoomControl.setPosition('bottomright')
-        map.zoomControl.addTo(map)
-      } else {
-        map.zoomControl.remove()
-      }
-    }
-
-    const toggleMapAttribution = (map) => {
-      if (isDesktopWidth) {
-        map.attributionControl.setPrefix('Leaflet')
-      } else {
-        map.attributionControl.setPrefix(false)
-      }
-    }
-
-    const _forceLoadMoreTiles = useEffect(() => {
-      setTimeout(() => {
-        map.invalidateSize()
-      })
-    }, [showFilterPane, showMetricsPane])
-
-    toggleMapZoomControls(map)
-    toggleMapAttribution(map)
   }
 
   const MapAndTableControlsWrapper = () => {
@@ -222,7 +208,7 @@ export default function LeafletMap(props) {
     )
   }
 
-  const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
+  const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
 
@@ -286,7 +272,6 @@ export default function LeafletMap(props) {
       ref={setMap}
     >
       <MapEventListener />
-      <MapResizeListener />
       <MapAndTableControlsWrapper />
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
