@@ -2,7 +2,6 @@ import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import { mediaQueryPhoneOnly, mediaQueryTabletLandscapeOnly } from '../../../../styles/mediaQueries'
 import theme from '../../../../theme'
-import { Column } from '../../../generic/positioning'
 
 const contentPadding = theme.spacing.xsmall
 const MainContentPageLayout = styled('div')`
@@ -21,24 +20,10 @@ const contentStyles = css`
   background: ${theme.color.white};
 `
 
-const ContentToolbar = styled('div')`
-  ${contentStyles};
-  padding: ${theme.spacing.small} ${theme.spacing.medium};
-  // border-bottom: solid ${theme.spacing.borderMedium} ${theme.color.backgroundColor};
-  margin-bottom: 0;
-  z-index: 100;
-  ${(props) =>
-    props.isToolbarSticky &&
-    css`
-      position: sticky;
-      top: ${theme.spacing.headerHeight};
-    `}
-`
-
 const Content = styled('div')`
   ${contentStyles};
-  margin-top: 0px;
-  height: calc(100%);
+  padding-top: 7.9rem;
+  height: 100%;
 `
 
 const ContentPageToolbarWrapper = styled('div')`
@@ -55,25 +40,13 @@ const ContentPageToolbarWrapper = styled('div')`
   `)}
 `
 
-const ContentPageLayout = ({
-  content,
-  toolbar = undefined,
-  isPageContentLoading = false,
-  isToolbarSticky = false,
-  subNavNode = null,
-}) => {
+const ContentPageLayout = ({ content }) => {
   return (
     <>
       <MainContentPageLayout>
         <NavAndContentLayout>
-          <Column></Column>
           <ContentWrapper>
-            <>
-              {toolbar && (
-                <ContentToolbar isToolbarSticky={isToolbarSticky}>{toolbar}</ContentToolbar>
-              )}
-              <Content>{content}</Content>
-            </>
+            <Content>{content}</Content>
           </ContentWrapper>
         </NavAndContentLayout>
       </MainContentPageLayout>
@@ -83,9 +56,6 @@ const ContentPageLayout = ({
 
 ContentPageLayout.propTypes = {
   content: PropTypes.node.isRequired,
-  isPageContentLoading: PropTypes.bool,
-  toolbar: PropTypes.node,
-  isToolbarSticky: PropTypes.bool,
 }
 
 export default ContentPageLayout

@@ -274,7 +274,7 @@ const TableView = (props) => {
 
   return (
     <StyledTableContainer>
-      <ContentPageLayout toolbar={<H2>"</H2>} content={table} isPageContentLoading={isLoading} />
+      <ContentPageLayout content={table} />
     </StyledTableContainer>
   )
 }
