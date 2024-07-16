@@ -6,7 +6,7 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 
 const StyledLoadingContainer = styled('div')`
   position: absolute;
-  width: ${(props) => (props.showLoadingBar ? '20rem' : '14rem')};
+  width: ${(props) => (props.$showLoadingBar ? '20rem' : '14rem')};
   bottom: 1.5rem;
   left: 1.5rem;
   padding: 0.8rem 1rem;
@@ -38,7 +38,7 @@ const StyledProgressBarContainer = styled('div')`
 `
 
 const StyledProgressBar = styled('div')`
-  width: ${(props) => props.value}%;
+  width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
   transition: width 0.3s ease-in-out;
@@ -75,7 +75,7 @@ export default function LoadingIndicator({
   }, [loadingProgressValue])
 
   return showLoadingIndicator === true ? (
-    <StyledLoadingContainer showLoadingBar={showLoadingBar}>
+    <StyledLoadingContainer $showLoadingBar={showLoadingBar}>
       <StyledHeader>
         {loadingProgressValue === 100
           ? 'All sites loaded'
@@ -83,7 +83,7 @@ export default function LoadingIndicator({
       </StyledHeader>
       {showLoadingBar === true ? (
         <StyledProgressBarContainer>
-          <StyledProgressBar value={loadingProgressValue} />
+          <StyledProgressBar $value={loadingProgressValue} />
         </StyledProgressBarContainer>
       ) : null}
     </StyledLoadingContainer>

@@ -22,10 +22,10 @@ const StyledDialog = styled('div')`
   padding: 0;
   margin: 0;
   min-width: 30rem;
-  width: ${(props) => props.modalCustomWidth};
+  width: ${(props) => props.$modalCustomWidth};
   max-width: 96rem;
   background: ${theme.color.tableRowEven};
-  ${(props) => props.modalCustomHeight !== '' && `height: ${props.modalCustomHeight};`}
+  ${(props) => props.$modalCustomHeight !== '' && `height: ${props.$modalCustomHeight};`}
   display: flex;
   flex-direction: column;
 `
@@ -51,7 +51,7 @@ const ModalToolbar = styled.div`
 `
 const ModalContent = styled.div`
   ${(props) =>
-    !props.contentOverflowIsVisible &&
+    !props.$contentOverflowIsVisible &&
     css`
       overflow: auto;
     `}
@@ -143,8 +143,8 @@ const Modal = ({
           role="dialog"
           aria-labelledby="modal-title"
           aria-describedby="modal-content"
-          modalCustomWidth={modalCustomWidth}
-          modalCustomHeight={modalCustomHeight}
+          $modalCustomWidth={modalCustomWidth}
+          $modalCustomHeight={modalCustomHeight}
         >
           {title ? (
             <ModalTitle>
@@ -156,9 +156,9 @@ const Modal = ({
           ) : null}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
           <ModalContent
-            contentOverflowIsVisible={contentOverflowIsVisible}
             id="modal-content"
-            modalContentCustomHeight={modalContentCustomHeight}
+            $contentOverflowIsVisible={contentOverflowIsVisible}
+            $modalContentCustomHeight={modalContentCustomHeight}
           >
             {mainContent}
           </ModalContent>

@@ -8,19 +8,19 @@ import { IconCaretUp, IconCaretDown } from './dashboardOnlyIcons'
 import useResponsive from '../library/useResponsive'
 
 const StyledMetricsWrapper = styled('div')`
-  ${(props) => props.showMetricsPane && 'min-width: 35rem;'}
+  ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
   position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     z-index: 5;
     background-color: transparent;
     width: 90%;
-    bottom: ${(props) => (props.showLoadingIndicator ? '5rem;' : '0.5rem;')}
+    bottom: ${(props) => (props.$showLoadingIndicator ? '5rem;' : '0.5rem;')}
     left: 50%;
     transform: translateX(-50%);
     display: grid;
     ${(props) =>
-      props.showMobileExpandedMetricsPane &&
+      props.$showMobileExpandedMetricsPane &&
       `
       top: 7.9rem;
       width: 100vw;
@@ -32,7 +32,7 @@ const StyledMetricsWrapper = styled('div')`
 const SummarizedMetrics = styled('div')`
   width: 100%;
   overflow-y: scroll;
-  ${(props) => props.isDesktopWidth && 'height: calc(100vh - 10rem);'}
+  ${(props) => props.$isDesktopWidth && 'height: calc(100vh - 10rem);'}
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -53,9 +53,9 @@ const SummarizedMetrics = styled('div')`
     gap: 0.5rem;
     margin: 0;
     ${(props) =>
-      props.showMobileExpandedMetricsPane ? 'align-items: flex-start;' : 'align-items: flex-end;'}
-    ${(props) => props.showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
-    height: ${(props) => (props.showLoadingIndicator ? '6.7rem;' : '11.2rem;')}
+      props.$showMobileExpandedMetricsPane ? 'align-items: flex-start;' : 'align-items: flex-end;'}
+    ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
+    height: ${(props) => (props.$showLoadingIndicator ? '6.7rem;' : '11.2rem;')}
   `)}
 `
 
@@ -91,7 +91,7 @@ const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   display: none;
   ${hoverState(css`
     ${(props) =>
-      props.showMobileExpandedMetricsPane
+      props.$showMobileExpandedMetricsPane
         ? `background-color: ${theme.color.grey1};`
         : 'background-color: transparent'}
   `)}
@@ -105,8 +105,8 @@ const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
     background-color: transparent;
     border: none;
     color: ${theme.color.white};
-    ${(props) => props.showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
-    ${(props) => props.showMobileExpandedMetricsPane && 'width: 100vw;'}
+    ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
+    ${(props) => props.$showMobileExpandedMetricsPane && 'width: 100vw;'}
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
   `)}
@@ -223,16 +223,16 @@ export default function MetricsPane(props) {
 
   return (
     <StyledMetricsWrapper
-      showMetricsPane={showMetricsPane}
-      showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      showLoadingIndicator={showLoadingIndicator}
+      $showMetricsPane={showMetricsPane}
+      $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+      $showLoadingIndicator={showLoadingIndicator}
     >
       {isMobileWidth || showMetricsPane ? (
         <SummarizedMetrics
-          isDesktopWidth={isDesktopWidth}
           onClick={handleMobileSummarizedMetricsClick}
-          showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-          showLoadingIndicator={showLoadingIndicator}
+          $isDesktopWidth={isDesktopWidth}
+          $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+          $showLoadingIndicator={showLoadingIndicator}
         >
           <MetricsCard>
             <P>{displayedProjects.length}</P>
@@ -270,7 +270,7 @@ export default function MetricsPane(props) {
       ) : (
         <MobileExpandMetricsPaneButton
           onClick={handleShowMobileExpandedMetricsPane}
-          showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+          $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
           aria-label={showMobileExpandedMetricsPane ? 'Collapse Metrics' : 'Expand Metrics'}
         >
           {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}

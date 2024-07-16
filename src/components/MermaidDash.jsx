@@ -33,15 +33,15 @@ const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${(props) => props.showFilterPane && 'width: 50%;'}
+  ${(props) => props.$showFilterPane && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
     background-color: ${theme.color.grey1};
     overflow-y: scroll;
-    width: ${(props) => (props.showFilterPane ? '80%' : '0%')};
+    width: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
     position: absolute;
     top: 10%;
-    height: ${(props) => (props.showFilterPane ? '80%' : '0%')};
+    height: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
     left: 50%;
     transform: translateX(-50%);
   `)}
@@ -287,7 +287,7 @@ export default function MermaidDash() {
         modalCustomHeight={'100dvh'}
       />
     ) : (
-      <StyledFilterWrapper showFilterPane={showFilterPane}>
+      <StyledFilterWrapper $showFilterPane={showFilterPane}>
         {showFilterPane ? (
           <StyledFilterContainer>
             <FilterPane
