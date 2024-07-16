@@ -5,11 +5,10 @@ import { mediaQueryTabletLandscapeOnly, hoverState } from '../styles/mediaQuerie
 import theme from '../theme'
 import { ButtonSecondary } from './generic/buttons'
 import { IconCaretUp, IconCaretDown } from './dashboardOnlyIcons'
-
-const mobileWidthThreshold = 960
+import useResponsive from '../library/useResponsive'
 
 const StyledMetricsWrapper = styled('div')`
-  ${(props) => props.showMetricsPane === true && 'min-width: 35rem;'}
+  ${(props) => props.showMetricsPane && 'min-width: 35rem;'}
   position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
@@ -20,16 +19,20 @@ const StyledMetricsWrapper = styled('div')`
     left: 50%;
     transform: translateX(-50%);
     display: grid;
-    ${(props) => props.showMobileExpandedMetricsPane && 'top: 7.9rem;'}
-    ${(props) => props.showMobileExpandedMetricsPane && 'width: 100vw;'}
-    ${(props) => props.showMobileExpandedMetricsPane && 'bottom: 0;'}
+    ${(props) =>
+      props.showMobileExpandedMetricsPane &&
+      `
+      top: 7.9rem;
+      width: 100vw;
+      bottom: 0;
+    `}
   `)}
 `
 
 const SummarizedMetrics = styled('div')`
   width: 100%;
   overflow-y: scroll;
-  ${window.innerWidth > mobileWidthThreshold && 'height: calc(100vh - 10rem);'}
+  ${(props) => props.isDesktopWidth && 'height: calc(100vh - 10rem);'}
   z-index: 2;
   display: flex;
   flex-direction: column;
@@ -163,6 +166,7 @@ export default function MetricsPane(props) {
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
   const [yearRange, setYearRange] = useState('')
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
+  const { isMobileWidth, isDesktopWidth } = useResponsive()
 
   const calculateMetrics = useMemo(() => {
     let sites = new Set()
@@ -223,9 +227,9 @@ export default function MetricsPane(props) {
       showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
       showLoadingIndicator={showLoadingIndicator}
     >
-      {window.innerWidth <= mobileWidthThreshold || showMetricsPane ? (
+      {isMobileWidth || showMetricsPane ? (
         <SummarizedMetrics
-          isDesktopView={window.innerWidth > mobileWidthThreshold ? true : false}
+          isDesktopWidth={isDesktopWidth}
           onClick={handleMobileSummarizedMetricsClick}
           showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
           showLoadingIndicator={showLoadingIndicator}
@@ -244,7 +248,7 @@ export default function MetricsPane(props) {
               <H3>Transects</H3>
             </MetricsCard>
           </SitesAndTransectsContainer>
-          {window.innerWidth > mobileWidthThreshold ? (
+          {isDesktopWidth ? (
             <MetricsCard>
               <P>{yearRange}</P>
             </MetricsCard>
@@ -256,10 +260,10 @@ export default function MetricsPane(props) {
           </MetricsCard>
         </SummarizedMetrics>
       ) : null}
-      {window.innerWidth <= mobileWidthThreshold && showMobileExpandedMetricsPane ? (
+      {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
       ) : null}
-      {window.innerWidth > mobileWidthThreshold ? (
+      {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
           {showMetricsPane ? String.fromCharCode(10095) : String.fromCharCode(10094)}{' '}
         </DesktopToggleMetricsPaneButton>
