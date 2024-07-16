@@ -50,8 +50,11 @@ const StyledHeader = styled('header')`
   `)}
 `
 
-export default function LoadingIndicator(props) {
-  const { projectData, showLoadingIndicator, setShowLoadingIndicator } = props
+export default function LoadingIndicator({
+  projectData,
+  showLoadingIndicator,
+  setShowLoadingIndicator,
+}) {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
