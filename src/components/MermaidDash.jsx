@@ -189,7 +189,7 @@ export default function MermaidDash() {
     },
   })
 
-  const fetchUserProfile = async () => {
+  const fetchUserProfile = useCallback(async () => {
     try {
       const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
       const response = await fetch(
@@ -201,7 +201,7 @@ export default function MermaidDash() {
     } catch (e) {
       console.error('Error fetching user profile:', e)
     }
-  }
+  }, [getAccessTokenSilently, setMermaidUserData])
 
   useEffect(() => {
     const handleFetchData = async () => {
@@ -220,7 +220,7 @@ export default function MermaidDash() {
       return
     }
     handleFetchData()
-  }, [isLoading, isAuthenticated, getAccessTokenSilently])
+  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -238,7 +238,7 @@ export default function MermaidDash() {
     setView('mapView')
     queryParams.delete('view')
     updateURLParams(queryParams)
-  }, [location.search, updateURLParams])
+  }, [location.search, updateURLParams, isDesktopWidth])
 
   useEffect(() => {
     const handleResize = () => {
@@ -248,7 +248,7 @@ export default function MermaidDash() {
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [isMobileWidth])
 
   const handleShowFilterPane = () => {
     setShowFilterPane(!showFilterPane)
@@ -265,6 +265,7 @@ export default function MermaidDash() {
         displayedProjects={displayedProjects}
         setDisplayedProjects={setDisplayedProjects}
         setSelectedMarkerId={setSelectedMarkerId}
+        mermaidUserData={mermaidUserData}
       />
     )
 
@@ -295,6 +296,7 @@ export default function MermaidDash() {
               displayedProjects={displayedProjects}
               setDisplayedProjects={setDisplayedProjects}
               setSelectedMarkerId={setSelectedMarkerId}
+              mermaidUserData={mermaidUserData}
             />
           </StyledFilterContainer>
         ) : null}

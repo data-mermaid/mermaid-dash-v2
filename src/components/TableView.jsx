@@ -4,7 +4,6 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './Layout/subLayouts/ContentPageLayout/ContentPageLayout'
 import { getTableColumnHeaderProps } from '../library/getTableColumnHeaderProps'
-import { H2 } from './generic/text'
 import PageSelector from './generic/Table/PageSelector/PageSelector'
 import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
 
@@ -35,7 +34,6 @@ const StyledTableContainer = styled('div')`
 
 const TableView = (props) => {
   const { displayedProjects } = props
-  const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -58,9 +56,7 @@ const TableView = (props) => {
         rawProjectData: project,
       }
     })
-
     setTableData(formattedTableData)
-    setIsLoading(false)
   }, [displayedProjects])
 
   const tableColumns = useMemo(

@@ -121,7 +121,6 @@ const Modal = ({
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
   modalCustomWidth = '50vw',
-  modalContentCustomHeight = '80vh',
   modalCustomHeight = '',
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
@@ -155,11 +154,7 @@ const Modal = ({
             </ModalTitle>
           ) : null}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
-          <ModalContent
-            id="modal-content"
-            $contentOverflowIsVisible={contentOverflowIsVisible}
-            $modalContentCustomHeight={modalContentCustomHeight}
-          >
+          <ModalContent id="modal-content" $contentOverflowIsVisible={contentOverflowIsVisible}>
             {mainContent}
           </ModalContent>
           <ModalFooter>{footerContent}</ModalFooter>
@@ -177,6 +172,8 @@ Modal.propTypes = {
   title: PropTypes.string.isRequired,
   contentOverflowIsVisible: PropTypes.bool,
   toolbarContent: PropTypes.node,
+  modalCustomWidth: PropTypes.string,
+  modalCustomHeight: PropTypes.string,
 }
 
 export default Modal

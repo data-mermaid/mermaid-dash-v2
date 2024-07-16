@@ -46,7 +46,6 @@ const ColumnHeaderToolTip = ({ helperText, bottom, left, top, maxWidth, html }) 
       $maxWidth={maxWidth}
       top={top}
     >
-      {/* eslint-disable-next-line react/no-danger */}
       {html ? <div dangerouslySetInnerHTML={{ __html: html }} /> : <span>{helperText}</span>}
     </TooltipPopup>
   )

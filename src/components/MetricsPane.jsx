@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'
 import { mediaQueryTabletLandscapeOnly, hoverState } from '../styles/mediaQueries'

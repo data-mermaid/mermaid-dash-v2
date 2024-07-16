@@ -1,7 +1,6 @@
 import PropTypes from 'prop-types'
 import { useRef } from 'react'
 import styled from 'styled-components'
-import theme from '../theme'
 import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
 import { IconMapOutline, IconTable, IconTrayDownload } from './dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'

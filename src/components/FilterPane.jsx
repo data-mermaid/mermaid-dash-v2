@@ -265,6 +265,37 @@ export default function FilterPane({
     setOrganizations(uniqueOrganizations)
   }, [projectData.results])
 
+  const getURLParams = useCallback(() => {
+    return new URLSearchParams(location.search)
+  }, [location.search])
+
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
+
+  const doesSelectedSampleEventPassFilters = useCallback(
+    (sampleEventId, filteredProjects) => {
+      const queryParams = getURLParams()
+      let displaySelectedSampleEvent = false
+      filteredProjects.forEach((project) => {
+        project.records.forEach((record) => {
+          if (record.sample_event_id === sampleEventId) {
+            displaySelectedSampleEvent = true
+          }
+        })
+      })
+      if (!displaySelectedSampleEvent) {
+        queryParams.delete('sample_event_id')
+        setSelectedMarkerId(null)
+        updateURLParams(queryParams)
+      }
+    },
+    [getURLParams, setSelectedMarkerId, updateURLParams],
+  )
+
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
@@ -373,35 +404,9 @@ export default function FilterPane({
     dataSharingFilter,
     methodFilters,
     setDisplayedProjects,
+    doesSelectedSampleEventPassFilters,
+    location.search,
   ])
-
-  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
-    const queryParams = getURLParams()
-    let displaySelectedSampleEvent = false
-    filteredProjects.forEach((project) => {
-      project.records.forEach((record) => {
-        if (record.sample_event_id === sampleEventId) {
-          displaySelectedSampleEvent = true
-        }
-      })
-    })
-    if (!displaySelectedSampleEvent) {
-      queryParams.delete('sample_event_id')
-      setSelectedMarkerId(null)
-      updateURLParams(queryParams)
-    }
-  }
-
-  const getURLParams = useCallback(() => {
-    return new URLSearchParams(location.search)
-  }, [location.search])
-
-  const updateURLParams = useCallback(
-    (queryParams) => {
-      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
-    },
-    [navigate, location.pathname],
-  )
 
   const formatEndDate = (date) => {
     return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
@@ -812,4 +817,6 @@ FilterPane.propTypes = {
   projectData: PropTypes.object.isRequired,
   displayedProjects: PropTypes.array.isRequired,
   setDisplayedProjects: PropTypes.func.isRequired,
+  setSelectedMarkerId: PropTypes.func.isRequired,
+  mermaidUserData: PropTypes.object,
 }

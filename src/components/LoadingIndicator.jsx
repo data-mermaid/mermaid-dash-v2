@@ -72,7 +72,7 @@ export default function LoadingIndicator({
         setShowLoadingIndicator(false)
       }, 10000)
     }
-  }, [loadingProgressValue])
+  }, [loadingProgressValue, setShowLoadingIndicator])
 
   return showLoadingIndicator === true ? (
     <StyledLoadingContainer $showLoadingBar={showLoadingBar}>
@@ -95,4 +95,6 @@ LoadingIndicator.propTypes = {
     count: PropTypes.number,
     results: PropTypes.array,
   }).isRequired,
+  showLoadingIndicator: PropTypes.bool.isRequired,
+  setShowLoadingIndicator: PropTypes.func.isRequired,
 }
