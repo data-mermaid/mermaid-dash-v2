@@ -14,6 +14,7 @@ import theme from '../theme'
 import { IconFilter } from './icons'
 import { ButtonSecondary } from './generic/buttons'
 import Modal from './generic/Modal'
+import useResponsive from '../library/useResponsive'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -32,15 +33,15 @@ const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${(props) => props.showFilterPane === true && 'width: 50%;'}
+  ${(props) => props.showFilterPane && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
     background-color: ${theme.color.grey1};
     overflow-y: scroll;
-    width: ${(props) => (props.showFilterPane === true ? '80%' : '0%')};
+    width: ${(props) => (props.showFilterPane ? '80%' : '0%')};
     position: absolute;
     top: 10%;
-    height: ${(props) => (props.showFilterPane === true ? '80%' : '0%')};
+    height: ${(props) => (props.showFilterPane ? '80%' : '0%')};
     left: 50%;
     transform: translateX(-50%);
   `)}
@@ -123,8 +124,6 @@ const MobileFooterContainer = styled('div')`
   padding-left: 2rem;
 `
 
-const mobileWidthThreshold = 960
-
 export default function MermaidDash() {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [projectData, setProjectData] = useState({})
@@ -148,6 +147,7 @@ export default function MermaidDash() {
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const [mermaidUserData, setMermaidUserData] = useState({})
+  const { isMobileWidth, isDesktopWidth } = useResponsive()
 
   const fetchData = async (token) => {
     try {
@@ -231,7 +231,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
+    if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
       setView('tableView')
       return
     }
@@ -242,7 +242,7 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= mobileWidthThreshold) {
+      if (isMobileWidth) {
         setView('mapView')
       }
     }
@@ -251,14 +251,14 @@ export default function MermaidDash() {
   }, [])
 
   const handleShowFilterPane = () => {
-    setShowFilterPane((prevState) => !prevState)
+    setShowFilterPane(!showFilterPane)
   }
 
   const handleShowFilterModal = () => {
-    setShowFilterModal((prevState) => !prevState)
+    setShowFilterModal(!showFilterModal)
   }
 
-  const renderFilter = () => {
+  const renderFilter = (showFilterModal) => {
     const modalContent = (
       <FilterPane
         projectData={projectData}
@@ -276,7 +276,7 @@ export default function MermaidDash() {
       </MobileFooterContainer>
     )
 
-    return window.innerWidth <= mobileWidthThreshold ? (
+    return isMobileWidth ? (
       <Modal
         isOpen={showFilterModal}
         onDismiss={handleShowFilterModal}
@@ -284,8 +284,6 @@ export default function MermaidDash() {
         mainContent={modalContent}
         footerContent={footerContent}
         modalCustomWidth={'100vw'}
-        modalContentCustomHeight={'90dvh'}
-        modalOmitTitle={true}
         modalCustomHeight={'100dvh'}
       />
     ) : (
@@ -317,7 +315,7 @@ export default function MermaidDash() {
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
       />
-      {window.innerWidth > mobileWidthThreshold ? (
+      {isDesktopWidth ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
       <LoadingIndicator
@@ -331,7 +329,7 @@ export default function MermaidDash() {
   const renderTable = () => (
     <StyledTableContainer>
       <TableView displayedProjects={displayedProjects} />
-      {window.innerWidth > mobileWidthThreshold ? (
+      {isDesktopWidth ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
       <LoadingIndicator
@@ -358,10 +356,8 @@ export default function MermaidDash() {
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
-        {renderFilter()}
-        {window.innerWidth <= mobileWidthThreshold || view === 'mapView'
-          ? renderMap()
-          : renderTable()}
+        {renderFilter(showFilterModal)}
+        {isMobileWidth || view === 'mapView' ? renderMap() : renderTable()}
         {renderMetrics()}
       </StyledContentContainer>
     </StyledDashboardContainer>
