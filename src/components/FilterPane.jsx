@@ -12,7 +12,7 @@ import { filterPane } from '../constants/language'
 import { useEffect, useState, useCallback } from 'react'
 import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose } from './icons'
+import { IconClose, IconUser } from './icons'
 import theme from '../theme'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { css } from 'styled-components'
@@ -183,7 +183,7 @@ const StyledMenuItem = styled(MenuItem)`
   }
 `
 
-export default function FilterPane() {
+export default function FilterPane({ mermaidUserData }) {
   const [countries, setCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
@@ -296,6 +296,11 @@ export default function FilterPane() {
       ? checkedProjects.filter((checkedProject) => checkedProject !== projectId)
       : [...checkedProjects, projectId]
     setCheckedProjects(updatedCheckedProjects)
+  }
+
+  const userIsMemberOfProject = (projectId) => {
+    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+    return projectsUserIsMemberOf.includes(projectId)
   }
 
   return (
@@ -464,7 +469,8 @@ export default function FilterPane() {
                   onChange={() => handleCheckProject(project.project_id)}
                 />{' '}
                 <label htmlFor={`checkbox-${project.project_id}`}>
-                  {project.records[0]?.project_name}
+                  {project.records[0]?.project_name}{' '}
+                  {userIsMemberOfProject(project.project_id) && <IconUser />}
                 </label>
               </li>
             )
@@ -473,4 +479,8 @@ export default function FilterPane() {
       </StyledProjectListContainer>
     </StyledFilterPaneContainer>
   )
+}
+
+FilterPane.propTypes = {
+  mermaidUserData: PropTypes.object,
 }

@@ -4,7 +4,6 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './Layout/subLayouts/ContentPageLayout/ContentPageLayout'
 import { getTableColumnHeaderProps } from '../library/getTableColumnHeaderProps'
-import { H2 } from './generic/text'
 import PageSelector from './generic/Table/PageSelector/PageSelector'
 import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
 
@@ -34,9 +33,7 @@ const StyledTableContainer = styled('div')`
   width: 100%;
 `
 
-const TableView = (props) => {
-  const { displayedProjects, view, setView, projectDataCount } = props
-  const [isLoading, setIsLoading] = useState(true)
+const TableView = ({ view, setView }) => {
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -59,9 +56,7 @@ const TableView = (props) => {
         rawProjectData: project,
       }
     })
-
     setTableData(formattedTableData)
-    setIsLoading(false)
   }, [displayedProjects])
 
   const tableColumns = useMemo(
@@ -275,19 +270,12 @@ const TableView = (props) => {
 
   return (
     <StyledTableContainer>
-      <ContentPageLayout toolbar={<H2>"</H2>} content={table} isPageContentLoading={isLoading} />
-      <MapAndTableControls
-        displayedProjects={displayedProjects}
-        view={view}
-        setView={setView}
-        projectDataCount={projectDataCount}
-      />
+      <ContentPageLayout content={table} />
+      <MapAndTableControls view={view} setView={setView} />
     </StyledTableContainer>
   )
 }
 
 export default TableView
 
-TableView.propTypes = {
-  displayedProjects: PropTypes.array.isRequired,
-}
+TableView.propTypes = {}

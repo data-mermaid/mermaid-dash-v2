@@ -22,18 +22,19 @@ const StyledDialog = styled('div')`
   padding: 0;
   margin: 0;
   min-width: 30rem;
-  width: ${(props) => props.modalCustomWidth};
+  width: ${(props) => props.$modalCustomWidth};
   max-width: 96rem;
   background: ${theme.color.tableRowEven};
-  max-height: 98vh;
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
+  ${(props) => props.$modalCustomHeight !== '' && `height: ${props.$modalCustomHeight};`}
+  display: flex;
+  flex-direction: column;
 `
 const ModalTitle = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
   padding: 3rem ${theme.spacing.medium} 0 3rem;
-  display: grid;
   color: ${theme.color.textColor};
-  grid-template-columns: auto auto;
   h2 {
     justify-self: start;
     align-self: center;
@@ -50,13 +51,13 @@ const ModalToolbar = styled.div`
 `
 const ModalContent = styled.div`
   ${(props) =>
-    !props.contentOverflowIsVisible &&
+    !props.$contentOverflowIsVisible &&
     css`
       overflow: auto;
     `}
-  max-height: ${(props) => props.modalContentCustomHeight};
   padding: ${theme.spacing.medium};
   padding-bottom: 3rem;
+  flex-grow: 1;
 `
 const ModalFooter = styled.div`
   padding: ${theme.spacing.medium};
@@ -120,8 +121,7 @@ const Modal = ({
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
   modalCustomWidth = '50vw',
-  modalOmitTitle = false,
-  modalContentCustomHeight = '80vh',
+  modalCustomHeight = '',
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
     const close = (event) => {
@@ -142,22 +142,19 @@ const Modal = ({
           role="dialog"
           aria-labelledby="modal-title"
           aria-describedby="modal-content"
-          modalCustomWidth={modalCustomWidth}
+          $modalCustomWidth={modalCustomWidth}
+          $modalCustomHeight={modalCustomHeight}
         >
-          {modalOmitTitle ? null : (
+          {title ? (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
               <CloseButton type="button" className="close-button" onClick={onDismiss}>
                 <IconClose aria-label="close" />
               </CloseButton>
             </ModalTitle>
-          )}
+          ) : null}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
-          <ModalContent
-            contentOverflowIsVisible={contentOverflowIsVisible}
-            id="modal-content"
-            modalContentCustomHeight={modalContentCustomHeight}
-          >
+          <ModalContent id="modal-content" $contentOverflowIsVisible={contentOverflowIsVisible}>
             {mainContent}
           </ModalContent>
           <ModalFooter>{footerContent}</ModalFooter>
@@ -175,6 +172,8 @@ Modal.propTypes = {
   title: PropTypes.string.isRequired,
   contentOverflowIsVisible: PropTypes.bool,
   toolbarContent: PropTypes.node,
+  modalCustomWidth: PropTypes.string,
+  modalCustomHeight: PropTypes.string,
 }
 
 export default Modal

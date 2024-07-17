@@ -13,6 +13,7 @@ import { IconFilter } from './icons'
 import { ButtonSecondary } from './generic/buttons'
 import Modal from './generic/Modal'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import useResponsive from '../library/useResponsive'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -31,15 +32,15 @@ const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
-  ${(props) => props.showFilterPane === true && 'width: 50%;'}
+  ${(props) => props.$showFilterPane && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
     background-color: ${theme.color.grey1};
     overflow-y: scroll;
-    width: ${(props) => (props.showFilterPane === true ? '80%' : '0%')};
+    width: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
     position: absolute;
     top: 10%;
-    height: ${(props) => (props.showFilterPane === true ? '80%' : '0%')};
+    height: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
     left: 50%;
     transform: translateX(-50%);
   `)}
@@ -122,10 +123,8 @@ const MobileFooterContainer = styled('div')`
   padding-left: 2rem;
 `
 
-const mobileWidthThreshold = 960
-
 export default function MermaidDash() {
-  const { projectData, displayedProjects } = useFilterProjectsContext()
+  const { projectData, displayedProjects, fetchData } = useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -133,6 +132,47 @@ export default function MermaidDash() {
   const location = useLocation()
   const navigate = useNavigate()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
+  const [mermaidUserData, setMermaidUserData] = useState({})
+  const { isMobileWidth, isDesktopWidth } = useResponsive()
+
+  const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
+    headers: {
+      Authorization: `Bearer ${await getAccessTokenSilently()}`,
+    },
+  })
+
+  const fetchUserProfile = useCallback(async () => {
+    try {
+      const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
+      const response = await fetch(
+        profileEndpoint,
+        await getAuthorizationHeaders(getAccessTokenSilently),
+      )
+      const parsedResponse = await response.json()
+      setMermaidUserData(parsedResponse)
+    } catch (e) {
+      console.error('Error fetching user profile:', e)
+    }
+  }, [getAccessTokenSilently, setMermaidUserData])
+
+  useEffect(() => {
+    const handleFetchData = async () => {
+      try {
+        const token = isAuthenticated ? await getAccessTokenSilently() : ''
+        fetchData(token)
+        if (isAuthenticated) {
+          fetchUserProfile()
+        }
+      } catch (e) {
+        console.error('Error fetching data:', e)
+      }
+    }
+
+    if (isLoading) {
+      return
+    }
+    handleFetchData()
+  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -143,35 +183,35 @@ export default function MermaidDash() {
 
   useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && window.innerWidth > mobileWidthThreshold) {
+    if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
       setView('tableView')
       return
     }
     setView('mapView')
     queryParams.delete('view')
     updateURLParams(queryParams)
-  }, [location.search, updateURLParams])
+  }, [location.search, updateURLParams, isDesktopWidth])
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth <= mobileWidthThreshold) {
+      if (isMobileWidth) {
         setView('mapView')
       }
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  }, [isMobileWidth])
 
   const handleShowFilterPane = () => {
-    setShowFilterPane((prevState) => !prevState)
+    setShowFilterPane(!showFilterPane)
   }
 
   const handleShowFilterModal = () => {
-    setShowFilterModal((prevState) => !prevState)
+    setShowFilterModal(!showFilterModal)
   }
 
   const renderFilter = () => {
-    const modalContent = <FilterPane />
+    const modalContent = <FilterPane mermaidUserData={mermaidUserData} />
 
     const footerContent = (
       <MobileFooterContainer>
@@ -181,22 +221,21 @@ export default function MermaidDash() {
       </MobileFooterContainer>
     )
 
-    return window.innerWidth <= mobileWidthThreshold ? (
+    return isMobileWidth ? (
       <Modal
         isOpen={showFilterModal}
         onDismiss={handleShowFilterModal}
         title=""
         mainContent={modalContent}
         footerContent={footerContent}
-        modalCustomWidth={'auto'}
-        modalContentCustomHeight={'90dvh'}
-        modalOmitTitle={true}
+        modalCustomWidth={'100vw'}
+        modalCustomHeight={'100dvh'}
       />
     ) : (
-      <StyledFilterWrapper showFilterPane={showFilterPane}>
+      <StyledFilterWrapper $showFilterPane={showFilterPane}>
         {showFilterPane ? (
           <StyledFilterContainer>
-            <FilterPane />
+            <FilterPane mermaidUserData={mermaidUserData} />
           </StyledFilterContainer>
         ) : null}
 
@@ -226,12 +265,7 @@ export default function MermaidDash() {
 
   const renderTable = () => (
     <StyledTableContainer>
-      <TableView
-        displayedProjects={displayedProjects}
-        view={view}
-        setView={setView}
-        projectDataCount={projectData?.count || 0}
-      />
+      <TableView view={view} setView={setView} />
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}
@@ -256,10 +290,8 @@ export default function MermaidDash() {
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
-        {renderFilter()}
-        {window.innerWidth <= mobileWidthThreshold || view === 'mapView'
-          ? renderMap()
-          : renderTable()}
+        {renderFilter(showFilterModal)}
+        {isMobileWidth || view === 'mapView' ? renderMap() : renderTable()}
         {renderMetrics()}
       </StyledContentContainer>
     </StyledDashboardContainer>

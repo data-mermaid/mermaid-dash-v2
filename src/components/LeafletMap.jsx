@@ -17,7 +17,6 @@ import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
-const mobileWidthThreshold = 960
 
 const CircleMarkerPathOptions = {
   color: `${theme.color.white}`,
@@ -57,8 +56,6 @@ export default function LeafletMap(props) {
   const [mapCenter, setMapCenter] = useState(initialMapCenter)
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
-  const prevShowFilterPane = usePrevious(showFilterPane)
-  const prevShowMetricsPane = usePrevious(showMetricsPane)
   const [markers, setMarkers] = useState(null)
 
   const updateURLParams = useCallback(
@@ -68,16 +65,19 @@ export default function LeafletMap(props) {
     [navigate, location.pathname],
   )
 
-  const toggleMapZoomControls = (map) => {
-    if (window.innerWidth > mobileWidthThreshold) {
+  const toggleMapZoomControlAndAttribution = () => {
+    if (!map) return
+    if (isDesktopWidth) {
+      map.attributionControl.setPrefix('Leaflet')
       map.zoomControl.setPosition('bottomright')
       map.zoomControl.addTo(map)
     } else {
+      map.attributionControl.setPrefix(false)
       map.zoomControl.remove()
     }
   }
 
-  function MapEventListener() {
+  const MapEventListener = () => {
     const map = useMapEvents({
       moveend: () => {
         const { lat, lng } = map.getCenter()
@@ -89,28 +89,17 @@ export default function LeafletMap(props) {
         updateURLParams(queryParams)
         setMapCenter([lat, lng])
         setMapZoom(zoom)
-        toggleMapZoomControls(map)
+      },
+      resize: () => {
+        toggleMapZoomControlAndAttribution()
       },
     })
 
-    if (window.innerWidth >= mobileWidthThreshold) {
-      map.attributionControl.setPrefix('Leaflet')
-    } else {
-      map.attributionControl.setPrefix(false)
-    }
+    toggleMapZoomControlAndAttribution()
+    return null
+  }
 
-    const showFilterPaneChanged = showFilterPane !== prevShowFilterPane
-    const showMetricsPaneChanged = showMetricsPane !== prevShowMetricsPane
-
-    if (showFilterPaneChanged || showMetricsPaneChanged) {
-      // Force map to load more tiles when panes are shown/hidden. A timeout is required
-      setTimeout(() => {
-        map.invalidateSize()
-      }, 10)
-    }
-
-    toggleMapZoomControls(map)
-
+  const MapAndTableControlsWrapper = () => {
     return (
       <MapAndTableControls
         map={map}
@@ -122,7 +111,7 @@ export default function LeafletMap(props) {
     )
   }
 
-  const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
+  const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
 
@@ -175,11 +164,13 @@ export default function LeafletMap(props) {
     selectedMarkerId,
     prevSelectedMarkerId,
     updateURLParams,
+    setSelectedMarkerId,
   ])
 
   return (
     <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
       <MapEventListener />
+      <MapAndTableControlsWrapper />
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
         chunkedLoading
@@ -191,7 +182,7 @@ export default function LeafletMap(props) {
       >
         {markers}
       </MarkerClusterGroup>
-      <TileLayer url={import.meta.env.VITE_REACT_APP_ESRI_TILES_URL} />
+      <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
     </MapContainer>
   )
 }
