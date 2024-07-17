@@ -14,6 +14,7 @@ import { ButtonSecondary } from './generic/buttons'
 import Modal from './generic/Modal'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 import useResponsive from '../library/useResponsive'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -124,7 +125,7 @@ const MobileFooterContainer = styled('div')`
 `
 
 export default function MermaidDash() {
-  const { projectData, displayedProjects, fetchData } = useFilterProjectsContext()
+  const { projectData, displayedProjects, setProjectData } = useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -134,6 +135,7 @@ export default function MermaidDash() {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const [mermaidUserData, setMermaidUserData] = useState({})
   const { isMobileWidth, isDesktopWidth } = useResponsive()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -141,13 +143,48 @@ export default function MermaidDash() {
     },
   })
 
+  const fetchData = useCallback(
+    async (token = '') => {
+      try {
+        let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
+
+        while (nextPageUrl !== null) {
+          const response = await fetch(nextPageUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          if (response.ok) {
+            const data = await response.json()
+            setProjectData((prevData) => {
+              return {
+                ...prevData,
+                count: data.count,
+                next: data.next,
+                previous: data.previous,
+                results: prevData.results
+                  ? [...prevData.results, ...data.results]
+                  : [...data.results],
+              }
+            })
+            nextPageUrl = data.next
+          } else {
+            console.error('Failed to fetch data:', response.status)
+            break
+          }
+        }
+      } catch (error) {
+        console.error('Error fetching data:', error)
+      }
+    },
+    [setProjectData],
+  )
+
   const fetchUserProfile = useCallback(async () => {
     try {
       const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
-      const response = await fetch(
-        profileEndpoint,
-        await getAuthorizationHeaders(getAccessTokenSilently),
-      )
+      const headers = await getAuthorizationHeaders(getAccessTokenSilently)
+      const response = await fetch(profileEndpoint, headers)
       const parsedResponse = await response.json()
       setMermaidUserData(parsedResponse)
     } catch (e) {
@@ -162,6 +199,13 @@ export default function MermaidDash() {
         fetchData(token)
         if (isAuthenticated) {
           fetchUserProfile()
+          const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
+          const response = await fetch(
+            profileEndpoint,
+            await getAuthorizationHeaders(getAccessTokenSilently),
+          )
+          const parsedResponse = await response.json()
+          setMermaidUserData(parsedResponse)
         }
       } catch (e) {
         console.error('Error fetching data:', e)
@@ -172,7 +216,7 @@ export default function MermaidDash() {
       return
     }
     handleFetchData()
-  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile])
+  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile, fetchData])
 
   const updateURLParams = useCallback(
     (queryParams) => {

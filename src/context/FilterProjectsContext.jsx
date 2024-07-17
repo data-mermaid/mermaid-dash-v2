@@ -1,7 +1,7 @@
-import { createContext, useContext, useState, useEffect } from 'react'
+import PropTypes from 'prop-types'
+import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
-import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -12,6 +12,18 @@ const URL_PARAMS = {
   DATA_SHARING: 'dataSharing',
   METHODS: 'methods',
 }
+
+const collectionMethods = [
+  {
+    name: 'beltfish',
+    description: 'Fish Belt',
+  },
+  { name: 'colonies_bleached', description: 'Bleaching' },
+  { name: 'benthicpit', description: 'Benthic PIT' },
+  { name: 'benthiclit', description: 'Benthic LIT' },
+  { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
+  { name: 'habitatcomplexity', description: 'Habitat Complexity' },
+]
 
 const isValidDateFormat = (dateString) => {
   // Regular expression to match the date format YYYY-MM-DD
@@ -47,7 +59,6 @@ const isValidDateFormat = (dateString) => {
 const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const location = useLocation()
   const navigate = useNavigate()
   const [projectData, setProjectData] = useState({})
@@ -72,59 +83,14 @@ export const FilterProjectsProvider = ({ children }) => {
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
 
-  const getURLParams = () => new URLSearchParams(location.search)
+  const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
-  const updateURLParams = (queryParams) => {
-    navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
-  }
-
-  const fetchData = async (token = '') => {
-    try {
-      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
-
-      while (nextPageUrl !== null) {
-        const response = await fetch(nextPageUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        if (response.ok) {
-          const data = await response.json()
-          setProjectData((prevData) => {
-            return {
-              ...prevData,
-              count: data.count,
-              next: data.next,
-              previous: data.previous,
-              results: prevData.results
-                ? [...prevData.results, ...data.results]
-                : [...data.results],
-            }
-          })
-          nextPageUrl = data.next
-        } else {
-          console.error('Failed to fetch data:', response.status)
-          break
-        }
-      }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
-  }
-
-  const _silentlyLoginUser = useEffect(() => {
-    if (isLoading) {
-      return
-    }
-
-    if (!isAuthenticated) {
-      fetchData()
-    } else {
-      getAccessTokenSilently()
-        .then((token) => fetchData(token))
-        .catch((error) => console.error('Error getting access token:', error))
-    }
-  }, [isLoading, isAuthenticated, getAccessTokenSilently])
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
 
   const _setFiltersBasedOnUrlParams = useEffect(() => {
     const queryParams = getURLParams()
@@ -168,7 +134,7 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    const handleProjectNameFilter = () => {
+    const setProjectNameValue = () => {
       if (queryParams.has(URL_PARAMS.PROJECTS)) {
         setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
       } else if (queryParams.has('project')) {
@@ -176,7 +142,7 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    const handleDataSharingFilter = () => {
+    const setDataSharingValue = () => {
       if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
         if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
           setDataSharingFilter(true)
@@ -194,9 +160,29 @@ export const FilterProjectsProvider = ({ children }) => {
     )
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
     handleMethodsFilter()
-    handleProjectNameFilter()
-    handleDataSharingFilter()
-  }, [])
+    setProjectNameValue()
+    setDataSharingValue()
+  }, [getURLParams, updateURLParams])
+
+  const doesSelectedSampleEventPassFilters = useCallback(
+    (sampleEventId, filteredProjects) => {
+      const queryParams = getURLParams()
+      let displaySelectedSampleEvent = false
+      filteredProjects.forEach((project) => {
+        project.records.forEach((record) => {
+          if (record.sample_event_id === sampleEventId) {
+            displaySelectedSampleEvent = true
+          }
+        })
+      })
+      if (!displaySelectedSampleEvent) {
+        queryParams.delete('sample_event_id')
+        setSelectedMarkerId(null)
+        updateURLParams(queryParams)
+      }
+    },
+    [updateURLParams, getURLParams],
+  )
 
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
@@ -306,24 +292,9 @@ export const FilterProjectsProvider = ({ children }) => {
     dataSharingFilter,
     methodFilters,
     setDisplayedProjects,
+    doesSelectedSampleEventPassFilters,
+    location.search,
   ])
-
-  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
-    const queryParams = getURLParams()
-    let displaySelectedSampleEvent = false
-    filteredProjects.forEach((project) => {
-      project.records.forEach((record) => {
-        if (record.sample_event_id === sampleEventId) {
-          displaySelectedSampleEvent = true
-        }
-      })
-    })
-    if (!displaySelectedSampleEvent) {
-      queryParams.delete('sample_event_id')
-      setSelectedMarkerId(null)
-      updateURLParams(queryParams)
-    }
-  }
 
   const handleSelectedCountriesChange = (event) => {
     const queryParams = getURLParams()
@@ -450,6 +421,7 @@ export const FilterProjectsProvider = ({ children }) => {
       value={{
         projectData,
         setProjectData,
+        projectDataCount: projectData?.count || 0,
         displayedProjects,
         setDisplayedProjects,
         selectedCountries,
@@ -488,3 +460,7 @@ export const FilterProjectsProvider = ({ children }) => {
 }
 
 export const useFilterProjectsContext = () => useContext(FilterProjectsContext)
+
+FilterProjectsProvider.propTypes = {
+  children: PropTypes.node.isRequired,
+}

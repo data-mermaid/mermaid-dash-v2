@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import L from 'leaflet'
 import styled, { css } from 'styled-components'
 import FilterIndicatorPill from './FilterIndicatorPill'
 import ViewToggle from './ViewToggle'
@@ -6,6 +7,8 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { ButtonSecondary } from './generic/buttons'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
+import useResponsive from '../library/useResponsive'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -31,10 +34,9 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
-const mobileWidthThreshold = 960
-
-export default function MapAndTableControls(props) {
-  const { map = undefined, displayedProjects, projectDataCount, view, setView } = props
+export default function MapAndTableControls({ map = undefined, view, setView }) {
+  const { displayedProjects, projectDataCount } = useFilterProjectsContext()
+  const { isDesktopWidth } = useResponsive()
 
   const handleZoomToFilteredData = () => {
     if (!map) {
@@ -97,11 +99,11 @@ export default function MapAndTableControls(props) {
     <ControlContainer>
       {isAnyActiveFilters() ? (
         <FilterIndicatorPill
-          searchFilteredRowLength={displayedProjects.length}
+          searchFilteredRowLength={displayedProjects?.length}
           unfilteredRowLength={projectDataCount}
         />
       ) : null}
-      {window.innerWidth > mobileWidthThreshold ? (
+      {isDesktopWidth ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
       {isAnyActiveFilters() && view === 'mapView' ? (
@@ -110,7 +112,7 @@ export default function MapAndTableControls(props) {
           aria-labelledby="Zoom to filtered data button"
         >
           <img src={zoomToFiltered} alt="Zoom to filtered data" />
-          {window.innerWidth > mobileWidthThreshold ? <span>Filtered Data</span> : null}
+          {isDesktopWidth ? <span>Filtered Data</span> : null}
         </ZoomToSecondaryButton>
       ) : null}
       {hasSelectedSite() && view === 'mapView' ? (
@@ -119,7 +121,7 @@ export default function MapAndTableControls(props) {
           aria-labelledby="Zoom to selected site button"
         >
           <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-          {window.innerWidth > mobileWidthThreshold ? <span>Selected Site</span> : null}
+          {isDesktopWidth ? <span>Selected Site</span> : null}
         </ZoomToSecondaryButton>
       ) : null}
     </ControlContainer>
@@ -128,8 +130,6 @@ export default function MapAndTableControls(props) {
 
 MapAndTableControls.propTypes = {
   map: PropTypes.object,
-  displayedProjects: PropTypes.array.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
-  projectDataCount: PropTypes.number.isRequired,
 }

@@ -14,6 +14,7 @@ import usePrevious from '../library/usePrevious'
 import theme from '../theme'
 import MapAndTableControls from './MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import useResponsive from '../library/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -38,8 +39,7 @@ const isValidZoom = (zoom) => {
   return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
-export default function LeafletMap(props) {
-  const { showFilterPane, showMetricsPane, view, setView, projectDataCount } = props
+export default function LeafletMap({ showFilterPane, showMetricsPane, view, setView }) {
   const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
@@ -57,6 +57,12 @@ export default function LeafletMap(props) {
   const [mapZoom, setMapZoom] = useState(initialMapZoom)
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [markers, setMarkers] = useState(null)
+  const [map, setMap] = useState(null)
+  const { isDesktopWidth } = useResponsive()
+
+  const _loadTilesWhenPanelsToggled = useEffect(() => {
+    map?.invalidateSize()
+  }, [map, showFilterPane, showMetricsPane])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -66,7 +72,9 @@ export default function LeafletMap(props) {
   )
 
   const toggleMapZoomControlAndAttribution = () => {
-    if (!map) return
+    if (!map) {
+      return
+    }
     if (isDesktopWidth) {
       map.attributionControl.setPrefix('Leaflet')
       map.zoomControl.setPosition('bottomright')
@@ -100,15 +108,7 @@ export default function LeafletMap(props) {
   }
 
   const MapAndTableControlsWrapper = () => {
-    return (
-      <MapAndTableControls
-        map={map}
-        displayedProjects={displayedProjects}
-        projectDataCount={projectDataCount}
-        view={view}
-        setView={setView}
-      />
-    )
+    return <MapAndTableControls map={map} view={view} setView={setView} />
   }
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
@@ -168,7 +168,13 @@ export default function LeafletMap(props) {
   ])
 
   return (
-    <MapContainer center={mapCenter} zoom={mapZoom} scrollWheelZoom={true} maxZoom={20}>
+    <MapContainer
+      center={mapCenter}
+      zoom={mapZoom}
+      scrollWheelZoom={true}
+      maxZoom={20}
+      ref={setMap}
+    >
       <MapEventListener />
       <MapAndTableControlsWrapper />
       <MarkerClusterGroup
