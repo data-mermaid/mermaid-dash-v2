@@ -18,6 +18,7 @@ import { IconClose, IconUser } from './icons'
 import theme from '../theme'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { css } from 'styled-components'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -233,6 +234,8 @@ export default function FilterPane({
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
   const [methodFilters, setMethodFilters] = useState([])
   const [checkedProjects, setCheckedProjects] = useState([])
+  const [showYourData, setShowYourData] = useState(false)
+  const { isAuthenticated } = useAuth0()
   const navigate = useNavigate()
   const location = useLocation()
 
@@ -373,11 +376,17 @@ export default function FilterPane({
         // Filter out projects with empty records
         const nonEmptyRecords = project.records.length > 0
 
+        // Filter out projects that the user is not a member of
+        const onlyShowProjectsUserIsAMemberOf = showYourData
+          ? userIsMemberOfProject(project.project_id)
+          : true
+
         return (
           matchesSelectedCountries &&
           matchesSelectedOrganizations &&
           matchesProjectName &&
-          nonEmptyRecords
+          nonEmptyRecords &&
+          onlyShowProjectsUserIsAMemberOf
         )
       })
 
@@ -406,6 +415,7 @@ export default function FilterPane({
     setDisplayedProjects,
     doesSelectedSampleEventPassFilters,
     location.search,
+    showYourData,
   ])
 
   const formatEndDate = (date) => {
@@ -521,6 +531,11 @@ export default function FilterPane({
     queryParams.delete('project')
     updateURLParams(queryParams)
     setProjectNameFilter(projectName)
+  }
+
+  const handleYourDataFilter = (event) => {
+    const { checked } = event.target
+    setShowYourData(checked)
   }
 
   const handleDataSharingFilter = (event) => {
@@ -750,6 +765,21 @@ export default function FilterPane({
               </IconButton>
             )}
           </StyledDateInput>
+          {isAuthenticated ? (
+            <>
+              <StyledHeader>Your Data</StyledHeader>
+              <div>
+                <input
+                  type="checkbox"
+                  name="yourData"
+                  id="yourData"
+                  onChange={handleYourDataFilter}
+                  checked={showYourData}
+                />
+                <label htmlFor="yourData">{filterPane.yourData}</label>
+              </div>
+            </>
+          ) : null}
           <StyledHeader>Data sharing</StyledHeader>
           <div>
             <input

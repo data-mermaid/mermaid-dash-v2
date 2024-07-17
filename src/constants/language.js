@@ -11,6 +11,7 @@ export const shareView = {
 
 export const filterPane = {
   dataSharing: 'Only show data you have access to',
+  yourData: 'Your Projects Only',
 }
 
 export const dataDisclaimer = {
