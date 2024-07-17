@@ -199,5 +199,4 @@ LeafletMap.propTypes = {
   showMetricsPane: PropTypes.bool.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
-  projectDataCount: PropTypes.number.isRequired,
 }

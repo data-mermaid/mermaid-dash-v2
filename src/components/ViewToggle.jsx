@@ -6,6 +6,7 @@ import { IconMapOutline, IconTable, IconTrayDownload } from './dashboardOnlyIcon
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatProjectDataHelper } from '../utils'
 import { CSVLink } from 'react-csv'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const StyledViewToggleContainer = styled('div')`
   width: 12.5rem;
@@ -28,8 +29,8 @@ const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
-export default function ViewToggle(props) {
-  const { view, setView, displayedProjects } = props
+export default function ViewToggle({ view, setView }) {
+  const { displayedProjects } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
@@ -116,5 +117,4 @@ export default function ViewToggle(props) {
 ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
-  displayedProjects: PropTypes.array.isRequired,
 }
