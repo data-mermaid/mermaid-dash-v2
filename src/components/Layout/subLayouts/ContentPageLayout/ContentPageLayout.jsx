@@ -14,7 +14,6 @@ const ContentWrapper = styled('div')`
 `
 const NavAndContentLayout = styled('div')`
   display: grid;
-  grid-template-columns: auto 1fr;
 `
 const contentStyles = css`
   background: ${theme.color.white};
@@ -42,15 +41,13 @@ const ContentPageToolbarWrapper = styled('div')`
 
 const ContentPageLayout = ({ content }) => {
   return (
-    <>
-      <MainContentPageLayout>
-        <NavAndContentLayout>
-          <ContentWrapper>
-            <Content>{content}</Content>
-          </ContentWrapper>
-        </NavAndContentLayout>
-      </MainContentPageLayout>
-    </>
+    <MainContentPageLayout>
+      <NavAndContentLayout>
+        <ContentWrapper>
+          <Content>{content}</Content>
+        </ContentWrapper>
+      </NavAndContentLayout>
+    </MainContentPageLayout>
   )
 }
 
