@@ -16,6 +16,8 @@ import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose, IconUser } from './icons'
 import theme from '../theme'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import { css } from 'styled-components'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -108,6 +110,11 @@ const StyledProjectsHeader = styled(StyledHeader)`
 
 const StyledFilterPaneContainer = styled('div')`
   padding: 1rem;
+  min-width: 35rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    min-width: 80vw;
+    min-height: 85dvh;
+  `)}
 `
 
 const StyledFormControl = styled(FormControl)`
@@ -171,12 +178,6 @@ const StyledProjectListContainer = styled('div')`
   border: 1px solid ${theme.color.grey0};
   word-break: break-word;
   overflow-wrap: break-word;
-`
-
-const StyledShowOtherProjects = styled('span')`
-  margin: 1.5rem 0;
-  cursor: pointer;
-  text-decoration: underline;
 `
 
 const StyledUnorderedList = styled('ul')`
@@ -263,6 +264,37 @@ export default function FilterPane({
 
     setOrganizations(uniqueOrganizations)
   }, [projectData.results])
+
+  const getURLParams = useCallback(() => {
+    return new URLSearchParams(location.search)
+  }, [location.search])
+
+  const updateURLParams = useCallback(
+    (queryParams) => {
+      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    },
+    [navigate, location.pathname],
+  )
+
+  const doesSelectedSampleEventPassFilters = useCallback(
+    (sampleEventId, filteredProjects) => {
+      const queryParams = getURLParams()
+      let displaySelectedSampleEvent = false
+      filteredProjects.forEach((project) => {
+        project.records.forEach((record) => {
+          if (record.sample_event_id === sampleEventId) {
+            displaySelectedSampleEvent = true
+          }
+        })
+      })
+      if (!displaySelectedSampleEvent) {
+        queryParams.delete('sample_event_id')
+        setSelectedMarkerId(null)
+        updateURLParams(queryParams)
+      }
+    },
+    [getURLParams, setSelectedMarkerId, updateURLParams],
+  )
 
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
@@ -372,35 +404,9 @@ export default function FilterPane({
     dataSharingFilter,
     methodFilters,
     setDisplayedProjects,
+    doesSelectedSampleEventPassFilters,
+    location.search,
   ])
-
-  function doesSelectedSampleEventPassFilters(sampleEventId, filteredProjects) {
-    const queryParams = getURLParams()
-    let displaySelectedSampleEvent = false
-    filteredProjects.forEach((project) => {
-      project.records.forEach((record) => {
-        if (record.sample_event_id === sampleEventId) {
-          displaySelectedSampleEvent = true
-        }
-      })
-    })
-    if (!displaySelectedSampleEvent) {
-      queryParams.delete('sample_event_id')
-      setSelectedMarkerId(null)
-      updateURLParams(queryParams)
-    }
-  }
-
-  const getURLParams = useCallback(() => {
-    return new URLSearchParams(location.search)
-  }, [location.search])
-
-  const updateURLParams = useCallback(
-    (queryParams) => {
-      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
-    },
-    [navigate, location.pathname],
-  )
 
   const formatEndDate = (date) => {
     return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
@@ -811,7 +817,6 @@ FilterPane.propTypes = {
   projectData: PropTypes.object.isRequired,
   displayedProjects: PropTypes.array.isRequired,
   setDisplayedProjects: PropTypes.func.isRequired,
-  hiddenProjects: PropTypes.array.isRequired,
-  setHiddenProjects: PropTypes.func.isRequired,
-  mermaidUserData: PropTypes.object.isRequired,
+  setSelectedMarkerId: PropTypes.func.isRequired,
+  mermaidUserData: PropTypes.object,
 }

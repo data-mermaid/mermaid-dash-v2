@@ -5,11 +5,13 @@ import styled from 'styled-components'
 import { dataDisclaimer } from '../constants/language'
 import { RightFooter } from './generic/Modal'
 import { ButtonSecondary } from './generic/buttons'
+import theme from '../theme'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
   z-index: 2;
+  color: ${theme.color.black};
 `
 
 export default function DataDisclaimer(props) {

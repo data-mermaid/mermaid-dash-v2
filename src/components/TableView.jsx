@@ -4,7 +4,6 @@ import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './Layout/subLayouts/ContentPageLayout/ContentPageLayout'
 import { getTableColumnHeaderProps } from '../library/getTableColumnHeaderProps'
-import { H2 } from './generic/text'
 import PageSelector from './generic/Table/PageSelector/PageSelector'
 import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
 
@@ -26,16 +25,15 @@ import { useLocation, useNavigate } from 'react-router-dom'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
-  margin-right: 31.5rem;
   flex-grow: 1;
   overflow: scroll;
   display: flex;
   flex-direction: column;
+  width: 100%;
 `
 
 const TableView = (props) => {
   const { displayedProjects } = props
-  const [isLoading, setIsLoading] = useState(true)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -58,9 +56,7 @@ const TableView = (props) => {
         rawProjectData: project,
       }
     })
-
     setTableData(formattedTableData)
-    setIsLoading(false)
   }, [displayedProjects])
 
   const tableColumns = useMemo(
@@ -274,15 +270,7 @@ const TableView = (props) => {
 
   return (
     <StyledTableContainer>
-      <ContentPageLayout
-        toolbar={
-          <>
-            <H2>Projects</H2>
-          </>
-        }
-        content={table}
-        isPageContentLoading={isLoading}
-      />
+      <ContentPageLayout content={table} />
     </StyledTableContainer>
   )
 }

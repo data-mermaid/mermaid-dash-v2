@@ -88,7 +88,7 @@ export const Td = styled.td(
 )
 
 export const TableOverflowWrapper = styled.div`
-  max-width: calc(100vw - ${theme.spacing.sideNavWidth} - 20px);
+  max-width: 100vw;
   ${mediaQueryPhoneOnly(css`
     max-width: calc(100vw - ${theme.spacing.mobileSideNavWidth} - 20px);
   `)}

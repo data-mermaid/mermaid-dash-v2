@@ -1,9 +1,8 @@
 import PropTypes from 'prop-types'
 import { useRef } from 'react'
 import styled from 'styled-components'
-import theme from '../theme'
 import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
-import { IconMapOutline, IconTable } from './dashboardOnlyIcons'
+import { IconMapOutline, IconTable, IconTrayDownload } from './dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatProjectDataHelper } from '../utils'
 import { CSVLink } from 'react-csv'
@@ -11,23 +10,20 @@ import { CSVLink } from 'react-csv'
 const StyledViewToggleContainer = styled('div')`
   position: absolute;
   width: 10rem;
-  left: ${(props) => (props.view === 'mapView' ? '5rem' : '53rem')};
-  ${(props) => (props.view === 'mapView' ? 'top: 1.3rem' : 'bottom: 1.8rem')};
+  left: 5rem;
+  top: 1.3rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
 `
 
-const OpaquePrimaryButton = styled(ButtonPrimary)`
-  opacity: 0.3;
-`
-
-const OpaqueSecondaryButton = styled(ButtonSecondary)`
-  opacity: 0.3;
-`
-
-const OpaqueButtonPrimaryWithMargin = styled(OpaquePrimaryButton)`
+const ButtonSecondaryWithMargin = styled(ButtonSecondary)`
   margin-left: 0.1rem;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  padding: 0 2rem;
 `
 
 const StyledCSVLink = styled(CSVLink)`
@@ -95,17 +91,18 @@ export default function ViewToggle(props) {
         </>
       ) : (
         <>
-          <OpaqueSecondaryButton onClick={handleMapView}>
+          <ButtonSecondary onClick={handleMapView}>
             <IconMapOutline />
             <div>Map</div>
-          </OpaqueSecondaryButton>
-          <OpaquePrimaryButton onClick={handleTableView}>
+          </ButtonSecondary>
+          <ButtonPrimary onClick={handleTableView}>
             <IconTable />
             <div>Table</div>
-          </OpaquePrimaryButton>
-          <OpaqueButtonPrimaryWithMargin onClick={handleDownload}>
-            DOWNLOAD
-          </OpaqueButtonPrimaryWithMargin>
+          </ButtonPrimary>
+          <ButtonSecondaryWithMargin onClick={handleDownload}>
+            <IconTrayDownload />
+            <span>Download</span>
+          </ButtonSecondaryWithMargin>
           <StyledCSVLink
             data={tableContent}
             headers={tableHeaders}

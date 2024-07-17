@@ -12,66 +12,37 @@ import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../library/usePrevious'
 import theme from '../theme'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ButtonSecondary } from './generic/buttons'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
+import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import useResponsive from '../library/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
 
-const Tooltip = styled.span`
-  visibility: hidden;
-  width: max-content;
-  background-color: ${theme.color.primaryColor};
-  color: ${theme.color.white};
-  text-align: center;
-  border-radius: 6px;
-  padding: 0.7rem;
-  position: relative;
-  z-index: 4;
-  bottom: -2.5rem;
-  left: 150%;
-  margin-left: -15rem;
-  transition: opacity 0.3s;
-  white-space: nowrap;
-  font-size: ${theme.typography.defaultFontSize};
-  width: 20rem;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: -4rem;
-    left: 39%;
-    margin-left: -0rem;
-    border-width: 2rem;
-    border-style: solid;
-    border-color: transparent transparent ${theme.color.primaryColor} transparent;
-  }
-`
-
-const TooltipContainer = styled.div`
-  display: inline-block;
-  height: 6rem;
-  &:hover ${Tooltip} {
-    visibility: visible;
-  }
-`
 const ZoomToSecondaryButton = styled(ButtonSecondary)`
-  padding-top: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
   margin-left: 0.5rem;
-  height: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+  align-items: center;
 `
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
   left: 16.5rem;
-  width: 10rem;
+  height: 6rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
+  ${mediaQueryTabletLandscapeOnly(css`
+    top: 1rem;
+    left: 8rem;
+  `)}
 `
 
 const CircleMarkerPathOptions = {
@@ -95,7 +66,13 @@ const isValidZoom = (zoom) => {
 }
 
 export default function LeafletMap(props) {
-  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = props
+  const {
+    displayedProjects,
+    selectedMarkerId,
+    setSelectedMarkerId,
+    showFilterPane,
+    showMetricsPane,
+  } = props
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -113,6 +90,11 @@ export default function LeafletMap(props) {
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
+  const { isDesktopWidth } = useResponsive()
+
+  const _loadTilesWhenPanelsToggled = useEffect(() => {
+    map?.invalidateSize()
+  }, [map, showFilterPane, showMetricsPane])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -170,7 +152,19 @@ export default function LeafletMap(props) {
     return queryParams.has('sample_event_id')
   }
 
-  function MapEventListener() {
+  const toggleMapZoomControlAndAttribution = () => {
+    if (!map) return
+    if (isDesktopWidth) {
+      map.attributionControl.setPrefix('Leaflet')
+      map.zoomControl.setPosition('bottomright')
+      map.zoomControl.addTo(map)
+    } else {
+      map.attributionControl.setPrefix(false)
+      map.zoomControl.remove()
+    }
+  }
+
+  const MapEventListener = () => {
     const map = useMapEvents({
       moveend: () => {
         const { lat, lng } = map.getCenter()
@@ -183,31 +177,41 @@ export default function LeafletMap(props) {
         setMapCenter([lat, lng])
         setMapZoom(zoom)
       },
+      resize: () => {
+        toggleMapZoomControlAndAttribution()
+      },
     })
 
+    toggleMapZoomControlAndAttribution()
+    return null
+  }
+
+  const MapAndTableControlsWrapper = () => {
     return (
       <ControlContainer>
         {isAnyActiveFilters() ? (
-          <TooltipContainer>
-            <ZoomToSecondaryButton onClick={handleZoomToFilteredData}>
-              <img src={zoomToFiltered} alt="Zoom to filtered data" />
-            </ZoomToSecondaryButton>
-            <Tooltip>Zoom to filtered data</Tooltip>
-          </TooltipContainer>
+          <ZoomToSecondaryButton
+            onClick={handleZoomToFilteredData}
+            aria-labelledby="Zoom to filtered data button"
+          >
+            <img src={zoomToFiltered} alt="Zoom to filtered data" />
+            {isDesktopWidth ? <span>Filtered Data</span> : null}
+          </ZoomToSecondaryButton>
         ) : null}
         {hasSelectedSite() ? (
-          <TooltipContainer>
-            <ZoomToSecondaryButton onClick={handleZoomToSelectedSite}>
-              <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-            </ZoomToSecondaryButton>
-            <Tooltip>Zoom to selected site</Tooltip>
-          </TooltipContainer>
+          <ZoomToSecondaryButton
+            onClick={handleZoomToSelectedSite}
+            aria-labelledby="Zoom to selected site button"
+          >
+            <img src={zoomToSelectedSites} alt="Zoom to selected site" />
+            {isDesktopWidth ? <span>Selected Site</span> : null}
+          </ZoomToSecondaryButton>
         ) : null}
       </ControlContainer>
     )
   }
 
-  const addAndRemoveMarkersBasedOnFilters = useEffect(() => {
+  const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
 
@@ -260,39 +264,40 @@ export default function LeafletMap(props) {
     selectedMarkerId,
     prevSelectedMarkerId,
     updateURLParams,
+    setSelectedMarkerId,
   ])
 
   return (
-    <>
-      <MapContainer
-        center={mapCenter}
-        zoom={mapZoom}
-        scrollWheelZoom={true}
-        maxZoom={20}
-        ref={setMap}
+    <MapContainer
+      center={mapCenter}
+      zoom={mapZoom}
+      scrollWheelZoom={true}
+      maxZoom={20}
+      ref={setMap}
+    >
+      <MapEventListener />
+      <MapAndTableControlsWrapper />
+      <MarkerClusterGroup
+        // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
+        chunkedLoading
+        spiderfyOnMaxZoom={false}
+        onClick={(event) => {
+          console.log('Click marker cluster group', event)
+          // Add a click event handler here if required
+        }}
       >
-        <MapEventListener />
-        <MarkerClusterGroup
-          // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
-          chunkedLoading
-          spiderfyOnMaxZoom={false}
-          onClick={(event) => {
-            console.log('Click marker cluster group', event)
-            // Add a click event handler here if required
-          }}
-        >
-          {markers}
-        </MarkerClusterGroup>
-        <TileLayer
-          url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-          attribution="Tiles &copy; Esri"
-        />
-      </MapContainer>
-    </>
+        {markers}
+      </MarkerClusterGroup>
+      <TileLayer url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}" />
+    </MapContainer>
   )
 }
 
 LeafletMap.propTypes = {
   // TODO: Add more detail here. What is the shape of the objects in the array?
   displayedProjects: PropTypes.array,
+  selectedMarkerId: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
+  setSelectedMarkerId: PropTypes.func.isRequired,
+  showFilterPane: PropTypes.bool.isRequired,
+  showMetricsPane: PropTypes.bool.isRequired,
 }

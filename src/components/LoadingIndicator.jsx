@@ -6,14 +6,22 @@ import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 
 const StyledLoadingContainer = styled('div')`
   position: absolute;
-  width: ${(props) => (props.showLoadingBar ? '20rem' : '14rem')};
-  right: 33rem;
-  top: 8rem;
+  width: ${(props) => (props.$showLoadingBar ? '20rem' : '14rem')};
+  bottom: 1.5rem;
+  left: 1.5rem;
   padding: 0.8rem 1rem;
-  z-index: 2;
+  z-index: 400;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
-    right: 3rem;
+    left: auto;
+    display: flex;
+    flex-direction: row;
+    width: 90vw;
+    justify-content: center;
+    background-color: ${theme.color.white};
+    justify-self: center;
+    bottom: 0.5rem;
+    justify-self: center;
   `)}
 `
 
@@ -24,19 +32,30 @@ const StyledProgressBarContainer = styled('div')`
   border-radius: 0;
   margin: 0.5rem 0;
   overflow: hidden;
+  ${mediaQueryTabletLandscapeOnly(css`
+    width: 15rem;
+  `)}
 `
 
 const StyledProgressBar = styled('div')`
-  width: ${(props) => props.value}%;
+  width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
   transition: width 0.3s ease-in-out;
 `
 
-export default function LoadingIndicator(props) {
-  const { projectData } = props
+const StyledHeader = styled('header')`
+  ${mediaQueryTabletLandscapeOnly(css`
+    width: 15rem;
+  `)}
+`
+
+export default function LoadingIndicator({
+  projectData,
+  showLoadingIndicator,
+  setShowLoadingIndicator,
+}) {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
   useEffect(() => {
@@ -53,18 +72,18 @@ export default function LoadingIndicator(props) {
         setShowLoadingIndicator(false)
       }, 10000)
     }
-  }, [loadingProgressValue])
+  }, [loadingProgressValue, setShowLoadingIndicator])
 
   return showLoadingIndicator === true ? (
-    <StyledLoadingContainer showLoadingBar={showLoadingBar}>
-      <header>
+    <StyledLoadingContainer $showLoadingBar={showLoadingBar}>
+      <StyledHeader>
         {loadingProgressValue === 100
           ? 'All sites loaded'
           : `Loading sites ${loadingProgressValue}%`}
-      </header>
+      </StyledHeader>
       {showLoadingBar === true ? (
         <StyledProgressBarContainer>
-          <StyledProgressBar value={loadingProgressValue} />
+          <StyledProgressBar $value={loadingProgressValue} />
         </StyledProgressBarContainer>
       ) : null}
     </StyledLoadingContainer>
@@ -76,4 +95,6 @@ LoadingIndicator.propTypes = {
     count: PropTypes.number,
     results: PropTypes.array,
   }).isRequired,
+  showLoadingIndicator: PropTypes.bool.isRequired,
+  setShowLoadingIndicator: PropTypes.func.isRequired,
 }
