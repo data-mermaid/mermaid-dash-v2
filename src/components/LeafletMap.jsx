@@ -153,7 +153,9 @@ export default function LeafletMap(props) {
   }
 
   const toggleMapZoomControlAndAttribution = () => {
-    if (!map) return
+    if (!map) {
+      return
+    }
     if (isDesktopWidth) {
       map.attributionControl.setPrefix('Leaflet')
       map.zoomControl.setPosition('bottomright')

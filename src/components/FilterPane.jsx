@@ -416,6 +416,7 @@ export default function FilterPane({
     doesSelectedSampleEventPassFilters,
     location.search,
     showYourData,
+    userIsMemberOfProject,
   ])
 
   const formatEndDate = (date) => {
@@ -645,10 +646,13 @@ export default function FilterPane({
     setCheckedProjects(updatedCheckedProjects)
   }
 
-  const userIsMemberOfProject = (projectId) => {
-    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
-    return projectsUserIsMemberOf.includes(projectId)
-  }
+  const userIsMemberOfProject = useCallback(
+    (projectId) => {
+      const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+      return projectsUserIsMemberOf.includes(projectId)
+    },
+    [mermaidUserData],
+  )
 
   return (
     <StyledFilterPaneContainer>
