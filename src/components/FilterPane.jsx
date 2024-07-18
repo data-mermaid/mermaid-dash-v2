@@ -299,6 +299,14 @@ export default function FilterPane({
     [getURLParams, setSelectedMarkerId, updateURLParams],
   )
 
+  const userIsMemberOfProject = useCallback(
+    (projectId) => {
+      const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+      return projectsUserIsMemberOf.includes(projectId)
+    },
+    [mermaidUserData],
+  )
+
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
@@ -645,14 +653,6 @@ export default function FilterPane({
       : [...checkedProjects, projectId]
     setCheckedProjects(updatedCheckedProjects)
   }
-
-  const userIsMemberOfProject = useCallback(
-    (projectId) => {
-      const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
-      return projectsUserIsMemberOf.includes(projectId)
-    },
-    [mermaidUserData],
-  )
 
   return (
     <StyledFilterPaneContainer>
