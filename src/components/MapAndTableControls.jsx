@@ -84,7 +84,7 @@ export default function MapAndTableControls({ map = undefined, view, setView }) 
       'endDate',
       'method',
       'dataSharing',
-      'projectName',
+      'projects',
     ]
 
     return filterKeys.some((key) => queryParams.has(key))
