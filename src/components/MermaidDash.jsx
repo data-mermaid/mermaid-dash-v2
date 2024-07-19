@@ -146,32 +146,35 @@ export default function MermaidDash() {
   const fetchData = useCallback(
     async (token = '') => {
       try {
-        let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
+        const apiEndpoint = import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT
+        const initialUrl = `${apiEndpoint}?limit=300&page=1`
+        let nextPageUrl = initialUrl
 
-        while (nextPageUrl !== null) {
+        while (nextPageUrl) {
           const response = await fetch(nextPageUrl, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
           })
-          if (response.ok) {
-            const data = await response.json()
-            setProjectData((prevData) => {
-              return {
-                ...prevData,
-                count: data.count,
-                next: data.next,
-                previous: data.previous,
-                results: prevData.results
-                  ? [...prevData.results, ...data.results]
-                  : [...data.results],
-              }
-            })
-            nextPageUrl = data.next
-          } else {
+
+          if (!response.ok) {
             console.error('Failed to fetch data:', response.status)
             break
           }
+
+          const data = await response.json()
+          setProjectData((prevData) => {
+            return {
+              ...prevData,
+              count: data.count,
+              next: data.next,
+              previous: data.previous,
+              results: prevData.results
+                ? [...prevData.results, ...data.results]
+                : [...data.results],
+            }
+          })
+          nextPageUrl = data.next
         }
       } catch (error) {
         console.error('Error fetching data:', error)

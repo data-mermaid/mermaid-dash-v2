@@ -37,13 +37,10 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 export default function MapAndTableControls({ map = undefined, view, setView }) {
   const { displayedProjects, projectDataCount } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
+  const queryParams = new URLSearchParams(location.search)
 
   const handleZoomToFilteredData = () => {
-    if (!map) {
-      return
-    }
-
-    if (!displayedProjects || displayedProjects.length === 0) {
+    if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
     const coordinates = displayedProjects.flatMap((project) =>
@@ -61,7 +58,6 @@ export default function MapAndTableControls({ map = undefined, view, setView }) 
       return
     }
 
-    const queryParams = new URLSearchParams(location.search)
     if (queryParams.has('sample_event_id')) {
       const sample_event_id = queryParams.get('sample_event_id')
       const foundSampleEvent = displayedProjects
@@ -76,7 +72,6 @@ export default function MapAndTableControls({ map = undefined, view, setView }) 
   }
 
   const isAnyActiveFilters = () => {
-    const queryParams = new URLSearchParams(location.search)
     const filterKeys = [
       'countries',
       'organizations',
@@ -91,7 +86,6 @@ export default function MapAndTableControls({ map = undefined, view, setView }) 
   }
 
   const hasSelectedSite = () => {
-    const queryParams = new URLSearchParams(location.search)
     return queryParams.has('sample_event_id')
   }
 
