@@ -22,6 +22,8 @@ import {
 import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
 import { formatProjectDataHelper } from '../utils'
 import { useLocation, useNavigate } from 'react-router-dom'
+import MapAndTableControls from './MapAndTableControls'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);
@@ -32,8 +34,8 @@ const StyledTableContainer = styled('div')`
   width: 100%;
 `
 
-const TableView = (props) => {
-  const { displayedProjects } = props
+const TableView = ({ view, setView }) => {
+  const { displayedProjects } = useFilterProjectsContext()
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -271,6 +273,7 @@ const TableView = (props) => {
   return (
     <StyledTableContainer>
       <ContentPageLayout content={table} />
+      <MapAndTableControls view={view} setView={setView} />
     </StyledTableContainer>
   )
 }
@@ -278,5 +281,6 @@ const TableView = (props) => {
 export default TableView
 
 TableView.propTypes = {
-  displayedProjects: PropTypes.array.isRequired,
+  view: PropTypes.string.isRequired,
+  setView: PropTypes.func.isRequired,
 }

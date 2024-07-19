@@ -1,12 +1,10 @@
 import { useEffect, useState, useCallback } from 'react'
 import styled, { css } from 'styled-components'
 import Header from './Header/Header'
-import { useAuth0 } from '@auth0/auth0-react'
 import LeafletMap from './LeafletMap'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import FilterPane from './FilterPane'
 import LoadingIndicator from './LoadingIndicator'
-import ViewToggle from './ViewToggle'
 import TableView from './TableView'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MetricsPane from './MetricsPane'
@@ -14,7 +12,9 @@ import theme from '../theme'
 import { IconFilter } from './icons'
 import { ButtonSecondary } from './generic/buttons'
 import Modal from './generic/Modal'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 import useResponsive from '../library/useResponsive'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const StyledDashboardContainer = styled('div')`
   display: flex;
@@ -125,41 +125,43 @@ const MobileFooterContainer = styled('div')`
 `
 
 export default function MermaidDash() {
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [projectData, setProjectData] = useState({})
-  const [displayedProjects, setDisplayedProjects] = useState([])
+  const { projectData, displayedProjects, setProjectData } = useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
-  const queryParams = new URLSearchParams(location.search)
-  const queryParamsSampleEventId = queryParams.get('sample_event_id')
-  const initialSelectedMarker =
-    queryParamsSampleEventId !== null
-      ? {
-          options: {
-            sample_event_id: queryParamsSampleEventId,
-          },
-        }
-      : null
-  const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const [mermaidUserData, setMermaidUserData] = useState({})
   const { isMobileWidth, isDesktopWidth } = useResponsive()
+  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
 
-  const fetchData = async (token) => {
-    try {
-      let nextPageUrl = `${import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT}?limit=300&page=1`
+  const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
+    headers: {
+      Authorization: `Bearer ${await getAccessTokenSilently()}`,
+    },
+  })
 
-      while (nextPageUrl !== null) {
-        const response = await fetch(nextPageUrl, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        })
-        if (response.ok) {
+  const fetchData = useCallback(
+    async (token = '') => {
+      try {
+        const apiEndpoint = import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT
+        const initialUrl = `${apiEndpoint}?limit=300&page=1`
+        let nextPageUrl = initialUrl
+
+        while (nextPageUrl) {
+          const response = await fetch(nextPageUrl, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          })
+
+          if (!response.ok) {
+            console.error('Failed to fetch data:', response.status)
+            break
+          }
+
           const data = await response.json()
           setProjectData((prevData) => {
             return {
@@ -173,29 +175,19 @@ export default function MermaidDash() {
             }
           })
           nextPageUrl = data.next
-        } else {
-          console.error('Failed to fetch data:', response.status)
-          break
         }
+      } catch (error) {
+        console.error('Error fetching data:', error)
       }
-    } catch (error) {
-      console.error('Error fetching data:', error)
-    }
-  }
-
-  const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
-    headers: {
-      Authorization: `Bearer ${await getAccessTokenSilently()}`,
     },
-  })
+    [setProjectData],
+  )
 
   const fetchUserProfile = useCallback(async () => {
     try {
       const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
-      const response = await fetch(
-        profileEndpoint,
-        await getAuthorizationHeaders(getAccessTokenSilently),
-      )
+      const headers = await getAuthorizationHeaders(getAccessTokenSilently)
+      const response = await fetch(profileEndpoint, headers)
       const parsedResponse = await response.json()
       setMermaidUserData(parsedResponse)
     } catch (e) {
@@ -210,6 +202,13 @@ export default function MermaidDash() {
         fetchData(token)
         if (isAuthenticated) {
           fetchUserProfile()
+          const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
+          const response = await fetch(
+            profileEndpoint,
+            await getAuthorizationHeaders(getAccessTokenSilently),
+          )
+          const parsedResponse = await response.json()
+          setMermaidUserData(parsedResponse)
         }
       } catch (e) {
         console.error('Error fetching data:', e)
@@ -220,7 +219,7 @@ export default function MermaidDash() {
       return
     }
     handleFetchData()
-  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile])
+  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile, fetchData])
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -258,16 +257,8 @@ export default function MermaidDash() {
     setShowFilterModal(!showFilterModal)
   }
 
-  const renderFilter = (showFilterModal) => {
-    const modalContent = (
-      <FilterPane
-        projectData={projectData}
-        displayedProjects={displayedProjects}
-        setDisplayedProjects={setDisplayedProjects}
-        setSelectedMarkerId={setSelectedMarkerId}
-        mermaidUserData={mermaidUserData}
-      />
-    )
+  const renderFilter = () => {
+    const modalContent = <FilterPane mermaidUserData={mermaidUserData} />
 
     const footerContent = (
       <MobileFooterContainer>
@@ -291,13 +282,7 @@ export default function MermaidDash() {
       <StyledFilterWrapper $showFilterPane={showFilterPane}>
         {showFilterPane ? (
           <StyledFilterContainer>
-            <FilterPane
-              projectData={projectData}
-              displayedProjects={displayedProjects}
-              setDisplayedProjects={setDisplayedProjects}
-              setSelectedMarkerId={setSelectedMarkerId}
-              mermaidUserData={mermaidUserData}
-            />
+            <FilterPane mermaidUserData={mermaidUserData} />
           </StyledFilterContainer>
         ) : null}
 
@@ -311,15 +296,12 @@ export default function MermaidDash() {
   const renderMap = () => (
     <StyledMapContainer>
       <LeafletMap
-        displayedProjects={displayedProjects}
-        selectedMarkerId={selectedMarkerId}
-        setSelectedMarkerId={setSelectedMarkerId}
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
+        view={view}
+        setView={setView}
+        projectDataCount={projectData?.count || 0}
       />
-      {isDesktopWidth ? (
-        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}
@@ -330,10 +312,7 @@ export default function MermaidDash() {
 
   const renderTable = () => (
     <StyledTableContainer>
-      <TableView displayedProjects={displayedProjects} />
-      {isDesktopWidth ? (
-        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
+      <TableView view={view} setView={setView} />
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}
