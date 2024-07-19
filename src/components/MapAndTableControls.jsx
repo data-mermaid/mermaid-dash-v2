@@ -35,7 +35,8 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 
 export default function MapAndTableControls({ map = undefined, view, setView }) {
-  const { displayedProjects, projectDataCount } = useFilterProjectsContext()
+  const { URL_PARAMS, displayedProjects, projectDataCount, showYourData } =
+    useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -72,17 +73,8 @@ export default function MapAndTableControls({ map = undefined, view, setView }) 
   }
 
   const isAnyActiveFilters = () => {
-    const filterKeys = [
-      'countries',
-      'organizations',
-      'startDate',
-      'endDate',
-      'method',
-      'dataSharing',
-      'projects',
-    ]
-
-    return filterKeys.some((key) => queryParams.has(key))
+    const filterKeys = Object.values(URL_PARAMS)
+    return showYourData || filterKeys.some((key) => queryParams.has(key))
   }
 
   const hasSelectedSite = () => {
