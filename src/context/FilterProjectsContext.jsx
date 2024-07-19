@@ -186,13 +186,10 @@ export const FilterProjectsProvider = ({ children }) => {
     [updateURLParams, getURLParams],
   )
 
-  const userIsMemberOfProject = useCallback(
-    (projectId, mermaidUserData) => {
-      const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
-      return projectsUserIsMemberOf.includes(projectId)
-    },
-    [mermaidUserData],
-  )
+  const userIsMemberOfProject = useCallback((projectId, mermaidUserData) => {
+    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+    return projectsUserIsMemberOf.includes(projectId)
+  }, [])
 
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
@@ -312,6 +309,7 @@ export const FilterProjectsProvider = ({ children }) => {
     location.search,
     showYourData,
     userIsMemberOfProject,
+    mermaidUserData,
   ])
 
   const handleSelectedCountriesChange = (event) => {

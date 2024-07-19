@@ -220,7 +220,14 @@ export default function MermaidDash() {
       return
     }
     handleFetchData()
-  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchUserProfile, fetchData])
+  }, [
+    isLoading,
+    isAuthenticated,
+    getAccessTokenSilently,
+    fetchUserProfile,
+    fetchData,
+    setMermaidUserData,
+  ])
 
   const updateURLParams = useCallback(
     (queryParams) => {
