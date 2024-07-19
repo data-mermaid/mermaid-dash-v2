@@ -82,6 +82,8 @@ export const FilterProjectsProvider = ({ children }) => {
         }
       : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+  const [showYourData, setShowYourData] = useState(false)
+  const [mermaidUserData, setMermaidUserData] = useState({})
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -184,6 +186,11 @@ export const FilterProjectsProvider = ({ children }) => {
     [updateURLParams, getURLParams],
   )
 
+  const userIsMemberOfProject = (projectId, mermaidUserData) => {
+    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
+    return projectsUserIsMemberOf.includes(projectId)
+  }
+
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
@@ -261,11 +268,17 @@ export const FilterProjectsProvider = ({ children }) => {
         // Filter out projects with empty records
         const nonEmptyRecords = project.records.length > 0
 
+        // Filter out projects that the user is not a member of
+        const onlyShowProjectsUserIsAMemberOf = showYourData
+          ? userIsMemberOfProject(project.project_id, mermaidUserData)
+          : true
+
         return (
           matchesSelectedCountries &&
           matchesSelectedOrganizations &&
           matchesProjectName &&
-          nonEmptyRecords
+          nonEmptyRecords &&
+          onlyShowProjectsUserIsAMemberOf
         )
       })
 
@@ -294,6 +307,8 @@ export const FilterProjectsProvider = ({ children }) => {
     setDisplayedProjects,
     doesSelectedSampleEventPassFilters,
     location.search,
+    showYourData,
+    userIsMemberOfProject,
   ])
 
   const handleSelectedCountriesChange = (event) => {
@@ -416,6 +431,11 @@ export const FilterProjectsProvider = ({ children }) => {
     setProjectNameFilter('')
   }
 
+  const handleYourDataFilter = (event) => {
+    const { checked } = event.target
+    setShowYourData(checked)
+  }
+
   return (
     <FilterProjectsContext.Provider
       value={{
@@ -442,6 +462,10 @@ export const FilterProjectsProvider = ({ children }) => {
         setSelectedMarkerId,
         checkedProjects,
         setCheckedProjects,
+        showYourData,
+        setShowYourData,
+        mermaidUserData,
+        setMermaidUserData,
         handleSelectedCountriesChange,
         handleSelectedOrganizationsChange,
         formattedDate,
@@ -452,6 +476,8 @@ export const FilterProjectsProvider = ({ children }) => {
         handleMethodFilter,
         handleProjectNameFilter,
         clearAllFilters,
+        handleYourDataFilter,
+        userIsMemberOfProject,
       }}
     >
       {children}

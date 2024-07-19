@@ -125,7 +125,8 @@ const MobileFooterContainer = styled('div')`
 `
 
 export default function MermaidDash() {
-  const { projectData, displayedProjects, setProjectData } = useFilterProjectsContext()
+  const { projectData, displayedProjects, setProjectData, mermaidUserData, setMermaidUserData } =
+    useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -133,7 +134,7 @@ export default function MermaidDash() {
   const location = useLocation()
   const navigate = useNavigate()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
-  const [mermaidUserData, setMermaidUserData] = useState({})
+  // const [mermaidUserData, setMermaidUserData] = useState({})
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
 
