@@ -432,6 +432,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setDataSharingFilter(false)
     setMethodFilters([])
     setProjectNameFilter('')
+    setShowYourData(false)
   }
 
   const handleYourDataFilter = (event) => {
