@@ -12,38 +12,12 @@ import '../customStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../library/usePrevious'
 import theme from '../theme'
-import styled, { css } from 'styled-components'
-import { ButtonSecondary } from './generic/buttons'
-import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
-import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
-import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import MapAndTableControls from './MapAndTableControls'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 import useResponsive from '../library/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
-
-const ZoomToSecondaryButton = styled(ButtonSecondary)`
-  padding-left: 2rem;
-  padding-right: 2rem;
-  margin-left: 0.5rem;
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-`
-const ControlContainer = styled.div`
-  position: absolute;
-  top: 1.3rem;
-  left: 16.5rem;
-  height: 6rem;
-  z-index: 400;
-  display: flex;
-  flex-direction: row;
-  ${mediaQueryTabletLandscapeOnly(css`
-    top: 1rem;
-    left: 8rem;
-  `)}
-`
 
 const CircleMarkerPathOptions = {
   color: `${theme.color.white}`,
@@ -65,14 +39,8 @@ const isValidZoom = (zoom) => {
   return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
-export default function LeafletMap(props) {
-  const {
-    displayedProjects,
-    selectedMarkerId,
-    setSelectedMarkerId,
-    showFilterPane,
-    showMetricsPane,
-  } = props
+export default function LeafletMap({ showFilterPane, showMetricsPane, view, setView }) {
+  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -103,57 +71,10 @@ export default function LeafletMap(props) {
     [navigate, location.pathname],
   )
 
-  const handleZoomToFilteredData = () => {
-    if (!displayedProjects || displayedProjects.length === 0) {
-      return
-    }
-    const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.latitude, record.longitude]),
-    )
-    if (coordinates.length === 0) {
-      return
-    }
-    const bounds = L.latLngBounds(coordinates)
-    map.fitBounds(bounds)
-  }
-
-  const handleZoomToSelectedSite = () => {
-    const queryParams = new URLSearchParams(location.search)
-    if (queryParams.has('sample_event_id')) {
-      const sample_event_id = queryParams.get('sample_event_id')
-      const foundSampleEvent = displayedProjects
-        .flatMap((project) => project.records)
-        .find((record) => record.sample_event_id === sample_event_id)
-      if (!foundSampleEvent) {
-        return
-      }
-      const { latitude, longitude } = foundSampleEvent
-      map.setView([latitude, longitude], 18)
-    }
-  }
-
-  const isAnyActiveFilters = () => {
-    const queryParams = new URLSearchParams(location.search)
-    const filterKeys = [
-      'countries',
-      'organizations',
-      'startDate',
-      'endDate',
-      'method',
-      'dataSharing',
-      'projectName',
-    ]
-
-    return filterKeys.some((key) => queryParams.has(key))
-  }
-
-  const hasSelectedSite = () => {
-    const queryParams = new URLSearchParams(location.search)
-    return queryParams.has('sample_event_id')
-  }
-
   const toggleMapZoomControlAndAttribution = () => {
-    if (!map) return
+    if (!map) {
+      return
+    }
     if (isDesktopWidth) {
       map.attributionControl.setPrefix('Leaflet')
       map.zoomControl.setPosition('bottomright')
@@ -187,28 +108,7 @@ export default function LeafletMap(props) {
   }
 
   const MapAndTableControlsWrapper = () => {
-    return (
-      <ControlContainer>
-        {isAnyActiveFilters() ? (
-          <ZoomToSecondaryButton
-            onClick={handleZoomToFilteredData}
-            aria-labelledby="Zoom to filtered data button"
-          >
-            <img src={zoomToFiltered} alt="Zoom to filtered data" />
-            {isDesktopWidth ? <span>Filtered Data</span> : null}
-          </ZoomToSecondaryButton>
-        ) : null}
-        {hasSelectedSite() ? (
-          <ZoomToSecondaryButton
-            onClick={handleZoomToSelectedSite}
-            aria-labelledby="Zoom to selected site button"
-          >
-            <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-            {isDesktopWidth ? <span>Selected Site</span> : null}
-          </ZoomToSecondaryButton>
-        ) : null}
-      </ControlContainer>
-    )
+    return <MapAndTableControls map={map} view={view} setView={setView} />
   }
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
@@ -295,9 +195,8 @@ export default function LeafletMap(props) {
 
 LeafletMap.propTypes = {
   // TODO: Add more detail here. What is the shape of the objects in the array?
-  displayedProjects: PropTypes.array,
-  selectedMarkerId: PropTypes.oneOfType([PropTypes.string, PropTypes.oneOf([null])]),
-  setSelectedMarkerId: PropTypes.func.isRequired,
   showFilterPane: PropTypes.bool.isRequired,
   showMetricsPane: PropTypes.bool.isRequired,
+  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  setView: PropTypes.func.isRequired,
 }
