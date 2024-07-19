@@ -189,7 +189,6 @@ export default function FilterPane({ mermaidUserData }) {
   const [countries, setCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
-  // const [showYourData, setShowYourData] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated } = useAuth0()
