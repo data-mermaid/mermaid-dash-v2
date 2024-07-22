@@ -16,33 +16,12 @@ import {
   StyledMenuItem,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
+import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose, IconUser } from '../icons'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
-
-const URL_PARAMS = {
-  COUNTRIES: 'countries',
-  ORGANIZATIONS: 'organizations',
-  SAMPLE_DATE_AFTER: 'sample_date_after',
-  SAMPLE_DATE_BEFORE: 'sample_date_before',
-  PROJECTS: 'projects',
-  DATA_SHARING: 'dataSharing',
-  METHODS: 'methods',
-}
-
-const collectionMethods = [
-  {
-    name: 'beltfish',
-    description: 'Fish Belt',
-  },
-  { name: 'colonies_bleached', description: 'Bleaching' },
-  { name: 'benthicpit', description: 'Benthic PIT' },
-  { name: 'benthiclit', description: 'Benthic LIT' },
-  { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
-  { name: 'habitatcomplexity', description: 'Habitat Complexity' },
-]
 
 const deleteIconSize = {
   height: '15px',
@@ -332,7 +311,7 @@ const FilterPane = ({ mermaidUserData }) => {
           </div>
           <StyledHeader>Methods</StyledHeader>
           <StyledUnorderedList>
-            {collectionMethods.map((method) => (
+            {COLLECTION_METHODS.map((method) => (
               <li key={method.name}>
                 <input
                   id={method.name}

@@ -9,6 +9,7 @@ import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
 import useResponsive from '../library/useResponsive'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { URL_PARAMS } from '../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -35,8 +36,7 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 
 const MapAndTableControls = ({ map = undefined, view, setView }) => {
-  const { URL_PARAMS, displayedProjects, projectDataCount, showYourData } =
-    useFilterProjectsContext()
+  const { displayedProjects, projectDataCount, showYourData } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
