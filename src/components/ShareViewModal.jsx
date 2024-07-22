@@ -31,7 +31,7 @@ const ModalURLContainer = styled.div`
   flex-grow: 1;
 `
 
-export default function ShareViewModal() {
+const ShareViewModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen])
@@ -88,3 +88,5 @@ export default function ShareViewModal() {
     </div>
   )
 }
+
+export default ShareViewModal

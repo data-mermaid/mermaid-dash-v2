@@ -159,12 +159,12 @@ const MobileExpandedMetricsPane = styled('div')`
   width: 100vw;
 `
 
-export default function MetricsPane({
+const MetricsPane = ({
   displayedProjects,
   showMetricsPane,
   setShowMetricsPane,
   showLoadingIndicator,
-}) {
+}) => {
   const [numSites, setNumSites] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
@@ -302,3 +302,5 @@ MetricsPane.propTypes = {
   setShowMetricsPane: PropTypes.func.isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
 }
+
+export default MetricsPane

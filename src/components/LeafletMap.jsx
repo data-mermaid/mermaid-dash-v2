@@ -39,7 +39,7 @@ const isValidZoom = (zoom) => {
   return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
-export default function LeafletMap({ showFilterPane, showMetricsPane, view, setView }) {
+const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
@@ -200,3 +200,5 @@ LeafletMap.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default LeafletMap

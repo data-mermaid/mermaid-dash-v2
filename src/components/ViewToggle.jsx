@@ -29,7 +29,7 @@ const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
-export default function ViewToggle({ view, setView }) {
+const ViewToggle = ({ view, setView }) => {
   const { displayedProjects } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
@@ -118,3 +118,5 @@ ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default ViewToggle

@@ -14,9 +14,7 @@ const ModalBody = styled.div`
   color: ${theme.color.black};
 `
 
-export default function DataDisclaimer(props) {
-  const { showDisclaimer, handleCloseDisclaimer } = props
-
+const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
@@ -57,3 +55,5 @@ DataDisclaimer.propTypes = {
   showDisclaimer: PropTypes.bool.isRequired,
   handleCloseDisclaimer: PropTypes.func.isRequired,
 }
+
+export default DataDisclaimer

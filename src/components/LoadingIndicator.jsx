@@ -50,11 +50,7 @@ const StyledHeader = styled('header')`
   `)}
 `
 
-export default function LoadingIndicator({
-  projectData,
-  showLoadingIndicator,
-  setShowLoadingIndicator,
-}) {
+const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingIndicator }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
@@ -98,3 +94,5 @@ LoadingIndicator.propTypes = {
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
 }
+
+export default LoadingIndicator

@@ -3,11 +3,11 @@ import { useNavigate } from 'react-router-dom'
 import GlobalStyle from './styles/globalStyles.js'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import mermaidThemeConfig from './styles/mermaidThemeConfig.js'
-import MermaidDash from './components/MermaidDash'
+import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { FilterProjectsProvider } from './context/FilterProjectsContext'
 
-function App() {
+const App = () => {
   const navigateTo = useNavigate()
   const theme = createTheme(mermaidThemeConfig)
   const location = useLocation()

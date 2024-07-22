@@ -34,7 +34,7 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
-export default function MapAndTableControls({ map = undefined, view, setView }) {
+const MapAndTableControls = ({ map = undefined, view, setView }) => {
   const { URL_PARAMS, displayedProjects, projectDataCount, showYourData } =
     useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
@@ -119,3 +119,5 @@ MapAndTableControls.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default MapAndTableControls
