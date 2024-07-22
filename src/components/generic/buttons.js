@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 
 import { hoverState } from '../../styles/mediaQueries'
-import theme from '../../theme'
+import theme from '../../styles/theme'
 
 const buttonActive = css`
   transition: ${theme.timing.activeTransition};

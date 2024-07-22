@@ -2,14 +2,14 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import GlobalStyle from './styles/globalStyles.js'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
-import mermaidThemeConfig from './styles/mermaidThemeConfig.js'
+import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
 import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { FilterProjectsProvider } from './context/FilterProjectsContext'
 
 const App = () => {
   const navigateTo = useNavigate()
-  const theme = createTheme(mermaidThemeConfig)
+  const theme = createTheme(mermaidMuiThemeConfig)
   const location = useLocation()
 
   const onRedirectCallback = (appState) => {

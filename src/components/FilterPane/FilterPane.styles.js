@@ -1,6 +1,6 @@
 import { FormControl, MenuItem, OutlinedInput, Chip, TextField } from '@mui/material'
 import styled from 'styled-components'
-import theme from '../../theme'
+import theme from '../../styles/theme'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import { css } from 'styled-components'
 

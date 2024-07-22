@@ -1,9 +1,9 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { IconClose } from './icons'
-import theme from '../theme'
+import { IconClose } from '../styles/Icons/icons'
+import theme from '../styles/theme'
 import { IconButton } from './generic/buttons'
-import dashboardOnlyTheme from './dashboardOnlyTheme'
+import dashboardOnlyTheme from '../styles/dashboardOnlyTheme'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 
 const FilterIndictorPillContainer = styled.div`
