@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import theme from '../../theme'
+import theme from '../styles/theme'
 
 export const TooltipPopup = styled('span')`
   display: block;
