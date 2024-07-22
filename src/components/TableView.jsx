@@ -19,7 +19,7 @@ import {
   StickyTableOverflowWrapper,
   GenericStickyTable,
 } from './generic/table'
-import { PAGE_SIZE_DEFAULT } from '../library/constants/constants'
+import { PAGE_SIZE_DEFAULT } from '../constants/constants'
 import { formatProjectDataHelper } from '../utils'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from './MapAndTableControls'
