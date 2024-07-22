@@ -18,7 +18,7 @@ import {
   BiggerIconUser,
   LoggedInAs,
 } from './Header.styles'
-import HideShow from '../HideShow/HideShow'
+import HideShow from '../HideShow'
 import { BiggerHamburgerIcon } from './Header.styles'
 import { LoginIcon } from '../dashboardOnlyIcons'
 import { IconDown } from '../icons'
