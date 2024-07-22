@@ -1,23 +1,25 @@
 import PropTypes from 'prop-types'
+import { Select, Box, IconButton } from '@mui/material'
 import {
-  FormControl,
-  MenuItem,
-  Select,
-  Box,
-  OutlinedInput,
-  Chip,
-  TextField,
-  IconButton,
-} from '@mui/material'
-import { filterPane } from '../constants/language'
+  StyledHeader,
+  StyledProjectsHeader,
+  StyledFilterPaneContainer,
+  StyledFormControl,
+  StyledOutlinedInput,
+  StyledChip,
+  StyledExpandFilters,
+  ShowMoreFiltersContainer,
+  StyledProjectNameFilter,
+  StyledProjectListContainer,
+  StyledUnorderedList,
+  StyledDateInput,
+  StyledMenuItem,
+} from './FilterPane.styles'
+import { filterPane } from '../../constants/language'
 import { useEffect, useState, useCallback } from 'react'
-import styled from 'styled-components'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose, IconUser } from './icons'
-import theme from '../theme'
-import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
-import { css } from 'styled-components'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { IconClose, IconUser } from '../icons'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
@@ -68,124 +70,7 @@ const selectCustomStyles = {
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
 
-const StyledHeader = styled('h2')`
-  font-size: ${theme.typography.defaultFontSize};
-  font-weight: bold;
-`
-
-const StyledProjectsHeader = styled(StyledHeader)`
-  display: flex;
-  justify-content: space-between;
-`
-
-const StyledFilterPaneContainer = styled('div')`
-  padding: 1rem;
-  min-width: 35rem;
-  ${mediaQueryTabletLandscapeOnly(css`
-    min-width: 80vw;
-    min-height: 85dvh;
-  `)}
-`
-
-const StyledFormControl = styled(FormControl)`
-  &.MuiFormControl-root {
-    width: 100%;
-  }
-`
-
-const StyledOutlinedInput = styled(OutlinedInput)`
-  &.MuiOutlinedInput-root {
-    background-color: ${theme.color.white};
-  }
-  .MuiChip-label {
-    font-size: ${theme.typography.smallFontSize};
-  }
-`
-
-const StyledChip = styled(Chip)`
-  &.MuiChip-root {
-    border-radius: 0.5rem;
-    border: 0.5px solid ${theme.color.black};
-    font-size: ${theme.typography.defaultFontSize};
-  }
-`
-
-const StyledExpandFilters = styled('button')`
-  margin: 1.5rem 0;
-  cursor: pointer;
-  text-decoration: underline;
-  border: none;
-  background: none;
-  padding: 0;
-`
-
-const ShowMoreFiltersContainer = styled('div')`
-  border-left: 0.5rem solid ${theme.color.grey4};
-  padding-left: 0.8rem;
-`
-
-const StyledProjectNameFilter = styled(TextField)`
-  width: 100%;
-  background-color: ${theme.color.white};
-  fieldset {
-    border-radius: 0;
-  }
-  input {
-    padding: 0.5rem 0 0.5rem 1rem;
-    font-size: ${theme.typography.defaultFontSize};
-  }
-  & input::placeholder {
-    font-style: italic;
-  }
-  &.MuiFormControl-root {
-    border: 1px solid ${theme.color.grey0};
-    border-bottom: none;
-  }
-`
-
-const StyledProjectListContainer = styled('div')`
-  background-color: ${theme.color.white};
-  border: 1px solid ${theme.color.grey0};
-  word-break: break-word;
-  overflow-wrap: break-word;
-`
-
-const StyledUnorderedList = styled('ul')`
-  list-style-type: none;
-  padding: 0;
-  margin: 0;
-`
-
-const StyledDateInput = styled.div`
-  position: relative;
-  width: calc(50% - 0.3rem);
-  margin-bottom: 1rem;
-  margin-right: 0.3rem;
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: ${theme.color.white};
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  .clear-button {
-    position: absolute;
-    right: 1.8rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-`
-
-const StyledMenuItem = styled(MenuItem)`
-  &.MuiMenuItem-root {
-    font-size: ${theme.typography.defaultFontSize};
-  }
-`
-
-export default function FilterPane({ mermaidUserData }) {
+const FilterPane = ({ mermaidUserData }) => {
   const [countries, setCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
@@ -500,3 +385,5 @@ export default function FilterPane({ mermaidUserData }) {
 FilterPane.propTypes = {
   mermaidUserData: PropTypes.object,
 }
+
+export default FilterPane
