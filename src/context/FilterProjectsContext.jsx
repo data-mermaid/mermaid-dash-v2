@@ -186,10 +186,11 @@ export const FilterProjectsProvider = ({ children }) => {
     [updateURLParams, getURLParams],
   )
 
-  const userIsMemberOfProject = useCallback((projectId, mermaidUserData) => {
-    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
-    return projectsUserIsMemberOf.includes(projectId)
-  }, [])
+  const userIsMemberOfProject = useCallback(
+    (projectId, mermaidUserData) =>
+      mermaidUserData?.projects?.some((project) => project.id === projectId),
+    [],
+  )
 
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {

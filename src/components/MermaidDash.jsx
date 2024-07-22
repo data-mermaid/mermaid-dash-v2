@@ -134,7 +134,6 @@ export default function MermaidDash() {
   const location = useLocation()
   const navigate = useNavigate()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
-  // const [mermaidUserData, setMermaidUserData] = useState({})
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
 
