@@ -18,6 +18,7 @@ import theme from '../theme'
 import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
 import { css } from 'styled-components'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { useAuth0 } from '@auth0/auth0-react'
 
 const URL_PARAMS = {
   COUNTRIES: 'countries',
@@ -190,6 +191,7 @@ export default function FilterPane({ mermaidUserData }) {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const { isAuthenticated } = useAuth0()
   const {
     projectData,
     displayedProjects,
@@ -204,6 +206,7 @@ export default function FilterPane({ mermaidUserData }) {
     projectNameFilter,
     checkedProjects,
     setCheckedProjects,
+    showYourData,
     handleSelectedCountriesChange,
     handleSelectedOrganizationsChange,
     formattedDate,
@@ -212,6 +215,8 @@ export default function FilterPane({ mermaidUserData }) {
     handleDataSharingFilter,
     handleMethodFilter,
     handleProjectNameFilter,
+    handleYourDataFilter,
+    userIsMemberOfProject,
   } = useFilterProjectsContext()
 
   const _generateCountryandOrganizationList = useEffect(() => {
@@ -297,11 +302,6 @@ export default function FilterPane({ mermaidUserData }) {
       ? checkedProjects.filter((checkedProject) => checkedProject !== projectId)
       : [...checkedProjects, projectId]
     setCheckedProjects(updatedCheckedProjects)
-  }
-
-  const userIsMemberOfProject = (projectId) => {
-    const projectsUserIsMemberOf = mermaidUserData?.projects?.map((project) => project.id) || []
-    return projectsUserIsMemberOf.includes(projectId)
   }
 
   return (
@@ -419,6 +419,21 @@ export default function FilterPane({ mermaidUserData }) {
               </IconButton>
             )}
           </StyledDateInput>
+          {isAuthenticated ? (
+            <>
+              <StyledHeader>Your Data</StyledHeader>
+              <div>
+                <input
+                  type="checkbox"
+                  name="yourData"
+                  id="yourData"
+                  onChange={handleYourDataFilter}
+                  checked={showYourData}
+                />
+                <label htmlFor="yourData">{filterPane.yourData}</label>
+              </div>
+            </>
+          ) : null}
           <StyledHeader>Data sharing</StyledHeader>
           <div>
             <input
@@ -471,7 +486,7 @@ export default function FilterPane({ mermaidUserData }) {
                 />{' '}
                 <label htmlFor={`checkbox-${project.project_id}`}>
                   {project.records[0]?.project_name}{' '}
-                  {userIsMemberOfProject(project.project_id) && <IconUser />}
+                  {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
                 </label>
               </li>
             )
