@@ -12,7 +12,7 @@ import '../styles/leafletMapContainerStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
 import usePrevious from '../hooks/usePrevious'
 import theme from '../styles/theme'
-import MapAndTableControls from './MapAndTableControls'
+import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 import useResponsive from '../hooks/useResponsive'
 

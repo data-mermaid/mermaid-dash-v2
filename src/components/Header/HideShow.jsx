@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import useIsMounted from '../hooks/useIsMounted'
+import useIsMounted from '../../hooks/useIsMounted'
 
 /**
  * Button that shows content in drop down on click

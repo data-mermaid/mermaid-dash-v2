@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import { mediaQueryPhoneOnly, mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
-import theme from '../styles/theme'
+import { mediaQueryPhoneOnly, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import theme from '../../styles/theme'
 
 const contentPadding = theme.spacing.xsmall
 const MainContentPageLayout = styled('div')`

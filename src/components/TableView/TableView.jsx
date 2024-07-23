@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './ContentPageLayout'
-import { getTableColumnHeaderProps, formatProjectDataHelper } from '../helperFunctions'
+import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
 import {
   Tr,
   Th,
@@ -15,11 +15,11 @@ import {
   ReactTableCustomYearSort,
   PageSelector,
   PageSizeSelector,
-} from './generic'
-import { PAGE_SIZE_DEFAULT } from '../constants/constants'
+} from '../generic'
+import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
-import MapAndTableControls from './MapAndTableControls'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 
 const StyledTableContainer = styled('div')`
   height: calc(100vh - 50px);

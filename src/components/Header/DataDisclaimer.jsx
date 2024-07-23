@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
-import { Modal, RightFooter, ButtonSecondary } from './generic'
+import { Modal, RightFooter, ButtonSecondary } from '../generic'
 import styled from 'styled-components'
-import { dataDisclaimer } from '../constants/language'
-import theme from '../styles/theme'
+import { dataDisclaimer } from '../../constants/language'
+import theme from '../../styles/theme'
 
 const ModalBody = styled.div`
   padding-left: 2rem;

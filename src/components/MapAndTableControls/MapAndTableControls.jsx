@@ -3,13 +3,13 @@ import L from 'leaflet'
 import styled, { css } from 'styled-components'
 import FilterIndicatorPill from './FilterIndicatorPill'
 import ViewToggle from './ViewToggle'
-import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
-import { ButtonSecondary } from './generic'
+import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import { ButtonSecondary } from '../generic'
 import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
-import useResponsive from '../hooks/useResponsive'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
-import { URL_PARAMS } from '../constants/constants'
+import useResponsive from '../../hooks/useResponsive'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { URL_PARAMS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;

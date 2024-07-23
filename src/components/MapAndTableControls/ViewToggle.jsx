@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import { useRef } from 'react'
 import styled from 'styled-components'
-import { ButtonPrimary, ButtonSecondary } from './generic'
-import { IconMapOutline, IconTable, IconTrayDownload } from '../styles/Icons/dashboardOnlyIcons'
+import { ButtonPrimary, ButtonSecondary } from '../generic'
+import { IconMapOutline, IconTable, IconTrayDownload } from '../../styles/Icons/dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { formatProjectDataHelper } from '../helperFunctions'
+import { formatProjectDataHelper } from '../../helperFunctions'
 import { CSVLink } from 'react-csv'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 
 const StyledViewToggleContainer = styled('div')`
   width: 12.5rem;
