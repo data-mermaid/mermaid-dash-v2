@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { IconClose } from '../../styles/Icons/icons'
+import { IconClose } from '../assets/icons'
 import theme from '../../styles/theme'
 import { IconButton } from '../generic'
 import dashboardOnlyTheme from '../../styles/dashboardOnlyTheme'

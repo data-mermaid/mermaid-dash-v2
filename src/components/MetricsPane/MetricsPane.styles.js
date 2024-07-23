@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly, hoverState } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { ButtonSecondary } from '../generic'
-import { IconCaretUp, IconCaretDown } from '../../styles/Icons/dashboardOnlyIcons'
+import { IconCaretUp, IconCaretDown } from '../assets/dashboardOnlyIcons'
 
 export const StyledMetricsWrapper = styled('div')`
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}

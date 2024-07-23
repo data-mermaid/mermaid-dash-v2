@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import MermaidLogo from '../../styles/Icons/mermaid-dashboard-logo.svg'
+import MermaidLogo from '../assets/mermaid-dashboard-logo.svg'
 import { useAuth0 } from '@auth0/auth0-react'
 import ShareViewModal from './ShareViewModal'
 import {
@@ -20,8 +20,8 @@ import {
 } from './Header.styles'
 import HideShow from './HideShow'
 import { BiggerHamburgerIcon } from './Header.styles'
-import { LoginIcon } from '../../styles/Icons/dashboardOnlyIcons'
-import { IconDown } from '../../styles/Icons/icons'
+import { LoginIcon } from '../assets/dashboardOnlyIcons'
+import { IconDown } from '../assets/icons'
 import { headerText, dataDisclaimer } from '../../constants/language'
 import DataDisclaimer from './DataDisclaimer'
 

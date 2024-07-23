@@ -4,7 +4,7 @@ import theme from '../../styles/theme'
 import styled from 'styled-components'
 import { ShareViewButton } from './Header.styles'
 import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../generic'
-import { IconCopy } from '../../styles/Icons/icons'
+import { IconCopy } from '../assets/icons'
 
 const ModalBody = styled.div`
   padding-left: 2rem;

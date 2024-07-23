@@ -19,7 +19,7 @@ import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose, IconUser } from '../../styles/Icons/icons'
+import { IconClose, IconUser } from '../assets/icons'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
