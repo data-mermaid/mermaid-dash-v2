@@ -54,14 +54,14 @@ const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingInd
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
-  useEffect(() => {
+  const _calculateCurrentLoadingPercentage = useEffect(() => {
     if (!projectData.count || !projectData.results) {
       return
     }
     setLoadingProgressValue(Math.floor((projectData.results.length / projectData.count) * 100))
   }, [projectData])
 
-  useEffect(() => {
+  const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
       setShowLoadingBar(false)
       setTimeout(() => {

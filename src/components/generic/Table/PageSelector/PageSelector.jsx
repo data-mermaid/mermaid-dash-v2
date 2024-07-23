@@ -61,7 +61,7 @@ const PageSelector = ({
 }) => {
   const [pageButtons, setPageButtons] = useState([])
 
-  useEffect(() => {
+  const _generatePageButtons = useEffect(() => {
     const pageButtonPropsThatChangeLess = { currentPageIndex, onGoToPage }
 
     const renderEightOrLessPageButtons = () => {

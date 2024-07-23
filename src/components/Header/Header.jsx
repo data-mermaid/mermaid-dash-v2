@@ -30,7 +30,7 @@ const Header = () => {
   const [hasImageError, setHasImageError] = useState(false)
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
-  useEffect(() => {
+  const _tryToAutomaticallyLoginUser = useEffect(() => {
     const silentAuth = async () => {
       try {
         await getAccessTokenSilently()

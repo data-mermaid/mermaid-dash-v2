@@ -95,7 +95,7 @@ const MermaidDash = () => {
     }
   }, [getAccessTokenSilently, setMermaidUserData])
 
-  useEffect(() => {
+  const _fetchDataFromApi = useEffect(() => {
     const handleFetchData = async () => {
       try {
         const token = isAuthenticated ? await getAccessTokenSilently() : ''
@@ -135,7 +135,7 @@ const MermaidDash = () => {
     [navigate, location.pathname],
   )
 
-  useEffect(() => {
+  const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
     if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
       setView('tableView')
@@ -146,7 +146,7 @@ const MermaidDash = () => {
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
 
-  useEffect(() => {
+  const _switchToMapViewIfResizedToMobileWidth = useEffect(() => {
     const handleResize = () => {
       if (isMobileWidth) {
         setView('mapView')

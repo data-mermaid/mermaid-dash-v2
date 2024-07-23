@@ -29,7 +29,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
     setShowItems(!showItems)
   }
 
-  useEffect(() => {
+  const _hideItemsIfClickedOutside = useEffect(() => {
     const handleClick = (event) => {
       const currentButtonRef = buttonRef.current
       const currentContentsRef = contentsRef.current

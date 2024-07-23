@@ -15,7 +15,7 @@ const ModalBody = styled.div`
 `
 
 const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {
-  useEffect(() => {
+  const _closeDisclaimerWithEscKey = useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleCloseDisclaimer()

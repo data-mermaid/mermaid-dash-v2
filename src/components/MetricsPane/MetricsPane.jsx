@@ -61,7 +61,7 @@ const MetricsPane = ({
     }
   }, [displayedProjects])
 
-  useEffect(() => {
+  const _setMetricsAfterCalculating = useEffect(() => {
     const { numSites, numTransects, numUniqueCountries, yearRange } = calculateMetrics
     setNumSites(numSites)
     setNumTransects(numTransects)

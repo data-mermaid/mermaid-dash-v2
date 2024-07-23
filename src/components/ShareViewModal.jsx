@@ -61,7 +61,7 @@ const ShareViewModal = () => {
     </RightFooter>
   )
 
-  useEffect(() => {
+  const _closeModalWithEscKey = useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleCloseModal()
