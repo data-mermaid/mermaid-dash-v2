@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 import { IconClose } from '../styles/Icons/icons'
 import theme from '../styles/theme'
-import { IconButton } from './generic/buttons'
+import { IconButton } from './generic'
 import dashboardOnlyTheme from '../styles/dashboardOnlyTheme'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 

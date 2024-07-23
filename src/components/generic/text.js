@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import theme from '../../theme'
+import theme from '../../styles/theme'
 export const P = styled.p`
   max-width: ${theme.spacing.maxTextWidth};
 `

@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { HamburgerMenu } from '../../styles/Icons/dashboardOnlyIcons'
 import { IconUser } from '../../styles/Icons/icons'
 import theme from '../../styles/theme'
-import { ButtonThatLooksLikeLink } from '../generic/buttons'
+import { ButtonThatLooksLikeLink } from '../generic'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 
 export const StyledHeader = styled('header')`

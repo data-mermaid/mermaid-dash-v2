@@ -3,14 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './ContentPageLayout'
-import { getTableColumnHeaderProps } from '../helperFunctions/getTableColumnHeaderProps'
-import PageSelector from './generic/Table/PageSelector/PageSelector'
-import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
-
-import {
-  reactTableNaturalSort,
-  ReactTableCustomYearSort,
-} from './generic/Table/reactTableNaturalSort'
+import { getTableColumnHeaderProps, formatProjectDataHelper } from '../helperFunctions'
 import {
   Tr,
   Th,
@@ -18,9 +11,12 @@ import {
   TableNavigation,
   StickyTableOverflowWrapper,
   GenericStickyTable,
-} from './generic/table'
+  reactTableNaturalSort,
+  ReactTableCustomYearSort,
+  PageSelector,
+  PageSizeSelector,
+} from './generic'
 import { PAGE_SIZE_DEFAULT } from '../constants/constants'
-import { formatProjectDataHelper } from '../helperFunctions/formatProjectDataHelper'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from './MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'

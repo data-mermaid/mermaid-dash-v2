@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom'
 import styled, { css } from 'styled-components'
-
 import { hoverState } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 

@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
-import Modal from './generic/Modal'
+import { Modal, RightFooter, ButtonSecondary } from './generic'
 import styled from 'styled-components'
 import { dataDisclaimer } from '../constants/language'
-import { RightFooter } from './generic/Modal'
-import { ButtonSecondary } from './generic/buttons'
 import theme from '../styles/theme'
 
 const ModalBody = styled.div`

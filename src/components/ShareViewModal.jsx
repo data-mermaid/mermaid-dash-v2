@@ -3,9 +3,7 @@ import { shareView } from '../constants/language'
 import theme from '../styles/theme'
 import styled from 'styled-components'
 import { ShareViewButton } from './Header/Header.styles'
-import Modal, { RightFooter } from './generic/Modal'
-import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
-import { Input } from './generic/form'
+import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from './generic'
 import { IconCopy } from '../styles/Icons/icons'
 
 const ModalBody = styled.div`

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly, hoverState } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
-import { ButtonSecondary } from '../generic/buttons'
+import { ButtonSecondary } from '../generic'
 import { IconCaretUp, IconCaretDown } from '../../styles/Icons/dashboardOnlyIcons'
 
 export const StyledMetricsWrapper = styled('div')`

@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { IconFilter } from '../../styles/Icons/icons'
-import { ButtonSecondary } from '../generic/buttons'
+import { ButtonSecondary } from '../generic'
 
 export const StyledDashboardContainer = styled('div')`
   display: flex;
