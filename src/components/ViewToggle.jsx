@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
 import { IconMapOutline, IconTable, IconTrayDownload } from '../styles/Icons/dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { formatProjectDataHelper } from '../utils'
+import { formatProjectDataHelper } from '../helperFunctions/formatProjectDataHelper'
 import { CSVLink } from 'react-csv'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 

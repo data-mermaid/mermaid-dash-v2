@@ -8,13 +8,13 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
-import '../customStyles.css'
+import '../styles/leafletMapContainerStyles.css'
 import customIcon from '../styles/Icons/map-pin.png'
-import usePrevious from '../library/usePrevious'
+import usePrevious from '../hooks/usePrevious'
 import theme from '../styles/theme'
 import MapAndTableControls from './MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
-import useResponsive from '../library/useResponsive'
+import useResponsive from '../hooks/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2

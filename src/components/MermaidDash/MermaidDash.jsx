@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import Modal from '../generic/Modal'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import useResponsive from '../../library/useResponsive'
+import useResponsive from '../../hooks/useResponsive'
 import { useAuth0 } from '@auth0/auth0-react'
 import {
   StyledDashboardContainer,

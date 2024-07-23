@@ -3,7 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './ContentPageLayout'
-import { getTableColumnHeaderProps } from '../library/getTableColumnHeaderProps'
+import { getTableColumnHeaderProps } from '../helperFunctions/getTableColumnHeaderProps'
 import PageSelector from './generic/Table/PageSelector/PageSelector'
 import PageSizeSelector from './generic/Table/PageSizeSelector/PageSizeSelector'
 
@@ -20,7 +20,7 @@ import {
   GenericStickyTable,
 } from './generic/table'
 import { PAGE_SIZE_DEFAULT } from '../constants/constants'
-import { formatProjectDataHelper } from '../utils'
+import { formatProjectDataHelper } from '../helperFunctions/formatProjectDataHelper'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from './MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'

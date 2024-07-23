@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo } from 'react'
 import PropTypes from 'prop-types'
-import useResponsive from '../../library/useResponsive'
+import useResponsive from '../../hooks/useResponsive'
 import {
   StyledMetricsWrapper,
   SummarizedMetrics,
