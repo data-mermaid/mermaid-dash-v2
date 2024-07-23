@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import useIsMounted from '../../library/useIsMounted'
+import useIsMounted from '../../../hooks/useIsMounted'
 
 /**
  * Button that shows content in drop down on click
@@ -29,7 +29,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
     setShowItems(!showItems)
   }
 
-  useEffect(() => {
+  const _hideItemsIfClickedOutside = useEffect(() => {
     const handleClick = (event) => {
       const currentButtonRef = buttonRef.current
       const currentContentsRef = contentsRef.current

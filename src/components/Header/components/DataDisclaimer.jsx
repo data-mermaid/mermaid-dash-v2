@@ -1,11 +1,9 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
-import Modal from './generic/Modal'
+import { Modal, RightFooter, ButtonSecondary } from '../../generic'
 import styled from 'styled-components'
-import { dataDisclaimer } from '../constants/language'
-import { RightFooter } from './generic/Modal'
-import { ButtonSecondary } from './generic/buttons'
-import theme from '../theme'
+import { dataDisclaimer } from '../../../constants/language'
+import theme from '../../../styles/theme'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -14,10 +12,8 @@ const ModalBody = styled.div`
   color: ${theme.color.black};
 `
 
-export default function DataDisclaimer(props) {
-  const { showDisclaimer, handleCloseDisclaimer } = props
-
-  useEffect(() => {
+const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {
+  const _closeDisclaimerWithEscKey = useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleCloseDisclaimer()
@@ -57,3 +53,5 @@ DataDisclaimer.propTypes = {
   showDisclaimer: PropTypes.bool.isRequired,
   handleCloseDisclaimer: PropTypes.func.isRequired,
 }
+
+export default DataDisclaimer

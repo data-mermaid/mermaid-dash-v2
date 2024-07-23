@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import theme from '../../theme'
+import theme from '../../styles/theme'
 import {
   hoverState,
   mediaQueryPhoneOnly,

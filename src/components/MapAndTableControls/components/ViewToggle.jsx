@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
 import { useRef } from 'react'
 import styled from 'styled-components'
-import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
-import { IconMapOutline, IconTable, IconTrayDownload } from './dashboardOnlyIcons'
+import { ButtonPrimary, ButtonSecondary } from '../../generic'
+import { IconMapOutline, IconTable, IconTrayDownload } from '../../../assets/dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { formatProjectDataHelper } from '../utils'
+import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
 
 const StyledViewToggleContainer = styled('div')`
   width: 12.5rem;
@@ -29,7 +29,7 @@ const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
-export default function ViewToggle({ view, setView }) {
+const ViewToggle = ({ view, setView }) => {
   const { displayedProjects } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
@@ -118,3 +118,5 @@ ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default ViewToggle

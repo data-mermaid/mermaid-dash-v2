@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { hoverState } from '../../../../styles/mediaQueries'
 import { ButtonThatLooksLikeLink } from '../../buttons'
-import theme from '../../../../theme'
+import theme from '../../../../styles/theme'
 
 const PaginationButtonStyles = css`
   border: none;
@@ -61,7 +61,7 @@ const PageSelector = ({
 }) => {
   const [pageButtons, setPageButtons] = useState([])
 
-  useEffect(() => {
+  const _generatePageButtons = useEffect(() => {
     const pageButtonPropsThatChangeLess = { currentPageIndex, onGoToPage }
 
     const renderEightOrLessPageButtons = () => {

@@ -2,28 +2,7 @@ import PropTypes from 'prop-types'
 import { createContext, useContext, useState, useEffect, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
-
-const URL_PARAMS = {
-  COUNTRIES: 'countries',
-  ORGANIZATIONS: 'organizations',
-  SAMPLE_DATE_AFTER: 'sample_date_after',
-  SAMPLE_DATE_BEFORE: 'sample_date_before',
-  PROJECTS: 'projects',
-  DATA_SHARING: 'dataSharing',
-  METHODS: 'methods',
-}
-
-const collectionMethods = [
-  {
-    name: 'beltfish',
-    description: 'Fish Belt',
-  },
-  { name: 'colonies_bleached', description: 'Bleaching' },
-  { name: 'benthicpit', description: 'Benthic PIT' },
-  { name: 'benthiclit', description: 'Benthic LIT' },
-  { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
-  { name: 'habitatcomplexity', description: 'Habitat Complexity' },
-]
+import { URL_PARAMS, COLLECTION_METHODS } from '../constants/constants'
 
 const isValidDateFormat = (dateString) => {
   // Regular expression to match the date format YYYY-MM-DD
@@ -123,7 +102,7 @@ export const FilterProjectsProvider = ({ children }) => {
           ? queryParams.getAll('method')[0].split(',')
           : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
         const validMethods = queryParamsMethods.filter((method) => {
-          return collectionMethods.some((collectionMethod) => collectionMethod.name === method)
+          return COLLECTION_METHODS.some((collectionMethod) => collectionMethod.name === method)
         })
         setMethodFilters(validMethods)
         if (validMethods.length === 0) {

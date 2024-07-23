@@ -8,13 +8,13 @@ import 'leaflet.markercluster'
 import 'leaflet.markercluster/dist/MarkerCluster.css'
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css'
 import 'leaflet/dist/leaflet.css'
-import '../customStyles.css'
-import customIcon from '../styles/Icons/map-pin.png'
-import usePrevious from '../library/usePrevious'
-import theme from '../theme'
-import MapAndTableControls from './MapAndTableControls'
+import '../styles/leafletMapContainerStyles.css'
+import customIcon from '../assets/map-pin.png'
+import usePrevious from '../hooks/usePrevious'
+import theme from '../styles/theme'
+import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
-import useResponsive from '../library/useResponsive'
+import useResponsive from '../hooks/useResponsive'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -39,7 +39,7 @@ const isValidZoom = (zoom) => {
   return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
-export default function LeafletMap({ showFilterPane, showMetricsPane, view, setView }) {
+const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
@@ -200,3 +200,5 @@ LeafletMap.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default LeafletMap

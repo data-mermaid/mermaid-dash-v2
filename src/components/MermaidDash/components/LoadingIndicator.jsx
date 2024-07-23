@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import theme from '../theme'
-import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
+import theme from '../../../styles/theme'
+import { mediaQueryTabletLandscapeOnly } from '../../../styles/mediaQueries'
 
 const StyledLoadingContainer = styled('div')`
   position: absolute;
@@ -50,22 +50,18 @@ const StyledHeader = styled('header')`
   `)}
 `
 
-export default function LoadingIndicator({
-  projectData,
-  showLoadingIndicator,
-  setShowLoadingIndicator,
-}) {
+const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingIndicator }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
   const [showLoadingBar, setShowLoadingBar] = useState(true)
 
-  useEffect(() => {
+  const _calculateCurrentLoadingPercentage = useEffect(() => {
     if (!projectData.count || !projectData.results) {
       return
     }
     setLoadingProgressValue(Math.floor((projectData.results.length / projectData.count) * 100))
   }, [projectData])
 
-  useEffect(() => {
+  const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
       setShowLoadingBar(false)
       setTimeout(() => {
@@ -98,3 +94,5 @@ LoadingIndicator.propTypes = {
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
 }
+
+export default LoadingIndicator

@@ -1,12 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { shareView } from '../constants/language'
-import theme from '../theme'
+import { shareView } from '../../../constants/language'
+import theme from '../../../styles/theme'
 import styled from 'styled-components'
-import { ShareViewButton } from './Header/Header.styles'
-import Modal, { RightFooter } from './generic/Modal'
-import { ButtonPrimary, ButtonSecondary } from './generic/buttons'
-import { Input } from './generic/form'
-import { IconCopy } from './icons'
+import { ShareViewButton } from '../Header.styles'
+import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../../generic'
+import { IconCopy } from '../../../assets/icons'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -31,7 +29,7 @@ const ModalURLContainer = styled.div`
   flex-grow: 1;
 `
 
-export default function ShareViewModal() {
+const ShareViewModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen])
@@ -61,7 +59,7 @@ export default function ShareViewModal() {
     </RightFooter>
   )
 
-  useEffect(() => {
+  const _closeModalWithEscKey = useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         handleCloseModal()
@@ -88,3 +86,5 @@ export default function ShareViewModal() {
     </div>
   )
 }
+
+export default ShareViewModal

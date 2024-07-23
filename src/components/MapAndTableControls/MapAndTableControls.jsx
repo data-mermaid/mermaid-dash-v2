@@ -1,14 +1,15 @@
 import PropTypes from 'prop-types'
 import L from 'leaflet'
 import styled, { css } from 'styled-components'
-import FilterIndicatorPill from './FilterIndicatorPill'
-import ViewToggle from './ViewToggle'
-import { mediaQueryTabletLandscapeOnly } from '../styles/mediaQueries'
-import { ButtonSecondary } from './generic/buttons'
-import zoomToSelectedSites from '../styles/Icons/zoom_to_selected_sites.svg'
-import zoomToFiltered from '../styles/Icons/zoom_to_filtered.svg'
-import useResponsive from '../library/useResponsive'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import FilterIndicatorPill from './components/FilterIndicatorPill'
+import ViewToggle from './components/ViewToggle'
+import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import { ButtonSecondary } from '../generic'
+import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
+import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
+import useResponsive from '../../hooks/useResponsive'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { URL_PARAMS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -34,9 +35,8 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
-export default function MapAndTableControls({ map = undefined, view, setView }) {
-  const { URL_PARAMS, displayedProjects, projectDataCount, showYourData } =
-    useFilterProjectsContext()
+const MapAndTableControls = ({ map = undefined, view, setView }) => {
+  const { displayedProjects, projectDataCount, showYourData } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -119,3 +119,5 @@ MapAndTableControls.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
+
+export default MapAndTableControls

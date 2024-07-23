@@ -1,5 +1,5 @@
 import { createGlobalStyle, css } from 'styled-components'
-import theme from '../theme'
+import theme from './theme'
 import { hoverState } from './mediaQueries'
 import '@fontsource/open-sans'
 import '@fontsource/open-sans/700.css'
