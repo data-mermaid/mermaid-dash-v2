@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react'
-import { shareView } from '../../constants/language'
-import theme from '../../styles/theme'
+import { shareView } from '../../../constants/language'
+import theme from '../../../styles/theme'
 import styled from 'styled-components'
-import { ShareViewButton } from './Header.styles'
-import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../generic'
-import { IconCopy } from '../assets/icons'
+import { ShareViewButton } from '../Header.styles'
+import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../../generic'
+import { IconCopy } from '../../../assets/icons'
 
 const ModalBody = styled.div`
   padding-left: 2rem;

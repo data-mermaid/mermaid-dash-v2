@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useEffect } from 'react'
 import styled, { css } from 'styled-components'
-import { IconClose } from '../assets/icons'
+import { IconClose } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { CloseButton } from './buttons'
 import { mediaQueryPhoneOnly } from '../../styles/mediaQueries'

@@ -53,7 +53,7 @@ import sync from '@iconify-icons/mdi/sync'
 import upload from '@iconify-icons/mdi/upload'
 import user from '@iconify-icons/mdi/user'
 import usersAndTransects from '@iconify-icons/mdi/account-box-multiple-outline'
-import theme from '../../styles/theme'
+import theme from '../styles/theme'
 
 const WarningIcon = styled(InlineIcon)`
   color: ${theme.color.warningColor};

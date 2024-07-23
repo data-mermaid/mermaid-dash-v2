@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
-import ContentPageLayout from './ContentPageLayout'
+import ContentPageLayout from './components/ContentPageLayout'
 import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
 import {
   Tr,
@@ -165,7 +165,7 @@ const TableView = ({ view, setView }) => {
     updateURLParams(queryParams)
   }
 
-  useEffect(() => {
+  const _displaySelectedProjectInMetricsPane = useEffect(() => {
     if (queryParamsProjectId) {
       const selectedProject = displayedProjects.find(
         (project) => project.project_id === queryParamsProjectId,

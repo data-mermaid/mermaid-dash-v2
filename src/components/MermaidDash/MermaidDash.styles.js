@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
-import { IconFilter } from '../assets/icons'
+import { IconFilter } from '../../assets/icons'
 import { ButtonSecondary } from '../generic'
 
 export const StyledDashboardContainer = styled('div')`

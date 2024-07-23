@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import theme from '../../styles/theme'
-import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import theme from '../../../styles/theme'
+import { mediaQueryTabletLandscapeOnly } from '../../../styles/mediaQueries'
 
 const StyledLoadingContainer = styled('div')`
   position: absolute;

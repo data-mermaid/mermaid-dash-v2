@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
-import MermaidLogo from '../assets/mermaid-dashboard-logo.svg'
+import MermaidLogo from '../../assets/mermaid-dashboard-logo.svg'
 import { useAuth0 } from '@auth0/auth0-react'
-import ShareViewModal from './ShareViewModal'
+import ShareViewModal from './components/ShareViewModal'
 import {
   StyledHeader,
   LogoImg,
@@ -18,12 +18,12 @@ import {
   BiggerIconUser,
   LoggedInAs,
 } from './Header.styles'
-import HideShow from './HideShow'
+import HideShow from './components/HideShow'
 import { BiggerHamburgerIcon } from './Header.styles'
-import { LoginIcon } from '../assets/dashboardOnlyIcons'
-import { IconDown } from '../assets/icons'
+import { LoginIcon } from '../../assets/dashboardOnlyIcons'
+import { IconDown } from '../../assets/icons'
 import { headerText, dataDisclaimer } from '../../constants/language'
-import DataDisclaimer from './DataDisclaimer'
+import DataDisclaimer from './components/DataDisclaimer'
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0()

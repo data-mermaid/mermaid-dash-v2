@@ -1,10 +1,10 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { IconClose } from '../assets/icons'
-import theme from '../../styles/theme'
-import { IconButton } from '../generic'
-import dashboardOnlyTheme from '../../styles/dashboardOnlyTheme'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { IconClose } from '../../../assets/icons'
+import theme from '../../../styles/theme'
+import { IconButton } from '../../generic'
+import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
 
 const FilterIndictorPillContainer = styled.div`
   border: solid 1px ${theme.color.border};
