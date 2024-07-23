@@ -1,4 +1,3 @@
-// import { language } from './language
 import language from '../constants/language'
 
 export const getTableColumnHeaderProps = (column) => {
