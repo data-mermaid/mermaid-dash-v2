@@ -11,9 +11,7 @@ export const formatProjectDataHelper = (project) => {
   records.forEach((record) => {
     data.years.add(record.sample_date.substring(0, 4))
     data.countries.add(record.country_name)
-    if (record.tags) {
-      record.tags.forEach((tag) => data.organizations.add(tag.name))
-    }
+    record.tags?.forEach((tag) => data.organizations.add(tag.name))
     const sumOfSampleUnitCounts = Object.values(record.protocols).reduce((sum, protocol) => {
       return sum + protocol.sample_unit_count
     }, 0)
