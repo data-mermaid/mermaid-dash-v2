@@ -29,7 +29,7 @@ const MetricsPane = ({
   const { isMobileWidth, isDesktopWidth } = useResponsive()
 
   const calculateMetrics = useMemo(() => {
-    let surveys = new Set()
+    let surveys = 0
     let transects = 0
     let countries = new Set()
     let years = new Set()
@@ -40,9 +40,9 @@ const MetricsPane = ({
           transects += value.sample_unit_count
         })
         countries.add(record.country_name)
-        surveys.add(record.site_name)
         years.add(record.sample_date.split('-')[0])
       })
+      surveys += project.records.length
     })
 
     const sortedYears = Array.from(years).sort()
@@ -54,7 +54,7 @@ const MetricsPane = ({
           : `Showing data from ${sortedYears[0]} to ${sortedYears[sortedYears.length - 1]}`
 
     return {
-      numSurveys: surveys.size,
+      numSurveys: surveys,
       numTransects: transects,
       numUniqueCountries: countries.size,
       yearRange,
