@@ -12,6 +12,14 @@ export const formatProjectDataHelper = (project) => {
   ]
     .sort((a, b) => a.localeCompare(b))
     .join(', ')
-  const siteCount = [...new Set(project.records.map((record) => record.site_name))].length
-  return { projectName, formattedYears, countries, organizations, siteCount }
+  const surveyCount = project.records.length
+  const transects = project.records.reduce((acc, record) => {
+    return (
+      acc +
+      Object.values(record.protocols).reduce((acc, protocol) => {
+        return acc + protocol.sample_unit_count
+      }, 0)
+    )
+  }, 0)
+  return { projectName, formattedYears, countries, organizations, surveyCount, transects }
 }

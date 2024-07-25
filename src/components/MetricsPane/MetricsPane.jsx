@@ -7,7 +7,7 @@ import {
   MetricsCard,
   P,
   H3,
-  SitesAndTransectsContainer,
+  SurveysAndTransectsContainer,
   MobileExpandedMetricsPane,
   DesktopToggleMetricsPaneButton,
   MobileExpandMetricsPaneButton,
@@ -21,7 +21,7 @@ const MetricsPane = ({
   setShowMetricsPane,
   showLoadingIndicator,
 }) => {
-  const [numSites, setNumSites] = useState(0)
+  const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
   const [yearRange, setYearRange] = useState('')
@@ -29,7 +29,7 @@ const MetricsPane = ({
   const { isMobileWidth, isDesktopWidth } = useResponsive()
 
   const calculateMetrics = useMemo(() => {
-    let sites = new Set()
+    let surveys = new Set()
     let transects = 0
     let countries = new Set()
     let years = new Set()
@@ -40,7 +40,7 @@ const MetricsPane = ({
           transects += value.sample_unit_count
         })
         countries.add(record.country_name)
-        sites.add(record.site_name)
+        surveys.add(record.site_name)
         years.add(record.sample_date.split('-')[0])
       })
     })
@@ -54,7 +54,7 @@ const MetricsPane = ({
           : `Showing data from ${sortedYears[0]} to ${sortedYears[sortedYears.length - 1]}`
 
     return {
-      numSites: sites.size,
+      numSurveys: surveys.size,
       numTransects: transects,
       numUniqueCountries: countries.size,
       yearRange,
@@ -62,8 +62,8 @@ const MetricsPane = ({
   }, [displayedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
-    const { numSites, numTransects, numUniqueCountries, yearRange } = calculateMetrics
-    setNumSites(numSites)
+    const { numSurveys, numTransects, numUniqueCountries, yearRange } = calculateMetrics
+    setNumSurveys(numSurveys)
     setNumTransects(numTransects)
     setNumUniqueCountries(numUniqueCountries)
     setYearRange(yearRange)
@@ -98,16 +98,16 @@ const MetricsPane = ({
             <P>{displayedProjects.length}</P>
             <H3>Projects </H3>
           </MetricsCard>
-          <SitesAndTransectsContainer>
+          <SurveysAndTransectsContainer>
             <MetricsCard>
-              <P>{numSites}</P>
-              <H3>Sites</H3>
+              <P>{numSurveys}</P>
+              <H3>Surveys</H3>
             </MetricsCard>
             <MetricsCard>
               <P>{numTransects}</P>
               <H3>Transects</H3>
             </MetricsCard>
-          </SitesAndTransectsContainer>
+          </SurveysAndTransectsContainer>
           {isDesktopWidth ? (
             <MetricsCard>
               <P>{yearRange}</P>

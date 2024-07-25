@@ -109,7 +109,7 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   `)}
 `
 
-export const SitesAndTransectsContainer = styled('div')`
+export const SurveysAndTransectsContainer = styled('div')`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
