@@ -52,14 +52,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [checkedProjects, setCheckedProjects] = useState([])
   const queryParams = new URLSearchParams(location.search)
   const queryParamsSampleEventId = queryParams.get('sample_event_id')
-  const initialSelectedMarker =
-    queryParamsSampleEventId !== null
-      ? {
-          options: {
-            sample_event_id: queryParamsSampleEventId,
-          },
-        }
-      : null
+  const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showYourData, setShowYourData] = useState(false)
   const [mermaidUserData, setMermaidUserData] = useState({})
@@ -147,7 +140,6 @@ export const FilterProjectsProvider = ({ children }) => {
 
   const doesSelectedSampleEventPassFilters = useCallback(
     (sampleEventId, filteredProjects) => {
-      const queryParams = getURLParams()
       let displaySelectedSampleEvent = false
       filteredProjects.forEach((project) => {
         project.records.forEach((record) => {
@@ -162,7 +154,7 @@ export const FilterProjectsProvider = ({ children }) => {
         updateURLParams(queryParams)
       }
     },
-    [updateURLParams, getURLParams],
+    [updateURLParams],
   )
 
   const userIsMemberOfProject = useCallback(
@@ -263,11 +255,12 @@ export const FilterProjectsProvider = ({ children }) => {
       })
 
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
-    const queryParams = new URLSearchParams(location.search)
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
 
-    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    if (projectData.results.length === projectData.count) {
+      doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    }
 
     setDisplayedProjects(
       filteredProjects.sort((a, b) =>
@@ -286,7 +279,6 @@ export const FilterProjectsProvider = ({ children }) => {
     methodFilters,
     setDisplayedProjects,
     doesSelectedSampleEventPassFilters,
-    location.search,
     showYourData,
     userIsMemberOfProject,
     mermaidUserData,
