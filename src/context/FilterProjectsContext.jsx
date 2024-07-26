@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { createContext, useContext, useState, useEffect, useCallback } from 'react'
+import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { URL_PARAMS, COLLECTION_METHODS } from '../constants/constants'
@@ -50,12 +50,13 @@ export const FilterProjectsProvider = ({ children }) => {
   const [methodFilters, setMethodFilters] = useState([])
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [checkedProjects, setCheckedProjects] = useState([])
-  const queryParams = new URLSearchParams(location.search)
+  const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
   const queryParamsSampleEventId = queryParams.get('sample_event_id')
   const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showYourData, setShowYourData] = useState(false)
   const [mermaidUserData, setMermaidUserData] = useState({})
+  const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -139,9 +140,9 @@ export const FilterProjectsProvider = ({ children }) => {
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
-    (sampleEventId, filteredProjects) => {
+    (sampleEventId, projects) => {
       let displaySelectedSampleEvent = false
-      filteredProjects.forEach((project) => {
+      projects.forEach((project) => {
         project.records.forEach((record) => {
           if (record.sample_event_id === sampleEventId) {
             displaySelectedSampleEvent = true
@@ -154,7 +155,7 @@ export const FilterProjectsProvider = ({ children }) => {
         updateURLParams(queryParams)
       }
     },
-    [updateURLParams],
+    [updateURLParams, queryParams],
   )
 
   const userIsMemberOfProject = useCallback(
@@ -255,12 +256,6 @@ export const FilterProjectsProvider = ({ children }) => {
       })
 
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
-    const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
-
-    if (projectData.results.length === projectData.count) {
-      doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
-    }
 
     setDisplayedProjects(
       filteredProjects.sort((a, b) =>
@@ -268,8 +263,12 @@ export const FilterProjectsProvider = ({ children }) => {
       ),
     )
     setCheckedProjects([...filteredIds])
+    if (projectData.results.length === projectData.count) {
+      setAllProjectsFinishedFiltering(true)
+    }
   }, [
     projectData.results,
+    projectData.count,
     selectedCountries,
     selectedOrganizations,
     projectNameFilter,
@@ -278,10 +277,23 @@ export const FilterProjectsProvider = ({ children }) => {
     dataSharingFilter,
     methodFilters,
     setDisplayedProjects,
-    doesSelectedSampleEventPassFilters,
     showYourData,
     userIsMemberOfProject,
     mermaidUserData,
+  ])
+
+  const _removeSampleIdParamsIfDoesntPassFilters = useEffect(() => {
+    if (!allProjectsFinishedFiltering) {
+      return
+    }
+    const paramsSampleEventId =
+      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+    doesSelectedSampleEventPassFilters(paramsSampleEventId, displayedProjects)
+  }, [
+    allProjectsFinishedFiltering,
+    displayedProjects,
+    queryParams,
+    doesSelectedSampleEventPassFilters,
   ])
 
   const handleSelectedCountriesChange = (event) => {
