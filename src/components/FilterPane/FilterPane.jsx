@@ -87,6 +87,8 @@ const FilterPane = ({ mermaidUserData }) => {
     remainingDisplayedCountries,
     displayedOrganizations,
     setDisplayedOrganizations,
+    countriesSelectOnOpen,
+    organizationsSelectOnOpen,
   } = useFilterProjectsContext()
 
   const _generateCountryandOrganizationList = useEffect(() => {
@@ -191,6 +193,7 @@ const FilterPane = ({ mermaidUserData }) => {
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
           MenuProps={selectCustomStyles.MenuProps}
+          onOpen={countriesSelectOnOpen}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
@@ -238,6 +241,7 @@ const FilterPane = ({ mermaidUserData }) => {
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
           MenuProps={selectCustomStyles.MenuProps}
+          onOpen={organizationsSelectOnOpen}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
