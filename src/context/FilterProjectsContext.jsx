@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, useCallback } from 'rea
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { URL_PARAMS, COLLECTION_METHODS } from '../constants/constants'
+import usePrevious from '../hooks/usePrevious'
 
 const isValidDateFormat = (dateString) => {
   // Regular expression to match the date format YYYY-MM-DD
@@ -41,6 +42,8 @@ export const FilterProjectsProvider = ({ children }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const [projectData, setProjectData] = useState({})
+  const [countries, setCountries] = useState([])
+  const [organizations, setOrganizations] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
@@ -63,6 +66,12 @@ export const FilterProjectsProvider = ({ children }) => {
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showYourData, setShowYourData] = useState(false)
   const [mermaidUserData, setMermaidUserData] = useState({})
+  const [displayedOrganizations, setDisplayedOrganizations] = useState([])
+  const [displayedCountries, setDisplayedCountries] = useState([])
+  const [remainingDisplayedCountries, setRemainingDisplayedCountries] = useState([])
+  const prevSelectedCountries = usePrevious(selectedCountries)
+  const prevSelectedOrganizations = usePrevious(selectedOrganizations)
+  const prevDisplayedProjects = usePrevious(displayedProjects)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -169,6 +178,81 @@ export const FilterProjectsProvider = ({ children }) => {
     (projectId, mermaidUserData) =>
       mermaidUserData?.projects?.some((project) => project.id === projectId),
     [],
+  )
+
+  const updateCountriesList = useCallback(
+    (projects) => {
+      const uniqueCountries = [
+        ...new Set(
+          projects
+            .map((project) => {
+              return project.records[0]?.country_name
+            })
+            .filter((country) => country !== undefined)
+            .sort((a, b) => a.localeCompare(b)),
+        ),
+      ]
+      const remainingCountries = countries.filter((country) => !uniqueCountries.includes(country))
+      setRemainingDisplayedCountries(remainingCountries)
+      setDisplayedCountries(uniqueCountries)
+    },
+    [countries, setRemainingDisplayedCountries, setDisplayedCountries],
+  )
+
+  const updateOrganizationsList = (projects) => {
+    const uniqueOrganizations = [
+      ...new Set(
+        projects
+          .map((project) => {
+            return project.records[0]?.tags?.map((tag) => tag.name)
+          })
+          .filter((tag) => tag !== undefined)
+          .flat()
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    ]
+    setDisplayedOrganizations(uniqueOrganizations)
+  }
+
+  const updateOrganizationsListGivenCountries = (projects, countries) => {
+    const uniqueOrganizations = [
+      ...new Set(
+        projects
+          .map((project) => {
+            return (
+              countries.includes(project.records[0]?.country_name) &&
+              project.records[0]?.tags?.map((tag) => tag.name)
+            )
+          })
+          .flat()
+          .filter((org) => org !== undefined && org !== false)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    ]
+    setDisplayedOrganizations(uniqueOrganizations)
+  }
+
+  const updateCountriesListGivenOrganizations = useCallback(
+    (projects, organizations) => {
+      const uniqueCountries = [
+        ...new Set(
+          projects
+            .map((project) => {
+              return (
+                organizations.some((organization) =>
+                  project.records[0]?.tags?.map((tag) => tag.name).includes(organization),
+                ) && project.records[0]?.country_name
+              )
+            })
+            .filter((country) => country !== undefined && country !== false)
+            .sort((a, b) => a.localeCompare(b)),
+        ),
+      ]
+      const remainingCountries = countries.filter((country) => !uniqueCountries.includes(country))
+      setRemainingDisplayedCountries(remainingCountries)
+      setDisplayedCountries(uniqueCountries)
+    },
+    [countries, setRemainingDisplayedCountries, setDisplayedCountries],
   )
 
   const _filterProjectRecords = useEffect(() => {
@@ -290,6 +374,52 @@ export const FilterProjectsProvider = ({ children }) => {
     showYourData,
     userIsMemberOfProject,
     mermaidUserData,
+  ])
+
+  useEffect(() => {
+    if (!projectData.results) {
+      return
+    }
+    console.log(displayedProjects)
+    // const selectedCountriesChanged = selectedCountries !== prevSelectedCountries
+    // const selectedOrganizationsChanged = selectedOrganizations !== prevSelectedOrganizations
+    // const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
+    // console.log('displayedProjectsChanged', displayedProjectsChanged)
+    // console.log('selectedCountriesChanged', selectedCountriesChanged)
+
+    const updateOrganizations = () => {
+      if (selectedCountries.length === 0) {
+        console.log('a')
+        updateOrganizationsList(
+          selectedOrganizations.length > 0 ? projectData.results : displayedProjects,
+        )
+      } else {
+        console.log('b')
+        updateOrganizationsListGivenCountries(projectData.results, selectedCountries)
+      }
+    }
+
+    const updateCountries = () => {
+      if (selectedOrganizations.length === 0) {
+        console.log('c')
+        updateCountriesList(
+          selectedCountries.length === 0 ? displayedProjects : projectData.results,
+        )
+      } else {
+        console.log('d')
+        updateCountriesListGivenOrganizations(projectData.results, selectedOrganizations)
+      }
+    }
+
+    updateOrganizations()
+    updateCountries()
+  }, [
+    selectedCountries,
+    selectedOrganizations,
+    displayedProjects,
+    projectData.results,
+    updateCountriesList,
+    updateCountriesListGivenOrganizations,
   ])
 
   const handleSelectedCountriesChange = (event) => {
@@ -424,6 +554,10 @@ export const FilterProjectsProvider = ({ children }) => {
         URL_PARAMS,
         projectData,
         setProjectData,
+        countries,
+        setCountries,
+        organizations,
+        setOrganizations,
         projectDataCount: projectData?.count || 0,
         displayedProjects,
         setDisplayedProjects,
@@ -461,6 +595,11 @@ export const FilterProjectsProvider = ({ children }) => {
         clearAllFilters,
         handleYourDataFilter,
         userIsMemberOfProject,
+        displayedCountries,
+        setDisplayedCountries,
+        remainingDisplayedCountries,
+        displayedOrganizations,
+        setDisplayedOrganizations,
       }}
     >
       {children}
