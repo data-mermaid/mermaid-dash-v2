@@ -14,6 +14,8 @@ import {
   StyledUnorderedList,
   StyledDateInput,
   StyledMenuItem,
+  ExpandClickableArea,
+  StyledLabel,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
@@ -313,14 +315,26 @@ const FilterPane = ({ mermaidUserData }) => {
           <StyledUnorderedList>
             {COLLECTION_METHODS.map((method) => (
               <li key={method.name}>
-                <input
-                  id={method.name}
-                  type="checkbox"
-                  name={method.name}
-                  onChange={handleMethodFilter}
-                  checked={methodFilters.includes(method.name)}
-                />
-                <label htmlFor={method.name}>{method.description}</label>
+                <ExpandClickableArea
+                  onClick={() =>
+                    handleMethodFilter({
+                      target: { name: method.name, checked: !methodFilters.includes(method.name) },
+                    })
+                  }
+                >
+                  <input
+                    id={method.name}
+                    type="checkbox"
+                    name={method.name}
+                    onChange={handleMethodFilter}
+                    checked={methodFilters.includes(method.name)}
+                    style={{ marginRight: '8px' }}
+                    onClick={(e) => e.stopPropagation()}
+                  />
+                  <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
+                    {method.description}
+                  </StyledLabel>
+                </ExpandClickableArea>
               </li>
             ))}
           </StyledUnorderedList>
@@ -342,16 +356,21 @@ const FilterPane = ({ mermaidUserData }) => {
           {displayedProjects.map((project) => {
             return (
               <li key={project.project_id}>
-                <input
-                  id={`checkbox-${project.project_id}`}
-                  type="checkbox"
-                  checked={checkedProjects.includes(project.project_id)}
-                  onChange={() => handleCheckProject(project.project_id)}
-                />{' '}
-                <label htmlFor={`checkbox-${project.project_id}`}>
-                  {project.records[0]?.project_name}{' '}
-                  {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
-                </label>
+                <ExpandClickableArea onClick={() => handleCheckProject(project.project_id)}>
+                  <input
+                    id={`checkbox-${project.project_id}`}
+                    type="checkbox"
+                    checked={checkedProjects.includes(project.project_id)}
+                    onChange={() => handleCheckProject(project.project_id)}
+                  />{' '}
+                  <StyledLabel
+                    htmlFor={`checkbox-${project.project_id}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {project.records[0]?.project_name}{' '}
+                    {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
+                  </StyledLabel>
+                </ExpandClickableArea>
               </li>
             )
           })}
