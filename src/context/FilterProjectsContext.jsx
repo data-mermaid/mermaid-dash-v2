@@ -49,7 +49,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [sampleDateAfter, setSampleDateAfter] = useState('')
   const [sampleDateBefore, setSampleDateBefore] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
-  const [methodFilters, setMethodFilters] = useState(initialCollectionMethods)
+  const [methodFilters, setMethodFilters] = useState([])
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [checkedProjects, setCheckedProjects] = useState([])
   const queryParams = new URLSearchParams(location.search)
@@ -107,12 +107,15 @@ export const FilterProjectsProvider = ({ children }) => {
           return COLLECTION_METHODS.some((collectionMethod) => collectionMethod.name === method)
         })
         setMethodFilters(validMethods)
-        if (validMethods.length === 0 || validMethods.length === COLLECTION_METHODS.length) {
+        if (validMethods.length === 0) {
           queryParams.delete('method')
           queryParams.delete(URL_PARAMS.METHODS)
         } else {
           queryParams.set(URL_PARAMS.METHODS, validMethods)
         }
+        updateURLParams(queryParams)
+      } else {
+        queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
         updateURLParams(queryParams)
       }
     }
@@ -376,10 +379,7 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const queryParams = getURLParams()
-    if (
-      updatedMethodFilters.length === 0 ||
-      updatedMethodFilters.length === COLLECTION_METHODS.length
-    ) {
+    if (updatedMethodFilters.length === 0) {
       queryParams.delete(URL_PARAMS.METHODS)
     } else {
       queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
