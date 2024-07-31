@@ -128,3 +128,14 @@ export const StyledListSubheader = styled(ListSubheader)`
     font-size: ${theme.typography.defaultFontSize};
   }
 `
+export const StyledClickableArea = styled('div')`
+  cursor: pointer;
+  display: flex;
+  &:hover {
+    background-color: ${theme.color.tableRowHover};
+  }
+`
+
+export const StyledLabel = styled('label')`
+  cursor: pointer;
+`

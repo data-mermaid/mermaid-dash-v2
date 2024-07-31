@@ -35,6 +35,8 @@ const isValidDateFormat = (dateString) => {
   return true
 }
 
+const initialCollectionMethods = COLLECTION_METHODS.map((method) => method.name)
+
 const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
@@ -110,6 +112,9 @@ export const FilterProjectsProvider = ({ children }) => {
         } else {
           queryParams.set(URL_PARAMS.METHODS, validMethods)
         }
+        updateURLParams(queryParams)
+      } else {
+        queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
         updateURLParams(queryParams)
       }
     }
@@ -486,7 +491,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setSampleDateAfter('')
     setSampleDateBefore('')
     setDataSharingFilter(false)
-    setMethodFilters([])
+    setMethodFilters(initialCollectionMethods)
     setProjectNameFilter('')
     setShowYourData(false)
   }
