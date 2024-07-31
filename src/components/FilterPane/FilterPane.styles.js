@@ -123,7 +123,6 @@ export const StyledMenuItem = styled(MenuItem)`
 export const ExpandClickableArea = styled('div')`
   cursor: pointer;
   display: flex;
-  alignitems: center;
   &:hover {
     background-color: ${theme.color.tableRowHover};
   }
