@@ -328,7 +328,6 @@ const FilterPane = ({ mermaidUserData }) => {
                     name={method.name}
                     onChange={handleMethodFilter}
                     checked={methodFilters.includes(method.name)}
-                    style={{ marginRight: '8px' }}
                     onClick={(e) => e.stopPropagation()}
                   />
                   <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
