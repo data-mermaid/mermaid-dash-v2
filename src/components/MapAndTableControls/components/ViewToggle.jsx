@@ -77,15 +77,8 @@ const ViewToggle = ({ view, setView }) => {
   }
 
   const downloadedFileName = () => {
-    const getFormattedDate = () => {
-      const today = new Date()
-      const year = today.getFullYear()
-      const month = String(today.getMonth() + 1).padStart(2, '0')
-      const day = String(today.getDate()).padStart(2, '0')
-      return `${year}-${month}-${day}`
-    }
-
-    return `mermaid_projects_${getFormattedDate()}.csv`
+    const formattedDate = new Date().toISOString().slice(0, 10)
+    return `mermaid_projects_${formattedDate}.csv`
   }
 
   return (
