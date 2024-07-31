@@ -120,3 +120,15 @@ export const StyledMenuItem = styled(MenuItem)`
     font-size: ${theme.typography.defaultFontSize};
   }
 `
+export const ExpandClickableArea = styled('div')`
+  cursor: pointer;
+  display: flex;
+  alignitems: center;
+  &:hover {
+    background-color: ${theme.color.warning};
+  }
+`
+
+export const StyledLabel = styled('label')`
+  cursor: pointer;
+`
