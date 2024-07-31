@@ -173,6 +173,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
     updateURLParams,
     setSelectedMarkerId,
     checkedProjects,
+    prevCheckedProjects,
   ])
 
   return (
