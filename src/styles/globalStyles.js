@@ -28,10 +28,6 @@ const GlobalStyle = createGlobalStyle`
         line-height: ${theme.typography.lineHeight};
 
     }
-    svg {
-        width: ${theme.typography.defaultIconSize}; // different from Collect - removed props parameter
-        height: ${theme.typography.defaultIconSize}; // different from Collect - removed props parameter
-    }
     *,*::before,*::after {
         box-sizing: border-box;
     } 
