@@ -306,6 +306,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setDisplayedProjects,
     showYourData,
     applyFilterToProjects,
+    queryParams,
   ])
 
   const countriesSelectOnOpen = () => {
