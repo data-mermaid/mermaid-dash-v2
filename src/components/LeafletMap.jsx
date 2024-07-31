@@ -44,7 +44,9 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
-  const getURLParams = () => new URLSearchParams(location.search)
+  const getURLParams = useCallback(() => {
+    return new URLSearchParams(location.search)
+  }, [location.search])
   const queryParams = getURLParams()
   const queryParamsLat = queryParams.get('lat')
   const queryParamsLng = queryParams.get('lng')
@@ -111,6 +113,16 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
     return <MapAndTableControls map={map} view={view} setView={setView} />
   }
 
+  const handleClickCircleMarker = useCallback(
+    (record) => {
+      const { sample_event_id } = record
+      queryParams.set('sample_event_id', sample_event_id)
+      updateURLParams(queryParams)
+      setSelectedMarkerId(sample_event_id)
+    },
+    [queryParams, setSelectedMarkerId, updateURLParams],
+  )
+
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
@@ -144,12 +156,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
             pathOptions={CircleMarkerPathOptions}
             radius={8}
             eventHandlers={{
-              click: () => {
-                queryParams.set('sample_event_id', record.sample_event_id)
-                updateURLParams(queryParams)
-                setSelectedMarkerId(record.sample_event_id)
-                console.log('TODO: display sample event in metrics pane', record)
-              },
+              click: () => handleClickCircleMarker(record),
             }}
           ></CircleMarker>
         )
@@ -165,6 +172,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
     prevSelectedMarkerId,
     updateURLParams,
     setSelectedMarkerId,
+    handleClickCircleMarker,
   ])
 
   return (
