@@ -14,7 +14,7 @@ import {
   StyledUnorderedList,
   StyledDateInput,
   StyledMenuItem,
-  ExpandClickableArea,
+  StyledClickableArea,
   StyledLabel,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
@@ -315,7 +315,7 @@ const FilterPane = ({ mermaidUserData }) => {
           <StyledUnorderedList>
             {COLLECTION_METHODS.map((method) => (
               <li key={method.name}>
-                <ExpandClickableArea
+                <StyledClickableArea
                   onClick={() =>
                     handleMethodFilter({
                       target: { name: method.name, checked: !methodFilters.includes(method.name) },
@@ -333,7 +333,7 @@ const FilterPane = ({ mermaidUserData }) => {
                   <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
                     {method.description}
                   </StyledLabel>
-                </ExpandClickableArea>
+                </StyledClickableArea>
               </li>
             ))}
           </StyledUnorderedList>
@@ -355,7 +355,7 @@ const FilterPane = ({ mermaidUserData }) => {
           {displayedProjects.map((project) => {
             return (
               <li key={project.project_id}>
-                <ExpandClickableArea onClick={() => handleCheckProject(project.project_id)}>
+                <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
                   <input
                     id={`checkbox-${project.project_id}`}
                     type="checkbox"
@@ -369,7 +369,7 @@ const FilterPane = ({ mermaidUserData }) => {
                     {project.records[0]?.project_name}{' '}
                     {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
                   </StyledLabel>
-                </ExpandClickableArea>
+                </StyledClickableArea>
               </li>
             )
           })}
