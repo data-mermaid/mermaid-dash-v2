@@ -76,6 +76,11 @@ const ViewToggle = ({ view, setView }) => {
     csvLinkRef.current.link.click()
   }
 
+  const downloadedFileName = () => {
+    const formattedDate = new Date().toISOString().slice(0, 10)
+    return `mermaid_projects_${formattedDate}.csv`
+  }
+
   return (
     <StyledViewToggleContainer view={view}>
       {view === 'mapView' ? (
@@ -106,7 +111,7 @@ const ViewToggle = ({ view, setView }) => {
           <StyledCSVLink
             data={tableContent}
             headers={tableHeaders}
-            filename="project_data.csv"
+            filename={downloadedFileName()}
             ref={csvLinkRef}
           />
         </>
