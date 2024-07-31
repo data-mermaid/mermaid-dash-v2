@@ -14,6 +14,7 @@ import {
   StyledUnorderedList,
   StyledDateInput,
   StyledMenuItem,
+  StyledListSubheader,
   StyledClickableArea,
   StyledLabel,
 } from './FilterPane.styles'
@@ -52,14 +53,14 @@ const selectCustomStyles = {
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
 
 const FilterPane = ({ mermaidUserData }) => {
-  const [countries, setCountries] = useState([])
-  const [organizations, setOrganizations] = useState([])
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated } = useAuth0()
   const {
     projectData,
+    setCountries,
+    setOrganizations,
     displayedProjects,
     selectedCountries,
     setSelectedCountries,
@@ -83,6 +84,13 @@ const FilterPane = ({ mermaidUserData }) => {
     handleProjectNameFilter,
     handleYourDataFilter,
     userIsMemberOfProject,
+    displayedCountries,
+    setDisplayedCountries,
+    remainingDisplayedCountries,
+    displayedOrganizations,
+    setDisplayedOrganizations,
+    countriesSelectOnOpen,
+    organizationsSelectOnOpen,
   } = useFilterProjectsContext()
 
   const _generateCountryandOrganizationList = useEffect(() => {
@@ -112,7 +120,13 @@ const FilterPane = ({ mermaidUserData }) => {
     ]
 
     setOrganizations(uniqueOrganizations)
-  }, [projectData.results])
+  }, [
+    projectData.results,
+    setCountries,
+    setDisplayedCountries,
+    setDisplayedOrganizations,
+    setOrganizations,
+  ])
 
   const getURLParams = useCallback(() => {
     return new URLSearchParams(location.search)
@@ -181,6 +195,7 @@ const FilterPane = ({ mermaidUserData }) => {
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
           MenuProps={selectCustomStyles.MenuProps}
+          onOpen={countriesSelectOnOpen}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
@@ -199,8 +214,20 @@ const FilterPane = ({ mermaidUserData }) => {
             </Box>
           )}
         >
-          {countries.map((country) => (
-            <StyledMenuItem key={country} value={country}>
+          {remainingDisplayedCountries.length ? (
+            <StyledListSubheader>Countries based on current filters</StyledListSubheader>
+          ) : null}
+          {displayedCountries.map((country) => (
+            <StyledMenuItem key={`matches-${country}`} value={country}>
+              <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
+              {country}
+            </StyledMenuItem>
+          ))}
+          {remainingDisplayedCountries.length ? (
+            <StyledListSubheader>Other countries</StyledListSubheader>
+          ) : null}
+          {remainingDisplayedCountries.map((country) => (
+            <StyledMenuItem key={`nonmatches-${country}`} value={country}>
               <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
               {country}
             </StyledMenuItem>
@@ -216,6 +243,7 @@ const FilterPane = ({ mermaidUserData }) => {
           input={<StyledOutlinedInput />}
           sx={selectCustomStyles}
           MenuProps={selectCustomStyles.MenuProps}
+          onOpen={organizationsSelectOnOpen}
           renderValue={(selected) => (
             <Box sx={selectBoxCustomStyles}>
               {selected.map((value) => (
@@ -234,7 +262,12 @@ const FilterPane = ({ mermaidUserData }) => {
             </Box>
           )}
         >
-          {organizations.map((organization) => (
+          <StyledListSubheader>
+            {displayedOrganizations.length
+              ? 'Organizations based on current filters'
+              : 'No organizations match current filters'}
+          </StyledListSubheader>
+          {displayedOrganizations.map((organization) => (
             <StyledMenuItem key={organization} value={organization}>
               <input
                 type="checkbox"
@@ -352,27 +385,31 @@ const FilterPane = ({ mermaidUserData }) => {
       />
       <StyledProjectListContainer>
         <StyledUnorderedList>
-          {displayedProjects.map((project) => {
-            return (
-              <li key={project.project_id}>
-                <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
-                  <input
-                    id={`checkbox-${project.project_id}`}
-                    type="checkbox"
-                    checked={checkedProjects.includes(project.project_id)}
-                    onChange={() => handleCheckProject(project.project_id)}
-                  />{' '}
-                  <StyledLabel
-                    htmlFor={`checkbox-${project.project_id}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {project.records[0]?.project_name}{' '}
-                    {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
-                  </StyledLabel>
-                </StyledClickableArea>
-              </li>
-            )
-          })}
+          {displayedProjects.length ? (
+            displayedProjects.map((project) => {
+              return (
+                <li key={project.project_id}>
+                  <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
+                    <input
+                      id={`checkbox-${project.project_id}`}
+                      type="checkbox"
+                      checked={checkedProjects.includes(project.project_id)}
+                      onChange={() => handleCheckProject(project.project_id)}
+                    />{' '}
+                    <StyledLabel
+                      htmlFor={`checkbox-${project.project_id}`}
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      {project.records[0]?.project_name}{' '}
+                      {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
+                    </StyledLabel>
+                  </StyledClickableArea>
+                </li>
+              )
+            })
+          ) : (
+            <li>No projects match current filters</li>
+          )}
         </StyledUnorderedList>
       </StyledProjectListContainer>
     </StyledFilterPaneContainer>

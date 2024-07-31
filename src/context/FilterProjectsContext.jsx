@@ -43,6 +43,8 @@ export const FilterProjectsProvider = ({ children }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const [projectData, setProjectData] = useState({})
+  const [countries, setCountries] = useState([])
+  const [organizations, setOrganizations] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
@@ -58,6 +60,9 @@ export const FilterProjectsProvider = ({ children }) => {
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [showYourData, setShowYourData] = useState(false)
   const [mermaidUserData, setMermaidUserData] = useState({})
+  const [displayedOrganizations, setDisplayedOrganizations] = useState([])
+  const [displayedCountries, setDisplayedCountries] = useState([])
+  const [remainingDisplayedCountries, setRemainingDisplayedCountries] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
@@ -169,98 +174,119 @@ export const FilterProjectsProvider = ({ children }) => {
     [],
   )
 
+  const applyFilterToProjects = useCallback(
+    (selectedCountries, selectedOrganizations) => {
+      const fallbackSampleDateAfter = new Date('1970-01-01')
+      const fallbackSampleDateBefore = new Date(Date.now())
+
+      return projectData.results
+        .map((project) => {
+          // Filter project if sample date falls within selected date range
+          if (!sampleDateAfter && !sampleDateBefore) {
+            return project
+          }
+          const beginDate = sampleDateAfter || fallbackSampleDateAfter
+          const finishDate = sampleDateBefore || fallbackSampleDateBefore
+          return {
+            ...project,
+            records: project.records.filter((record) => {
+              const recordDate = new Date(record.sample_date)
+              return recordDate <= new Date(finishDate) && recordDate >= new Date(beginDate)
+            }),
+          }
+        })
+        .map((project) => {
+          // Filter projects based on data sharing policy
+          if (dataSharingFilter) {
+            const policies = [
+              'data_policy_beltfish',
+              'data_policy_benthiclit',
+              'data_policy_benthicpit',
+              'data_policy_benthicpqt',
+              'data_policy_bleachingqc',
+              'data_policy_habitatcomplexity',
+            ]
+            return {
+              ...project,
+              records: project.records.filter((record) =>
+                policies.some((policy) => record[policy] === 'public summary'),
+              ),
+            }
+          } else {
+            return project
+          }
+        })
+        .map((project) => {
+          // Filter projects based on collection method
+          if (methodFilters.length === 0) {
+            return project
+          } else {
+            return {
+              ...project,
+              records: project.records.filter((record) =>
+                methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
+              ),
+            }
+          }
+        })
+        .filter((project) => {
+          // Filter by selected countries
+          const matchesSelectedCountries =
+            selectedCountries.length === 0 ||
+            selectedCountries.includes(project.records[0]?.country_name)
+
+          // Filter by selected organizations
+          const matchesSelectedOrganizations =
+            selectedOrganizations.length === 0 ||
+            project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
+
+          // Filter by project name
+          const matchesProjectName =
+            projectNameFilter === '' ||
+            project.records[0]?.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
+
+          // Filter out projects with empty records
+          const nonEmptyRecords = project.records.length > 0
+
+          // Filter out projects that the user is not a member of
+          const onlyShowProjectsUserIsAMemberOf = showYourData
+            ? userIsMemberOfProject(project.project_id, mermaidUserData)
+            : true
+
+          const isProjectVisible =
+            matchesSelectedCountries &&
+            matchesSelectedOrganizations &&
+            matchesProjectName &&
+            nonEmptyRecords &&
+            onlyShowProjectsUserIsAMemberOf
+
+          return isProjectVisible
+        })
+    },
+    [
+      projectData.results,
+      userIsMemberOfProject,
+      mermaidUserData,
+      dataSharingFilter,
+      methodFilters,
+      projectNameFilter,
+      sampleDateAfter,
+      sampleDateBefore,
+      showYourData,
+    ],
+  )
+
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
     }
 
-    const fallbackSampleDateAfter = new Date('1970-01-01')
-    const fallbackSampleDateBefore = new Date(Date.now())
-
-    const filteredProjects = projectData.results
-      .map((project) => {
-        // Filter project if sample date falls within selected date range
-        if (!sampleDateAfter && !sampleDateBefore) {
-          return project
-        }
-        const beginDate = sampleDateAfter || fallbackSampleDateAfter
-        const finishDate = sampleDateBefore || fallbackSampleDateBefore
-        return {
-          ...project,
-          records: project.records.filter((record) => {
-            const recordDate = new Date(record.sample_date)
-            return recordDate <= new Date(finishDate) && recordDate >= new Date(beginDate)
-          }),
-        }
-      })
-      .map((project) => {
-        // Filter projects based on data sharing policy
-        if (dataSharingFilter) {
-          const policies = [
-            'data_policy_beltfish',
-            'data_policy_benthiclit',
-            'data_policy_benthicpit',
-            'data_policy_benthicpqt',
-            'data_policy_bleachingqc',
-            'data_policy_habitatcomplexity',
-          ]
-          return {
-            ...project,
-            records: project.records.filter((record) =>
-              policies.some((policy) => record[policy] === 'public summary'),
-            ),
-          }
-        } else {
-          return project
-        }
-      })
-      .map((project) => {
-        // Filter projects based on collection method
-        if (methodFilters.length === 0) {
-          return project
-        } else {
-          return {
-            ...project,
-            records: project.records.filter((record) =>
-              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
-            ),
-          }
-        }
-      })
-      .filter((project) => {
-        // Filter by selected countries
-        const matchesSelectedCountries =
-          selectedCountries.length === 0 ||
-          selectedCountries.includes(project.records[0]?.country_name)
-
-        // Filter by selected organizations
-        const matchesSelectedOrganizations =
-          selectedOrganizations.length === 0 ||
-          project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
-
-        // Filter by project name
-        const matchesProjectName =
-          projectNameFilter === '' ||
-          project.records[0]?.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
-
-        // Filter out projects with empty records
-        const nonEmptyRecords = project.records.length > 0
-
-        // Filter out projects that the user is not a member of
-        const onlyShowProjectsUserIsAMemberOf = showYourData
-          ? userIsMemberOfProject(project.project_id, mermaidUserData)
-          : true
-
-        return (
-          matchesSelectedCountries &&
-          matchesSelectedOrganizations &&
-          matchesProjectName &&
-          nonEmptyRecords &&
-          onlyShowProjectsUserIsAMemberOf
-        )
-      })
-
+    const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
+    const paramsSampleEventId =
+      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    setCheckedProjects([...filteredIds])
 
     setDisplayedProjects(
       filteredProjects.sort((a, b) =>
@@ -281,12 +307,60 @@ export const FilterProjectsProvider = ({ children }) => {
     sampleDateBefore,
     dataSharingFilter,
     methodFilters,
+    doesSelectedSampleEventPassFilters,
     setDisplayedProjects,
     showYourData,
-    userIsMemberOfProject,
-    mermaidUserData,
+    applyFilterToProjects,
+    queryParams,
   ])
 
+  const countriesSelectOnOpen = () => {
+    const filteredProjects = applyFilterToProjects([], selectedOrganizations)
+    const uniqueCountries = [
+      ...new Set(
+        filteredProjects
+          .map((project) => {
+            if (selectedOrganizations.length === 0) {
+              return project.records[0]?.country_name
+            } else {
+              return (
+                selectedOrganizations.some((organization) =>
+                  project.records[0]?.tags?.map((tag) => tag.name).includes(organization),
+                ) && project.records[0]?.country_name
+              )
+            }
+          })
+          .filter((country) => country !== undefined && country !== false)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    ]
+    const remainingCountries = countries.filter((country) => !uniqueCountries.includes(country))
+    setDisplayedCountries(uniqueCountries)
+    setRemainingDisplayedCountries(remainingCountries)
+  }
+
+  const organizationsSelectOnOpen = () => {
+    const filteredProjects = applyFilterToProjects(selectedCountries, [])
+    const uniqueOrganizations = [
+      ...new Set(
+        filteredProjects
+          .map((project) => {
+            if (selectedCountries.length === 0) {
+              return project.records[0]?.tags?.map((tag) => tag.name)
+            } else {
+              return (
+                selectedCountries.includes(project.records[0]?.country_name) &&
+                project.records[0]?.tags?.map((tag) => tag.name)
+              )
+            }
+          })
+          .flat()
+          .filter((org) => org !== undefined && org !== false)
+          .sort((a, b) => a.localeCompare(b)),
+      ),
+    ]
+    setDisplayedOrganizations(uniqueOrganizations)
+  }
   const _removeSampleIdParamsIfDoesntPassFilters = useEffect(() => {
     if (!allProjectsFinishedFiltering) {
       return
@@ -433,6 +507,10 @@ export const FilterProjectsProvider = ({ children }) => {
         URL_PARAMS,
         projectData,
         setProjectData,
+        countries,
+        setCountries,
+        organizations,
+        setOrganizations,
         projectDataCount: projectData?.count || 0,
         displayedProjects,
         setDisplayedProjects,
@@ -470,6 +548,13 @@ export const FilterProjectsProvider = ({ children }) => {
         clearAllFilters,
         handleYourDataFilter,
         userIsMemberOfProject,
+        displayedCountries,
+        setDisplayedCountries,
+        remainingDisplayedCountries,
+        displayedOrganizations,
+        setDisplayedOrganizations,
+        countriesSelectOnOpen,
+        organizationsSelectOnOpen,
       }}
     >
       {children}
