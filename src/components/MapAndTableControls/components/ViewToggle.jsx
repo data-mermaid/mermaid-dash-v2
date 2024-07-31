@@ -54,11 +54,11 @@ const ViewToggle = ({ view, setView }) => {
     { label: 'Countries', key: 'countries' },
     { label: 'Organizations', key: 'organizations' },
     { label: 'Transects', key: 'transects' },
-    { label: 'Sites', key: 'siteCount' },
+    { label: 'Surveys', key: 'surveyCount' },
   ]
 
   const tableContent = displayedProjects.map((project) => {
-    const { projectName, formattedYears, countries, organizations, siteCount } =
+    const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
       formatProjectDataHelper(project)
     const formattedTableRowData = {
       projectName,
@@ -66,13 +66,19 @@ const ViewToggle = ({ view, setView }) => {
       countries,
       organizations,
       recordCount: project.records.length,
-      siteCount,
+      surveyCount,
+      transects,
     }
     return formattedTableRowData
   })
 
   const handleDownload = () => {
     csvLinkRef.current.link.click()
+  }
+
+  const downloadedFileName = () => {
+    const formattedDate = new Date().toISOString().slice(0, 10)
+    return `mermaid_projects_${formattedDate}.csv`
   }
 
   return (
@@ -105,7 +111,7 @@ const ViewToggle = ({ view, setView }) => {
           <StyledCSVLink
             data={tableContent}
             headers={tableHeaders}
-            filename="project_data.csv"
+            filename={downloadedFileName()}
             ref={csvLinkRef}
           />
         </>

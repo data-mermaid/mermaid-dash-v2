@@ -41,7 +41,7 @@ const TableView = ({ view, setView }) => {
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects.map((project, i) => {
-      const { projectName, formattedYears, countries, organizations, siteCount } =
+      const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
         formatProjectDataHelper(project)
       return {
         id: i,
@@ -49,8 +49,8 @@ const TableView = ({ view, setView }) => {
         formattedYears,
         countries,
         organizations,
-        transects: project.records.length,
-        siteCount,
+        transects,
+        surveyCount,
         rawProjectData: project,
       }
     })
@@ -81,8 +81,8 @@ const TableView = ({ view, setView }) => {
         sortType: reactTableNaturalSort,
       },
       {
-        Header: 'Sites',
-        accessor: 'siteCount',
+        Header: 'Surveys',
+        accessor: 'surveyCount',
         sortType: reactTableNaturalSort,
         align: 'right',
       },
@@ -103,7 +103,7 @@ const TableView = ({ view, setView }) => {
         formattedYears,
         countries,
         organizations,
-        siteCount,
+        surveyCount,
         transects,
         rawProjectData,
       } = data
@@ -113,7 +113,7 @@ const TableView = ({ view, setView }) => {
         formattedYears,
         countries,
         organizations,
-        siteCount,
+        surveyCount,
         transects,
         rawProjectData,
       }
