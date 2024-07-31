@@ -35,6 +35,8 @@ const isValidDateFormat = (dateString) => {
   return true
 }
 
+const initialCollectionMethods = COLLECTION_METHODS.map((method) => method.name)
+
 const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
@@ -47,7 +49,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [sampleDateAfter, setSampleDateAfter] = useState('')
   const [sampleDateBefore, setSampleDateBefore] = useState('')
   const [dataSharingFilter, setDataSharingFilter] = useState(false)
-  const [methodFilters, setMethodFilters] = useState([])
+  const [methodFilters, setMethodFilters] = useState(initialCollectionMethods)
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [checkedProjects, setCheckedProjects] = useState([])
   const queryParams = new URLSearchParams(location.search)
@@ -105,7 +107,7 @@ export const FilterProjectsProvider = ({ children }) => {
           return COLLECTION_METHODS.some((collectionMethod) => collectionMethod.name === method)
         })
         setMethodFilters(validMethods)
-        if (validMethods.length === 0) {
+        if (validMethods.length === 0 || validMethods.length === COLLECTION_METHODS.length) {
           queryParams.delete('method')
           queryParams.delete(URL_PARAMS.METHODS)
         } else {
@@ -374,7 +376,10 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const queryParams = getURLParams()
-    if (updatedMethodFilters.length === 0) {
+    if (
+      updatedMethodFilters.length === 0 ||
+      updatedMethodFilters.length === COLLECTION_METHODS.length
+    ) {
       queryParams.delete(URL_PARAMS.METHODS)
     } else {
       queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
@@ -408,7 +413,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setSampleDateAfter('')
     setSampleDateBefore('')
     setDataSharingFilter(false)
-    setMethodFilters([])
+    setMethodFilters(initialCollectionMethods)
     setProjectNameFilter('')
     setShowYourData(false)
   }
