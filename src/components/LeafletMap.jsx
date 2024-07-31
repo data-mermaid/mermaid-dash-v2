@@ -40,7 +40,8 @@ const isValidZoom = (zoom) => {
 }
 
 const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
-  const { displayedProjects, selectedMarkerId, setSelectedMarkerId } = useFilterProjectsContext()
+  const { displayedProjects, selectedMarkerId, setSelectedMarkerId, checkedProjects } =
+    useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -59,6 +60,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const [markers, setMarkers] = useState(null)
   const [map, setMap] = useState(null)
   const { isDesktopWidth } = useResponsive()
+  const prevCheckedProjects = usePrevious(checkedProjects)
 
   const _loadTilesWhenPanelsToggled = useEffect(() => {
     map?.invalidateSize()
@@ -114,8 +116,9 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
+    const checkedProjectsChanged = checkedProjects !== prevCheckedProjects
 
-    if (displayedProjectsChanged || selectedMarkerChanged) {
+    if (displayedProjectsChanged || selectedMarkerChanged || checkedProjectsChanged) {
       const records = displayedProjects.flatMap((project) => {
         return project.records.map((record) => {
           return {
@@ -129,6 +132,10 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
         const recordPassesAllFilters = records.find(
           (record) => record.sample_event_id === selectedMarkerId,
         )
+        const isProjectChecked = checkedProjects.includes(record.project_id)
+        if (!isProjectChecked) {
+          return null
+        }
 
         return isSelected && recordPassesAllFilters ? (
           <Marker
@@ -165,6 +172,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
     prevSelectedMarkerId,
     updateURLParams,
     setSelectedMarkerId,
+    checkedProjects,
   ])
 
   return (
