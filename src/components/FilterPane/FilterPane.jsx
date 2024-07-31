@@ -212,20 +212,20 @@ const FilterPane = ({ mermaidUserData }) => {
             </Box>
           )}
         >
-          {remainingDisplayedCountries.length > 0 ? (
+          {remainingDisplayedCountries.length ? (
             <StyledListSubheader>Countries based on current filters</StyledListSubheader>
           ) : null}
           {displayedCountries.map((country) => (
-            <StyledMenuItem key={country} value={country}>
+            <StyledMenuItem key={`matches-${country}`} value={country}>
               <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
               {country}
             </StyledMenuItem>
           ))}
-          {remainingDisplayedCountries.length > 0 ? (
+          {remainingDisplayedCountries.length ? (
             <StyledListSubheader>Other countries</StyledListSubheader>
           ) : null}
           {remainingDisplayedCountries.map((country) => (
-            <StyledMenuItem key={`other-${country}`} value={country}>
+            <StyledMenuItem key={`nonmatches-${country}`} value={country}>
               <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
               {country}
             </StyledMenuItem>
@@ -261,7 +261,7 @@ const FilterPane = ({ mermaidUserData }) => {
           )}
         >
           <StyledListSubheader>
-            {displayedOrganizations.length > 0
+            {displayedOrganizations.length
               ? 'Organizations based on current filters'
               : 'No organizations match current filters'}
           </StyledListSubheader>

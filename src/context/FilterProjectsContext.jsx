@@ -177,16 +177,7 @@ export const FilterProjectsProvider = ({ children }) => {
   )
 
   const applyFilterToProjects = useCallback(
-    (
-      selectedCountries,
-      selectedOrganizations,
-      projectNameFilter,
-      sampleDateAfter,
-      sampleDateBefore,
-      dataSharingFilter,
-      methodFilters,
-      showYourData,
-    ) => {
+    (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
       const fallbackSampleDateBefore = new Date(Date.now())
 
@@ -264,16 +255,27 @@ export const FilterProjectsProvider = ({ children }) => {
             ? userIsMemberOfProject(project.project_id, mermaidUserData)
             : true
 
-          return (
+          const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
             nonEmptyRecords &&
             onlyShowProjectsUserIsAMemberOf
-          )
+
+          return isProjectVisible
         })
     },
-    [projectData.results, userIsMemberOfProject, mermaidUserData],
+    [
+      projectData.results,
+      userIsMemberOfProject,
+      mermaidUserData,
+      dataSharingFilter,
+      methodFilters,
+      projectNameFilter,
+      sampleDateAfter,
+      sampleDateBefore,
+      showYourData,
+    ],
   )
 
   const _filterProjectRecords = useEffect(() => {
@@ -281,17 +283,7 @@ export const FilterProjectsProvider = ({ children }) => {
       return
     }
 
-    const filteredProjects = applyFilterToProjects(
-      selectedCountries,
-      selectedOrganizations,
-      projectNameFilter,
-      sampleDateAfter,
-      sampleDateBefore,
-      dataSharingFilter,
-      methodFilters,
-      showYourData,
-    )
-
+    const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
     const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
     const queryParams = new URLSearchParams(location.search)
     const paramsSampleEventId =
@@ -319,16 +311,7 @@ export const FilterProjectsProvider = ({ children }) => {
   ])
 
   const countriesSelectOnOpen = () => {
-    const filteredProjects = applyFilterToProjects(
-      [],
-      selectedOrganizations,
-      projectNameFilter,
-      sampleDateAfter,
-      sampleDateBefore,
-      dataSharingFilter,
-      methodFilters,
-      showYourData,
-    )
+    const filteredProjects = applyFilterToProjects([], selectedOrganizations)
     const uniqueCountries = [
       ...new Set(
         filteredProjects
@@ -353,16 +336,7 @@ export const FilterProjectsProvider = ({ children }) => {
   }
 
   const organizationsSelectOnOpen = () => {
-    const filteredProjects = applyFilterToProjects(
-      selectedCountries,
-      [],
-      projectNameFilter,
-      sampleDateAfter,
-      sampleDateBefore,
-      dataSharingFilter,
-      methodFilters,
-      showYourData,
-    )
+    const filteredProjects = applyFilterToProjects(selectedCountries, [])
     const uniqueOrganizations = [
       ...new Set(
         filteredProjects
