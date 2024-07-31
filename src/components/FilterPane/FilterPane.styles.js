@@ -125,7 +125,7 @@ export const ExpandClickableArea = styled('div')`
   display: flex;
   alignitems: center;
   &:hover {
-    background-color: ${theme.color.warning};
+    background-color: ${theme.color.tableRowHover};
   }
 `
 
