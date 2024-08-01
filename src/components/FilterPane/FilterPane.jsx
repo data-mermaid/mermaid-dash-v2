@@ -400,7 +400,7 @@ const FilterPane = ({ mermaidUserData }) => {
                       htmlFor={`checkbox-${project.project_id}`}
                       onClick={(e) => e.stopPropagation()}
                     >
-                      {project.records[0]?.project_name}{' '}
+                      {project.project_name}{' '}
                       {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
                     </StyledLabel>
                   </StyledClickableArea>

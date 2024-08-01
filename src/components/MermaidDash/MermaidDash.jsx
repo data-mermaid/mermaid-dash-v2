@@ -25,8 +25,14 @@ import {
 } from './MermaidDash.styles'
 
 const MermaidDash = () => {
-  const { projectData, displayedProjects, setProjectData, mermaidUserData, setMermaidUserData } =
-    useFilterProjectsContext()
+  const {
+    projectData,
+    displayedProjects,
+    setProjectData,
+    mermaidUserData,
+    setMermaidUserData,
+    setCheckedProjects,
+  } = useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -74,13 +80,17 @@ const MermaidDash = () => {
                 : [...data.results],
             }
           })
+          setCheckedProjects((prevCheckedProjects) => [
+            ...prevCheckedProjects,
+            ...data.results.map((project) => project.project_id),
+          ])
           nextPageUrl = data.next
         }
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     },
-    [setProjectData],
+    [setProjectData, setCheckedProjects],
   )
 
   const fetchUserProfile = useCallback(async () => {

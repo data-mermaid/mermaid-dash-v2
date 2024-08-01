@@ -243,10 +243,7 @@ export const FilterProjectsProvider = ({ children }) => {
           // Filter by project name
           const matchesProjectName =
             projectNameFilter === '' ||
-            project.records[0]?.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
-
-          // Filter out projects with empty records
-          const nonEmptyRecords = project.records.length > 0
+            project.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
 
           // Filter out projects that the user is not a member of
           const onlyShowProjectsUserIsAMemberOf = showYourData
@@ -257,7 +254,6 @@ export const FilterProjectsProvider = ({ children }) => {
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
-            nonEmptyRecords &&
             onlyShowProjectsUserIsAMemberOf
 
           return isProjectVisible
@@ -282,18 +278,13 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
-    const filteredIds = new Set(filteredProjects.map((project) => project.project_id))
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
     doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
-    setCheckedProjects([...filteredIds])
 
     setDisplayedProjects(
-      filteredProjects.sort((a, b) =>
-        a.records[0]?.project_name.localeCompare(b.records[0]?.project_name),
-      ),
+      filteredProjects.sort((a, b) => a.project_name.localeCompare(b.project_name)),
     )
-    setCheckedProjects([...filteredIds])
     if (projectData.results.length === projectData.count) {
       setAllProjectsFinishedFiltering(true)
     }
