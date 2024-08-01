@@ -19,12 +19,17 @@ export const formatProjectDataHelper = (project) => {
   })
 
   const years = [...data.years].sort((a, b) => a.localeCompare(b))
-  const formattedYears = years.length === 1 ? years[0] : `${years[0]}-${years[years.length - 1]}`
+  const formattedYears =
+    years.length === 0
+      ? ''
+      : years.length === 1
+        ? years[0]
+        : `${years[0]}-${years[years.length - 1]}`
   const countries = [...data.countries].sort((a, b) => a.localeCompare(b)).join(', ')
   const organizations = [...data.organizations].sort((a, b) => a.localeCompare(b)).join(', ')
 
   return {
-    projectName: records[0].project_name,
+    projectName: project.project_name,
     formattedYears,
     countries,
     organizations,
