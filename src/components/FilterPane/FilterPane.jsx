@@ -2,6 +2,7 @@ import PropTypes from 'prop-types'
 import { Select, Box, IconButton } from '@mui/material'
 import {
   StyledHeader,
+  StyledFormContainer,
   StyledProjectsHeader,
   StyledFilterPaneContainer,
   StyledFormControl,
@@ -12,17 +13,22 @@ import {
   StyledProjectNameFilter,
   StyledProjectListContainer,
   StyledUnorderedList,
+  StyledMethodListContainer,
+  StyledListItem,
+  StyledDateInputContainer,
   StyledDateInput,
   StyledMenuItem,
   StyledListSubheader,
   StyledClickableArea,
   StyledLabel,
+  StyledCategoryContainer,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose, IconUser } from '../../assets/icons'
+import { IconClose } from '../../assets/icons'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -187,189 +193,213 @@ const FilterPane = ({ mermaidUserData }) => {
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
-      <StyledFormControl>
-        <Select
-          multiple
-          value={selectedCountries}
-          onChange={handleSelectedCountriesChange}
-          input={<StyledOutlinedInput />}
-          sx={selectCustomStyles}
-          MenuProps={selectCustomStyles.MenuProps}
-          onOpen={countriesSelectOnOpen}
-          renderValue={(selected) => (
-            <Box sx={selectBoxCustomStyles}>
-              {selected.map((value) => (
-                <StyledChip
-                  key={value}
-                  label={value}
-                  onDelete={() => handleDeleteCountry(value)}
-                  deleteIcon={
-                    <IconClose
-                      onMouseDown={(event) => event.stopPropagation()}
-                      {...deleteIconSize}
-                    />
-                  }
-                />
-              ))}
-            </Box>
-          )}
-        >
-          {remainingDisplayedCountries.length ? (
-            <StyledListSubheader>Countries based on current filters</StyledListSubheader>
-          ) : null}
-          {displayedCountries.map((country) => (
-            <StyledMenuItem key={`matches-${country}`} value={country}>
-              <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
-              {country}
-            </StyledMenuItem>
-          ))}
-          {remainingDisplayedCountries.length ? (
-            <StyledListSubheader>Other countries</StyledListSubheader>
-          ) : null}
-          {remainingDisplayedCountries.map((country) => (
-            <StyledMenuItem key={`nonmatches-${country}`} value={country}>
-              <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
-              {country}
-            </StyledMenuItem>
-          ))}
-        </Select>
-      </StyledFormControl>
+      <StyledFormContainer>
+        <StyledFormControl>
+          <Select
+            multiple
+            value={selectedCountries}
+            onChange={handleSelectedCountriesChange}
+            input={<StyledOutlinedInput />}
+            sx={selectCustomStyles}
+            MenuProps={selectCustomStyles.MenuProps}
+            onOpen={countriesSelectOnOpen}
+            renderValue={(selected) => (
+              <Box sx={selectBoxCustomStyles}>
+                {selected.map((value) => (
+                  <StyledChip
+                    key={value}
+                    label={value}
+                    onDelete={() => handleDeleteCountry(value)}
+                    deleteIcon={
+                      <IconClose
+                        onMouseDown={(event) => event.stopPropagation()}
+                        {...deleteIconSize}
+                      />
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            {remainingDisplayedCountries.length ? (
+              <StyledListSubheader>Countries based on current filters</StyledListSubheader>
+            ) : null}
+            {displayedCountries.map((country) => (
+              <StyledMenuItem key={`matches-${country}`} value={country}>
+                <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
+                {country}
+              </StyledMenuItem>
+            ))}
+            {remainingDisplayedCountries.length ? (
+              <StyledListSubheader>Other countries</StyledListSubheader>
+            ) : null}
+            {remainingDisplayedCountries.map((country) => (
+              <StyledMenuItem key={`nonmatches-${country}`} value={country}>
+                <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
+                {country}
+              </StyledMenuItem>
+            ))}
+          </Select>
+        </StyledFormControl>
+      </StyledFormContainer>
       <StyledHeader>Organizations</StyledHeader>
-      <StyledFormControl>
-        <Select
-          multiple
-          value={selectedOrganizations}
-          onChange={handleSelectedOrganizationsChange}
-          input={<StyledOutlinedInput />}
-          sx={selectCustomStyles}
-          MenuProps={selectCustomStyles.MenuProps}
-          onOpen={organizationsSelectOnOpen}
-          renderValue={(selected) => (
-            <Box sx={selectBoxCustomStyles}>
-              {selected.map((value) => (
-                <StyledChip
-                  key={value}
-                  label={value}
-                  onDelete={() => handleDeleteOrganization(value)}
-                  deleteIcon={
-                    <IconClose
-                      onMouseDown={(event) => event.stopPropagation()}
-                      {...deleteIconSize}
-                    />
-                  }
+      <StyledFormContainer>
+        <StyledFormControl>
+          <Select
+            multiple
+            value={selectedOrganizations}
+            onChange={handleSelectedOrganizationsChange}
+            input={<StyledOutlinedInput />}
+            sx={selectCustomStyles}
+            MenuProps={selectCustomStyles.MenuProps}
+            onOpen={organizationsSelectOnOpen}
+            renderValue={(selected) => (
+              <Box sx={selectBoxCustomStyles}>
+                {selected.map((value) => (
+                  <StyledChip
+                    key={value}
+                    label={value}
+                    onDelete={() => handleDeleteOrganization(value)}
+                    deleteIcon={
+                      <IconClose
+                        onMouseDown={(event) => event.stopPropagation()}
+                        {...deleteIconSize}
+                      />
+                    }
+                  />
+                ))}
+              </Box>
+            )}
+          >
+            <StyledListSubheader>
+              {displayedOrganizations.length
+                ? 'Organizations based on current filters'
+                : 'No organizations match current filters'}
+            </StyledListSubheader>
+            {displayedOrganizations.map((organization) => (
+              <StyledMenuItem key={organization} value={organization}>
+                <input
+                  type="checkbox"
+                  checked={selectedOrganizations.includes(organization)}
+                  readOnly
                 />
-              ))}
-            </Box>
-          )}
-        >
-          <StyledListSubheader>
-            {displayedOrganizations.length
-              ? 'Organizations based on current filters'
-              : 'No organizations match current filters'}
-          </StyledListSubheader>
-          {displayedOrganizations.map((organization) => (
-            <StyledMenuItem key={organization} value={organization}>
-              <input
-                type="checkbox"
-                checked={selectedOrganizations.includes(organization)}
-                readOnly
-              />
-              {organization}
-            </StyledMenuItem>
-          ))}
-        </Select>
-      </StyledFormControl>
+                {organization}
+              </StyledMenuItem>
+            ))}
+          </Select>
+        </StyledFormControl>
+      </StyledFormContainer>
       <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
         Show {showMoreFilters ? 'fewer' : 'more'} filters
       </StyledExpandFilters>
       {showMoreFilters ? (
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
-          <StyledDateInput>
-            <input
-              type="date"
-              value={formattedDate(sampleDateAfter)}
-              onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
-            />
-            {sampleDateAfter && (
-              <IconButton
-                aria-label="clear date"
-                onClick={handleClearSampleDateAfter}
-                className="clear-button"
-              >
-                <IconClose />
-              </IconButton>
-            )}
-          </StyledDateInput>
+          <StyledDateInputContainer>
+            <StyledDateInput>
+              <input
+                type="date"
+                value={formattedDate(sampleDateAfter)}
+                onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
+              />
+              {sampleDateAfter && (
+                <IconButton
+                  aria-label="clear date"
+                  onClick={handleClearSampleDateAfter}
+                  className="clear-button"
+                >
+                  <IconClose />
+                </IconButton>
+              )}
+            </StyledDateInput>
 
-          <StyledDateInput>
-            <input
-              type="date"
-              value={formattedDate(sampleDateBefore)}
-              onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
-            />
-            {sampleDateBefore && (
-              <IconButton
-                aria-label="clear date"
-                onClick={handleClearSampleDateBefore}
-                className="clear-button"
-              >
-                <IconClose />
-              </IconButton>
-            )}
-          </StyledDateInput>
+            <StyledDateInput>
+              <input
+                type="date"
+                value={formattedDate(sampleDateBefore)}
+                onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
+              />
+              {sampleDateBefore && (
+                <IconButton
+                  aria-label="clear date"
+                  onClick={handleClearSampleDateBefore}
+                  className="clear-button"
+                >
+                  <IconClose />
+                </IconButton>
+              )}
+            </StyledDateInput>
+          </StyledDateInputContainer>
           {isAuthenticated ? (
             <>
               <StyledHeader>Your Data</StyledHeader>
-              <div>
-                <input
-                  type="checkbox"
-                  name="yourData"
-                  id="yourData"
-                  onChange={handleYourDataFilter}
-                  checked={showYourData}
-                />
-                <label htmlFor="yourData">{filterPane.yourData}</label>
-              </div>
+              <StyledCategoryContainer>
+                <StyledClickableArea
+                  onClick={() => handleYourDataFilter({ target: { checked: !showYourData } })}
+                >
+                  <input
+                    type="checkbox"
+                    name="yourData"
+                    id="yourData"
+                    onChange={handleYourDataFilter}
+                    checked={showYourData}
+                  />
+                  <StyledLabel htmlFor="yourData" onClick={(e) => e.stopPropagation()}>
+                    {filterPane.yourData}
+                  </StyledLabel>
+                </StyledClickableArea>
+              </StyledCategoryContainer>
             </>
           ) : null}
           <StyledHeader>Data sharing</StyledHeader>
-          <div>
-            <input
-              type="checkbox"
-              name="dataSharing"
-              id="dataSharing"
-              onChange={handleDataSharingFilter}
-              checked={dataSharingFilter}
-            />
-            <label htmlFor="dataSharing">{filterPane.dataSharing}</label>
-          </div>
+          <StyledCategoryContainer>
+            <StyledClickableArea
+              onClick={() => handleDataSharingFilter({ target: { checked: !dataSharingFilter } })}
+            >
+              <input
+                type="checkbox"
+                name="dataSharing"
+                id="dataSharing"
+                onChange={handleDataSharingFilter}
+                checked={dataSharingFilter}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <StyledLabel htmlFor="dataSharing" onClick={(e) => e.stopPropagation()}>
+                {filterPane.dataSharing}
+              </StyledLabel>
+            </StyledClickableArea>
+          </StyledCategoryContainer>
           <StyledHeader>Methods</StyledHeader>
-          <StyledUnorderedList>
-            {COLLECTION_METHODS.map((method) => (
-              <li key={method.name}>
-                <StyledClickableArea
-                  onClick={() =>
-                    handleMethodFilter({
-                      target: { name: method.name, checked: !methodFilters.includes(method.name) },
-                    })
-                  }
-                >
-                  <input
-                    id={method.name}
-                    type="checkbox"
-                    name={method.name}
-                    onChange={handleMethodFilter}
-                    checked={methodFilters.includes(method.name)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
-                    {method.description}
-                  </StyledLabel>
-                </StyledClickableArea>
-              </li>
-            ))}
-          </StyledUnorderedList>
+          <StyledMethodListContainer>
+            <StyledUnorderedList>
+              {COLLECTION_METHODS.map((method) => (
+                <StyledListItem key={method.name}>
+                  <StyledClickableArea
+                    onClick={() =>
+                      handleMethodFilter({
+                        target: {
+                          name: method.name,
+                          checked: !methodFilters.includes(method.name),
+                        },
+                      })
+                    }
+                  >
+                    <input
+                      id={method.name}
+                      type="checkbox"
+                      name={method.name}
+                      onChange={handleMethodFilter}
+                      checked={methodFilters.includes(method.name)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                    <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
+                      {method.description}
+                    </StyledLabel>
+                  </StyledClickableArea>
+                </StyledListItem>
+              ))}
+            </StyledUnorderedList>
+          </StyledMethodListContainer>
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledProjectsHeader>
@@ -388,7 +418,7 @@ const FilterPane = ({ mermaidUserData }) => {
           {displayedProjects.length ? (
             displayedProjects.map((project) => {
               return (
-                <li key={project.project_id}>
+                <StyledListItem key={project.project_id}>
                   <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
                     <input
                       id={`checkbox-${project.project_id}`}
@@ -401,10 +431,12 @@ const FilterPane = ({ mermaidUserData }) => {
                       onClick={(e) => e.stopPropagation()}
                     >
                       {project.project_name}{' '}
-                      {userIsMemberOfProject(project.project_id, mermaidUserData) && <IconUser />}
+                      {userIsMemberOfProject(project.project_id, mermaidUserData) && (
+                        <IconUserCircle />
+                      )}
                     </StyledLabel>
                   </StyledClickableArea>
-                </li>
+                </StyledListItem>
               )
             })
           ) : (
