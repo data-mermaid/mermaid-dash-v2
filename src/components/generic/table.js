@@ -42,6 +42,8 @@ export const Th = styled.th(
     vertical-align: top;
     font-weight: bold;
     border: 1px solid ${theme.color.tableBorderColor};
+    color: ${theme.color.white};
+    background-color: ${theme.color.headerColor};
     &::after {
       content: ${props.isSortingEnabled ? ' \u25b2' : ''};
       font-size: small;
@@ -52,7 +54,7 @@ export const Th = styled.th(
 
 export const Tr = styled.tr`
   cursor: pointer;
-  border: 1px solid ${theme.color.tableBorderColor};
+  border: 1px solid ${theme.color.grey0};
   &:nth-child(odd) {
     background-color: ${theme.color.tableRowOdd};
   }
@@ -69,7 +71,7 @@ export const Td = styled.td(
     text-align: ${props.align || 'left'};
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
-    border-color: ${theme.color.tableBorderColor};
+    border-color: ${theme.color.grey0};
     border-style: solid;
     position: relative;
     &:first-child {
