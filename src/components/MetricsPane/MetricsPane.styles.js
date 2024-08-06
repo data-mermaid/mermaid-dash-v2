@@ -73,10 +73,10 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  left: -4rem;
+  left: -10rem;
   height: 6rem;
   z-index: 5;
-  width: 4rem;
+  width: 10rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -154,4 +154,8 @@ export const MobileExpandedMetricsPane = styled('div')`
   background-color: ${theme.color.grey1};
   height: calc(100vh - 14rem);
   width: 100vw;
+`
+
+export const StyledChevronSpan = styled('span')`
+  padding-right: 0.8rem;
 `
