@@ -157,5 +157,5 @@ export const MobileExpandedMetricsPane = styled('div')`
 `
 
 export const StyledChevronSpan = styled('span')`
-  padding-right: 0.8rem;
+  padding-left: 0.8rem;
 `
