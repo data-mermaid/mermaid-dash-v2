@@ -13,20 +13,51 @@ import {
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
   BiggerIconCaretUp,
+  SelectedSiteMetricsCardContainer,
+  SelectedSiteSiteCardContainer,
+  SelectedSiteContentContainer,
+  BiggerIconPersonCircle,
+  StyledHeader,
+  StyledSummaryMetadataContainer,
+  StyledMetricsSelector,
+  BiggerIconTextBoxMultiple,
+  BiggerIconCalendar,
+  BiggerIconUser,
+  BiggerIconGlobe,
+  BiggerIconText,
+  StyledSvgContainer,
+  StyledMapPinContainer,
+  StyledReefContainer,
+  StyledReefRow,
+  StyledReefItem,
+  StyledReefItemBold,
+  StyledVisibleBackground,
 } from './MetricsPane.styles'
+import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { CloseButton } from '../generic'
+import { IconClose } from '../../assets/icons'
+import mapPin from '../../assets/map-pin.png'
+import coralReefSvg from '../../assets/coral_reef.svg'
+import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 
-const MetricsPane = ({
-  displayedProjects,
-  showMetricsPane,
-  setShowMetricsPane,
-  showLoadingIndicator,
-}) => {
+const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
   const [yearRange, setYearRange] = useState('')
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
+  const {
+    selectedMarkerId,
+    setSelectedMarkerId,
+    displayedProjects,
+    getURLParams,
+    updateURLParams,
+    mermaidUserData,
+    userIsMemberOfProject,
+  } = useFilterProjectsContext()
+  const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
+  const [metricsView, setMetricsView] = useState('summary')
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
@@ -69,6 +100,20 @@ const MetricsPane = ({
     setYearRange(yearRange)
   }, [calculateMetrics])
 
+  const _getSelectedSampleEvent = useEffect(() => {
+    if (!selectedMarkerId || !displayedProjects.length) {
+      return
+    }
+
+    const foundSelectedSampleEvent = displayedProjects
+      .map((project) =>
+        project.records.find((record) => record.sample_event_id === selectedMarkerId),
+      )
+      .find((record) => record !== undefined)
+
+    setSelectedSampleEvent(foundSelectedSampleEvent)
+  }, [selectedMarkerId, displayedProjects])
+
   const handleShowMetricsPane = () => {
     setShowMetricsPane((prevState) => !prevState)
   }
@@ -77,8 +122,196 @@ const MetricsPane = ({
     setShowMobileExpandedMetricsPane((prevState) => !prevState)
   }
 
-  const handleMobileSummarizedMetricsClick = () => {
+  const toggleMobileMetricsPane = () => {
     handleShowMobileExpandedMetricsPane()
+  }
+
+  const handleClearSelectedSampleEvent = () => {
+    setSelectedSampleEvent(null)
+    setSelectedMarkerId(null)
+    const queryParams = getURLParams()
+    queryParams.delete('sample_event_id')
+    updateURLParams(queryParams)
+  }
+
+  const handleChangeMetricsView = (event) => {
+    setMetricsView(event.target.name)
+  }
+
+  const SelectedSiteHeader = () => (
+    <StyledVisibleBackground>
+      <SelectedSiteSiteCardContainer>
+        <StyledMapPinContainer>
+          <img src={mapPin} alt="map-pin" />
+        </StyledMapPinContainer>
+        <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
+        <CloseButton onClick={handleClearSelectedSampleEvent}>
+          <IconClose aria-label="close" />
+        </CloseButton>
+      </SelectedSiteSiteCardContainer>
+    </StyledVisibleBackground>
+  )
+
+  const SelectedSiteBody = () => {
+    if (!isDesktopWidth) {
+      return
+    }
+
+    const sampleEventAdmins = selectedSampleEvent.project_admins
+      .map((admin) => admin.name)
+      .join(', ')
+    const sampleEventOrganizations = selectedSampleEvent.tags.map((tag) => tag.name).join(', ')
+
+    return (
+      <>
+        <SelectedSiteMetricsCardContainer>
+          <BiggerIconTextBoxMultiple />
+          <SelectedSiteContentContainer>
+            <StyledHeader>Project</StyledHeader>
+            <span>
+              {selectedSampleEvent.project_name}{' '}
+              {userIsMemberOfProject(selectedSampleEvent.project_id, mermaidUserData) ? (
+                <IconPersonCircle />
+              ) : null}
+            </span>
+          </SelectedSiteContentContainer>
+        </SelectedSiteMetricsCardContainer>
+        <SelectedSiteMetricsCardContainer>
+          <BiggerIconCalendar />
+          <SelectedSiteContentContainer>
+            <StyledHeader>Sample Date</StyledHeader>
+            <span>{selectedSampleEvent.sample_date}</span>
+          </SelectedSiteContentContainer>
+        </SelectedSiteMetricsCardContainer>
+        <StyledSummaryMetadataContainer>
+          <StyledMetricsSelector>
+            <input
+              id="metrics-summary"
+              type="radio"
+              name="summary"
+              checked={metricsView === 'summary'}
+              onChange={handleChangeMetricsView}
+            />
+            <label htmlFor="metrics-summary">Summary</label>
+          </StyledMetricsSelector>
+          <StyledMetricsSelector>
+            <input
+              id="metrics-metadata"
+              type="radio"
+              name="metadata"
+              checked={metricsView === 'metadata'}
+              onChange={handleChangeMetricsView}
+            />
+            <label htmlFor="metrics-metadata">Metadata</label>
+          </StyledMetricsSelector>
+        </StyledSummaryMetadataContainer>
+        {metricsView === 'summary' ? (
+          <span>Placeholder: show summary metrics here</span>
+        ) : (
+          <>
+            <SelectedSiteMetricsCardContainer>
+              <BiggerIconPersonCircle />
+              <SelectedSiteContentContainer>
+                <StyledHeader>Management Regime</StyledHeader>
+                <span>{selectedSampleEvent.management_name}</span>
+              </SelectedSiteContentContainer>
+            </SelectedSiteMetricsCardContainer>
+            <SelectedSiteMetricsCardContainer>
+              <BiggerIconUser />
+              <SelectedSiteContentContainer>
+                <StyledHeader>Admins</StyledHeader>
+                <span>{sampleEventAdmins}</span>
+              </SelectedSiteContentContainer>
+            </SelectedSiteMetricsCardContainer>
+            <SelectedSiteMetricsCardContainer>
+              <BiggerIconGlobe />
+              <SelectedSiteContentContainer>
+                <StyledHeader>Organizations</StyledHeader>
+                <span>{sampleEventOrganizations}</span>
+              </SelectedSiteContentContainer>
+            </SelectedSiteMetricsCardContainer>
+            <SelectedSiteMetricsCardContainer>
+              <StyledSvgContainer>
+                <img src={coralReefSvg} alt="coral reef" />
+              </StyledSvgContainer>
+              <SelectedSiteContentContainer>
+                <StyledHeader>Reef Habitat</StyledHeader>
+                <StyledReefContainer>
+                  <StyledReefRow>
+                    <StyledReefItemBold>Reef Zone</StyledReefItemBold>
+                    <StyledReefItem>{selectedSampleEvent.reef_zone}</StyledReefItem>
+                  </StyledReefRow>
+                  <StyledReefRow>
+                    <StyledReefItemBold>Reef Type</StyledReefItemBold>
+                    <StyledReefItem>{selectedSampleEvent.reef_type}</StyledReefItem>
+                  </StyledReefRow>
+                  <StyledReefRow>
+                    <StyledReefItemBold>Reef Exposure</StyledReefItemBold>
+                    <StyledReefItem>{selectedSampleEvent.reef_exposure}</StyledReefItem>
+                  </StyledReefRow>
+                </StyledReefContainer>
+              </SelectedSiteContentContainer>
+            </SelectedSiteMetricsCardContainer>
+            <SelectedSiteMetricsCardContainer>
+              <BiggerIconText />
+              <SelectedSiteContentContainer>
+                <StyledHeader>Notes</StyledHeader>
+                <span>{selectedSampleEvent.site_notes}</span>
+              </SelectedSiteContentContainer>
+            </SelectedSiteMetricsCardContainer>
+          </>
+        )}
+      </>
+    )
+  }
+
+  const RenderSummarizedMetrics = () => {
+    return (
+      <SummarizedMetrics
+        onClick={toggleMobileMetricsPane}
+        $isDesktopWidth={isDesktopWidth}
+        $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+        $showLoadingIndicator={showLoadingIndicator}
+      >
+        <MetricsCard>
+          <P>{displayedProjects.length}</P>
+          <H3>Projects </H3>
+        </MetricsCard>
+        <SurveysAndTransectsContainer>
+          <MetricsCard>
+            <P>{numSurveys}</P>
+            <H3>Surveys</H3>
+          </MetricsCard>
+          <MetricsCard>
+            <P>{numTransects}</P>
+            <H3>Transects</H3>
+          </MetricsCard>
+        </SurveysAndTransectsContainer>
+        {isDesktopWidth ? (
+          <MetricsCard>
+            <P>{yearRange}</P>
+          </MetricsCard>
+        ) : null}
+
+        <MetricsCard>
+          <P>{numUniqueCountries}</P>
+          <H3>{numUniqueCountries === 1 ? 'Country' : 'Countries'}</H3>
+        </MetricsCard>
+      </SummarizedMetrics>
+    )
+  }
+
+  const MetricsContent = () => {
+    if (selectedSampleEvent) {
+      return (
+        <>
+          <SelectedSiteHeader />
+          <SelectedSiteBody />
+        </>
+      )
+    } else {
+      return <RenderSummarizedMetrics />
+    }
   }
 
   return (
@@ -87,39 +320,7 @@ const MetricsPane = ({
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
       $showLoadingIndicator={showLoadingIndicator}
     >
-      {isMobileWidth || showMetricsPane ? (
-        <SummarizedMetrics
-          onClick={handleMobileSummarizedMetricsClick}
-          $isDesktopWidth={isDesktopWidth}
-          $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-          $showLoadingIndicator={showLoadingIndicator}
-        >
-          <MetricsCard>
-            <P>{displayedProjects.length}</P>
-            <H3>Projects </H3>
-          </MetricsCard>
-          <SurveysAndTransectsContainer>
-            <MetricsCard>
-              <P>{numSurveys}</P>
-              <H3>Surveys</H3>
-            </MetricsCard>
-            <MetricsCard>
-              <P>{numTransects}</P>
-              <H3>Transects</H3>
-            </MetricsCard>
-          </SurveysAndTransectsContainer>
-          {isDesktopWidth ? (
-            <MetricsCard>
-              <P>{yearRange}</P>
-            </MetricsCard>
-          ) : null}
-
-          <MetricsCard>
-            <P>{numUniqueCountries}</P>
-            <H3>{numUniqueCountries === 1 ? 'Country' : 'Countries'}</H3>
-          </MetricsCard>
-        </SummarizedMetrics>
-      ) : null}
+      {isMobileWidth || showMetricsPane ? MetricsContent() : null}
       {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
       ) : null}
@@ -141,19 +342,6 @@ const MetricsPane = ({
 }
 
 MetricsPane.propTypes = {
-  displayedProjects: PropTypes.arrayOf(
-    PropTypes.shape({
-      created_on: PropTypes.string.isRequired,
-      project_id: PropTypes.string.isRequired,
-      records: PropTypes.arrayOf(
-        PropTypes.shape({
-          country_name: PropTypes.string.isRequired,
-          site_name: PropTypes.string.isRequired,
-          sample_date: PropTypes.string.isRequired,
-        }),
-      ).isRequired,
-    }),
-  ).isRequired,
   showMetricsPane: PropTypes.bool.isRequired,
   setShowMetricsPane: PropTypes.func.isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
