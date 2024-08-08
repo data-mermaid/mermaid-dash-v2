@@ -25,14 +25,8 @@ import {
 } from './MermaidDash.styles'
 
 const MermaidDash = () => {
-  const {
-    projectData,
-    displayedProjects,
-    setProjectData,
-    mermaidUserData,
-    setMermaidUserData,
-    setCheckedProjects,
-  } = useFilterProjectsContext()
+  const { projectData, setProjectData, mermaidUserData, setMermaidUserData, setCheckedProjects } =
+    useFilterProjectsContext()
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -240,7 +234,6 @@ const MermaidDash = () => {
 
   const renderMetrics = () => (
     <MetricsPane
-      displayedProjects={displayedProjects}
       showMetricsPane={showMetricsPane}
       setShowMetricsPane={setShowMetricsPane}
       showLoadingIndicator={showLoadingIndicator}
