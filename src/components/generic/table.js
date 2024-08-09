@@ -41,7 +41,6 @@ export const Th = styled.th(
     background: ${theme.color.white};
     vertical-align: top;
     font-weight: bold;
-    border: 1px solid ${theme.color.tableBorderColor};
     color: ${theme.color.white};
     background-color: ${theme.color.headerColor};
     &::after {
@@ -114,7 +113,7 @@ const stickyStyles = css`
   position: sticky;
   white-space: nowrap;
   z-index: 3;
-  top: calc(${theme.spacing.headerHeight} - 1px);
+  top: 9rem;
   &::before {
     /* 
     this is to account for the border-bottom
@@ -134,4 +133,12 @@ export const GenericStickyTable = styled(Table)`
   tr th {
     ${stickyStyles}
   }
+`
+
+export const EmptySpace = styled('div')`
+  height: 9.1rem;
+  background-color: white;
+  z-index: 3;
+  position: sticky;
+  top: 0;
 `

@@ -15,6 +15,7 @@ import {
   ReactTableCustomYearSort,
   PageSelector,
   PageSizeSelector,
+  EmptySpace,
 } from '../generic'
 import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -177,6 +178,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
 
   const table = tableData.length ? (
     <>
+      <EmptySpace />
       <StickyTableOverflowWrapper>
         <GenericStickyTable {...getTableProps()}>
           <thead>
@@ -273,7 +275,10 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       </TableNavigation>
     </>
   ) : (
-    <div>No project data</div>
+    <>
+      <EmptySpace />
+      <div>No project data</div>
+    </>
   )
 
   return (

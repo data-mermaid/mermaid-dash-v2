@@ -21,7 +21,6 @@ const contentStyles = css`
 
 const Content = styled('div')`
   ${contentStyles};
-  padding-top: 7.9rem;
   height: 100%;
 `
 
