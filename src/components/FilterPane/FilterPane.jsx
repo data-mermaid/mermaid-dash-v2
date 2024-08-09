@@ -14,7 +14,6 @@ import {
   StyledProjectListContainer,
   StyledUnorderedList,
   StyledMethodListContainer,
-  StyledListItem,
   StyledDateInputContainer,
   StyledDateInput,
   StyledMenuItem,
@@ -22,6 +21,7 @@ import {
   StyledClickableArea,
   StyledLabel,
   StyledCategoryContainer,
+  StyledEmptyListItem,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
@@ -373,7 +373,7 @@ const FilterPane = ({ mermaidUserData }) => {
           <StyledMethodListContainer>
             <StyledUnorderedList>
               {COLLECTION_METHODS.map((method) => (
-                <StyledListItem key={method.name}>
+                <li key={method.name}>
                   <StyledClickableArea
                     onClick={() =>
                       handleMethodFilter({
@@ -396,7 +396,7 @@ const FilterPane = ({ mermaidUserData }) => {
                       {method.description}
                     </StyledLabel>
                   </StyledClickableArea>
-                </StyledListItem>
+                </li>
               ))}
             </StyledUnorderedList>
           </StyledMethodListContainer>
@@ -418,7 +418,7 @@ const FilterPane = ({ mermaidUserData }) => {
           {displayedProjects.length ? (
             displayedProjects.map((project) => {
               return (
-                <StyledListItem key={project.project_id}>
+                <li key={project.project_id}>
                   <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
                     <input
                       id={`checkbox-${project.project_id}`}
@@ -436,11 +436,11 @@ const FilterPane = ({ mermaidUserData }) => {
                       )}
                     </StyledLabel>
                   </StyledClickableArea>
-                </StyledListItem>
+                </li>
               )
             })
           ) : (
-            <li>No projects match current filters</li>
+            <StyledEmptyListItem>No projects match current filters</StyledEmptyListItem>
           )}
         </StyledUnorderedList>
       </StyledProjectListContainer>

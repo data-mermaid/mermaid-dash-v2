@@ -1,7 +1,7 @@
 import { FormControl, MenuItem, OutlinedInput, Chip, TextField, ListSubheader } from '@mui/material'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
-import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import { css } from 'styled-components'
 
 export const StyledHeader = styled('h2')`
@@ -98,11 +98,7 @@ export const StyledUnorderedList = styled('ul')`
   list-style-type: none;
   margin: 0;
   background-color: ${theme.color.white};
-  padding: 1rem 0.7rem;
-`
-
-export const StyledListItem = styled('li')`
-  margin-bottom: 0.5rem;
+  padding: 0;
 `
 
 export const StyledDateInputContainer = styled.div`
@@ -150,9 +146,9 @@ export const StyledListSubheader = styled(ListSubheader)`
 export const StyledClickableArea = styled('div')`
   cursor: pointer;
   display: flex;
-  &:hover {
+  ${hoverState(css`
     background-color: ${theme.color.tableRowHover};
-  }
+  `)}
 `
 
 export const StyledLabel = styled('label')`
@@ -168,4 +164,8 @@ export const StyledCategoryContainer = styled('div')`
 `
 export const StyledFormContainer = styled('div')`
   border: 1px solid ${theme.color.grey0};
+`
+
+export const StyledEmptyListItem = styled('div')`
+  padding: 0.5rem 1rem;
 `
