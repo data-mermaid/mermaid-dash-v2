@@ -21,6 +21,7 @@ export const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
+  max-width: 40rem;
   ${(props) => props.$showFilterPane && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;

@@ -87,6 +87,7 @@ const MetricsPane = ({
       $showMetricsPane={showMetricsPane}
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
       $showLoadingIndicator={showLoadingIndicator}
+      $isDesktopWidth={isDesktopWidth}
     >
       {isMobileWidth || showMetricsPane ? (
         <SummarizedMetrics

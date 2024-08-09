@@ -6,6 +6,7 @@ import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
 
 export const StyledMetricsWrapper = styled('div')`
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
+  ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
