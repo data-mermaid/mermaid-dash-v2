@@ -146,6 +146,7 @@ export const StyledListSubheader = styled(ListSubheader)`
 export const StyledClickableArea = styled('div')`
   cursor: pointer;
   display: flex;
+  padding: 0.5rem;
   ${hoverState(css`
     background-color: ${theme.color.tableRowHover};
   `)}
@@ -160,7 +161,6 @@ export const StyledCategoryContainer = styled('div')`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
   margin-right: 1rem;
-  padding: 1rem 0.7rem;
 `
 export const StyledFormContainer = styled('div')`
   border: 1px solid ${theme.color.grey0};
