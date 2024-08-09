@@ -22,6 +22,7 @@ import {
   StyledMobileToggleFilterPaneButton,
   MobileCloseFilterPaneButton,
   MobileFooterContainer,
+  StyledChevronSpan,
 } from './MermaidDash.styles'
 
 const MermaidDash = () => {
@@ -204,7 +205,17 @@ const MermaidDash = () => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          {showFilterPane ? String.fromCharCode(10094) : String.fromCharCode(10095)}{' '}
+          {showFilterPane ? (
+            <>
+              <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
+              <span>Filters</span>
+            </>
+          ) : (
+            <>
+              <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
+              <span>Filters</span>
+            </>
+          )}
         </DesktopToggleFilterPaneButton>
       </StyledFilterWrapper>
     )
@@ -229,7 +240,7 @@ const MermaidDash = () => {
 
   const renderTable = () => (
     <StyledTableContainer>
-      <TableView view={view} setView={setView} />
+      <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}

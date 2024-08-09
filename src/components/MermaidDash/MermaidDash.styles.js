@@ -21,6 +21,7 @@ export const StyledFilterWrapper = styled('div')`
   display: flex;
   flex-direction: column;
   position: relative;
+  max-width: 40rem;
   ${(props) => props.$showFilterPane && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
@@ -75,10 +76,10 @@ export const BiggerFilterIcon = styled(IconFilter)`
 export const DesktopToggleFilterPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  right: -4rem;
+  right: -10rem;
   height: 6rem;
   z-index: 5;
-  width: 4rem;
+  width: 10rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -110,4 +111,8 @@ export const MobileFooterContainer = styled('div')`
   background-color: ${theme.color.grey1};
   margin: -1rem;
   padding-left: 2rem;
+`
+
+export const StyledChevronSpan = styled('span')`
+  padding-right: 0.8rem;
 `

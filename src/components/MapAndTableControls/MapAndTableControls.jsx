@@ -14,7 +14,7 @@ import { URL_PARAMS } from '../../constants/constants'
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: 4.5rem;
+  left: 10.5rem;
   height: 6rem;
   z-index: 400;
   display: flex;

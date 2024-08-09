@@ -10,6 +10,7 @@ export {
   GenericStickyTable,
   Table,
   TableOverflowWrapper,
+  EmptySpace,
 } from './table'
 export {
   CloseButton,
