@@ -50,7 +50,7 @@ const ViewToggle = ({ view, setView }) => {
 
   const tableHeaders = [
     { label: 'Project Name', key: 'projectName' },
-    { label: 'Years', key: 'formattedYears' },
+    { label: 'Date Range', key: 'formattedDateRange' },
     { label: 'Countries', key: 'countries' },
     { label: 'Organizations', key: 'organizations' },
     { label: 'Transects', key: 'transects' },
@@ -58,11 +58,11 @@ const ViewToggle = ({ view, setView }) => {
   ]
 
   const tableContent = displayedProjects.map((project) => {
-    const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
+    const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
       formatProjectDataHelper(project)
     const formattedTableRowData = {
       projectName,
-      formattedYears,
+      formattedDateRange,
       countries,
       organizations,
       recordCount: project.records.length,
