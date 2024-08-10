@@ -74,8 +74,8 @@ const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingInd
     <StyledLoadingContainer $showLoadingBar={showLoadingBar}>
       <StyledHeader>
         {loadingProgressValue === 100
-          ? 'All sites loaded'
-          : `Loading sites ${loadingProgressValue}%`}
+          ? 'Loaded'
+          : `Loading ${loadingProgressValue}%`}
       </StyledHeader>
       {showLoadingBar === true ? (
         <StyledProgressBarContainer>
