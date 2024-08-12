@@ -190,6 +190,73 @@ const FilterPane = ({ mermaidUserData }) => {
     setCheckedProjects(updatedCheckedProjects)
   }
 
+  const renderMethods = () => (
+    <StyledMethodListContainer>
+      <StyledUnorderedList>
+        {COLLECTION_METHODS.map((method) => (
+          <li key={method.name}>
+            <StyledClickableArea
+              onClick={() =>
+                handleMethodFilter({
+                  target: {
+                    name: method.name,
+                    checked: !methodFilters.includes(method.name),
+                  },
+                })
+              }
+            >
+              <input
+                id={method.name}
+                type="checkbox"
+                name={method.name}
+                onChange={handleMethodFilter}
+                checked={methodFilters.includes(method.name)}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
+                {method.description}
+              </StyledLabel>
+            </StyledClickableArea>
+          </li>
+        ))}
+      </StyledUnorderedList>
+    </StyledMethodListContainer>
+  )
+
+  const renderDisplayedProjects = () => (
+    <StyledProjectListContainer>
+      <StyledUnorderedList>
+        {displayedProjects.length ? (
+          displayedProjects.map((project) => {
+            return (
+              <li key={project.project_id}>
+                <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
+                  <input
+                    id={`checkbox-${project.project_id}`}
+                    type="checkbox"
+                    checked={checkedProjects.includes(project.project_id)}
+                    onChange={() => handleCheckProject(project.project_id)}
+                  />{' '}
+                  <StyledLabel
+                    htmlFor={`checkbox-${project.project_id}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {project.project_name}{' '}
+                    {userIsMemberOfProject(project.project_id, mermaidUserData) && (
+                      <IconUserCircle />
+                    )}
+                  </StyledLabel>
+                </StyledClickableArea>
+              </li>
+            )
+          })
+        ) : (
+          <StyledEmptyListItem>No projects match current filters</StyledEmptyListItem>
+        )}
+      </StyledUnorderedList>
+    </StyledProjectListContainer>
+  )
+
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
@@ -340,11 +407,11 @@ const FilterPane = ({ mermaidUserData }) => {
                   <input
                     type="checkbox"
                     name="yourData"
-                    id="yourData"
+                    id="your-data"
                     onChange={handleYourDataFilter}
                     checked={showYourData}
                   />
-                  <StyledLabel htmlFor="yourData" onClick={(e) => e.stopPropagation()}>
+                  <StyledLabel htmlFor="your-data" onClick={(e) => e.stopPropagation()}>
                     {filterPane.yourData}
                   </StyledLabel>
                 </StyledClickableArea>
@@ -359,47 +426,18 @@ const FilterPane = ({ mermaidUserData }) => {
               <input
                 type="checkbox"
                 name="dataSharing"
-                id="dataSharing"
+                id="data-sharing"
                 onChange={handleDataSharingFilter}
                 checked={dataSharingFilter}
                 onClick={(e) => e.stopPropagation()}
               />
-              <StyledLabel htmlFor="dataSharing" onClick={(e) => e.stopPropagation()}>
+              <StyledLabel htmlFor="data-sharing" onClick={(e) => e.stopPropagation()}>
                 {filterPane.dataSharing}
               </StyledLabel>
             </StyledClickableArea>
           </StyledCategoryContainer>
           <StyledHeader>Methods</StyledHeader>
-          <StyledMethodListContainer>
-            <StyledUnorderedList>
-              {COLLECTION_METHODS.map((method) => (
-                <li key={method.name}>
-                  <StyledClickableArea
-                    onClick={() =>
-                      handleMethodFilter({
-                        target: {
-                          name: method.name,
-                          checked: !methodFilters.includes(method.name),
-                        },
-                      })
-                    }
-                  >
-                    <input
-                      id={method.name}
-                      type="checkbox"
-                      name={method.name}
-                      onChange={handleMethodFilter}
-                      checked={methodFilters.includes(method.name)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
-                      {method.description}
-                    </StyledLabel>
-                  </StyledClickableArea>
-                </li>
-              ))}
-            </StyledUnorderedList>
-          </StyledMethodListContainer>
+          {renderMethods()}
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledProjectsHeader>
@@ -413,37 +451,7 @@ const FilterPane = ({ mermaidUserData }) => {
         placeholder="Type to filter projects"
         onChange={handleProjectNameFilter}
       />
-      <StyledProjectListContainer>
-        <StyledUnorderedList>
-          {displayedProjects.length ? (
-            displayedProjects.map((project) => {
-              return (
-                <li key={project.project_id}>
-                  <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
-                    <input
-                      id={`checkbox-${project.project_id}`}
-                      type="checkbox"
-                      checked={checkedProjects.includes(project.project_id)}
-                      onChange={() => handleCheckProject(project.project_id)}
-                    />{' '}
-                    <StyledLabel
-                      htmlFor={`checkbox-${project.project_id}`}
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      {project.project_name}{' '}
-                      {userIsMemberOfProject(project.project_id, mermaidUserData) && (
-                        <IconUserCircle />
-                      )}
-                    </StyledLabel>
-                  </StyledClickableArea>
-                </li>
-              )
-            })
-          ) : (
-            <StyledEmptyListItem>No projects match current filters</StyledEmptyListItem>
-          )}
-        </StyledUnorderedList>
-      </StyledProjectListContainer>
+      {renderDisplayedProjects()}
     </StyledFilterPaneContainer>
   )
 }
