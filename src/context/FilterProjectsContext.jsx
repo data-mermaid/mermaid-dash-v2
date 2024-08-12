@@ -478,8 +478,10 @@ export const FilterProjectsProvider = ({ children }) => {
     setSampleDateBefore('')
     setDataSharingFilter(false)
     setMethodFilters(initialCollectionMethods)
+    queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
     setProjectNameFilter('')
     setShowYourData(false)
+    updateURLParams(queryParams)
   }
 
   const handleYourDataFilter = (event) => {
