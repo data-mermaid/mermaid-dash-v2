@@ -4,27 +4,27 @@ import { mediaQueryPhoneOnly, mediaQueryTabletLandscapeOnly } from '../../../sty
 import theme from '../../../styles/theme'
 
 const contentPadding = theme.spacing.xsmall
-const MainContentPageLayout = styled('div')`
+const MainContentPageLayout = styled.div`
   display: grid;
   grid-template-rows: auto 1fr;
   background: ${theme.color.backgroundColor};
 `
-const ContentWrapper = styled('div')`
+const ContentWrapper = styled.div`
   padding: ${contentPadding} 0 0 ${contentPadding};
 `
-const NavAndContentLayout = styled('div')`
+const NavAndContentLayout = styled.div`
   display: grid;
 `
 const contentStyles = css`
   background: ${theme.color.white};
 `
 
-const Content = styled('div')`
+const Content = styled.div`
   ${contentStyles};
   height: 100%;
 `
 
-const ContentPageToolbarWrapper = styled('div')`
+const ContentPageToolbarWrapper = styled.div`
   display: flex;
   justify-content: space-between;
   flex-direction: row;

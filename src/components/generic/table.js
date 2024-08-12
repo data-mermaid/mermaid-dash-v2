@@ -18,7 +18,7 @@ export const TableNavigation = styled.div`
   }
 `
 
-export const Table = styled('table')`
+export const Table = styled.table`
   border: solid 1px ${theme.color.tableBorderColor};
   table-layout: auto;
   background: ${theme.color.secondaryColor};
@@ -135,7 +135,7 @@ export const GenericStickyTable = styled(Table)`
   }
 `
 
-export const EmptySpace = styled('div')`
+export const EmptySpace = styled.div`
   height: 9.1rem;
   background-color: white;
   z-index: 3;

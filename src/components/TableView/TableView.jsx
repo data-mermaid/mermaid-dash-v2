@@ -23,7 +23,7 @@ import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
-const StyledTableContainer = styled('div')`
+const StyledTableContainer = styled.div`
   height: calc(100vh - 50px);
   flex-grow: 1;
   overflow: scroll;

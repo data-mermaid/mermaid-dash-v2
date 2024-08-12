@@ -4,7 +4,7 @@ import theme from '../../styles/theme'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import { css } from 'styled-components'
 
-export const StyledHeader = styled('h2')`
+export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
   margin-top: 1rem;
@@ -16,7 +16,7 @@ export const StyledProjectsHeader = styled(StyledHeader)`
   justify-content: space-between;
 `
 
-export const StyledFilterPaneContainer = styled('div')`
+export const StyledFilterPaneContainer = styled.div`
   padding: 1rem;
   min-width: 35rem;
   ${mediaQueryTabletLandscapeOnly(css`
@@ -49,7 +49,7 @@ export const StyledChip = styled(Chip)`
   }
 `
 
-export const StyledExpandFilters = styled('button')`
+export const StyledExpandFilters = styled.button`
   margin: 1.5rem 0;
   cursor: pointer;
   text-decoration: underline;
@@ -58,7 +58,7 @@ export const StyledExpandFilters = styled('button')`
   padding: 0;
 `
 
-export const ShowMoreFiltersContainer = styled('div')`
+export const ShowMoreFiltersContainer = styled.div`
   padding: 0.5rem 0 1.5rem 0.8rem;
   background-color: ${theme.color.grey4};
 `
@@ -82,19 +82,19 @@ export const StyledProjectNameFilter = styled(TextField)`
   }
 `
 
-export const StyledProjectListContainer = styled('div')`
+export const StyledProjectListContainer = styled.div`
   background-color: ${theme.color.white};
   border: 1px solid ${theme.color.grey0};
   word-break: break-word;
   overflow-wrap: break-word;
 `
 
-export const StyledMethodListContainer = styled('div')`
+export const StyledMethodListContainer = styled.div`
   margin-right: 1rem;
   border: 1px solid ${theme.color.grey0};
 `
 
-export const StyledUnorderedList = styled('ul')`
+export const StyledUnorderedList = styled.ul`
   list-style-type: none;
   margin: 0;
   background-color: ${theme.color.white};
@@ -143,7 +143,7 @@ export const StyledListSubheader = styled(ListSubheader)`
     font-size: ${theme.typography.defaultFontSize};
   }
 `
-export const StyledClickableArea = styled('div')`
+export const StyledClickableArea = styled.div`
   cursor: pointer;
   display: flex;
   padding: 0.5rem;
@@ -152,20 +152,20 @@ export const StyledClickableArea = styled('div')`
   `)}
 `
 
-export const StyledLabel = styled('label')`
+export const StyledLabel = styled.label`
   cursor: pointer;
   margin: 0.2rem;
 `
 
-export const StyledCategoryContainer = styled('div')`
+export const StyledCategoryContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
   margin-right: 1rem;
 `
-export const StyledFormContainer = styled('div')`
+export const StyledFormContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
 `
 
-export const StyledEmptyListItem = styled('div')`
+export const StyledEmptyListItem = styled.div`
   padding: 0.5rem 1rem;
 `

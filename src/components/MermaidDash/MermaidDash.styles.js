@@ -4,20 +4,20 @@ import theme from '../../styles/theme'
 import { IconFilter } from '../../assets/icons'
 import { ButtonSecondary } from '../generic'
 
-export const StyledDashboardContainer = styled('div')`
+export const StyledDashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100dvh;
 `
 
-export const StyledContentContainer = styled('div')`
+export const StyledContentContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-top: 4.9rem;
   flex-grow: 1;
 `
 
-export const StyledFilterWrapper = styled('div')`
+export const StyledFilterWrapper = styled.div`
   display: flex;
   flex-direction: column;
   position: relative;
@@ -36,7 +36,7 @@ export const StyledFilterWrapper = styled('div')`
   `)}
 `
 
-export const StyledFilterContainer = styled('div')`
+export const StyledFilterContainer = styled.div`
   z-index: 2;
   overflow-y: scroll;
   height: calc(100dvh - 5rem);
@@ -50,7 +50,7 @@ export const StyledFilterContainer = styled('div')`
   scrollbar-width: none; /* Firefox */
 `
 
-export const StyledMapContainer = styled('div')`
+export const StyledMapContainer = styled.div`
   flex-grow: 2;
   height: 100%;
   width: 100%;
@@ -59,7 +59,7 @@ export const StyledMapContainer = styled('div')`
   display: grid;
 `
 
-export const StyledTableContainer = styled('div')`
+export const StyledTableContainer = styled.div`
   flex-grow: 1;
   width: 100%;
   overflow: auto;
@@ -107,12 +107,12 @@ export const MobileCloseFilterPaneButton = styled(ButtonSecondary)`
   margin: 1rem;
 `
 
-export const MobileFooterContainer = styled('div')`
+export const MobileFooterContainer = styled.div`
   background-color: ${theme.color.grey1};
   margin: -1rem;
   padding-left: 2rem;
 `
 
-export const StyledChevronSpan = styled('span')`
+export const StyledChevronSpan = styled.span`
   padding-right: 0.8rem;
 `
