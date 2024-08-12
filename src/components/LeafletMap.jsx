@@ -194,7 +194,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
       <MapAndTableControlsWrapper />
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
-        chunkedLoading
+        chunkedLoading={true}
         spiderfyOnMaxZoom={false}
         onClick={(event) => {
           console.log('Click marker cluster group', event)
