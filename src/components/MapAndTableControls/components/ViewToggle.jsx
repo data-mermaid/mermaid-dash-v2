@@ -53,8 +53,8 @@ const ViewToggle = ({ view, setView }) => {
     { label: 'Date Range', key: 'formattedDateRange' },
     { label: 'Countries', key: 'countries' },
     { label: 'Organizations', key: 'organizations' },
-    { label: 'Transects', key: 'transects' },
     { label: 'Surveys', key: 'surveyCount' },
+    { label: 'Transects', key: 'transects' },
   ]
 
   const tableContent = displayedProjects.map((project) => {
