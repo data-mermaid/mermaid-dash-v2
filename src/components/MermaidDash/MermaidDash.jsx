@@ -208,14 +208,13 @@ const MermaidDash = () => {
           {showFilterPane ? (
             <>
               <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
-              <span>Filters</span>
             </>
           ) : (
             <>
               <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
-              <span>Filters</span>
             </>
           )}
+          <span>Filters</span>
         </DesktopToggleFilterPaneButton>
       </StyledFilterWrapper>
     )
