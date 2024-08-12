@@ -8,7 +8,7 @@ import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
 import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
 
-const StyledViewToggleContainer = styled('div')`
+const StyledViewToggleContainer = styled.div`
   width: 12.5rem;
   left: 5rem;
   top: 1.3rem;
