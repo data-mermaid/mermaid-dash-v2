@@ -51,7 +51,7 @@ const ClusterIcon = styled.div`
   justify-content: center;
   align-items: center;
   border: 3px solid white;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
 `
 
 const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
