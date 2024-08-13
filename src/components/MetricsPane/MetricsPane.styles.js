@@ -12,8 +12,9 @@ import {
 } from '../../assets/dashboardOnlyIcons'
 import { IconGlobe, IconUser } from '../../assets/icons'
 
-export const StyledMetricsWrapper = styled('div')`
+export const StyledMetricsWrapper = styled.div`
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
+  ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
@@ -34,7 +35,7 @@ export const StyledMetricsWrapper = styled('div')`
   `)}
 `
 
-export const SummarizedMetrics = styled('div')`
+export const SummarizedMetrics = styled.div`
   width: 100%;
   overflow-y: scroll;
   ${(props) => props.$isDesktopWidth && 'height: calc(100vh - 10rem);'}
@@ -81,10 +82,10 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  left: -4rem;
+  left: -10rem;
   height: 6rem;
   z-index: 5;
-  width: 4rem;
+  width: 10rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -117,7 +118,7 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   `)}
 `
 
-export const SurveysAndTransectsContainer = styled('div')`
+export const SurveysAndTransectsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -131,7 +132,7 @@ export const SurveysAndTransectsContainer = styled('div')`
   `)}
 `
 
-export const MetricsCard = styled('div')`
+export const MetricsCard = styled.div`
   background-color: ${theme.color.white};
   width: 100%;
   display: flex;
@@ -147,18 +148,18 @@ export const MetricsCard = styled('div')`
   `)}
 `
 
-export const H3 = styled('h3')`
+export const H3 = styled.h3`
   padding: 0;
   margin: 0.5rem;
 `
 
-export const P = styled('p')`
+export const P = styled.p`
   padding: 0;
   margin: 0.5rem;
   font-size: ${theme.typography.defaultFontSize};
 `
 
-export const MobileExpandedMetricsPane = styled('div')`
+export const MobileExpandedMetricsPane = styled.div`
   background-color: ${theme.color.grey1};
   height: calc(100vh - 14rem);
   width: 100vw;
@@ -273,4 +274,8 @@ export const StyledReefItemBold = styled(StyledReefItem)`
 `
 export const StyledVisibleBackground = styled('div')`
   background-color: ${theme.color.grey1};
+`
+
+export const StyledChevronSpan = styled.span`
+  padding-left: 0.8rem;
 `

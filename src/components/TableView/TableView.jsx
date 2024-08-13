@@ -15,13 +15,15 @@ import {
   ReactTableCustomYearSort,
   PageSelector,
   PageSizeSelector,
+  EmptySpace,
 } from '../generic'
 import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
-const StyledTableContainer = styled('div')`
+const StyledTableContainer = styled.div`
   height: calc(100vh - 50px);
   flex-grow: 1;
   overflow: scroll;
@@ -30,8 +32,8 @@ const StyledTableContainer = styled('div')`
   width: 100%;
 `
 
-const TableView = ({ view, setView }) => {
-  const { displayedProjects } = useFilterProjectsContext()
+const TableView = ({ view, setView, mermaidUserData }) => {
+  const { displayedProjects, userIsMemberOfProject } = useFilterProjectsContext()
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -176,6 +178,7 @@ const TableView = ({ view, setView }) => {
 
   const table = tableData.length ? (
     <>
+      <EmptySpace />
       <StickyTableOverflowWrapper>
         <GenericStickyTable {...getTableProps()}>
           <thead>
@@ -233,7 +236,16 @@ const TableView = ({ view, setView }) => {
                         align={cell.column.align}
                         onClick={() => handleTableRowClick(cell.row.original.rawProjectData)}
                       >
-                        {cell.render('Cell')}
+                        {cell.render('Cell')}{' '}
+                        {cell.column.Header === 'Project Name' &&
+                        userIsMemberOfProject(
+                          cell.row.original.rawProjectData.project_id,
+                          mermaidUserData,
+                        ) ? (
+                          <IconUserCircle />
+                        ) : (
+                          ''
+                        )}
                       </Td>
                     )
                   })}
@@ -263,7 +275,10 @@ const TableView = ({ view, setView }) => {
       </TableNavigation>
     </>
   ) : (
-    <div>No project data</div>
+    <>
+      <EmptySpace />
+      <div>No project data</div>
+    </>
   )
 
   return (
@@ -279,4 +294,5 @@ export default TableView
 TableView.propTypes = {
   view: PropTypes.string.isRequired,
   setView: PropTypes.func.isRequired,
+  mermaidUserData: PropTypes.object,
 }

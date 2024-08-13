@@ -32,6 +32,7 @@ import {
   StyledReefItem,
   StyledReefItemBold,
   StyledVisibleBackground,
+  StyledChevronSpan,
 } from './MetricsPane.styles'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { CloseButton } from '../generic'
@@ -319,6 +320,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       $showMetricsPane={showMetricsPane}
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
       $showLoadingIndicator={showLoadingIndicator}
+      $isDesktopWidth={isDesktopWidth}
     >
       {isMobileWidth || showMetricsPane ? MetricsContent() : null}
       {isMobileWidth && showMobileExpandedMetricsPane ? (
@@ -326,7 +328,17 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       ) : null}
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
-          {showMetricsPane ? String.fromCharCode(10095) : String.fromCharCode(10094)}{' '}
+          {showMetricsPane ? (
+            <>
+              <span>Metrics</span>
+              <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
+            </>
+          ) : (
+            <>
+              <span>Metrics</span>
+              <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
+            </>
+          )}
         </DesktopToggleMetricsPaneButton>
       ) : (
         <MobileExpandMetricsPaneButton
