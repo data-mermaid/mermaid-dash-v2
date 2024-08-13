@@ -115,7 +115,7 @@ export const ButtonCaution = styled(Button)`
   }
 `
 
-export const ButtonThatLooksLikeLink = styled('button')`
+export const ButtonThatLooksLikeLink = styled.button`
   font-size: inherit;
   padding: ${theme.spacing.buttonPadding};
   background: none;
@@ -131,7 +131,7 @@ export const ButtonThatLooksLikeLinkUnderlined = styled(ButtonThatLooksLikeLink)
   padding: 0;
 `
 
-export const ToolbarButtonWrapper = styled('div')`
+export const ToolbarButtonWrapper = styled.div`
   // button,
   a {
     margin: 0 -1px;
@@ -177,7 +177,7 @@ export const CheckBoxContainer = styled.label`
   }
 `
 
-export const InputButton = styled('button')`
+export const InputButton = styled.button`
   display: flex;
   flex-direction: row;
   align-items: center;

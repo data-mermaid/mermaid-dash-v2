@@ -13,6 +13,7 @@ import {
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
   BiggerIconCaretUp,
+  StyledChevronSpan,
 } from './MetricsPane.styles'
 
 const MetricsPane = ({
@@ -86,6 +87,7 @@ const MetricsPane = ({
       $showMetricsPane={showMetricsPane}
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
       $showLoadingIndicator={showLoadingIndicator}
+      $isDesktopWidth={isDesktopWidth}
     >
       {isMobileWidth || showMetricsPane ? (
         <SummarizedMetrics
@@ -125,7 +127,17 @@ const MetricsPane = ({
       ) : null}
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
-          {showMetricsPane ? String.fromCharCode(10095) : String.fromCharCode(10094)}{' '}
+          {showMetricsPane ? (
+            <>
+              <span>Metrics</span>
+              <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
+            </>
+          ) : (
+            <>
+              <span>Metrics</span>
+              <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
+            </>
+          )}
         </DesktopToggleMetricsPaneButton>
       ) : (
         <MobileExpandMetricsPaneButton

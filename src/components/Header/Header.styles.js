@@ -5,7 +5,7 @@ import theme from '../../styles/theme'
 import { ButtonThatLooksLikeLink } from '../generic'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 
-export const StyledHeader = styled('header')`
+export const StyledHeader = styled.header`
   background-color: ${theme.color.headerColor};
   display: flex;
   justify-content: space-between;
@@ -17,7 +17,7 @@ export const StyledHeader = styled('header')`
   z-index: 102;
   height: ${theme.spacing.headerHeight};
 `
-export const AvatarWrapper = styled('button')`
+export const AvatarWrapper = styled.button`
   cursor: pointer;
   height: ${theme.spacing.headerHeight};
   width: ${theme.spacing.headerHeight};
@@ -28,7 +28,7 @@ export const AvatarWrapper = styled('button')`
   border: none;
 `
 
-export const CurrentUserImg = styled('img')`
+export const CurrentUserImg = styled.img`
   height: calc(${theme.spacing.headerHeight} - 10px);
   width: calc(${theme.spacing.headerHeight} - 10px);
   border-radius: 50%;
@@ -41,7 +41,7 @@ export const CurrentUserImg = styled('img')`
   `)}
 `
 
-export const LogoImg = styled('img')`
+export const LogoImg = styled.img`
   height: calc(${theme.spacing.headerHeight} - 10px);
   padding: 0 ${theme.spacing.small};
   margin-top: 5px;
@@ -72,7 +72,7 @@ export const HeaderButtonThatLooksLikeLink = styled(ButtonThatLooksLikeLink)`
   ${linkStyles}
 `
 
-export const StyledNavLink = styled('a')`
+export const StyledNavLink = styled.a`
 ${linkStyles}
 ${(props) =>
   props.$disabledLink &&
@@ -90,7 +90,7 @@ export const MenuLink = styled(StyledNavLink)`
   display: inline-block;
 `
 
-export const UserMenu = styled('div')`
+export const UserMenu = styled.div`
   position: absolute;
   top: ${theme.spacing.headerHeight};
   right: 0;
@@ -102,13 +102,13 @@ export const UserMenu = styled('div')`
   padding: ${theme.spacing.medium};
 `
 
-export const LoggedInAs = styled('p')`
+export const LoggedInAs = styled.p`
   color: inherit;
   white-space: nowrap;
   opacity: 0.7;
 `
 
-export const GlobalNav = styled('nav')`
+export const GlobalNav = styled.nav`
   .desktop {
     display: flex;
   }
@@ -161,7 +161,7 @@ export const BiggerIconUser = styled(IconUser)`
   position: inherit;
 `
 
-export const UserLoginContainer = styled('div')`
+export const UserLoginContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -170,12 +170,12 @@ export const UserLoginContainer = styled('div')`
   padding-top: ${theme.spacing.small};
 `
 
-export const HeaderLoginText = styled('span')`
+export const HeaderLoginText = styled.span`
   font-size: ${theme.typography.smallFontSize};
   line-height: 1;
 `
 
-export const ShareViewModalContainer = styled('div')`
+export const ShareViewModalContainer = styled.div`
   display: flex;
   flex-direction: column;
   position: 'absolute';
