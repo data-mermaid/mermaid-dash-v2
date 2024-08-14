@@ -187,7 +187,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
       center={mapCenter}
       zoom={mapZoom}
       scrollWheelZoom={true}
-      maxZoom={20}
+      maxZoom={18}
       ref={setMap}
     >
       <MapEventListener />
