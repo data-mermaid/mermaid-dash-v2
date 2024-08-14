@@ -24,6 +24,7 @@ import {
   StyledEmptyListItem,
   TieredCheckboxContainer,
   ToggleDataSharingButton,
+  DataSharingRowContainer,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS, DATA_SHARING_OPTIONS } from '../../constants/constants'
@@ -275,7 +276,6 @@ const FilterPane = ({ mermaidUserData }) => {
       ...prev,
       [section]: !prev[section],
     }))
-    e.stopPropagation()
   }
 
   const toggleDataSharingAll = (section) => (e) => {
@@ -326,24 +326,26 @@ const FilterPane = ({ mermaidUserData }) => {
 
   const renderSection = (section, label) => (
     <>
-      <StyledClickableArea>
-        <input
-          type="checkbox"
-          name={`${section}All`}
-          id={DATA_SHARING_OPTIONS[section][0]}
-          onChange={toggleDataSharingAll(section)}
-          checked={dataSharingFilter.includes(DATA_SHARING_OPTIONS[section][0])}
-        />
-        <StyledLabel
-          htmlFor={DATA_SHARING_OPTIONS[section][0]}
-          onClick={(e) => e.stopPropagation()}
-        >
-          {label}
-        </StyledLabel>
+      <DataSharingRowContainer>
+        <StyledClickableArea>
+          <input
+            type="checkbox"
+            name={`${section}All`}
+            id={DATA_SHARING_OPTIONS[section][0]}
+            onChange={toggleDataSharingAll(section)}
+            checked={dataSharingFilter.includes(DATA_SHARING_OPTIONS[section][0])}
+          />
+          <StyledLabel
+            htmlFor={DATA_SHARING_OPTIONS[section][0]}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {label}
+          </StyledLabel>
+        </StyledClickableArea>
         <ToggleDataSharingButton onClick={toggleShowExpanded(section)}>
           {expandedSections[section] ? <IconMinus /> : <IconPlus />}
         </ToggleDataSharingButton>
-      </StyledClickableArea>
+      </DataSharingRowContainer>
       {expandedSections[section] && (
         <TieredCheckboxContainer>
           {DATA_SHARING_OPTIONS[section].slice(1).map((option, index) => (

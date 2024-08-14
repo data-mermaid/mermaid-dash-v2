@@ -147,6 +147,7 @@ export const StyledClickableArea = styled.div`
   cursor: pointer;
   display: flex;
   padding: 0.5rem;
+  flex-grow: 1;
   ${hoverState(css`
     background-color: ${theme.color.tableRowHover};
   `)}
@@ -179,8 +180,11 @@ export const ToggleDataSharingButton = styled.button`
   border: 0;
   background-color: ${theme.color.white};
   cursor: pointer;
-  margin-right: 1rem;
   ${hoverState(css`
     background-color: ${theme.color.secondaryColor};
   `)}
+`
+
+export const DataSharingRowContainer = styled.div`
+  display: flex;
 `
