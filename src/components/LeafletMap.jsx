@@ -50,7 +50,7 @@ const ClusterIcon = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 3px solid white;
+  border: 1px solid white;
   font-size: 1.3rem;
 `
 
