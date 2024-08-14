@@ -47,6 +47,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [countries, setCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
+  console.log('displayedProjects', displayedProjects)
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [sampleDateAfter, setSampleDateAfter] = useState('')
@@ -214,7 +215,7 @@ export const FilterProjectsProvider = ({ children }) => {
             }),
           }
         })
-        .filter((project) => {
+        .map((project) => {
           // Filter project if it has records that match the data sharing filter
           const policyMappings = {
             'pu-1': { policies: ['data_policy_beltfish'], value: 'public' },
@@ -252,12 +253,17 @@ export const FilterProjectsProvider = ({ children }) => {
             'pr-3': { policies: ['data_policy_bleachingqc'], value: 'private' },
           }
 
-          return dataSharingFilter.some((filter) => {
-            const { policies, value } = policyMappings[filter] || {}
-            return policies?.some((policy) =>
-              project.records.some((record) => record[policy] === value),
-            )
+          const filteredRecords = project.records.filter((record) => {
+            return dataSharingFilter.some((filter) => {
+              const { policies, value } = policyMappings[filter] || {}
+              return policies?.some((policy) => record[policy] === value)
+            })
           })
+
+          return {
+            ...project,
+            records: filteredRecords,
+          }
         })
         .map((project) => {
           return {
