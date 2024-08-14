@@ -6,7 +6,7 @@ import { mediaQueryTabletLandscapeOnly } from '../../../styles/mediaQueries'
 
 const StyledLoadingContainer = styled('div')`
   position: absolute;
-  width: ${(props) => (props.$showLoadingBar ? '20rem' : '14rem')};
+  width: '20rem';
   bottom: 1.5rem;
   left: 1.5rem;
   padding: 0.8rem 1rem;
@@ -52,7 +52,6 @@ const StyledHeader = styled('header')`
 
 const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingIndicator }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
-  const [showLoadingBar, setShowLoadingBar] = useState(true)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
     if (!projectData.count || !projectData.results) {
@@ -63,25 +62,22 @@ const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingInd
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
-      setShowLoadingBar(false)
-      setTimeout(() => {
-        setShowLoadingIndicator(false)
+        setTimeout(() => {
+          setShowLoadingIndicator(false)
       }, 10000)
     }
   }, [loadingProgressValue, setShowLoadingIndicator])
-
+    
   return showLoadingIndicator === true ? (
-    <StyledLoadingContainer $showLoadingBar={showLoadingBar}>
+    <StyledLoadingContainer>
       <StyledHeader>
         {loadingProgressValue === 100
-          ? 'Loaded'
+          ? `Done ${loadingProgressValue}%`
           : `Loading ${loadingProgressValue}%`}
       </StyledHeader>
-      {showLoadingBar === true ? (
-        <StyledProgressBarContainer>
-          <StyledProgressBar $value={loadingProgressValue} />
-        </StyledProgressBarContainer>
-      ) : null}
+      <StyledProgressBarContainer>
+        <StyledProgressBar $value={loadingProgressValue} />
+      </StyledProgressBarContainer>
     </StyledLoadingContainer>
   ) : null
 }
