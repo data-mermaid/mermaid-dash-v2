@@ -9,7 +9,7 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { COLLECTION_METHODS, URL_PARAMS } from '../../constants/constants'
+import { COLLECTION_METHODS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
