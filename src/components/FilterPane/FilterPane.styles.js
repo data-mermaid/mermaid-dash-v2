@@ -155,6 +155,7 @@ export const StyledClickableArea = styled.div`
 export const StyledLabel = styled.label`
   cursor: pointer;
   margin: 0.2rem;
+  flex-grow: 1;
 `
 
 export const StyledCategoryContainer = styled.div`
@@ -168,4 +169,18 @@ export const StyledFormContainer = styled.div`
 
 export const StyledEmptyListItem = styled.div`
   padding: 0.5rem 1rem;
+`
+
+export const TieredCheckboxContainer = styled.div`
+  margin-left: 2rem;
+`
+
+export const ToggleDataSharingButton = styled.button`
+  border: 0;
+  background-color: ${theme.color.white};
+  cursor: pointer;
+  margin-right: 1rem;
+  ${hoverState(css`
+    background-color: ${theme.color.secondaryColor};
+  `)}
 `

@@ -19,3 +19,9 @@ export const COLLECTION_METHODS = [
   { name: 'quadrat_benthic_percent', description: 'Benthic Photo Quadrat' },
   { name: 'habitatcomplexity', description: 'Habitat Complexity' },
 ]
+
+export const DATA_SHARING_OPTIONS = {
+  public: ['pu-all', 'pu-1', 'pu-2', 'pu-3'],
+  publicSummary: ['ps-all', 'ps-1', 'ps-2', 'ps-3'],
+  private: ['pr-all', 'pr-1', 'pr-2', 'pr-3'],
+}

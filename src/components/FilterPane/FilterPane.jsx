@@ -22,13 +22,15 @@ import {
   StyledLabel,
   StyledCategoryContainer,
   StyledEmptyListItem,
+  TieredCheckboxContainer,
+  ToggleDataSharingButton,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
-import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
+import { URL_PARAMS, COLLECTION_METHODS, DATA_SHARING_OPTIONS } from '../../constants/constants'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose } from '../../assets/icons'
-import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
+import { IconClose, IconPlus } from '../../assets/icons'
+import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -58,6 +60,12 @@ const selectCustomStyles = {
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
 
+const DATA_SHARING_LABELS = [
+  'Fish Belt',
+  'Benthic: PIT, LIT, PQT, and Habitat Complexity',
+  'Bleaching',
+]
+
 const FilterPane = ({ mermaidUserData }) => {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
@@ -85,7 +93,6 @@ const FilterPane = ({ mermaidUserData }) => {
     formattedDate,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
-    handleDataSharingFilter,
     handleMethodFilter,
     handleProjectNameFilter,
     handleYourDataFilter,
@@ -97,7 +104,13 @@ const FilterPane = ({ mermaidUserData }) => {
     setDisplayedOrganizations,
     countriesSelectOnOpen,
     organizationsSelectOnOpen,
+    setDataSharingFilter,
   } = useFilterProjectsContext()
+  const [expandedSections, setExpandedSections] = useState({
+    public: false,
+    publicSummary: false,
+    private: false,
+  })
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -255,6 +268,110 @@ const FilterPane = ({ mermaidUserData }) => {
         )}
       </StyledUnorderedList>
     </StyledProjectListContainer>
+  )
+
+  const toggleShowExpanded = (section) => (e) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+    e.stopPropagation()
+  }
+
+  const toggleDataSharingAll = (section) => (e) => {
+    const { checked } = e.target
+    const options = DATA_SHARING_OPTIONS[section]
+    const prevDataSharingFilter = [...dataSharingFilter]
+    const updatedFilter = checked
+      ? [...new Set([...prevDataSharingFilter, ...options])]
+      : prevDataSharingFilter.filter((option) => !options.includes(option))
+
+    setDataSharingFilter(updatedFilter)
+
+    const queryParams = getURLParams()
+    if (updatedFilter.length === 0) {
+      queryParams.delete('dataSharing')
+    } else {
+      queryParams.set('dataSharing', updatedFilter)
+    }
+    updateURLParams(queryParams)
+  }
+
+  const toggleDataSharingOption = (section) => (e) => {
+    const { checked, name } = e.target
+    const allOptions = DATA_SHARING_OPTIONS[section].slice(1) // Exclude the 'all' option
+    let updatedFilter
+
+    if (checked) {
+      updatedFilter = [...dataSharingFilter, name]
+      const allChecked = allOptions.every((option) => updatedFilter.includes(option))
+      if (allChecked) {
+        updatedFilter.push(DATA_SHARING_OPTIONS[section][0]) // Add the 'all' option
+      }
+    } else {
+      updatedFilter = [...dataSharingFilter].filter(
+        (option) => ![DATA_SHARING_OPTIONS[section][0], name].includes(option),
+      )
+    }
+    setDataSharingFilter(updatedFilter)
+
+    const queryParams = getURLParams()
+    if (updatedFilter.length === 0) {
+      queryParams.delete('dataSharing')
+    } else {
+      queryParams.set('dataSharing', updatedFilter)
+    }
+    updateURLParams(queryParams)
+  }
+
+  const renderSection = (section, label) => (
+    <>
+      <StyledClickableArea>
+        <input
+          type="checkbox"
+          name={`${section}All`}
+          id={DATA_SHARING_OPTIONS[section][0]}
+          onChange={toggleDataSharingAll(section)}
+          checked={dataSharingFilter.includes(DATA_SHARING_OPTIONS[section][0])}
+        />
+        <StyledLabel
+          htmlFor={DATA_SHARING_OPTIONS[section][0]}
+          onClick={(e) => e.stopPropagation()}
+        >
+          {label}
+        </StyledLabel>
+        <ToggleDataSharingButton onClick={toggleShowExpanded(section)}>
+          {expandedSections[section] ? <IconMinus /> : <IconPlus />}
+        </ToggleDataSharingButton>
+      </StyledClickableArea>
+      {expandedSections[section] && (
+        <TieredCheckboxContainer>
+          {DATA_SHARING_OPTIONS[section].slice(1).map((option, index) => (
+            <StyledClickableArea key={option}>
+              <input
+                type="checkbox"
+                checked={dataSharingFilter.includes(option)}
+                onChange={toggleDataSharingOption(section)}
+                name={option}
+                id={option}
+              />
+              <StyledLabel htmlFor={option}>{DATA_SHARING_LABELS[index]}</StyledLabel>
+            </StyledClickableArea>
+          ))}
+        </TieredCheckboxContainer>
+      )}
+    </>
+  )
+
+  const renderDataSharingFilter = () => (
+    <>
+      <StyledHeader>Data sharing</StyledHeader>
+      <StyledCategoryContainer>
+        {renderSection('public', 'Public')}
+        {renderSection('publicSummary', 'Public Summary')}
+        {renderSection('private', 'Private')}
+      </StyledCategoryContainer>
+    </>
   )
 
   return (
@@ -418,24 +535,7 @@ const FilterPane = ({ mermaidUserData }) => {
               </StyledCategoryContainer>
             </>
           ) : null}
-          <StyledHeader>Data sharing</StyledHeader>
-          <StyledCategoryContainer>
-            <StyledClickableArea
-              onClick={() => handleDataSharingFilter({ target: { checked: !dataSharingFilter } })}
-            >
-              <input
-                type="checkbox"
-                name="dataSharing"
-                id="data-sharing"
-                onChange={handleDataSharingFilter}
-                checked={dataSharingFilter}
-                onClick={(e) => e.stopPropagation()}
-              />
-              <StyledLabel htmlFor="data-sharing" onClick={(e) => e.stopPropagation()}>
-                {filterPane.dataSharing}
-              </StyledLabel>
-            </StyledClickableArea>
-          </StyledCategoryContainer>
+          {renderDataSharingFilter()}
           <StyledHeader>Methods</StyledHeader>
           {renderMethods()}
         </ShowMoreFiltersContainer>

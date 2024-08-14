@@ -9,6 +9,7 @@ import trayDownload from '@iconify-icons/mdi/tray-download'
 import caretUp from '@iconify-icons/mdi/caret-up'
 import caretDown from '@iconify-icons/mdi/caret-down'
 import userCircle from '@iconify-icons/mdi/user-circle'
+import minus from '@iconify-icons/mdi/minus'
 
 export const HamburgerMenu = (props) => <InlineIcon icon={hamburgerMenu} {...props} />
 export const LoginIcon = (props) => <InlineIcon icon={login} {...props} />
@@ -19,3 +20,4 @@ export const IconTrayDownload = (props) => <InlineIcon icon={trayDownload} {...p
 export const IconCaretUp = (props) => <InlineIcon icon={caretUp} {...props} />
 export const IconCaretDown = (props) => <InlineIcon icon={caretDown} {...props} />
 export const IconUserCircle = (props) => <InlineIcon icon={userCircle} {...props} />
+export const IconMinus = (props) => <InlineIcon icon={minus} {...props} />
