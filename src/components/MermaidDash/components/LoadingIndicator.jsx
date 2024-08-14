@@ -41,7 +41,6 @@ const StyledProgressBar = styled.div`
   width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
-  transition: width 0.3s ease-in-out;
 `
 
 const StyledHeader = styled.header`
