@@ -161,7 +161,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     const sampleEventAdmins = selectedSampleEvent.project_admins
       .map((admin) => admin.name)
       .join(', ')
-    const sampleEventOrganizations = selectedSampleEvent.tags.map((tag) => tag.name).join(', ')
+    const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
 
     return (
       <>
