@@ -46,6 +46,8 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     showYourData,
     methodFilters,
     projectNameFilter,
+    dataSharingFilter,
+    initialDataSharingOptions,
   } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
@@ -88,6 +90,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     const anyActiveSampleDateAfter = sampleDateAfter
     const anyActiveSampleDateBefore = sampleDateBefore
     const showYourDataOnly = showYourData
+    const anyInactiveDataSharing = dataSharingFilter.length !== initialDataSharingOptions.length
     const anyInactiveMethods = methodFilters.length !== COLLECTION_METHODS.length
     const anyActiveProjects = projectNameFilter
 
@@ -97,6 +100,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
       anyActiveSampleDateAfter ||
       anyActiveSampleDateBefore ||
       showYourDataOnly ||
+      anyInactiveDataSharing ||
       anyInactiveMethods ||
       anyActiveProjects
     )
