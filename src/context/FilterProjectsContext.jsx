@@ -47,7 +47,6 @@ export const FilterProjectsProvider = ({ children }) => {
   const [countries, setCountries] = useState([])
   const [organizations, setOrganizations] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
-  console.log('displayedProjects', displayedProjects)
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [sampleDateAfter, setSampleDateAfter] = useState('')

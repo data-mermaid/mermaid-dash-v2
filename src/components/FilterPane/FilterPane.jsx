@@ -324,6 +324,19 @@ const FilterPane = ({ mermaidUserData }) => {
     updateURLParams(queryParams)
   }
 
+  const isIndeterminate = (el, section) => {
+    if (!el) {
+      return
+    }
+    const allSectionOptionsChecked = DATA_SHARING_OPTIONS[section].slice(1).every((option) => {
+      return dataSharingFilter.includes(option)
+    })
+    const someSectionOptionsChecked = DATA_SHARING_OPTIONS[section].slice(1).some((option) => {
+      return dataSharingFilter.includes(option)
+    })
+    el.indeterminate = !allSectionOptionsChecked && someSectionOptionsChecked ? true : false
+  }
+
   const renderSection = (section, label) => (
     <>
       <DataSharingRowContainer>
@@ -334,6 +347,7 @@ const FilterPane = ({ mermaidUserData }) => {
             id={DATA_SHARING_OPTIONS[section][0]}
             onChange={toggleDataSharingAll(section)}
             checked={dataSharingFilter.includes(DATA_SHARING_OPTIONS[section][0])}
+            ref={(el) => isIndeterminate(el, section)}
           />
           <StyledLabel
             htmlFor={DATA_SHARING_OPTIONS[section][0]}
