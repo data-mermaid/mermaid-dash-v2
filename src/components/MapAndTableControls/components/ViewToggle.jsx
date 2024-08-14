@@ -30,7 +30,7 @@ const StyledCSVLink = styled(CSVLink)`
 `
 
 const ViewToggle = ({ view, setView }) => {
-  const { displayedProjects } = useFilterProjectsContext()
+  const { displayedProjects, checkedProjects } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
@@ -57,20 +57,25 @@ const ViewToggle = ({ view, setView }) => {
     { label: 'Surveys', key: 'surveyCount' },
   ]
 
-  const tableContent = displayedProjects.map((project) => {
-    const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
-      formatProjectDataHelper(project)
-    const formattedTableRowData = {
-      projectName,
-      formattedYears,
-      countries,
-      organizations,
-      recordCount: project.records.length,
-      surveyCount,
-      transects,
-    }
-    return formattedTableRowData
-  })
+  const tableContent = displayedProjects
+    .map((project) => {
+      if (!checkedProjects.includes(project.project_id)) {
+        return null
+      }
+      const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
+        formatProjectDataHelper(project)
+      const formattedTableRowData = {
+        projectName,
+        formattedYears,
+        countries,
+        organizations,
+        recordCount: project.records.length,
+        surveyCount,
+        transects,
+      }
+      return formattedTableRowData
+    })
+    .filter((project) => project !== null)
 
   const handleDownload = () => {
     csvLinkRef.current.link.click()
