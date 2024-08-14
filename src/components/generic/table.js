@@ -18,7 +18,7 @@ export const TableNavigation = styled.div`
   }
 `
 
-export const Table = styled('table')`
+export const Table = styled.table`
   border: solid 1px ${theme.color.tableBorderColor};
   table-layout: auto;
   background: ${theme.color.secondaryColor};
@@ -41,7 +41,8 @@ export const Th = styled.th(
     background: ${theme.color.white};
     vertical-align: top;
     font-weight: bold;
-    border: 1px solid ${theme.color.tableBorderColor};
+    color: ${theme.color.white};
+    background-color: ${theme.color.headerColor};
     &::after {
       content: ${props.isSortingEnabled ? ' \u25b2' : ''};
       font-size: small;
@@ -52,7 +53,7 @@ export const Th = styled.th(
 
 export const Tr = styled.tr`
   cursor: pointer;
-  border: 1px solid ${theme.color.tableBorderColor};
+  border: 1px solid ${theme.color.grey0};
   &:nth-child(odd) {
     background-color: ${theme.color.tableRowOdd};
   }
@@ -69,7 +70,7 @@ export const Td = styled.td(
     text-align: ${props.align || 'left'};
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
-    border-color: ${theme.color.tableBorderColor};
+    border-color: ${theme.color.grey0};
     border-style: solid;
     position: relative;
     &:first-child {
@@ -112,7 +113,7 @@ const stickyStyles = css`
   position: sticky;
   white-space: nowrap;
   z-index: 3;
-  top: calc(${theme.spacing.headerHeight} - 1px);
+  top: 9rem;
   &::before {
     /* 
     this is to account for the border-bottom
@@ -132,4 +133,12 @@ export const GenericStickyTable = styled(Table)`
   tr th {
     ${stickyStyles}
   }
+`
+
+export const EmptySpace = styled.div`
+  height: 9.1rem;
+  background-color: white;
+  z-index: 3;
+  position: sticky;
+  top: 0;
 `

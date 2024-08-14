@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
 import { mediaQueryTabletLandscapeOnly } from '../../../styles/mediaQueries'
 
-const StyledLoadingContainer = styled('div')`
+const StyledLoadingContainer = styled.div`
   position: absolute;
   width: '20rem';
   bottom: 1.5rem;
@@ -25,7 +25,7 @@ const StyledLoadingContainer = styled('div')`
   `)}
 `
 
-const StyledProgressBarContainer = styled('div')`
+const StyledProgressBarContainer = styled.div`
   width: 100%;
   background-color: ${theme.color.grey2};
   height: 1rem;
@@ -37,14 +37,14 @@ const StyledProgressBarContainer = styled('div')`
   `)}
 `
 
-const StyledProgressBar = styled('div')`
+const StyledProgressBar = styled.div`
   width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
   transition: width 0.3s ease-in-out;
 `
 
-const StyledHeader = styled('header')`
+const StyledHeader = styled.header`
   ${mediaQueryTabletLandscapeOnly(css`
     width: 15rem;
   `)}

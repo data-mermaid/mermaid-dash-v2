@@ -6,7 +6,7 @@ import theme from '../../styles/theme'
 import { CloseButton } from './buttons'
 import { mediaQueryPhoneOnly } from '../../styles/mediaQueries'
 
-const StyledDialogOverlay = styled('div')`
+const StyledDialogOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
   width: 100vw;
   height: 100dvh;
@@ -18,7 +18,7 @@ const StyledDialogOverlay = styled('div')`
   z-index: 103;
   cursor: default;
 `
-const StyledDialog = styled('div')`
+const StyledDialog = styled.div`
   padding: 0;
   margin: 0;
   min-width: 30rem;
@@ -86,7 +86,7 @@ const ModalFooter = styled.div`
     }
   }
 `
-const ModalLoadingIndicatorWrapper = styled('div')`
+const ModalLoadingIndicatorWrapper = styled.div`
   position: static;
   width: 100%;
   padding: 5rem 0;
@@ -105,10 +105,10 @@ const ModalLoadingIndicatorWrapper = styled('div')`
     }
   }
 `
-const LeftFooter = styled('div')`
+const LeftFooter = styled.div`
   justify-self: start;
 `
-const RightFooter = styled('div')`
+const RightFooter = styled.div`
   justify-self: end;
 `
 

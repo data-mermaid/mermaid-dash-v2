@@ -9,12 +9,12 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { URL_PARAMS } from '../../constants/constants'
+import { COLLECTION_METHODS, URL_PARAMS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: 4.5rem;
+  left: 10.5rem;
   height: 6rem;
   z-index: 400;
   display: flex;
@@ -36,7 +36,17 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 
 const MapAndTableControls = ({ map = undefined, view, setView }) => {
-  const { displayedProjects, projectDataCount, showYourData } = useFilterProjectsContext()
+  const {
+    displayedProjects,
+    projectDataCount,
+    selectedCountries,
+    selectedOrganizations,
+    sampleDateAfter,
+    sampleDateBefore,
+    showYourData,
+    methodFilters,
+    projectNameFilter,
+  } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -73,8 +83,23 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
   }
 
   const isAnyActiveFilters = () => {
-    const filterKeys = Object.values(URL_PARAMS)
-    return showYourData || filterKeys.some((key) => queryParams.has(key))
+    const anyActiveCountries = selectedCountries.length
+    const anyActiveOrganizations = selectedOrganizations.length
+    const anyActiveSampleDateAfter = sampleDateAfter
+    const anyActiveSampleDateBefore = sampleDateBefore
+    const showYourDataOnly = showYourData
+    const anyInactiveMethods = methodFilters.length !== COLLECTION_METHODS.length
+    const anyActiveProjects = projectNameFilter
+
+    return (
+      anyActiveCountries ||
+      anyActiveOrganizations ||
+      anyActiveSampleDateAfter ||
+      anyActiveSampleDateBefore ||
+      showYourDataOnly ||
+      anyInactiveMethods ||
+      anyActiveProjects
+    )
   }
 
   const hasSelectedSite = () => {

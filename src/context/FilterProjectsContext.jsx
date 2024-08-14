@@ -217,16 +217,11 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Filter projects based on collection method
-          if (methodFilters.length === 0) {
-            return project
-          } else {
-            return {
-              ...project,
-              records: project.records.filter((record) =>
-                methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
-              ),
-            }
+          return {
+            ...project,
+            records: project.records.filter((record) =>
+              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
+            ),
           }
         })
         .filter((project) => {
@@ -483,8 +478,10 @@ export const FilterProjectsProvider = ({ children }) => {
     setSampleDateBefore('')
     setDataSharingFilter(false)
     setMethodFilters(initialCollectionMethods)
+    queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
     setProjectNameFilter('')
     setShowYourData(false)
+    updateURLParams(queryParams)
   }
 
   const handleYourDataFilter = (event) => {

@@ -126,7 +126,8 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   )
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
-    const displayedProjectsChanged = displayedProjects !== prevDisplayedProjects
+    const displayedProjectsChanged =
+      JSON.stringify(displayedProjects) !== JSON.stringify(prevDisplayedProjects)
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
     const checkedProjectsChanged = checkedProjects !== prevCheckedProjects
 
@@ -174,11 +175,8 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   }, [
     displayedProjects,
     prevDisplayedProjects,
-    queryParams,
     selectedMarkerId,
     prevSelectedMarkerId,
-    updateURLParams,
-    setSelectedMarkerId,
     checkedProjects,
     prevCheckedProjects,
     handleClickCircleMarker,
@@ -197,6 +195,7 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
       <MarkerClusterGroup
         // TODO: Experiment with some of the "chunked" props to see if they improve performance: https://akursat.gitbook.io/marker-cluster/api
         chunkedLoading
+        chunkedInterval={2000}
         spiderfyOnMaxZoom={false}
         onClick={(event) => {
           console.log('Click marker cluster group', event)
