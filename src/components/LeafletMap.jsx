@@ -15,6 +15,8 @@ import theme from '../styles/theme'
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 import { useFilterProjectsContext } from '../context/FilterProjectsContext'
 import useResponsive from '../hooks/useResponsive'
+import styled from 'styled-components'
+import { renderToString } from 'react-dom/server'
 
 const defaultMapCenter = [32, -79]
 const defaultMapZoom = 2
@@ -23,6 +25,7 @@ const CircleMarkerPathOptions = {
   color: `${theme.color.white}`,
   fillColor: '#A53434',
   fillOpacity: 1,
+  weight: 1,
 }
 const selectedIcon = L.icon({
   iconUrl: customIcon,
@@ -38,6 +41,19 @@ const isValidLatLng = (lat, lng) => {
 const isValidZoom = (zoom) => {
   return zoom >= 0 && zoom <= 20 && zoom !== null
 }
+
+const ClusterIcon = styled.div`
+  background-color: #a53434;
+  color: white;
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid white;
+  font-size: 1.3rem;
+`
 
 const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
   const { displayedProjects, selectedMarkerId, setSelectedMarkerId, checkedProjects } =
@@ -201,6 +217,13 @@ const LeafletMap = ({ showFilterPane, showMetricsPane, view, setView }) => {
           console.log('Click marker cluster group', event)
           // Add a click event handler here if required
         }}
+        iconCreateFunction={(cluster) =>
+          L.divIcon({
+            html: renderToString(<ClusterIcon>{cluster.getChildCount()}</ClusterIcon>),
+            className: 'marker-cluster-custom',
+            iconSize: L.point(30, 30),
+          })
+        }
       >
         {markers}
       </MarkerClusterGroup>

@@ -543,6 +543,8 @@ export const FilterProjectsProvider = ({ children }) => {
         setDisplayedOrganizations,
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
+        getURLParams,
+        updateURLParams,
       }}
     >
       {children}
