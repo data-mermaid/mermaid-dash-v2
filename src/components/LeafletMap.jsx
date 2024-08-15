@@ -25,6 +25,7 @@ const CircleMarkerPathOptions = {
   color: `${theme.color.white}`,
   fillColor: '#A53434',
   fillOpacity: 1,
+  weight: 1,
 }
 const selectedIcon = L.icon({
   iconUrl: customIcon,
