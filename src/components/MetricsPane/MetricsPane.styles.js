@@ -165,7 +165,7 @@ export const MobileExpandedMetricsPane = styled.div`
   width: 100vw;
 `
 
-export const SelectedSiteMetricsCardContainer = styled('div')`
+export const SelectedSiteMetricsCardContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin: 1rem;
@@ -179,7 +179,7 @@ export const SelectedSiteSiteCardContainer = styled(SelectedSiteMetricsCardConta
   align-items: center;
 `
 
-export const SelectedSiteContentContainer = styled('div')`
+export const SelectedSiteContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 27.5rem;
@@ -216,14 +216,14 @@ export const BiggerIconText = styled(IconText)`
   ${biggerIcons}
 `
 
-export const StyledHeader = styled('h2')`
+export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
   margin: 0 0 0.5rem 0;
   flex-grow: 1;
 `
 
-export const StyledSummaryMetadataContainer = styled('fieldset')`
+export const StyledSummaryMetadataContainer = styled.fieldset`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -231,7 +231,7 @@ export const StyledSummaryMetadataContainer = styled('fieldset')`
   border: 0;
   padding: 0;
 `
-export const StyledMetricsSelector = styled('div')`
+export const StyledMetricsSelector = styled.div`
   display: flex;
   width: calc(50% - 0.5rem);
   border: 1px solid ${theme.color.grey0};
@@ -240,29 +240,29 @@ export const StyledMetricsSelector = styled('div')`
   padding: 0.5rem;
 `
 
-export const StyledMapPinContainer = styled('div')`
+export const StyledMapPinContainer = styled.div`
   margin-right: 0.8rem;
 `
 
-export const StyledSvgContainer = styled('div')`
+export const StyledSvgContainer = styled.div`
   width: 2.25rem;
   height: 2.25rem;
   margin-left: 0.2rem;
   margin-right: 0.6rem;
 `
 
-export const StyledReefContainer = styled('div')`
+export const StyledReefContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
 `
 
-export const StyledReefRow = styled('div')`
+export const StyledReefRow = styled.div`
   display: flex;
   flex-direction: row;
   width: 100%;
 `
-export const StyledReefItem = styled('p')`
+export const StyledReefItem = styled.p`
   width: 50%;
   text-transform: capitalize;
   margin: 0;
@@ -272,7 +272,7 @@ export const StyledReefItemBold = styled(StyledReefItem)`
   font-weight: bold;
   width: 50%;
 `
-export const StyledVisibleBackground = styled('div')`
+export const StyledVisibleBackground = styled.div`
   background-color: ${theme.color.grey1};
 `
 
