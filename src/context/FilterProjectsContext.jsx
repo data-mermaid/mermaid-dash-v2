@@ -489,6 +489,18 @@ export const FilterProjectsProvider = ({ children }) => {
     setShowYourData(checked)
   }
 
+  const projectCount = useMemo(() => {
+    let count = 0
+
+    displayedProjects.forEach((project) => {
+      if (checkedProjects.includes(project.project_id)) {
+        count++
+      }
+    })
+
+    return count
+  }, [displayedProjects, checkedProjects])
+
   return (
     <FilterProjectsContext.Provider
       value={{
@@ -543,6 +555,7 @@ export const FilterProjectsProvider = ({ children }) => {
         setDisplayedOrganizations,
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
+        projectCount,
       }}
     >
       {children}

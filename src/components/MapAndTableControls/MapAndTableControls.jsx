@@ -46,6 +46,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     showYourData,
     methodFilters,
     projectNameFilter,
+    projectCount,
   } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
@@ -110,7 +111,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     <ControlContainer>
       {isAnyActiveFilters() ? (
         <FilterIndicatorPill
-          searchFilteredRowLength={displayedProjects?.length}
+          searchFilteredRowLength={projectCount}
           unfilteredRowLength={projectDataCount}
         />
       ) : null}

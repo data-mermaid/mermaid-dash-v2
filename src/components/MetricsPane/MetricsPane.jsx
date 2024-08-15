@@ -29,7 +29,7 @@ const MetricsPane = ({
   const [yearRange, setYearRange] = useState('')
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
-  const { checkedProjects } = useFilterProjectsContext()
+  const { checkedProjects, projectCount } = useFilterProjectsContext()
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
@@ -102,7 +102,7 @@ const MetricsPane = ({
           $showLoadingIndicator={showLoadingIndicator}
         >
           <MetricsCard>
-            <P>{displayedProjects.length}</P>
+            <P>{projectCount}</P>
             <H3>Projects </H3>
           </MetricsCard>
           <SurveysAndTransectsContainer>
