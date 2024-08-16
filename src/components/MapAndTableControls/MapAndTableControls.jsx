@@ -74,7 +74,7 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
     if (isLeafletMap) {
       bounds = L.latLngBounds(coordinates)
     } else {
-      const bounds = bbox(points(coordinates))
+      bounds = bbox(points(coordinates))
     }
     map.fitBounds(bounds)
   }
