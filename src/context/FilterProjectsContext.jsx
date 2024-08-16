@@ -556,6 +556,8 @@ export const FilterProjectsProvider = ({ children }) => {
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
         getActiveProjectCount,
+        getURLParams,
+        updateURLParams,
       }}
     >
       {children}
