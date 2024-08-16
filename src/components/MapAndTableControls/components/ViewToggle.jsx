@@ -75,7 +75,7 @@ const ViewToggle = ({ view, setView }) => {
       }
       return formattedTableRowData
     })
-    .filter((project) => project !== null)
+    .filter((project) => project)
 
   const handleDownload = () => {
     csvLinkRef.current.link.click()
