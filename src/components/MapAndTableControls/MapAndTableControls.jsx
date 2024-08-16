@@ -93,7 +93,7 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
         return
       }
       const { latitude, longitude } = foundSampleEvent
-      if isLeafletMap {
+      if (isLeafletMap) {
         map.setView([latitude, longitude], 18)
       } else {
         map.setCenter([longitude, latitude])
