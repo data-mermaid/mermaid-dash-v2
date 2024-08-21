@@ -97,6 +97,7 @@ const FilterPane = ({ mermaidUserData }) => {
     setDisplayedOrganizations,
     countriesSelectOnOpen,
     organizationsSelectOnOpen,
+    getActiveProjectCount,
   } = useFilterProjectsContext()
 
   const _generateCountryandOrganizationList = useEffect(() => {
@@ -443,7 +444,7 @@ const FilterPane = ({ mermaidUserData }) => {
       <StyledProjectsHeader>
         <span>Projects</span>
         <span>
-          {displayedProjects.length}/{projectData.count}
+          {getActiveProjectCount()}/{projectData.count}
         </span>
       </StyledProjectsHeader>
       <StyledProjectNameFilter

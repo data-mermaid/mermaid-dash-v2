@@ -489,6 +489,18 @@ export const FilterProjectsProvider = ({ children }) => {
     setShowYourData(checked)
   }
 
+  const getActiveProjectCount = () => {
+    let count = 0
+
+    displayedProjects.forEach((project) => {
+      if (checkedProjects.includes(project.project_id)) {
+        count++
+      }
+    })
+
+    return count
+  }
+
   return (
     <FilterProjectsContext.Provider
       value={{
@@ -543,6 +555,7 @@ export const FilterProjectsProvider = ({ children }) => {
         setDisplayedOrganizations,
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
+        getActiveProjectCount,
         getURLParams,
         updateURLParams,
       }}
