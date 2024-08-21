@@ -12,7 +12,6 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { COLLECTION_METHODS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -47,10 +46,8 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
     sampleDateAfter,
     sampleDateBefore,
     showYourData,
-    methodFilters,
+    methodDataSharingFilters,
     projectNameFilter,
-    dataSharingFilter,
-    initialDataSharingOptions,
   } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
@@ -110,8 +107,7 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
     const anyActiveSampleDateAfter = sampleDateAfter
     const anyActiveSampleDateBefore = sampleDateBefore
     const showYourDataOnly = showYourData
-    const anyInactiveDataSharing = dataSharingFilter.length !== initialDataSharingOptions.length
-    const anyInactiveMethods = methodFilters.length !== COLLECTION_METHODS.length
+    const anyInactiveMethodDataSharing = methodDataSharingFilters.length
     const anyActiveProjects = projectNameFilter
 
     return (
@@ -120,8 +116,7 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
       anyActiveSampleDateAfter ||
       anyActiveSampleDateBefore ||
       showYourDataOnly ||
-      anyInactiveDataSharing ||
-      anyInactiveMethods ||
+      anyInactiveMethodDataSharing ||
       anyActiveProjects
     )
   }

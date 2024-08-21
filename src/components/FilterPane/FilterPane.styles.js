@@ -176,7 +176,7 @@ export const TieredCheckboxContainer = styled.div`
   margin-left: 2rem;
 `
 
-export const ToggleDataSharingButton = styled.button`
+export const ToggleMethodDataSharingButton = styled.button`
   border: 0;
   background-color: ${theme.color.white};
   cursor: pointer;
@@ -185,6 +185,11 @@ export const ToggleDataSharingButton = styled.button`
   `)}
 `
 
-export const DataSharingRowContainer = styled.div`
+export const ExpandableFilterRowContainer = styled.div`
   display: flex;
+`
+
+export const StyledLI = styled.li`
+  display: flex;
+  flex-direction: column;
 `
