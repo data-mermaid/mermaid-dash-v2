@@ -580,6 +580,8 @@ export const FilterProjectsProvider = ({ children }) => {
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
         initialDataSharingOptions,
+        getURLParams,
+        updateURLParams,
       }}
     >
       {children}

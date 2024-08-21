@@ -8,6 +8,9 @@ import personCircle from '@iconify-icons/mdi/person-circle'
 import trayDownload from '@iconify-icons/mdi/tray-download'
 import caretUp from '@iconify-icons/mdi/caret-up'
 import caretDown from '@iconify-icons/mdi/caret-down'
+import calendar from '@iconify-icons/mdi/calendar'
+import text from '@iconify-icons/mdi/text'
+import textBoxMultiple from '@iconify-icons/mdi/text-box-multiple'
 import userCircle from '@iconify-icons/mdi/user-circle'
 import minus from '@iconify-icons/mdi/minus'
 
@@ -19,5 +22,8 @@ export const IconPersonCircle = (props) => <InlineIcon icon={personCircle} {...p
 export const IconTrayDownload = (props) => <InlineIcon icon={trayDownload} {...props} />
 export const IconCaretUp = (props) => <InlineIcon icon={caretUp} {...props} />
 export const IconCaretDown = (props) => <InlineIcon icon={caretDown} {...props} />
+export const IconCalendar = (props) => <InlineIcon icon={calendar} {...props} />
+export const IconText = (props) => <InlineIcon icon={text} {...props} />
+export const IconTextBoxMultiple = (props) => <InlineIcon icon={textBoxMultiple} {...props} />
 export const IconUserCircle = (props) => <InlineIcon icon={userCircle} {...props} />
 export const IconMinus = (props) => <InlineIcon icon={minus} {...props} />
