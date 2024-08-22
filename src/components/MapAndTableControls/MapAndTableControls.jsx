@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import L from 'leaflet'
-import { bbox } from "@turf/bbox";
-import { points } from "@turf/helpers";
+import { bbox } from '@turf/bbox'
+import { points } from '@turf/helpers'
 
 import FilterIndicatorPill from './components/FilterIndicatorPill'
 import ViewToggle from './components/ViewToggle'
@@ -38,18 +38,8 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 
 const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = true }) => {
-  const {
-    displayedProjects,
-    projectDataCount,
-    selectedCountries,
-    selectedOrganizations,
-    sampleDateAfter,
-    sampleDateBefore,
-    showYourData,
-    methodDataSharingFilters,
-    projectNameFilter,
-    getActiveProjectCount,
-  } = useFilterProjectsContext()
+  const { displayedProjects, projectDataCount, getActiveProjectCount, isAnyActiveFilters } =
+    useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -100,26 +90,6 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
         map.setZoom(18)
       }
     }
-  }
-
-  const isAnyActiveFilters = () => {
-    const anyActiveCountries = selectedCountries.length
-    const anyActiveOrganizations = selectedOrganizations.length
-    const anyActiveSampleDateAfter = sampleDateAfter
-    const anyActiveSampleDateBefore = sampleDateBefore
-    const showYourDataOnly = showYourData
-    const anyInactiveMethodDataSharing = methodDataSharingFilters.length
-    const anyActiveProjects = projectNameFilter
-
-    return (
-      anyActiveCountries ||
-      anyActiveOrganizations ||
-      anyActiveSampleDateAfter ||
-      anyActiveSampleDateBefore ||
-      showYourDataOnly ||
-      anyInactiveMethodDataSharing ||
-      anyActiveProjects
-    )
   }
 
   const hasSelectedSite = () => {
