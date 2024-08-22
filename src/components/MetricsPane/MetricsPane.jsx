@@ -56,6 +56,8 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     updateURLParams,
     mermaidUserData,
     userIsMemberOfProject,
+    checkedProjects,
+    getActiveProjectCount,
   } = useFilterProjectsContext()
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
@@ -67,6 +69,9 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     let years = new Set()
 
     displayedProjects.forEach((project) => {
+      if (!checkedProjects.includes(project.project_id)) {
+        return
+      }
       project.records.forEach((record) => {
         Object.values(record.protocols).forEach((value) => {
           transects += value.sample_unit_count
@@ -91,7 +96,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       numUniqueCountries: countries.size,
       yearRange,
     }
-  }, [displayedProjects])
+  }, [displayedProjects, checkedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
     const { numSurveys, numTransects, numUniqueCountries, yearRange } = calculateMetrics
@@ -275,7 +280,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
         $showLoadingIndicator={showLoadingIndicator}
       >
         <MetricsCard>
-          <P>{displayedProjects.length}</P>
+          <P>{getActiveProjectCount()}</P>
           <H3>Projects </H3>
         </MetricsCard>
         <SurveysAndTransectsContainer>

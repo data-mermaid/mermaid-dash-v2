@@ -33,7 +33,7 @@ const StyledTableContainer = styled.div`
 `
 
 const TableView = ({ view, setView, mermaidUserData }) => {
-  const { displayedProjects, userIsMemberOfProject } = useFilterProjectsContext()
+  const { displayedProjects, userIsMemberOfProject, checkedProjects } = useFilterProjectsContext()
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -42,22 +42,27 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const queryParamsProjectId = queryParams.get('project_id')
 
   const _getSiteRecords = useEffect(() => {
-    const formattedTableData = displayedProjects.map((project, i) => {
-      const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
-        formatProjectDataHelper(project)
-      return {
-        id: i,
-        projectName,
-        formattedYears,
-        countries,
-        organizations,
-        transects,
-        surveyCount,
-        rawProjectData: project,
-      }
-    })
+    const formattedTableData = displayedProjects
+      .map((project, i) => {
+        if (!checkedProjects.includes(project.project_id)) {
+          return null
+        }
+        const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
+          formatProjectDataHelper(project)
+        return {
+          id: i,
+          projectName,
+          formattedYears,
+          countries,
+          organizations,
+          transects,
+          surveyCount,
+          rawProjectData: project,
+        }
+      })
+      .filter((project) => project !== null)
     setTableData(formattedTableData)
-  }, [displayedProjects])
+  }, [displayedProjects, checkedProjects])
 
   const tableColumns = useMemo(
     () => [

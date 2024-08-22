@@ -101,6 +101,7 @@ const FilterPane = ({ mermaidUserData }) => {
     setDisplayedOrganizations,
     countriesSelectOnOpen,
     organizationsSelectOnOpen,
+    getActiveProjectCount,
   } = useFilterProjectsContext()
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
@@ -487,7 +488,7 @@ const FilterPane = ({ mermaidUserData }) => {
       <StyledProjectsHeader>
         <span>Projects</span>
         <span>
-          {displayedProjects.length}/{projectData.count}
+          {getActiveProjectCount()}/{projectData.count}
         </span>
       </StyledProjectsHeader>
       <StyledProjectNameFilter
