@@ -184,30 +184,78 @@ export const FilterProjectsProvider = ({ children }) => {
         })
         .map((project) => {
           const policyMappings = {
-            bf_0: { policy: ['data_policy_beltfish'], value: 'public' },
-            bf_1: { policy: ['data_policy_beltfish'], value: 'public summary' },
-            bf_2: { policy: ['data_policy_beltfish'], value: 'private' },
-            cb_1: { policy: ['data_policy_bleachingqc'], value: 'public' },
-            cb_2: { policy: ['data_policy_bleachingqc'], value: 'public summary' },
-            cb_3: { policy: ['data_policy_bleachingqc'], value: 'private' },
-            bp_1: { policy: ['data_policy_benthicpit'], value: 'public' },
-            bp_2: { policy: ['data_policy_benthicpit'], value: 'public summary' },
-            bp_3: { policy: ['data_policy_benthicpit'], value: 'private' },
-            bl_1: { policy: ['data_policy_benthiclit'], value: 'public' },
-            bl_2: { policy: ['data_policy_benthiclit'], value: 'public summary' },
-            bl_3: { policy: ['data_policy_benthiclit'], value: 'private' },
-            qbp_1: { policy: ['data_policy_benthicpqt'], value: 'public' },
-            qbp_2: { policy: ['data_policy_benthicpqt'], value: 'public summary' },
-            qbp_3: { policy: ['data_policy_benthicpqt'], value: 'private' },
-            hc_1: { policy: ['data_policy_habitatcomplexity'], value: 'public' },
-            hc_2: { policy: ['data_policy_habitatcomplexity'], value: 'public summary' },
-            hc_3: { policy: ['data_policy_habitatcomplexity'], value: 'private' },
+            bf_0: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
+            bf_1: {
+              policy: 'data_policy_beltfish',
+              name: 'beltfish',
+              value: 'public summary',
+            },
+            bf_2: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
+            cb_1: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'public',
+            },
+            cb_2: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'public summary',
+            },
+            cb_3: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'private',
+            },
+            bp_1: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'public' },
+            bp_2: {
+              policy: 'data_policy_benthicpit',
+              name: 'benthicpit',
+              value: 'public summary',
+            },
+            bp_3: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'private' },
+            bl_1: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'public' },
+            bl_2: {
+              policy: 'data_policy_benthiclit',
+              name: 'benthiclit',
+              value: 'public summary',
+            },
+            bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
+            qbp_1: {
+              policy: 'data_policy_benthicpqt',
+              name: 'quadrat_benthic_percent',
+              value: 'public',
+            },
+            qbp_2: {
+              policy: 'data_policy_benthicpqt',
+              name: 'quadrat_benthic_percent',
+              value: 'public summary',
+            },
+            qbp_3: {
+              policy: 'data_policy_benthicpqt',
+              name: 'quadrat_benthic_percent',
+              value: 'private',
+            },
+            hc_1: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'public',
+            },
+            hc_2: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'public summary',
+            },
+            hc_3: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'private',
+            },
           }
 
           const filteredRecords = project.records.filter((record) => {
             return methodDataSharingFilters.every((filter) => {
-              const { policy, value } = policyMappings[filter] || {}
-              return policy?.every((policy) => record[policy] !== value)
+              const { policy, value, name } = policyMappings[filter] || {}
+              return record[policy] !== value && record.protocols?.[name]?.sample_unit_count
             })
           })
 
@@ -238,11 +286,14 @@ export const FilterProjectsProvider = ({ children }) => {
             ? userIsMemberOfProject(project.project_id, mermaidUserData)
             : true
 
+          const hasRecords = project.records.length > 0
+
           const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
-            onlyShowProjectsUserIsAMemberOf
+            onlyShowProjectsUserIsAMemberOf &&
+            hasRecords
 
           return isProjectVisible
         })
@@ -436,7 +487,7 @@ export const FilterProjectsProvider = ({ children }) => {
         updatedFilter = [...methodDataSharingFilters].filter((filter) => filter !== name)
 
         // Remove the 'all' option if at least one sub-option is checked
-        if (subOptions.every((option) => !updatedFilter.includes(option))) {
+        if (!subOptions.every((option) => updatedFilter.includes(option))) {
           updatedFilter = updatedFilter.filter((filter) => filter !== allOption)
         }
       }
