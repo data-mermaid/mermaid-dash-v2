@@ -161,6 +161,34 @@ export const FilterProjectsProvider = ({ children }) => {
     [],
   )
 
+  const isAnyActiveFilters = useCallback(() => {
+    const anyActiveCountries = selectedCountries.length
+    const anyActiveOrganizations = selectedOrganizations.length
+    const anyActiveSampleDateAfter = sampleDateAfter
+    const anyActiveSampleDateBefore = sampleDateBefore
+    const showYourDataOnly = showYourData
+    const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
+    const anyActiveProjects = projectNameFilter
+
+    return (
+      anyActiveCountries ||
+      anyActiveOrganizations ||
+      anyActiveSampleDateAfter ||
+      anyActiveSampleDateBefore ||
+      showYourDataOnly ||
+      anyInactiveMethodDataSharing ||
+      anyActiveProjects
+    )
+  }, [
+    selectedCountries,
+    selectedOrganizations,
+    sampleDateAfter,
+    sampleDateBefore,
+    showYourData,
+    methodDataSharingFilters,
+    projectNameFilter,
+  ])
+
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
@@ -286,14 +314,15 @@ export const FilterProjectsProvider = ({ children }) => {
             ? userIsMemberOfProject(project.project_id, mermaidUserData)
             : true
 
-          const hasRecords = project.records.length > 0
+          // Filter out projects that have no records
+          const projectHasRecords = isAnyActiveFilters() && !project.records.length ? false : true
 
           const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
             onlyShowProjectsUserIsAMemberOf &&
-            hasRecords
+            projectHasRecords
 
           return isProjectVisible
         })
@@ -307,6 +336,7 @@ export const FilterProjectsProvider = ({ children }) => {
       sampleDateAfter,
       sampleDateBefore,
       showYourData,
+      isAnyActiveFilters,
     ],
   )
 
@@ -604,6 +634,7 @@ export const FilterProjectsProvider = ({ children }) => {
         getActiveProjectCount,
         getURLParams,
         updateURLParams,
+        isAnyActiveFilters,
       }}
     >
       {children}
