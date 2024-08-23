@@ -22,10 +22,10 @@ import {
   StyledLabel,
   StyledCategoryContainer,
   StyledEmptyListItem,
-  TieredCheckboxContainer,
   ToggleMethodDataSharingButton,
   ExpandableFilterRowContainer,
   StyledLI,
+  TieredStyledClickableArea,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
@@ -263,9 +263,9 @@ const FilterPane = ({ mermaidUserData }) => {
               </ToggleMethodDataSharingButton>
             </ExpandableFilterRowContainer>
             {expandedSections[method.name] ? (
-              <TieredCheckboxContainer>
+              <>
                 {method.dataSharingOptions.slice(1).map((option, index) => (
-                  <StyledClickableArea key={option}>
+                  <TieredStyledClickableArea key={option}>
                     <input
                       type="checkbox"
                       name={option}
@@ -276,9 +276,9 @@ const FilterPane = ({ mermaidUserData }) => {
                       onChange={handleMethodDataSharingFilter}
                     />
                     <StyledLabel htmlFor={option}>{DATA_SHARING_LABELS[index]}</StyledLabel>
-                  </StyledClickableArea>
+                  </TieredStyledClickableArea>
                 ))}
-              </TieredCheckboxContainer>
+              </>
             ) : null}
           </StyledLI>
         ))}
