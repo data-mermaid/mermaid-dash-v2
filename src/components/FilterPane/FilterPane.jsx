@@ -243,7 +243,7 @@ const FilterPane = ({ mermaidUserData }) => {
                 }
               >
                 <input
-                  id={method.name}
+                  id={method.dataSharingOptions[0]}
                   type="checkbox"
                   name={method.dataSharingOptions[0]}
                   onChange={handleMethodDataSharingFilter}
