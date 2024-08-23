@@ -236,8 +236,8 @@ const FilterPane = ({ mermaidUserData }) => {
                 onClick={() =>
                   handleMethodDataSharingFilter({
                     target: {
-                      name: method.name,
-                      checked: !methodDataSharingFilters.includes(method.name),
+                      name: method.dataSharingOptions[0],
+                      checked: methodDataSharingFilters.includes(method.dataSharingOptions[0]),
                     },
                   })
                 }
@@ -265,14 +265,22 @@ const FilterPane = ({ mermaidUserData }) => {
             {expandedSections[method.name] ? (
               <>
                 {method.dataSharingOptions.slice(1).map((option, index) => (
-                  <TieredStyledClickableArea key={option}>
+                  <TieredStyledClickableArea
+                    key={option}
+                    onClick={() =>
+                      handleMethodDataSharingFilter({
+                        target: {
+                          name: option,
+                          checked: methodDataSharingFilters.includes(option),
+                        },
+                      })
+                    }
+                  >
                     <input
                       type="checkbox"
                       name={option}
                       id={option}
-                      checked={
-                        !methodDataSharingFilters.includes(method.dataSharingOptions[index + 1])
-                      }
+                      checked={!methodDataSharingFilters.includes(option)}
                       onChange={handleMethodDataSharingFilter}
                     />
                     <StyledLabel htmlFor={option}>{DATA_SHARING_LABELS[index]}</StyledLabel>
