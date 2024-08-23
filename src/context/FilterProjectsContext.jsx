@@ -286,14 +286,11 @@ export const FilterProjectsProvider = ({ children }) => {
             ? userIsMemberOfProject(project.project_id, mermaidUserData)
             : true
 
-          const hasRecords = project.records.length > 0
-
           const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
-            onlyShowProjectsUserIsAMemberOf &&
-            hasRecords
+            onlyShowProjectsUserIsAMemberOf
 
           return isProjectVisible
         })
