@@ -250,17 +250,17 @@ export const FilterProjectsProvider = ({ children }) => {
             bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
             qbp_1: {
               policy: 'data_policy_benthicpqt',
-              name: 'quadrat_benthic_percent',
+              name: 'benthicpqt',
               value: 'public',
             },
             qbp_2: {
               policy: 'data_policy_benthicpqt',
-              name: 'quadrat_benthic_percent',
+              name: 'benthicpqt',
               value: 'public summary',
             },
             qbp_3: {
               policy: 'data_policy_benthicpqt',
-              name: 'quadrat_benthic_percent',
+              name: 'benthicpqt',
               value: 'private',
             },
             hc_1: {
@@ -281,10 +281,15 @@ export const FilterProjectsProvider = ({ children }) => {
           }
 
           const filteredRecords = project.records.filter((record) => {
-            return methodDataSharingFilters.every((filter) => {
+            // Check if this record should be excluded based on methodDataSharingFilters
+            const shouldOmitRecord = methodDataSharingFilters.some((filter) => {
               const { policy, value, name } = policyMappings[filter] || {}
-              return record[policy] !== value && record.protocols?.[name]?.sample_unit_count
+              const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
+              const isPolicyValueMatch = record[policy] === value
+              return sampleUnitExists && isPolicyValueMatch
             })
+            // Return the inverse of shouldOmitRecord to keep only the records that should not be omitted
+            return !shouldOmitRecord
           })
 
           return {
@@ -346,7 +351,6 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
-    console.log('filteredProjects', filteredProjects)
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
     doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)

@@ -172,8 +172,8 @@ export const StyledEmptyListItem = styled.div`
   padding: 0.5rem 1rem;
 `
 
-export const TieredCheckboxContainer = styled.div`
-  margin-left: 2rem;
+export const TieredStyledClickableArea = styled(StyledClickableArea)`
+  padding-left: 2rem;
 `
 
 export const ToggleMethodDataSharingButton = styled.button`
