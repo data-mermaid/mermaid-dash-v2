@@ -8,7 +8,7 @@ const reactTableNaturalSort = (rowA, rowB, columnId) => {
   })
 }
 
-const ReactTableCustomYearSort = (rowA, rowB, columnId, desc) => {
+const ReactTableCustomDateRangeSort = (rowA, rowB, columnId, desc) => {
   const getYear = (yearStr) => {
     const yearRange = yearStr.split('-')
     if (yearRange.length === 2) {
@@ -26,4 +26,4 @@ const ReactTableCustomYearSort = (rowA, rowB, columnId, desc) => {
   return yearA > yearB ? 1 : -1
 }
 
-export { reactTableNaturalSort, ReactTableCustomYearSort }
+export { reactTableNaturalSort, ReactTableCustomDateRangeSort }

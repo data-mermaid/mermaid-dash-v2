@@ -1,6 +1,6 @@
 export { default as PageSelector } from './Table/PageSelector/PageSelector'
 export { default as PageSizeSelector } from './Table/PageSizeSelector/PageSizeSelector'
-export { reactTableNaturalSort, ReactTableCustomYearSort } from './Table/reactTableNaturalSort'
+export { reactTableNaturalSort, ReactTableCustomDateRangeSort } from './Table/reactTableNaturalSort'
 export {
   Tr,
   Th,

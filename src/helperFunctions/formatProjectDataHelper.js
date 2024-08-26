@@ -19,7 +19,7 @@ export const formatProjectDataHelper = (project) => {
   })
 
   const years = [...data.years].sort((a, b) => a.localeCompare(b))
-  const formattedYears =
+  const formattedDateRange =
     years.length === 0
       ? ''
       : years.length === 1
@@ -30,7 +30,7 @@ export const formatProjectDataHelper = (project) => {
 
   return {
     projectName: project.project_name,
-    formattedYears,
+    formattedDateRange,
     countries,
     organizations,
     surveyCount: data.surveyCount,
