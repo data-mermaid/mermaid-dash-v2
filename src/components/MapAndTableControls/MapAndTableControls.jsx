@@ -1,6 +1,9 @@
 import PropTypes from 'prop-types'
-import L from 'leaflet'
 import styled, { css } from 'styled-components'
+import L from 'leaflet'
+import { bbox } from "@turf/bbox";
+import { points } from "@turf/helpers";
+
 import FilterIndicatorPill from './components/FilterIndicatorPill'
 import ViewToggle from './components/ViewToggle'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
@@ -9,12 +12,12 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { URL_PARAMS } from '../../constants/constants'
+import { COLLECTION_METHODS, URL_PARAMS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: 4.5rem;
+  left: 10.5rem;
   height: 6rem;
   z-index: 400;
   display: flex;
@@ -35,8 +38,19 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
-const MapAndTableControls = ({ map = undefined, view, setView }) => {
-  const { displayedProjects, projectDataCount, showYourData } = useFilterProjectsContext()
+const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = true }) => {
+  const {
+    displayedProjects,
+    projectDataCount,
+    selectedCountries,
+    selectedOrganizations,
+    sampleDateAfter,
+    sampleDateBefore,
+    showYourData,
+    methodFilters,
+    projectNameFilter,
+    getActiveProjectCount,
+  } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -44,13 +58,25 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
-    const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.latitude, record.longitude]),
-    )
+    const coordinates = displayedProjects.flatMap((project) => {
+      if (isLeafletMap) {
+        return project.records.map((record) => [record.latitude, record.longitude])
+      } else {
+        return project.records.map((record) => [record.longitude, record.latitude])
+      }
+    })
+
     if (coordinates.length === 0) {
       return
     }
-    const bounds = L.latLngBounds(coordinates)
+
+    let bounds
+
+    if (isLeafletMap) {
+      bounds = L.latLngBounds(coordinates)
+    } else {
+      bounds = bbox(points(coordinates))
+    }
     map.fitBounds(bounds)
   }
 
@@ -68,13 +94,33 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
         return
       }
       const { latitude, longitude } = foundSampleEvent
-      map.setView([latitude, longitude], 18)
+      if (isLeafletMap) {
+        map.setView([latitude, longitude], 18)
+      } else {
+        map.setCenter([longitude, latitude])
+        map.setZoom(18)
+      }
     }
   }
 
   const isAnyActiveFilters = () => {
-    const filterKeys = Object.values(URL_PARAMS)
-    return showYourData || filterKeys.some((key) => queryParams.has(key))
+    const anyActiveCountries = selectedCountries.length
+    const anyActiveOrganizations = selectedOrganizations.length
+    const anyActiveSampleDateAfter = sampleDateAfter
+    const anyActiveSampleDateBefore = sampleDateBefore
+    const showYourDataOnly = showYourData
+    const anyInactiveMethods = methodFilters.length !== COLLECTION_METHODS.length
+    const anyActiveProjects = projectNameFilter
+
+    return (
+      anyActiveCountries ||
+      anyActiveOrganizations ||
+      anyActiveSampleDateAfter ||
+      anyActiveSampleDateBefore ||
+      showYourDataOnly ||
+      anyInactiveMethods ||
+      anyActiveProjects
+    )
   }
 
   const hasSelectedSite = () => {
@@ -85,7 +131,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     <ControlContainer>
       {isAnyActiveFilters() ? (
         <FilterIndicatorPill
-          searchFilteredRowLength={displayedProjects?.length}
+          searchFilteredRowLength={getActiveProjectCount()}
           unfilteredRowLength={projectDataCount}
         />
       ) : null}
@@ -118,6 +164,7 @@ MapAndTableControls.propTypes = {
   map: PropTypes.object,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
+  isLeafletMap: PropTypes.bool,
 }
 
 export default MapAndTableControls

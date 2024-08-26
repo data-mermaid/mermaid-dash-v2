@@ -8,7 +8,7 @@ import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
 import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
 
-const StyledViewToggleContainer = styled('div')`
+const StyledViewToggleContainer = styled.div`
   width: 12.5rem;
   left: 5rem;
   top: 1.3rem;
@@ -30,7 +30,7 @@ const StyledCSVLink = styled(CSVLink)`
 `
 
 const ViewToggle = ({ view, setView }) => {
-  const { displayedProjects } = useFilterProjectsContext()
+  const { displayedProjects, checkedProjects } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
@@ -57,20 +57,25 @@ const ViewToggle = ({ view, setView }) => {
     { label: 'Transects', key: 'transects' },
   ]
 
-  const tableContent = displayedProjects.map((project) => {
-    const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
-      formatProjectDataHelper(project)
-    const formattedTableRowData = {
-      projectName,
-      formattedDateRange,
-      countries,
-      organizations,
-      recordCount: project.records.length,
-      surveyCount,
-      transects,
-    }
-    return formattedTableRowData
-  })
+  const tableContent = displayedProjects
+    .map((project) => {
+      if (!checkedProjects.includes(project.project_id)) {
+        return null
+      }
+      const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
+        formatProjectDataHelper(project)
+      const formattedTableRowData = {
+        projectName,
+        formattedDateRange,
+        countries,
+        organizations,
+        recordCount: project.records.length,
+        surveyCount,
+        transects,
+      }
+      return formattedTableRowData
+    })
+    .filter((project) => project)
 
   const handleDownload = () => {
     csvLinkRef.current.link.click()

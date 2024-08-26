@@ -29,7 +29,7 @@ export const CheckRadioLabel = styled.label`
     padding-bottom: ${theme.spacing.medium};
   }
 `
-export const ValidationList = styled('ul')`
+export const ValidationList = styled.ul`
   list-style: none;
   padding: ${theme.spacing.medium};
   margin: 0;

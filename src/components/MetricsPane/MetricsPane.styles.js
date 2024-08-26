@@ -2,10 +2,19 @@ import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly, hoverState } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { ButtonSecondary } from '../generic'
-import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
+import {
+  IconCaretUp,
+  IconCaretDown,
+  IconPersonCircle,
+  IconTextBoxMultiple,
+  IconCalendar,
+  IconText,
+} from '../../assets/dashboardOnlyIcons'
+import { IconGlobe, IconUser } from '../../assets/icons'
 
-export const StyledMetricsWrapper = styled('div')`
+export const StyledMetricsWrapper = styled.div`
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
+  ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
@@ -26,7 +35,7 @@ export const StyledMetricsWrapper = styled('div')`
   `)}
 `
 
-export const SummarizedMetrics = styled('div')`
+export const SummarizedMetrics = styled.div`
   width: 100%;
   overflow-y: scroll;
   ${(props) => props.$isDesktopWidth && 'height: calc(100vh - 10rem);'}
@@ -73,10 +82,10 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  left: -4rem;
+  left: -10rem;
   height: 6rem;
   z-index: 5;
-  width: 4rem;
+  width: 10rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -109,7 +118,7 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   `)}
 `
 
-export const SurveysAndTransectsContainer = styled('div')`
+export const SurveysAndTransectsContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -123,7 +132,7 @@ export const SurveysAndTransectsContainer = styled('div')`
   `)}
 `
 
-export const MetricsCard = styled('div')`
+export const MetricsCard = styled.div`
   background-color: ${theme.color.white};
   width: 100%;
   display: flex;
@@ -139,19 +148,134 @@ export const MetricsCard = styled('div')`
   `)}
 `
 
-export const H3 = styled('h3')`
+export const H3 = styled.h3`
   padding: 0;
   margin: 0.5rem;
 `
 
-export const P = styled('p')`
+export const P = styled.p`
   padding: 0;
   margin: 0.5rem;
   font-size: ${theme.typography.defaultFontSize};
 `
 
-export const MobileExpandedMetricsPane = styled('div')`
+export const MobileExpandedMetricsPane = styled.div`
   background-color: ${theme.color.grey1};
   height: calc(100vh - 14rem);
   width: 100vw;
+`
+
+export const SelectedSiteMetricsCardContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  margin: 1rem;
+  padding: 1rem;
+  border: 1px solid ${theme.color.grey0};
+  background-color: ${theme.color.white};
+`
+
+export const SelectedSiteSiteCardContainer = styled(SelectedSiteMetricsCardContainer)`
+  text-transform: uppercase;
+  align-items: center;
+`
+
+export const SelectedSiteContentContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 27.5rem;
+`
+
+export const biggerIcons = css`
+  width: ${theme.typography.mediumIconSize};
+  height: ${theme.typography.mediumIconSize};
+  position: relative;
+  margin-right: 0.8rem;
+`
+
+export const BiggerIconPersonCircle = styled(IconPersonCircle)`
+  ${biggerIcons}
+`
+
+export const BiggerIconTextBoxMultiple = styled(IconTextBoxMultiple)`
+  ${biggerIcons}
+`
+
+export const BiggerIconCalendar = styled(IconCalendar)`
+  ${biggerIcons}
+`
+
+export const BiggerIconUser = styled(IconUser)`
+  ${biggerIcons}
+`
+
+export const BiggerIconGlobe = styled(IconGlobe)`
+  ${biggerIcons}
+`
+
+export const BiggerIconText = styled(IconText)`
+  ${biggerIcons}
+`
+
+export const StyledHeader = styled.h2`
+  font-size: ${theme.typography.defaultFontSize};
+  font-weight: bold;
+  margin: 0 0 0.5rem 0;
+  flex-grow: 1;
+`
+
+export const StyledSummaryMetadataContainer = styled.fieldset`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  margin: 0 1rem 0 1rem;
+  border: 0;
+  padding: 0;
+`
+export const StyledMetricsSelector = styled.div`
+  display: flex;
+  width: calc(50% - 0.5rem);
+  border: 1px solid ${theme.color.grey0};
+  background-color: ${theme.color.white};
+  justify-content: center;
+  padding: 0.5rem;
+`
+
+export const StyledMapPinContainer = styled.div`
+  margin-right: 0.8rem;
+`
+
+export const StyledSvgContainer = styled.div`
+  width: 2.25rem;
+  height: 2.25rem;
+  margin-left: 0.2rem;
+  margin-right: 0.6rem;
+`
+
+export const StyledReefContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+`
+
+export const StyledReefRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+`
+export const StyledReefItem = styled.p`
+  width: 50%;
+  text-transform: capitalize;
+  margin: 0;
+`
+
+export const StyledReefItemBold = styled(StyledReefItem)`
+  font-weight: bold;
+  width: 50%;
+`
+export const StyledVisibleBackground = styled.div`
+  background-color: ${theme.color.grey1};
+`
+
+export const StyledChevronSpan = styled.span`
+  padding-left: 0.8rem;
 `

@@ -217,16 +217,11 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Filter projects based on collection method
-          if (methodFilters.length === 0) {
-            return project
-          } else {
-            return {
-              ...project,
-              records: project.records.filter((record) =>
-                methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
-              ),
-            }
+          return {
+            ...project,
+            records: project.records.filter((record) =>
+              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
+            ),
           }
         })
         .filter((project) => {
@@ -483,13 +478,27 @@ export const FilterProjectsProvider = ({ children }) => {
     setSampleDateBefore('')
     setDataSharingFilter(false)
     setMethodFilters(initialCollectionMethods)
+    queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
     setProjectNameFilter('')
     setShowYourData(false)
+    updateURLParams(queryParams)
   }
 
   const handleYourDataFilter = (event) => {
     const { checked } = event.target
     setShowYourData(checked)
+  }
+
+  const getActiveProjectCount = () => {
+    let count = 0
+
+    displayedProjects.forEach((project) => {
+      if (checkedProjects.includes(project.project_id)) {
+        count++
+      }
+    })
+
+    return count
   }
 
   return (
@@ -546,6 +555,9 @@ export const FilterProjectsProvider = ({ children }) => {
         setDisplayedOrganizations,
         countriesSelectOnOpen,
         organizationsSelectOnOpen,
+        getActiveProjectCount,
+        getURLParams,
+        updateURLParams,
       }}
     >
       {children}
