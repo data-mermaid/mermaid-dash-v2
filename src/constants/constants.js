@@ -11,7 +11,7 @@ export const COLLECTION_METHODS = [
   {
     name: 'beltfish',
     description: 'Fish Belt',
-    dataSharingOptions: ['bf_all', 'bf_0', 'bf_1', 'bf_2'],
+    dataSharingOptions: ['bf_all', 'bf_1', 'bf_2', 'bf_3'],
   },
   {
     name: 'colonies_bleached',
