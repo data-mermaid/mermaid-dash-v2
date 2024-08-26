@@ -283,7 +283,9 @@ const FilterPane = ({ mermaidUserData }) => {
                       checked={!methodDataSharingFilters.includes(option)}
                       onChange={handleMethodDataSharingFilter}
                     />
-                    <StyledLabel htmlFor={option}>{DATA_SHARING_LABELS[index]}</StyledLabel>
+                    <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
+                      {DATA_SHARING_LABELS[index]}
+                    </StyledLabel>
                   </TieredStyledClickableArea>
                 ))}
               </>
