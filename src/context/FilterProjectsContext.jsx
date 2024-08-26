@@ -212,13 +212,13 @@ export const FilterProjectsProvider = ({ children }) => {
         })
         .map((project) => {
           const policyMappings = {
-            bf_0: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
-            bf_1: {
+            bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
+            bf_2: {
               policy: 'data_policy_beltfish',
               name: 'beltfish',
               value: 'public summary',
             },
-            bf_2: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
+            bf_3: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
             cb_1: {
               policy: 'data_policy_bleachingqc',
               name: 'colonies_bleached',
