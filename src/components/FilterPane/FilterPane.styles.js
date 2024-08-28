@@ -189,7 +189,7 @@ export const ExpandableFilterRowContainer = styled.div`
   display: flex;
 `
 
-export const StyledLI = styled.li`
+export const StyledLi = styled.li`
   display: flex;
   flex-direction: column;
 `

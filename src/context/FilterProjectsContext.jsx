@@ -102,7 +102,7 @@ export const FilterProjectsProvider = ({ children }) => {
       const queryParamsMethodDataSharing = queryParams.has('method')
         ? queryParams.getAll('method')[0].split(',')
         : queryParams.getAll(URL_PARAMS.METHOD_DATA_SHARING)[0].split(',')
-      const allDataSharingOptions = COLLECTION_METHODS.flatMap(
+      const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
         (method) => method.dataSharingOptions,
       )
       const validMethodDataSharing = queryParamsMethodDataSharing.filter((option) => {
@@ -320,7 +320,7 @@ export const FilterProjectsProvider = ({ children }) => {
             : true
 
           // Filter out projects that have no records
-          const projectHasRecords = isAnyActiveFilters() && !project.records.length ? false : true
+          const projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
 
           const isProjectVisible =
             matchesSelectedCountries &&
@@ -500,8 +500,8 @@ export const FilterProjectsProvider = ({ children }) => {
 
   const handleMethodDataSharingFilter = (event) => {
     const { checked, name } = event.target
-    const foundMethod = COLLECTION_METHODS.find((method) =>
-      method.dataSharingOptions.includes(name),
+    const foundMethod = Object.values(COLLECTION_METHODS).find((value) =>
+      value.dataSharingOptions.includes(name),
     )
     const [allOption, ...subOptions] = foundMethod.dataSharingOptions
     let updatedFilter = [...methodDataSharingFilters]
@@ -518,11 +518,11 @@ export const FilterProjectsProvider = ({ children }) => {
         }
       } else {
         // checking a sub-option (not 'all')
-        updatedFilter = [...methodDataSharingFilters].filter((filter) => filter !== name)
+        updatedFilter = updatedFilter.filter((f) => f !== name)
 
         // Remove the 'all' option if at least one sub-option is checked
         if (!subOptions.every((option) => updatedFilter.includes(option))) {
-          updatedFilter = updatedFilter.filter((filter) => filter !== allOption)
+          updatedFilter = updatedFilter.filter((f) => f !== allOption)
         }
       }
     }

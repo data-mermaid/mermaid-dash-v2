@@ -24,7 +24,7 @@ import {
   StyledEmptyListItem,
   ToggleMethodDataSharingButton,
   ExpandableFilterRowContainer,
-  StyledLI,
+  StyledLi,
   TieredStyledClickableArea,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
@@ -210,12 +210,13 @@ const FilterPane = ({ mermaidUserData }) => {
     }))
   }
 
-  const isIndeterminate = (el, methodName) => {
-    if (!el) {
+  const isIndeterminate = (inputElement, methodName) => {
+    if (!inputElement) {
       return
     }
 
-    const foundMethod = COLLECTION_METHODS.find((method) => method.name === methodName)
+    // const foundMethod = COLLECTION_METHODS.find((method) => method.name === methodName)
+    const foundMethod = COLLECTION_METHODS[methodName]
 
     const allDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).every((option) => {
       return methodDataSharingFilters.includes(option)
@@ -223,75 +224,77 @@ const FilterPane = ({ mermaidUserData }) => {
     const someDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).some((option) => {
       return methodDataSharingFilters.includes(option)
     })
-    el.indeterminate = !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
+    inputElement.indeterminate =
+      !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
   }
 
   const renderMethods = () => (
     <StyledMethodListContainer>
       <StyledUnorderedList>
-        {COLLECTION_METHODS.map((method) => (
-          <StyledLI key={method.name}>
-            <ExpandableFilterRowContainer>
-              <StyledClickableArea
-                onClick={() =>
-                  handleMethodDataSharingFilter({
-                    target: {
-                      name: method.dataSharingOptions[0],
-                      checked: methodDataSharingFilters.includes(method.dataSharingOptions[0]),
-                    },
-                  })
-                }
-              >
-                <input
-                  id={method.dataSharingOptions[0]}
-                  type="checkbox"
-                  name={method.dataSharingOptions[0]}
-                  onChange={handleMethodDataSharingFilter}
-                  checked={!methodDataSharingFilters.includes(method.dataSharingOptions[0])}
-                  onClick={(e) => e.stopPropagation()}
-                  ref={(el) => isIndeterminate(el, method.name)}
-                />
-                <StyledLabel
-                  htmlFor={method.dataSharingOptions[0]}
-                  onClick={(e) => e.stopPropagation()}
+        {Object.keys(COLLECTION_METHODS).map((method) => {
+          const { description, dataSharingOptions } = COLLECTION_METHODS[method]
+          return (
+            <StyledLi key={method}>
+              <ExpandableFilterRowContainer>
+                <StyledClickableArea
+                  onClick={() =>
+                    handleMethodDataSharingFilter({
+                      target: {
+                        name: dataSharingOptions[0],
+                        checked: methodDataSharingFilters.includes(dataSharingOptions[0]),
+                      },
+                    })
+                  }
                 >
-                  {method.description}
-                </StyledLabel>
-              </StyledClickableArea>
-              <ToggleMethodDataSharingButton onClick={() => toggleShowExpanded(method.name)}>
-                {expandedSections[method.name] ? <IconMinus /> : <IconPlus />}
-              </ToggleMethodDataSharingButton>
-            </ExpandableFilterRowContainer>
-            {expandedSections[method.name] ? (
-              <>
-                {method.dataSharingOptions.slice(1).map((option, index) => (
-                  <TieredStyledClickableArea
-                    key={option}
-                    onClick={() =>
-                      handleMethodDataSharingFilter({
-                        target: {
-                          name: option,
-                          checked: methodDataSharingFilters.includes(option),
-                        },
-                      })
-                    }
-                  >
-                    <input
-                      type="checkbox"
-                      name={option}
-                      id={option}
-                      checked={!methodDataSharingFilters.includes(option)}
-                      onChange={handleMethodDataSharingFilter}
-                    />
-                    <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
-                      {DATA_SHARING_LABELS[index]}
-                    </StyledLabel>
-                  </TieredStyledClickableArea>
-                ))}
-              </>
-            ) : null}
-          </StyledLI>
-        ))}
+                  <input
+                    id={dataSharingOptions[0]}
+                    type="checkbox"
+                    name={dataSharingOptions[0]}
+                    onChange={handleMethodDataSharingFilter}
+                    checked={!methodDataSharingFilters.includes(dataSharingOptions[0])}
+                    onClick={(e) => e.stopPropagation()}
+                    ref={(inputElement) => isIndeterminate(inputElement, method)}
+                  />
+                  <StyledLabel htmlFor={dataSharingOptions[0]} onClick={(e) => e.stopPropagation()}>
+                    {description}
+                  </StyledLabel>
+                </StyledClickableArea>
+                <ToggleMethodDataSharingButton onClick={() => toggleShowExpanded(method)}>
+                  {expandedSections[method] ? <IconMinus /> : <IconPlus />}
+                </ToggleMethodDataSharingButton>
+              </ExpandableFilterRowContainer>
+              {expandedSections[method] ? (
+                <>
+                  {dataSharingOptions.slice(1).map((option, index) => (
+                    <TieredStyledClickableArea
+                      key={option}
+                      onClick={() =>
+                        handleMethodDataSharingFilter({
+                          target: {
+                            method,
+                            name: option,
+                            checked: methodDataSharingFilters.includes(option),
+                          },
+                        })
+                      }
+                    >
+                      <input
+                        type="checkbox"
+                        name={option}
+                        id={option}
+                        checked={!methodDataSharingFilters.includes(option)}
+                        onChange={handleMethodDataSharingFilter}
+                      />
+                      <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
+                        {DATA_SHARING_LABELS[index]}
+                      </StyledLabel>
+                    </TieredStyledClickableArea>
+                  ))}
+                </>
+              ) : null}
+            </StyledLi>
+          )
+        })}
       </StyledUnorderedList>
     </StyledMethodListContainer>
   )
