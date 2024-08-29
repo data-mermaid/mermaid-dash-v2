@@ -22,13 +22,17 @@ import {
   StyledLabel,
   StyledCategoryContainer,
   StyledEmptyListItem,
+  ToggleMethodDataSharingButton,
+  ExpandableFilterRowContainer,
+  StyledLi,
+  TieredStyledClickableArea,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useEffect, useState, useCallback } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { IconClose } from '../../assets/icons'
-import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
+import { IconClose, IconPlus } from '../../assets/icons'
+import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
@@ -58,6 +62,8 @@ const selectCustomStyles = {
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
 
+const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
+
 const FilterPane = ({ mermaidUserData }) => {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
@@ -74,8 +80,7 @@ const FilterPane = ({ mermaidUserData }) => {
     setSelectedOrganizations,
     sampleDateAfter,
     sampleDateBefore,
-    dataSharingFilter,
-    methodFilters,
+    methodDataSharingFilters,
     projectNameFilter,
     checkedProjects,
     setCheckedProjects,
@@ -85,8 +90,7 @@ const FilterPane = ({ mermaidUserData }) => {
     formattedDate,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
-    handleDataSharingFilter,
-    handleMethodFilter,
+    handleMethodDataSharingFilter,
     handleProjectNameFilter,
     handleYourDataFilter,
     userIsMemberOfProject,
@@ -99,6 +103,14 @@ const FilterPane = ({ mermaidUserData }) => {
     organizationsSelectOnOpen,
     getActiveProjectCount,
   } = useFilterProjectsContext()
+  const [expandedSections, setExpandedSections] = useState({
+    beltfish: false,
+    colonies_bleached: false,
+    benthicpit: false,
+    benthiclit: false,
+    quadrat_benthic_percent: false,
+    habitatcomplexity: false,
+  })
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -191,35 +203,96 @@ const FilterPane = ({ mermaidUserData }) => {
     setCheckedProjects(updatedCheckedProjects)
   }
 
+  const toggleShowExpanded = (section) => {
+    setExpandedSections((prev) => ({
+      ...prev,
+      [section]: !prev[section],
+    }))
+  }
+
+  const isIndeterminate = (inputElement, methodName) => {
+    if (!inputElement) {
+      return
+    }
+
+    const foundMethod = COLLECTION_METHODS[methodName]
+    const allDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).every((option) => {
+      return methodDataSharingFilters.includes(option)
+    })
+    const someDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).some((option) => {
+      return methodDataSharingFilters.includes(option)
+    })
+    inputElement.indeterminate =
+      !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
+  }
+
   const renderMethods = () => (
     <StyledMethodListContainer>
       <StyledUnorderedList>
-        {COLLECTION_METHODS.map((method) => (
-          <li key={method.name}>
-            <StyledClickableArea
-              onClick={() =>
-                handleMethodFilter({
-                  target: {
-                    name: method.name,
-                    checked: !methodFilters.includes(method.name),
-                  },
-                })
-              }
-            >
-              <input
-                id={method.name}
-                type="checkbox"
-                name={method.name}
-                onChange={handleMethodFilter}
-                checked={methodFilters.includes(method.name)}
-                onClick={(e) => e.stopPropagation()}
-              />
-              <StyledLabel htmlFor={method.name} onClick={(e) => e.stopPropagation()}>
-                {method.description}
-              </StyledLabel>
-            </StyledClickableArea>
-          </li>
-        ))}
+        {Object.keys(COLLECTION_METHODS).map((method) => {
+          const { description, dataSharingOptions } = COLLECTION_METHODS[method]
+          return (
+            <StyledLi key={method}>
+              <ExpandableFilterRowContainer>
+                <StyledClickableArea
+                  onClick={() =>
+                    handleMethodDataSharingFilter({
+                      target: {
+                        name: dataSharingOptions[0],
+                        checked: methodDataSharingFilters.includes(dataSharingOptions[0]),
+                      },
+                    })
+                  }
+                >
+                  <input
+                    id={dataSharingOptions[0]}
+                    type="checkbox"
+                    name={dataSharingOptions[0]}
+                    onChange={handleMethodDataSharingFilter}
+                    checked={!methodDataSharingFilters.includes(dataSharingOptions[0])}
+                    onClick={(e) => e.stopPropagation()}
+                    ref={(inputElement) => isIndeterminate(inputElement, method)}
+                  />
+                  <StyledLabel htmlFor={dataSharingOptions[0]} onClick={(e) => e.stopPropagation()}>
+                    {description}
+                  </StyledLabel>
+                </StyledClickableArea>
+                <ToggleMethodDataSharingButton onClick={() => toggleShowExpanded(method)}>
+                  {expandedSections[method] ? <IconMinus /> : <IconPlus />}
+                </ToggleMethodDataSharingButton>
+              </ExpandableFilterRowContainer>
+              {expandedSections[method] ? (
+                <>
+                  {dataSharingOptions.slice(1).map((option, index) => (
+                    <TieredStyledClickableArea
+                      key={option}
+                      onClick={() =>
+                        handleMethodDataSharingFilter({
+                          target: {
+                            method,
+                            name: option,
+                            checked: methodDataSharingFilters.includes(option),
+                          },
+                        })
+                      }
+                    >
+                      <input
+                        type="checkbox"
+                        name={option}
+                        id={option}
+                        checked={!methodDataSharingFilters.includes(option)}
+                        onChange={handleMethodDataSharingFilter}
+                      />
+                      <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
+                        {DATA_SHARING_LABELS[index]}
+                      </StyledLabel>
+                    </TieredStyledClickableArea>
+                  ))}
+                </>
+              ) : null}
+            </StyledLi>
+          )
+        })}
       </StyledUnorderedList>
     </StyledMethodListContainer>
   )
@@ -419,25 +492,7 @@ const FilterPane = ({ mermaidUserData }) => {
               </StyledCategoryContainer>
             </>
           ) : null}
-          <StyledHeader>Data sharing</StyledHeader>
-          <StyledCategoryContainer>
-            <StyledClickableArea
-              onClick={() => handleDataSharingFilter({ target: { checked: !dataSharingFilter } })}
-            >
-              <input
-                type="checkbox"
-                name="dataSharing"
-                id="data-sharing"
-                onChange={handleDataSharingFilter}
-                checked={dataSharingFilter}
-                onClick={(e) => e.stopPropagation()}
-              />
-              <StyledLabel htmlFor="data-sharing" onClick={(e) => e.stopPropagation()}>
-                {filterPane.dataSharing}
-              </StyledLabel>
-            </StyledClickableArea>
-          </StyledCategoryContainer>
-          <StyledHeader>Methods</StyledHeader>
+          <StyledHeader>Methods / Data Sharing</StyledHeader>
           {renderMethods()}
         </ShowMoreFiltersContainer>
       ) : null}

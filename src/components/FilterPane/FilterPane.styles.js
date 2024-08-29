@@ -147,6 +147,7 @@ export const StyledClickableArea = styled.div`
   cursor: pointer;
   display: flex;
   padding: 0.5rem;
+  flex-grow: 1;
   ${hoverState(css`
     background-color: ${theme.color.tableRowHover};
   `)}
@@ -155,6 +156,7 @@ export const StyledClickableArea = styled.div`
 export const StyledLabel = styled.label`
   cursor: pointer;
   margin: 0.2rem;
+  flex-grow: 1;
 `
 
 export const StyledCategoryContainer = styled.div`
@@ -168,4 +170,26 @@ export const StyledFormContainer = styled.div`
 
 export const StyledEmptyListItem = styled.div`
   padding: 0.5rem 1rem;
+`
+
+export const TieredStyledClickableArea = styled(StyledClickableArea)`
+  padding-left: 2rem;
+`
+
+export const ToggleMethodDataSharingButton = styled.button`
+  border: 0;
+  background-color: ${theme.color.white};
+  cursor: pointer;
+  ${hoverState(css`
+    background-color: ${theme.color.secondaryColor};
+  `)}
+`
+
+export const ExpandableFilterRowContainer = styled.div`
+  display: flex;
+`
+
+export const StyledLi = styled.li`
+  display: flex;
+  flex-direction: column;
 `

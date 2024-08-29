@@ -35,8 +35,6 @@ const isValidDateFormat = (dateString) => {
   return true
 }
 
-const initialCollectionMethods = COLLECTION_METHODS.map((method) => method.name)
-
 const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
@@ -50,8 +48,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
   const [sampleDateAfter, setSampleDateAfter] = useState('')
   const [sampleDateBefore, setSampleDateBefore] = useState('')
-  const [dataSharingFilter, setDataSharingFilter] = useState(false)
-  const [methodFilters, setMethodFilters] = useState([])
+  const [methodDataSharingFilters, setMethodDataSharingFilters] = useState([])
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [checkedProjects, setCheckedProjects] = useState([])
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
@@ -97,26 +94,28 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    const handleMethodsFilter = () => {
-      if (queryParams.has(URL_PARAMS.METHODS) || queryParams.has('method')) {
-        const queryParamsMethods = queryParams.has('method')
-          ? queryParams.getAll('method')[0].split(',')
-          : queryParams.getAll(URL_PARAMS.METHODS)[0].split(',')
-        const validMethods = queryParamsMethods.filter((method) => {
-          return COLLECTION_METHODS.some((collectionMethod) => collectionMethod.name === method)
-        })
-        setMethodFilters(validMethods)
-        if (validMethods.length === 0) {
-          queryParams.delete('method')
-          queryParams.delete(URL_PARAMS.METHODS)
-        } else {
-          queryParams.set(URL_PARAMS.METHODS, validMethods)
-        }
-        updateURLParams(queryParams)
-      } else {
-        queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
-        updateURLParams(queryParams)
+    const handleMethodDataSharingFilter = () => {
+      if (!queryParams.has(URL_PARAMS.METHOD_DATA_SHARING) && !queryParams.has('method')) {
+        return
       }
+
+      const queryParamsMethodDataSharing = queryParams.has('method')
+        ? queryParams.getAll('method')[0].split(',')
+        : queryParams.getAll(URL_PARAMS.METHOD_DATA_SHARING)[0].split(',')
+      const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+        (method) => method.dataSharingOptions,
+      )
+      const validMethodDataSharing = queryParamsMethodDataSharing.filter((option) => {
+        return allDataSharingOptions.includes(option)
+      })
+      setMethodDataSharingFilters(validMethodDataSharing)
+      if (validMethodDataSharing.length === 0) {
+        queryParams.delete('method')
+        queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
+      } else {
+        queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, validMethodDataSharing)
+      }
+      updateURLParams(queryParams)
     }
 
     const setProjectNameValue = () => {
@@ -127,26 +126,14 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    const setDataSharingValue = () => {
-      if (queryParams.has(URL_PARAMS.DATA_SHARING)) {
-        if (queryParams.get(URL_PARAMS.DATA_SHARING) === 'true') {
-          setDataSharingFilter(true)
-        } else {
-          queryParams.delete(URL_PARAMS.DATA_SHARING)
-          updateURLParams(queryParams)
-        }
-      }
-    }
-
     setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
     setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
       formattedDate(dayjs(date)),
     )
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
-    handleMethodsFilter()
+    handleMethodDataSharingFilter()
     setProjectNameValue()
-    setDataSharingValue()
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
@@ -174,6 +161,34 @@ export const FilterProjectsProvider = ({ children }) => {
     [],
   )
 
+  const isAnyActiveFilters = useCallback(() => {
+    const anyActiveCountries = selectedCountries.length
+    const anyActiveOrganizations = selectedOrganizations.length
+    const anyActiveSampleDateAfter = sampleDateAfter
+    const anyActiveSampleDateBefore = sampleDateBefore
+    const showYourDataOnly = showYourData
+    const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
+    const anyActiveProjects = projectNameFilter
+
+    return (
+      anyActiveCountries ||
+      anyActiveOrganizations ||
+      anyActiveSampleDateAfter ||
+      anyActiveSampleDateBefore ||
+      showYourDataOnly ||
+      anyInactiveMethodDataSharing ||
+      anyActiveProjects
+    )
+  }, [
+    selectedCountries,
+    selectedOrganizations,
+    sampleDateAfter,
+    sampleDateBefore,
+    showYourData,
+    methodDataSharingFilters,
+    projectNameFilter,
+  ])
+
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
@@ -196,34 +211,93 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Filter projects based on data sharing policy
-          if (dataSharingFilter) {
-            const policies = [
-              'data_policy_beltfish',
-              'data_policy_benthiclit',
-              'data_policy_benthicpit',
-              'data_policy_benthicpqt',
-              'data_policy_bleachingqc',
-              'data_policy_habitatcomplexity',
-            ]
-            return {
-              ...project,
-              records: project.records.filter((record) =>
-                policies.some((policy) => record[policy] === 'public summary'),
-              ),
-            }
-          } else {
-            return project
+          const policyMappings = {
+            bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
+            bf_2: {
+              policy: 'data_policy_beltfish',
+              name: 'beltfish',
+              value: 'public summary',
+            },
+            bf_3: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
+            cb_1: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'public',
+            },
+            cb_2: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'public summary',
+            },
+            cb_3: {
+              policy: 'data_policy_bleachingqc',
+              name: 'colonies_bleached',
+              value: 'private',
+            },
+            bp_1: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'public' },
+            bp_2: {
+              policy: 'data_policy_benthicpit',
+              name: 'benthicpit',
+              value: 'public summary',
+            },
+            bp_3: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'private' },
+            bl_1: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'public' },
+            bl_2: {
+              policy: 'data_policy_benthiclit',
+              name: 'benthiclit',
+              value: 'public summary',
+            },
+            bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
+            qbp_1: {
+              policy: 'data_policy_benthicpqt',
+              name: 'benthicpqt',
+              value: 'public',
+            },
+            qbp_2: {
+              policy: 'data_policy_benthicpqt',
+              name: 'benthicpqt',
+              value: 'public summary',
+            },
+            qbp_3: {
+              policy: 'data_policy_benthicpqt',
+              name: 'benthicpqt',
+              value: 'private',
+            },
+            hc_1: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'public',
+            },
+            hc_2: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'public summary',
+            },
+            hc_3: {
+              policy: 'data_policy_habitatcomplexity',
+              name: 'habitatcomplexity',
+              value: 'private',
+            },
           }
-        })
-        .map((project) => {
+
+          const filteredRecords = project.records.filter((record) => {
+            // Check if this record should be excluded based on methodDataSharingFilters
+            const shouldOmitRecord = methodDataSharingFilters.some((filter) => {
+              const { policy, value, name } = policyMappings[filter] || {}
+              const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
+              const isPolicyValueMatch = record[policy] === value
+              return sampleUnitExists && isPolicyValueMatch
+            })
+            // Return the inverse of shouldOmitRecord to keep only the records that should not be omitted
+            return !shouldOmitRecord
+          })
+
           return {
             ...project,
-            records: project.records.filter((record) =>
-              methodFilters.some((method) => Object.keys(record.protocols).includes(method)),
-            ),
+            records: filteredRecords,
           }
         })
+
         .filter((project) => {
           // Filter by selected countries
           const matchesSelectedCountries =
@@ -245,11 +319,15 @@ export const FilterProjectsProvider = ({ children }) => {
             ? userIsMemberOfProject(project.project_id, mermaidUserData)
             : true
 
+          // Filter out projects that have no records
+          const projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
+
           const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
             matchesProjectName &&
-            onlyShowProjectsUserIsAMemberOf
+            onlyShowProjectsUserIsAMemberOf &&
+            projectHasRecords
 
           return isProjectVisible
         })
@@ -258,12 +336,12 @@ export const FilterProjectsProvider = ({ children }) => {
       projectData.results,
       userIsMemberOfProject,
       mermaidUserData,
-      dataSharingFilter,
-      methodFilters,
+      methodDataSharingFilters,
       projectNameFilter,
       sampleDateAfter,
       sampleDateBefore,
       showYourData,
+      isAnyActiveFilters,
     ],
   )
 
@@ -291,8 +369,7 @@ export const FilterProjectsProvider = ({ children }) => {
     projectNameFilter,
     sampleDateAfter,
     sampleDateBefore,
-    dataSharingFilter,
-    methodFilters,
+    methodDataSharingFilters,
     doesSelectedSampleEventPassFilters,
     setDisplayedProjects,
     showYourData,
@@ -421,36 +498,44 @@ export const FilterProjectsProvider = ({ children }) => {
     updateURLParams(queryParams)
   }
 
-  const handleDataSharingFilter = (event) => {
-    const queryParams = getURLParams()
-    const { checked } = event.target
-    if (!checked) {
-      queryParams.delete(URL_PARAMS.DATA_SHARING)
-    } else {
-      queryParams.set(URL_PARAMS.DATA_SHARING, checked)
-    }
-    updateURLParams(queryParams)
-    setDataSharingFilter(checked)
-  }
-
-  const handleMethodFilter = (event) => {
-    let updatedMethodFilters
+  const handleMethodDataSharingFilter = (event) => {
     const { checked, name } = event.target
-    if (checked) {
-      updatedMethodFilters = [...methodFilters, name]
+    const foundMethod = Object.values(COLLECTION_METHODS).find((value) =>
+      value.dataSharingOptions.includes(name),
+    )
+    const [allOption, ...subOptions] = foundMethod.dataSharingOptions
+    let updatedFilter = [...methodDataSharingFilters]
+    if (name.includes('all')) {
+      updatedFilter = checked
+        ? updatedFilter.filter((method) => !foundMethod.dataSharingOptions.includes(method))
+        : [...updatedFilter, ...foundMethod.dataSharingOptions]
     } else {
-      updatedMethodFilters = methodFilters.filter((method) => method !== name)
-    }
+      if (!checked) {
+        // unchecking a sub-option (not 'all')
+        updatedFilter.push(name)
+        if (subOptions.every((option) => updatedFilter.includes(option))) {
+          updatedFilter.push(allOption)
+        }
+      } else {
+        // checking a sub-option (not 'all')
+        updatedFilter = updatedFilter.filter((f) => f !== name)
 
+        // Remove the 'all' option if at least one sub-option is checked
+        if (!subOptions.every((option) => updatedFilter.includes(option))) {
+          updatedFilter = updatedFilter.filter((f) => f !== allOption)
+        }
+      }
+    }
+    updatedFilter = [...new Set(updatedFilter)]
     const queryParams = getURLParams()
-    if (updatedMethodFilters.length === 0) {
-      queryParams.delete(URL_PARAMS.METHODS)
+    if (updatedFilter.length === 0) {
+      queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
     } else {
-      queryParams.set(URL_PARAMS.METHODS, updatedMethodFilters)
+      queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, updatedFilter)
     }
     queryParams.delete('method')
     updateURLParams(queryParams)
-    setMethodFilters(updatedMethodFilters)
+    setMethodDataSharingFilters(updatedFilter)
   }
 
   const handleProjectNameFilter = (event) => {
@@ -476,9 +561,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setSelectedOrganizations([])
     setSampleDateAfter('')
     setSampleDateBefore('')
-    setDataSharingFilter(false)
-    setMethodFilters(initialCollectionMethods)
-    queryParams.set(URL_PARAMS.METHODS, initialCollectionMethods)
+    setMethodDataSharingFilters([])
     setProjectNameFilter('')
     setShowYourData(false)
     updateURLParams(queryParams)
@@ -522,10 +605,8 @@ export const FilterProjectsProvider = ({ children }) => {
         setSampleDateAfter,
         sampleDateBefore,
         setSampleDateBefore,
-        dataSharingFilter,
-        setDataSharingFilter,
-        methodFilters,
-        setMethodFilters,
+        methodDataSharingFilters,
+        setMethodDataSharingFilters,
         projectNameFilter,
         setProjectNameFilter,
         selectedMarkerId,
@@ -542,8 +623,7 @@ export const FilterProjectsProvider = ({ children }) => {
         formatEndDate,
         handleChangeSampleDateAfter,
         handleChangeSampleDateBefore,
-        handleDataSharingFilter,
-        handleMethodFilter,
+        handleMethodDataSharingFilter,
         handleProjectNameFilter,
         clearAllFilters,
         handleYourDataFilter,
@@ -558,6 +638,7 @@ export const FilterProjectsProvider = ({ children }) => {
         getActiveProjectCount,
         getURLParams,
         updateURLParams,
+        isAnyActiveFilters,
       }}
     >
       {children}

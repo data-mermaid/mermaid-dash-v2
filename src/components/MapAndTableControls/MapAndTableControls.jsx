@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 import L from 'leaflet'
-import { bbox } from "@turf/bbox";
-import { points } from "@turf/helpers";
+import { bbox } from '@turf/bbox'
+import { points } from '@turf/helpers'
 
 import FilterIndicatorPill from './components/FilterIndicatorPill'
 import ViewToggle from './components/ViewToggle'
@@ -12,7 +12,6 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { COLLECTION_METHODS, URL_PARAMS } from '../../constants/constants'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -39,18 +38,8 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
 `
 
 const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = true }) => {
-  const {
-    displayedProjects,
-    projectDataCount,
-    selectedCountries,
-    selectedOrganizations,
-    sampleDateAfter,
-    sampleDateBefore,
-    showYourData,
-    methodFilters,
-    projectNameFilter,
-    getActiveProjectCount,
-  } = useFilterProjectsContext()
+  const { displayedProjects, projectDataCount, getActiveProjectCount, isAnyActiveFilters } =
+    useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
   const queryParams = new URLSearchParams(location.search)
 
@@ -101,26 +90,6 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
         map.setZoom(18)
       }
     }
-  }
-
-  const isAnyActiveFilters = () => {
-    const anyActiveCountries = selectedCountries.length
-    const anyActiveOrganizations = selectedOrganizations.length
-    const anyActiveSampleDateAfter = sampleDateAfter
-    const anyActiveSampleDateBefore = sampleDateBefore
-    const showYourDataOnly = showYourData
-    const anyInactiveMethods = methodFilters.length !== COLLECTION_METHODS.length
-    const anyActiveProjects = projectNameFilter
-
-    return (
-      anyActiveCountries ||
-      anyActiveOrganizations ||
-      anyActiveSampleDateAfter ||
-      anyActiveSampleDateBefore ||
-      showYourDataOnly ||
-      anyInactiveMethods ||
-      anyActiveProjects
-    )
   }
 
   const hasSelectedSite = () => {
