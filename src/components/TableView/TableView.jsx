@@ -12,7 +12,7 @@ import {
   StickyTableOverflowWrapper,
   GenericStickyTable,
   reactTableNaturalSort,
-  ReactTableCustomYearSort,
+  ReactTableCustomDateRangeSort,
   PageSelector,
   PageSizeSelector,
   EmptySpace,
@@ -58,12 +58,12 @@ const TableView = ({ view, setView, mermaidUserData }) => {
         if (!checkedProjects.includes(project.project_id)) {
           return null
         }
-        const { projectName, formattedYears, countries, organizations, surveyCount, transects } =
+        const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
           formatProjectDataHelper(project)
         return {
           id: i,
           projectName,
-          formattedYears,
+          formattedDateRange,
           countries,
           organizations,
           transects,
@@ -83,10 +83,10 @@ const TableView = ({ view, setView, mermaidUserData }) => {
         sortType: reactTableNaturalSort,
       },
       {
-        Header: 'Years',
-        accessor: 'formattedYears',
+        Header: 'Date Range',
+        accessor: 'formattedDateRange',
         sortType: (rowA, rowB, columnId, desc) =>
-          ReactTableCustomYearSort(rowA, rowB, columnId, desc),
+          ReactTableCustomDateRangeSort(rowA, rowB, columnId, desc),
       },
       {
         Header: 'Countries',
@@ -118,7 +118,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
     return tableData.map((data) => {
       const {
         projectName,
-        formattedYears,
+        formattedDateRange,
         countries,
         organizations,
         surveyCount,
@@ -128,7 +128,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
 
       return {
         projectName,
-        formattedYears,
+        formattedDateRange,
         countries,
         organizations,
         surveyCount,
