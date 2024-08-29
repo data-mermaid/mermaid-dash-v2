@@ -215,9 +215,7 @@ const FilterPane = ({ mermaidUserData }) => {
       return
     }
 
-    // const foundMethod = COLLECTION_METHODS.find((method) => method.name === methodName)
     const foundMethod = COLLECTION_METHODS[methodName]
-
     const allDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).every((option) => {
       return methodDataSharingFilters.includes(option)
     })
