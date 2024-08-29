@@ -33,13 +33,24 @@ const StyledTableContainer = styled.div`
 `
 
 const TableView = ({ view, setView, mermaidUserData }) => {
-  const { displayedProjects, userIsMemberOfProject, checkedProjects } = useFilterProjectsContext()
+  const {
+    displayedProjects,
+    userIsMemberOfProject,
+    checkedProjects,
+    setShowProjectsWithNoRecords,
+  } = useFilterProjectsContext()
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
   const queryParamsProjectId = queryParams.get('project_id')
+
+  const _onUnmount = useEffect(() => {
+    return () => {
+      setShowProjectsWithNoRecords(false)
+    }
+  }, [setShowProjectsWithNoRecords])
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects

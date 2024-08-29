@@ -7,11 +7,9 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
 import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
+import theme from '../../../styles/theme'
 
 const StyledViewToggleContainer = styled.div`
-  width: 12.5rem;
-  left: 5rem;
-  top: 1.3rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
@@ -29,8 +27,23 @@ const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
+const StyledInputContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid ${theme.color.secondaryBorder};
+  border-left: none;
+  width: 27rem;
+`
+
 const ViewToggle = ({ view, setView }) => {
-  const { displayedProjects, checkedProjects } = useFilterProjectsContext()
+  const {
+    displayedProjects,
+    checkedProjects,
+    showProjectsWithNoRecords,
+    setShowProjectsWithNoRecords,
+  } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)
@@ -46,6 +59,10 @@ const ViewToggle = ({ view, setView }) => {
     setView('tableView')
     queryParams.set('view', 'tableView')
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+  }
+
+  const handleShowProjectsWithNoRecords = () => {
+    setShowProjectsWithNoRecords(!showProjectsWithNoRecords)
   }
 
   const tableHeaders = [
@@ -119,6 +136,15 @@ const ViewToggle = ({ view, setView }) => {
             filename={downloadedFileName()}
             ref={csvLinkRef}
           />
+          <StyledInputContainer>
+            <input
+              type="checkbox"
+              id="show-0-projects"
+              checked={showProjectsWithNoRecords}
+              onChange={handleShowProjectsWithNoRecords}
+            />
+            <label htmlFor="show-0-projects">Show projects with 0 surveys</label>
+          </StyledInputContainer>
         </>
       )}
     </StyledViewToggleContainer>
