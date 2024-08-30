@@ -1,6 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
 import Header from '../Header/Header'
-import LeafletMap from '../LeafletMap'
 import FilterPane from '../FilterPane/FilterPane'
 import LoadingIndicator from './components/LoadingIndicator'
 import TableView from '../TableView/TableView'
@@ -38,9 +37,6 @@ const MermaidDash = () => {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
-
-  const [isLeafletMap, setIsLeafletMap] = useState(true)
-
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -220,19 +216,13 @@ const MermaidDash = () => {
 
   const renderMap = () => (
     <StyledMapContainer>
-      { isLeafletMap ? <LeafletMap
+      <MaplibreMap
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
         view={view}
         setView={setView}
         projectDataCount={projectData?.count || 0}
-      /> : <MaplibreMap
-        showFilterPane={showFilterPane}
-        showMetricsPane={showMetricsPane}
-        view={view}
-        setView={setView}
-        projectDataCount={projectData?.count || 0}
-      />}
+      />
       <LoadingIndicator
         projectData={projectData}
         showLoadingIndicator={showLoadingIndicator}
@@ -262,7 +252,7 @@ const MermaidDash = () => {
 
   return (
     <StyledDashboardContainer>
-      <Header isLeafletMap={isLeafletMap} setIsLeafletMap={setIsLeafletMap}/>
+      <Header />
       <StyledMobileToggleFilterPaneButton onClick={handleShowFilterModal}>
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
