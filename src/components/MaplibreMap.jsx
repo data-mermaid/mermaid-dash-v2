@@ -259,6 +259,24 @@ const MaplibreMap = ({ view, setView }) => {
     }
   }
 
+  const hideMapStyleLayers = (map) => {
+    const layerIdsToHide = [
+      'background',
+      'coastline',
+      'countries-fill',
+      'countries-boundary',
+      'geolines',
+      'geolines-label',
+      'countries-label',
+      'crimea-fill',
+    ]
+    map.getStyle().layers.forEach((layer) => {
+      if (layerIdsToHide.includes(layer.id)) {
+        map.setLayoutProperty(layer.id, 'visibility', 'none')
+      }
+    })
+  }
+
   const handleMapLoad = () => {
     if (mapRef.current) {
       const map = mapRef.current.getMap()
@@ -269,6 +287,7 @@ const MaplibreMap = ({ view, setView }) => {
         }
       }
       customImage.src = customIcon
+      hideMapStyleLayers(map)
     }
   }
 
