@@ -46,17 +46,15 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
-    const coordinates = displayedProjects.flatMap((project) => {
-      return project.records.map((record) => [record.longitude, record.latitude])
-    })
+    const coordinates = displayedProjects.flatMap((project) =>
+      project.records.map((record) => [record.longitude, record.latitude]),
+    )
 
     if (coordinates.length === 0) {
       return
     }
 
-    let bounds
-
-    bounds = bbox(points(coordinates))
+    const bounds = bbox(points(coordinates))
     map.fitBounds(bounds)
   }
 

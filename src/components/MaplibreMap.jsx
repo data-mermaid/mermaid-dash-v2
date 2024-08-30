@@ -148,8 +148,6 @@ const MaplibreMap = ({ view, setView }) => {
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
     const checkedProjectsChanged = checkedProjects !== prevCheckedProjects
 
-    // checked projects
-
     if (displayedProjectsChanged || selectedMarkerChanged || checkedProjectsChanged) {
       const features = displayedProjects.flatMap((project) => {
         return project.records
