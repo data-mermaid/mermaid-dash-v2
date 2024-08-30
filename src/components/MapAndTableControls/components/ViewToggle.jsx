@@ -27,7 +27,7 @@ const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
-const StyledInputContainer = styled.div`
+const ZeroSurveysButton = styled(ButtonSecondary)`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -136,15 +136,18 @@ const ViewToggle = ({ view, setView }) => {
             filename={downloadedFileName()}
             ref={csvLinkRef}
           />
-          <StyledInputContainer>
+          <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
             <input
               type="checkbox"
               id="show-0-projects"
               checked={showProjectsWithNoRecords}
               onChange={handleShowProjectsWithNoRecords}
+              onClick={(e) => e.stopPropagation()}
             />
-            <label htmlFor="show-0-projects">Show projects with 0 surveys</label>
-          </StyledInputContainer>
+            <label htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
+              Show projects with 0 surveys
+            </label>
+          </ZeroSurveysButton>
         </>
       )}
     </StyledViewToggleContainer>
