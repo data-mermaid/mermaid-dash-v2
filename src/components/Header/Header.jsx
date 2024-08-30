@@ -25,7 +25,7 @@ import { IconDown } from '../../assets/icons'
 import { headerText, dataDisclaimer } from '../../constants/language'
 import DataDisclaimer from './components/DataDisclaimer'
 
-const Header = ({isLeafletMap = true, setIsLeafletMap}) => {
+const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0()
   const [hasImageError, setHasImageError] = useState(false)
   const [showDisclaimer, setShowDisclaimer] = useState(false)
@@ -84,9 +84,6 @@ const Header = ({isLeafletMap = true, setIsLeafletMap}) => {
         <MenuLink href="https://datamermaid.org/contact-us/" target="_blank">
           Contact Us
         </MenuLink>
-        <UserMenuButton onClick={() => setIsLeafletMap(!isLeafletMap)}>
-          Switch to {isLeafletMap ? 'maplibre' : 'leaflet'} map
-        </UserMenuButton>
       </UserMenu>
     )
   }

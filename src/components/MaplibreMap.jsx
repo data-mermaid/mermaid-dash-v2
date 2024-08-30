@@ -1,15 +1,15 @@
-import { useCallback, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
-import Map from 'react-map-gl/maplibre';
+import { useCallback, useEffect, useState } from 'react'
+import PropTypes from 'prop-types'
+import Map from 'react-map-gl/maplibre'
 
-import 'maplibre-gl/dist/maplibre-gl.css';
-import { AttributionControl, Layer, NavigationControl, Source } from 'react-map-gl';
-import { useFilterProjectsContext } from '../context/FilterProjectsContext';
-import usePrevious from '../hooks/usePrevious';
-import { useLocation, useNavigate } from 'react-router-dom';
-import useResponsive from '../hooks/useResponsive';
-import { useRef } from 'react';
-import MapAndTableControls from './MapAndTableControls/MapAndTableControls';
+import 'maplibre-gl/dist/maplibre-gl.css'
+import { AttributionControl, Layer, NavigationControl, Source } from 'react-map-gl'
+import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import usePrevious from '../hooks/usePrevious'
+import { useLocation, useNavigate } from 'react-router-dom'
+import useResponsive from '../hooks/useResponsive'
+import { useRef } from 'react'
+import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 import customIcon from '../assets/map-pin.png'
 
 const defaultLon = -79
@@ -21,38 +21,30 @@ const basemapLayerStyle = {
   type: 'raster',
   minzoom: 0,
   maxzoom: 22,
-};
+}
 
 const sitesClusterLayer = {
   type: 'circle',
   filter: ['has', 'point_count'],
   paint: {
     'circle-color': '#a53434',
-    'circle-radius': [
-        'step',
-        ['get', 'point_count'],
-        20,
-        100,
-        30,
-        750,
-        40
-    ],
+    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
     'circle-stroke-width': 1,
-    'circle-stroke-color': '#fff'
-  }
+    'circle-stroke-color': '#fff',
+  },
 }
 
 const sitesClusterCountLayer = {
   type: 'symbol',
   filter: ['has', 'point_count'],
   layout: {
-      'text-field': '{point_count_abbreviated}',
-      'text-font': ['Open Sans Semibold'],
-      'text-size': 13,
+    'text-field': '{point_count_abbreviated}',
+    'text-font': ['Open Sans Semibold'],
+    'text-size': 13,
   },
   paint: {
     'text-color': '#fff',
-  }
+  },
 }
 
 const getSitesUnclusteredLayerStyle = (selectedFeatureId) => {
@@ -61,13 +53,13 @@ const getSitesUnclusteredLayerStyle = (selectedFeatureId) => {
     filter: [
       'all',
       ['!', ['has', 'point_count']],
-      ['!=', ['get', 'sample_event_id'], selectedFeatureId]
+      ['!=', ['get', 'sample_event_id'], selectedFeatureId],
     ],
     paint: {
-        'circle-color': '#a53434',
-        'circle-radius': 6,
-        'circle-stroke-width': 1,
-        'circle-stroke-color': '#fff'
+      'circle-color': '#a53434',
+      'circle-radius': 6,
+      'circle-stroke-width': 1,
+      'circle-stroke-color': '#fff',
     },
   }
 }
@@ -78,13 +70,13 @@ const getSitesSelectedLayerStyle = (selectedFeatureId) => {
     filter: [
       'all',
       ['!', ['has', 'point_count']],
-      ['==', ['get', 'sample_event_id'], selectedFeatureId]
+      ['==', ['get', 'sample_event_id'], selectedFeatureId],
     ],
     layout: {
       'icon-image': 'custom-icon',
       'icon-size': 1,
-      'icon-anchor': 'bottom'
-    }
+      'icon-anchor': 'bottom',
+    },
   }
 }
 
@@ -97,15 +89,15 @@ const isValidZoom = (zoom) => {
 }
 
 const sitesSource = {
-  type: "geojson",
+  type: 'geojson',
   cluster: true,
   clusterMaxZoom: 14, // Max zoom to cluster points on
-  clusterRadius: 50 // Radius of each cluster when clustering points (defaults to 50)
+  clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
 const MaplibreMap = ({ view, setView }) => {
   const { displayedProjects, selectedMarkerId, setSelectedMarkerId, checkedProjects } =
-  useFilterProjectsContext()
+    useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -127,7 +119,7 @@ const MaplibreMap = ({ view, setView }) => {
   const { isDesktopWidth } = useResponsive()
   const prevCheckedProjects = usePrevious(checkedProjects)
 
-  const mapRef = useRef();
+  const mapRef = useRef()
 
   const updateURLParams = useCallback(
     (queryParams) => {
@@ -158,30 +150,44 @@ const MaplibreMap = ({ view, setView }) => {
 
     if (displayedProjectsChanged || selectedMarkerChanged || checkedProjectsChanged) {
       const features = displayedProjects.flatMap((project) => {
-        return project.records.map((record) => {
-          return {
-            type: "Feature",
-            properties: { ...record },
-            geometry : { "type": "Point", "coordinates": [ record.longitude, record.latitude] }
-          }
-        })
+        return project.records
+          .map((record) => {
+            const isProjectChecked = checkedProjects.includes(project.project_id)
+            if (!isProjectChecked) {
+              return
+            }
+
+            return {
+              type: 'Feature',
+              properties: { ...record },
+              geometry: { type: 'Point', coordinates: [record.longitude, record.latitude] },
+            }
+          })
+          .filter((feature) => feature !== undefined)
       })
 
       const featureClass = {
-        type: "FeatureCollection",
-        features
+        type: 'FeatureCollection',
+        features,
       }
 
       setSitesFeatureClass(featureClass)
     }
-  }, [displayedProjects, prevDisplayedProjects, selectedMarkerId, prevSelectedMarkerId, checkedProjects, prevCheckedProjects])
+  }, [
+    displayedProjects,
+    prevDisplayedProjects,
+    selectedMarkerId,
+    prevSelectedMarkerId,
+    checkedProjects,
+    prevCheckedProjects,
+  ])
 
-  const handleMoveEnd = () => { 
+  const handleMoveEnd = () => {
     const map = mapRef.current.getMap()
     const { lat, lng } = map.getCenter()
     const zoom = map.getZoom()
     const queryParams = getURLParams()
-    
+
     queryParams.set('lat', lat)
     queryParams.set('lng', lng)
     queryParams.set('zoom', zoom)
@@ -198,16 +204,18 @@ const MaplibreMap = ({ view, setView }) => {
     const { features } = event
 
     if (features && features.length > 0) {
-      const clickedFeature = features[0];
+      const clickedFeature = features[0]
       if (clickedFeature.layer.id === 'sites-cluster-layer') {
         const clusterId = clickedFeature.properties.cluster_id
-        const zoom = await mapRef.current.getSource('sites-source').getClusterExpansionZoom(clusterId);
-        
+        const zoom = await mapRef.current
+          .getSource('sites-source')
+          .getClusterExpansionZoom(clusterId)
+
         mapRef.current.easeTo({
-            center: features[0].geometry.coordinates,
-            zoom
-        });
-        return 
+          center: features[0].geometry.coordinates,
+          zoom,
+        })
+        return
       }
 
       if (clickedFeature.layer.id === 'sites-unclustered-layer') {
@@ -225,10 +233,9 @@ const MaplibreMap = ({ view, setView }) => {
     const { features } = event
 
     if (features && features.length > 0) {
-
-      const feature = features[0];
-      if (['sites-cluster-layer', 'sites-unclustered-layer'].includes(feature.layer.id) ) {
-        mapRef.current.getCanvas().style.cursor = 'pointer';
+      const feature = features[0]
+      if (['sites-cluster-layer', 'sites-unclustered-layer'].includes(feature.layer.id)) {
+        mapRef.current.getCanvas().style.cursor = 'pointer'
       }
     }
   }
@@ -237,33 +244,50 @@ const MaplibreMap = ({ view, setView }) => {
     const { features } = event
 
     if (features && features.length > 0) {
-
-      const feature = features[0];
+      const feature = features[0]
       if (['sites-cluster-layer', 'sites-unclustered-layer'].includes(feature.layer.id)) {
-        mapRef.current.getCanvas().style.cursor = '';
+        mapRef.current.getCanvas().style.cursor = ''
       }
     }
   }
 
-
   const MapAndTableControlsWrapper = () => {
     const map = mapRef.current
-    
+
     if (map) {
-      return <MapAndTableControls map={map.getMap()} view={view} setView={setView} isLeafletMap={false}/>
+      return <MapAndTableControls map={map.getMap()} view={view} setView={setView} />
     }
+  }
+
+  const hideMapStyleLayers = (map) => {
+    const layerIdsToHide = [
+      'background',
+      'coastline',
+      'countries-fill',
+      'countries-boundary',
+      'geolines',
+      'geolines-label',
+      'countries-label',
+      'crimea-fill',
+    ]
+    map.getStyle().layers.forEach((layer) => {
+      if (layerIdsToHide.includes(layer.id)) {
+        map.setLayoutProperty(layer.id, 'visibility', 'none')
+      }
+    })
   }
 
   const handleMapLoad = () => {
     if (mapRef.current) {
       const map = mapRef.current.getMap()
-      const customImage = new Image();
+      const customImage = new Image()
       customImage.onload = () => {
         if (!map.hasImage('custom-icon')) {
-          mapRef.current.addImage('custom-icon', customImage, { sdf: false });
+          mapRef.current.addImage('custom-icon', customImage, { sdf: false })
         }
       }
-      customImage.src = customIcon; 
+      customImage.src = customIcon
+      hideMapStyleLayers(map)
     }
   }
 
@@ -271,13 +295,13 @@ const MaplibreMap = ({ view, setView }) => {
     <>
       <Map
         ref={mapRef}
-        style={{width: '100%', height: '100%'}}
+        style={{ width: '100%', height: '100%' }}
         initialViewState={{
-          longitude: mapCenter && mapCenter[1] || defaultLon,
-          latitude: mapCenter && mapCenter[0] || defaultLat,
-          zoom: mapZoom || defaultMapZoom
+          longitude: (mapCenter && mapCenter[1]) || defaultLon,
+          latitude: (mapCenter && mapCenter[0]) || defaultLat,
+          zoom: mapZoom || defaultMapZoom,
         }}
-        mapStyle='https://demotiles.maplibre.org/style.json'
+        mapStyle="https://demotiles.maplibre.org/style.json"
         onLoad={handleMapLoad}
         onMoveEnd={handleMoveEnd}
         onResize={handleResize}
@@ -288,40 +312,36 @@ const MaplibreMap = ({ view, setView }) => {
         // disable the default attribution
         attributionControl={false}
       >
-      <MapAndTableControlsWrapper />
-      <AttributionControl
-        compact={true}
-        customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
-        position={isDesktopWidth ? 'bottom-right' : 'top-right'}
-      />
-      <NavigationControl showCompass={false} showZoom={isDesktopWidth ? true : false} position='bottom-right' />
-      <Source id="basemap-source" type="raster" tiles={["https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"]}
-            >
-        <Layer {...basemapLayerStyle} />
-      </Source>
-      <Source
-        id='sites-source'
-        data={sitesFeatureClass}
-        { ...sitesSource }
-      >
-        <Layer
-          id='sites-cluster-layer'
-          { ...sitesClusterLayer }
+        <MapAndTableControlsWrapper />
+        <AttributionControl
+          compact={true}
+          customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
+          position={isDesktopWidth ? 'bottom-right' : 'top-right'}
         />
-        <Layer
-          id='sites-cluster-count-layer'
-          { ...sitesClusterCountLayer }
+        <NavigationControl
+          showCompass={false}
+          showZoom={isDesktopWidth ? true : false}
+          position="bottom-right"
         />
-        <Layer
-          id='sites-unclustered-layer'
-          { ...getSitesUnclusteredLayerStyle(selectedMarkerId) }
-        />
-        <Layer
-          id='sites-selected-layer'
-          { ...getSitesSelectedLayerStyle(selectedMarkerId) }
-        />
-      </Source>
-    </Map>
+        <Source
+          id="basemap-source"
+          type="raster"
+          tiles={[
+            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+          ]}
+        >
+          <Layer {...basemapLayerStyle} />
+        </Source>
+        <Source id="sites-source" data={sitesFeatureClass} {...sitesSource}>
+          <Layer id="sites-cluster-layer" {...sitesClusterLayer} />
+          <Layer id="sites-cluster-count-layer" {...sitesClusterCountLayer} />
+          <Layer
+            id="sites-unclustered-layer"
+            {...getSitesUnclusteredLayerStyle(selectedMarkerId)}
+          />
+          <Layer id="sites-selected-layer" {...getSitesSelectedLayerStyle(selectedMarkerId)} />
+        </Source>
+      </Map>
     </>
   )
 }
