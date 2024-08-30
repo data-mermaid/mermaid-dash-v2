@@ -37,6 +37,10 @@ const ZeroSurveysButton = styled(ButtonSecondary)`
   width: 27rem;
 `
 
+const StyledLabel = styled.label`
+  cursor: pointer;
+`
+
 const ViewToggle = ({ view, setView }) => {
   const {
     displayedProjects,
@@ -144,9 +148,9 @@ const ViewToggle = ({ view, setView }) => {
               onChange={handleShowProjectsWithNoRecords}
               onClick={(e) => e.stopPropagation()}
             />
-            <label htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
+            <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
               Show projects with 0 surveys
-            </label>
+            </StyledLabel>
           </ZeroSurveysButton>
         </>
       )}
