@@ -201,6 +201,16 @@ export const FilterProjectsProvider = ({ children }) => {
     enableFollowScreen,
   ])
 
+  const normalizeLng = (lng) => {
+    if (lng < -180) {
+      return lng + 360
+    }
+    if (lng > 180) {
+      return lng - 360
+    }
+    return lng
+  }
+
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
@@ -223,6 +233,7 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
+          // Filter by method data sharing
           const policyMappings = {
             bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
             bf_2: {
@@ -309,6 +320,30 @@ export const FilterProjectsProvider = ({ children }) => {
             records: filteredRecords,
           }
         })
+        .map((project) => {
+          // Filter by map bounding box
+          if (!enableFollowScreen) {
+            return project
+          }
+
+          return {
+            ...project,
+            records: project.records.filter((record) => {
+              const isWithinLatitude =
+                record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
+
+              const swLng = normalizeLng(mapBbox['_sw'].lng)
+              const neLng = normalizeLng(mapBbox['_ne'].lng)
+
+              const isWithinLongitude =
+                swLng <= neLng
+                  ? record.longitude >= swLng && record.longitude <= neLng
+                  : record.longitude >= swLng || record.longitude <= neLng
+
+              return isWithinLatitude && isWithinLongitude
+            }),
+          }
+        })
 
         .filter((project) => {
           // Filter by selected countries
@@ -357,54 +392,12 @@ export const FilterProjectsProvider = ({ children }) => {
     ],
   )
 
-  const applyFilterToProjectsBasedOnBbox = useCallback(() => {
-    if (!Object.keys(mapBbox).length) {
-      return
-    }
-
-    const normalizeLng = (lng) => {
-      if (lng < -180) {
-        return lng + 360
-      }
-      if (lng > 180) {
-        return lng - 360
-      }
-      return lng
-    }
-
-    const result = projectData.results
-      .map((project) => {
-        return {
-          ...project,
-          records: project.records.filter((record) => {
-            const isWithinLatitude =
-              record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
-
-            const swLng = normalizeLng(mapBbox['_sw'].lng)
-            const neLng = normalizeLng(mapBbox['_ne'].lng)
-
-            const isWithinLongitude =
-              swLng <= neLng
-                ? record.longitude >= swLng && record.longitude <= neLng
-                : record.longitude >= swLng || record.longitude <= neLng
-
-            return isWithinLatitude && isWithinLongitude
-          }),
-        }
-      })
-      .filter((project) => project.records.length > 0)
-
-    return result
-  }, [mapBbox, projectData])
-
   const _filterProjectRecords = useEffect(() => {
     if (!projectData.results) {
       return
     }
 
-    const filteredProjects = enableFollowScreen
-      ? applyFilterToProjectsBasedOnBbox()
-      : applyFilterToProjects(selectedCountries, selectedOrganizations)
+    const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
     if (projectData.results.length === projectData.count) {
@@ -430,7 +423,6 @@ export const FilterProjectsProvider = ({ children }) => {
     setDisplayedProjects,
     showYourData,
     applyFilterToProjects,
-    applyFilterToProjectsBasedOnBbox,
     queryParams,
     enableFollowScreen,
     mapBbox,
