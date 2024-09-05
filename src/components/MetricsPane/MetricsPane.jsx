@@ -34,6 +34,7 @@ import {
   StyledVisibleBackground,
   StyledChevronSpan,
   DesktopFollowScreenButton,
+  StyledLabel,
 } from './MetricsPane.styles'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { CloseButton } from '../generic'
@@ -362,9 +363,9 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
             onChange={handleFollowScreen}
             onClick={(e) => e.stopPropagation()}
           />
-          <label htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
+          <StyledLabel htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
             Update metrics based on map view
-          </label>
+          </StyledLabel>
         </DesktopFollowScreenButton>
       ) : null}
       {isDesktopWidth ? (

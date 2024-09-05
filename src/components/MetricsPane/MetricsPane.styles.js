@@ -293,3 +293,7 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
     display: none;
   `)}
 `
+
+export const StyledLabel = styled.label`
+  cursor: pointer;
+`
