@@ -128,6 +128,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
+    const setFollowScreen = () => {
+      if (queryParams.has(URL_PARAMS.FOLLOW_SCREEN)) {
+        setEnableFollowScreen(true)
+      }
+    }
+
     setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
     setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
@@ -136,6 +142,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
     handleMethodDataSharingFilter()
     setProjectNameValue()
+    setFollowScreen()
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
@@ -397,7 +404,9 @@ export const FilterProjectsProvider = ({ children }) => {
       : applyFilterToProjects(selectedCountries, selectedOrganizations)
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
-    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    if (projectData.results.length === projectData.count) {
+      doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    }
 
     setDisplayedProjects(
       filteredProjects.sort((a, b) => a.project_name.localeCompare(b.project_name)),

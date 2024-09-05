@@ -6,6 +6,7 @@ export const URL_PARAMS = {
   SAMPLE_DATE_BEFORE: 'sample_date_before',
   PROJECTS: 'projects',
   METHOD_DATA_SHARING: 'omitted_method_data_sharing',
+  FOLLOW_SCREEN: 'follow_screen',
 }
 
 export const COLLECTION_METHODS = {

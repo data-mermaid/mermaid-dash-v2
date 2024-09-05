@@ -323,8 +323,17 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     }
   }
 
-  const handleFollowScreen = () => {
+  const handleFollowScreen = (e) => {
     setEnableFollowScreen((prevState) => !prevState)
+
+    const { checked } = e.target
+    const queryParams = getURLParams()
+    if (checked) {
+      queryParams.set('follow_screen', 'true')
+    } else {
+      queryParams.delete('follow_screen')
+    }
+    updateURLParams(queryParams)
   }
 
   return (
@@ -338,15 +347,24 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
       ) : null}
-      {isDesktopWidth && view === 'mapView' && showMetricsPane ? (
-        <DesktopFollowScreenButton>
+      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+        <DesktopFollowScreenButton
+          onClick={() =>
+            handleFollowScreen({
+              target: { checked: !enableFollowScreen },
+            })
+          }
+        >
           <input
             type="checkbox"
             id="follow-screen"
             checked={enableFollowScreen}
             onChange={handleFollowScreen}
+            onClick={(e) => e.stopPropagation()}
           />
-          <label htmlFor="follow-screen">Update metrics based on map view</label>
+          <label htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
+            Update metrics based on map view
+          </label>
         </DesktopFollowScreenButton>
       ) : null}
       {isDesktopWidth ? (
@@ -380,6 +398,7 @@ MetricsPane.propTypes = {
   showMetricsPane: PropTypes.bool.isRequired,
   setShowMetricsPane: PropTypes.func.isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
+  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
 }
 
 export default MetricsPane
