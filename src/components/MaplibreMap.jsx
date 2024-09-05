@@ -149,13 +149,13 @@ const MaplibreMap = ({ view, setView }) => {
   }
 
   const _updateMapBbox = useEffect(() => {
-    if (!enableFollowScreen) {
+    const map = mapRef.current?.getMap()
+    if (!enableFollowScreen || !map) {
       return
     }
-    const map = mapRef.current?.getMap()
     const bounds = map.getBounds()
     setMapBbox(bounds)
-  }, [enableFollowScreen])
+  }, [enableFollowScreen, setMapBbox])
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged =
