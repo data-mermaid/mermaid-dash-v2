@@ -33,6 +33,7 @@ import {
   StyledReefItemBold,
   StyledVisibleBackground,
   StyledChevronSpan,
+  DesktopFollowScreenButton,
 } from './MetricsPane.styles'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { CloseButton } from '../generic'
@@ -41,7 +42,7 @@ import mapPin from '../../assets/map-pin.png'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 
-const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator }) => {
+const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator, view }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
@@ -58,6 +59,8 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     userIsMemberOfProject,
     checkedProjects,
     getActiveProjectCount,
+    enableFollowScreen,
+    setEnableFollowScreen,
   } = useFilterProjectsContext()
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
@@ -320,6 +323,10 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     }
   }
 
+  const handleFollowScreen = () => {
+    setEnableFollowScreen((prevState) => !prevState)
+  }
+
   return (
     <StyledMetricsWrapper
       $showMetricsPane={showMetricsPane}
@@ -330,6 +337,17 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       {isMobileWidth || showMetricsPane ? MetricsContent() : null}
       {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
+      ) : null}
+      {isDesktopWidth && view === 'mapView' && showMetricsPane ? (
+        <DesktopFollowScreenButton>
+          <input
+            type="checkbox"
+            id="follow-screen"
+            checked={enableFollowScreen}
+            onChange={handleFollowScreen}
+          />
+          <label htmlFor="follow-screen">Update metrics based on map view</label>
+        </DesktopFollowScreenButton>
       ) : null}
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>

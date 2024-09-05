@@ -279,3 +279,17 @@ export const StyledVisibleBackground = styled.div`
 export const StyledChevronSpan = styled.span`
   padding-left: 0.8rem;
 `
+
+export const DesktopFollowScreenButton = styled(ButtonSecondary)`
+  position: absolute;
+  top: 1.3rem;
+  left: -42rem;
+  height: 6rem;
+  z-index: 5;
+  width: 31rem;
+  border: solid 1px ${theme.color.secondaryBorder}
+  background-color: ${theme.color.grey1};
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: none;
+  `)}
+`
