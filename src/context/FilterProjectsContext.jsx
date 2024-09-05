@@ -178,6 +178,7 @@ export const FilterProjectsProvider = ({ children }) => {
     const showYourDataOnly = showYourData
     const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
     const anyActiveProjects = projectNameFilter
+    const followScreenEnabled = enableFollowScreen
 
     return (
       anyActiveCountries ||
@@ -186,7 +187,8 @@ export const FilterProjectsProvider = ({ children }) => {
       anyActiveSampleDateBefore ||
       showYourDataOnly ||
       anyInactiveMethodDataSharing ||
-      anyActiveProjects
+      anyActiveProjects ||
+      followScreenEnabled
     )
   }, [
     selectedCountries,
@@ -196,6 +198,7 @@ export const FilterProjectsProvider = ({ children }) => {
     showYourData,
     methodDataSharingFilters,
     projectNameFilter,
+    enableFollowScreen,
   ])
 
   const applyFilterToProjects = useCallback(
@@ -620,6 +623,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setMethodDataSharingFilters([])
     setProjectNameFilter('')
     setShowYourData(false)
+    setEnableFollowScreen(false)
     updateURLParams(queryParams)
   }
 
