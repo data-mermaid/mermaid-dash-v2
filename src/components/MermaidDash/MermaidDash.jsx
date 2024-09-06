@@ -247,6 +247,7 @@ const MermaidDash = () => {
       showMetricsPane={showMetricsPane}
       setShowMetricsPane={setShowMetricsPane}
       showLoadingIndicator={showLoadingIndicator}
+      view={view}
     />
   )
 

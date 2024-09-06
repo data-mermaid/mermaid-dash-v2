@@ -96,8 +96,14 @@ const sitesSource = {
 }
 
 const MaplibreMap = ({ view, setView }) => {
-  const { displayedProjects, selectedMarkerId, setSelectedMarkerId, checkedProjects } =
-    useFilterProjectsContext()
+  const {
+    displayedProjects,
+    selectedMarkerId,
+    setSelectedMarkerId,
+    checkedProjects,
+    enableFollowScreen,
+    setMapBbox,
+  } = useFilterProjectsContext()
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
@@ -141,6 +147,15 @@ const MaplibreMap = ({ view, setView }) => {
     //   map.zoomControl.remove()
     // }
   }
+
+  const _updateMapBbox = useEffect(() => {
+    const map = mapRef.current?.getMap()
+    if (!enableFollowScreen || !map) {
+      return
+    }
+    const bounds = map.getBounds()
+    setMapBbox(bounds)
+  }, [enableFollowScreen, setMapBbox])
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged =
@@ -187,6 +202,7 @@ const MaplibreMap = ({ view, setView }) => {
     const { lat, lng } = map.getCenter()
     const zoom = map.getZoom()
     const queryParams = getURLParams()
+    const bounds = map.getBounds()
 
     queryParams.set('lat', lat)
     queryParams.set('lng', lng)
@@ -194,6 +210,7 @@ const MaplibreMap = ({ view, setView }) => {
     updateURLParams(queryParams)
     setMapCenter([lat, lng])
     setMapZoom(zoom)
+    setMapBbox(bounds)
   }
 
   const handleResize = () => {
@@ -288,6 +305,9 @@ const MaplibreMap = ({ view, setView }) => {
       }
       customImage.src = customIcon
       hideMapStyleLayers(map)
+
+      const bounds = map.getBounds()
+      setMapBbox(bounds)
     }
   }
 
