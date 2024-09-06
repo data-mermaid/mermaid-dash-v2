@@ -201,15 +201,31 @@ export const FilterProjectsProvider = ({ children }) => {
     enableFollowScreen,
   ])
 
-  const normalizeLng = (lng) => {
-    if (lng < -180) {
-      return lng + 360
+  const isRecordWithinMapBounds = useCallback((record, mapBbox) => {
+    const isWithinLatitude =
+      record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
+
+    const normalizeLng = (lng) => {
+      // Use modulo to handle any number of rotations around the globe
+      lng = (lng + 180) % 360
+      // Adjust the result to be in the range [-180, 180)
+      if (lng < 0) {
+        lng += 360
+      }
+
+      return lng - 180
     }
-    if (lng > 180) {
-      return lng - 360
-    }
-    return lng
-  }
+
+    const swLng = normalizeLng(mapBbox['_sw'].lng)
+    const neLng = normalizeLng(mapBbox['_ne'].lng)
+
+    const isWithinLongitude =
+      swLng <= neLng
+        ? record.longitude >= swLng && record.longitude <= neLng
+        : record.longitude >= swLng || record.longitude <= neLng
+
+    return isWithinLatitude && isWithinLongitude
+  }, [])
 
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
@@ -328,20 +344,7 @@ export const FilterProjectsProvider = ({ children }) => {
 
           return {
             ...project,
-            records: project.records.filter((record) => {
-              const isWithinLatitude =
-                record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
-
-              const swLng = normalizeLng(mapBbox['_sw'].lng)
-              const neLng = normalizeLng(mapBbox['_ne'].lng)
-
-              const isWithinLongitude =
-                swLng <= neLng
-                  ? record.longitude >= swLng && record.longitude <= neLng
-                  : record.longitude >= swLng || record.longitude <= neLng
-
-              return isWithinLatitude && isWithinLongitude
-            }),
+            records: project.records.filter((record) => isRecordWithinMapBounds(record, mapBbox)),
           }
         })
 
@@ -389,6 +392,9 @@ export const FilterProjectsProvider = ({ children }) => {
       sampleDateBefore,
       showYourData,
       isAnyActiveFilters,
+      enableFollowScreen,
+      isRecordWithinMapBounds,
+      mapBbox,
     ],
   )
 
