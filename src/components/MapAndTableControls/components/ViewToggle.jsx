@@ -47,6 +47,9 @@ const ViewToggle = ({ view, setView }) => {
     checkedProjects,
     showProjectsWithNoRecords,
     setShowProjectsWithNoRecords,
+    selectedOrganizations,
+    showYourData,
+    isAnyActiveFilters,
   } = useFilterProjectsContext()
   const location = useLocation()
   const navigate = useNavigate()
@@ -140,18 +143,20 @@ const ViewToggle = ({ view, setView }) => {
             filename={downloadedFileName()}
             ref={csvLinkRef}
           />
-          <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
-            <input
-              type="checkbox"
-              id="show-0-projects"
-              checked={showProjectsWithNoRecords}
-              onChange={handleShowProjectsWithNoRecords}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
-              Show projects with 0 surveys
-            </StyledLabel>
-          </ZeroSurveysButton>
+          {selectedOrganizations.length || showYourData ? (
+            <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
+              <input
+                type="checkbox"
+                id="show-0-projects"
+                checked={showProjectsWithNoRecords}
+                onChange={handleShowProjectsWithNoRecords}
+                onClick={(e) => e.stopPropagation()}
+              />
+              <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
+                Show projects with 0 surveys
+              </StyledLabel>
+            </ZeroSurveysButton>
+          ) : null}
         </>
       )}
     </StyledViewToggleContainer>
