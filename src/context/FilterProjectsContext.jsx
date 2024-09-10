@@ -62,6 +62,8 @@ export const FilterProjectsProvider = ({ children }) => {
   const [remainingDisplayedCountries, setRemainingDisplayedCountries] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
   const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(false)
+  const [enableFollowScreen, setEnableFollowScreen] = useState(false)
+  const [mapBbox, setMapBbox] = useState({})
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -127,6 +129,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
+    const setFollowScreen = () => {
+      if (queryParams.has(URL_PARAMS.FOLLOW_SCREEN)) {
+        setEnableFollowScreen(true)
+      }
+    }
+
     setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
     setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
@@ -135,6 +143,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
     handleMethodDataSharingFilter()
     setProjectNameValue()
+    setFollowScreen()
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
@@ -170,6 +179,7 @@ export const FilterProjectsProvider = ({ children }) => {
     const showYourDataOnly = showYourData
     const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
     const anyActiveProjects = projectNameFilter
+    const followScreenEnabled = enableFollowScreen
 
     return (
       anyActiveCountries ||
@@ -178,7 +188,8 @@ export const FilterProjectsProvider = ({ children }) => {
       anyActiveSampleDateBefore ||
       showYourDataOnly ||
       anyInactiveMethodDataSharing ||
-      anyActiveProjects
+      anyActiveProjects ||
+      followScreenEnabled
     )
   }, [
     selectedCountries,
@@ -188,7 +199,34 @@ export const FilterProjectsProvider = ({ children }) => {
     showYourData,
     methodDataSharingFilters,
     projectNameFilter,
+    enableFollowScreen,
   ])
+
+  const isRecordWithinMapBounds = useCallback((record, mapBbox) => {
+    const isWithinLatitude =
+      record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
+
+    const normalizeLng = (lng) => {
+      // Use modulo to handle any number of rotations around the globe
+      lng = (lng + 180) % 360
+      // Adjust the result to be in the range [-180, 180)
+      if (lng < 0) {
+        lng += 360
+      }
+
+      return lng - 180
+    }
+
+    const swLng = normalizeLng(mapBbox['_sw'].lng)
+    const neLng = normalizeLng(mapBbox['_ne'].lng)
+
+    const isWithinLongitude =
+      swLng <= neLng
+        ? record.longitude >= swLng && record.longitude <= neLng
+        : record.longitude >= swLng || record.longitude <= neLng
+
+    return isWithinLatitude && isWithinLongitude
+  }, [])
 
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
@@ -199,22 +237,22 @@ export const FilterProjectsProvider = ({ children }) => {
         projectData.results
           // Create new keys at the project level to store the countries, organizations, and years
           // These will persist even if the project has no records
-          .map((project) => {
-            const yearsInProject = new Set()
-            const countriesInProject = new Set()
-            const organizationsInProject = new Set()
-            project.records.forEach((record) => {
-              countriesInProject.add(record.country_name)
-              record.tags?.forEach((tag) => organizationsInProject.add(tag.name))
-              yearsInProject.add(record.sample_date.substring(0, 4))
-            })
-            return {
-              ...project,
-              years: Array.from(yearsInProject).sort((a, b) => a.localeCompare(b)),
-              countries: Array.from(countriesInProject).sort((a, b) => a.localeCompare(b)),
-              organizations: Array.from(organizationsInProject).sort((a, b) => a.localeCompare(b)),
-            }
-          })
+          // .map((project) => {
+          //   const yearsInProject = new Set()
+          //   const countriesInProject = new Set()
+          //   const organizationsInProject = new Set()
+          //   project.records.forEach((record) => {
+          //     countriesInProject.add(record.country_name)
+          //     record.tags?.forEach((tag) => organizationsInProject.add(tag.name))
+          //     yearsInProject.add(record.sample_date.substring(0, 4))
+          //   })
+          //   return {
+          //     ...project,
+          //     years: Array.from(yearsInProject).sort((a, b) => a.localeCompare(b)),
+          //     countries: Array.from(countriesInProject).sort((a, b) => a.localeCompare(b)),
+          //     organizations: Array.from(organizationsInProject).sort((a, b) => a.localeCompare(b)),
+          //   }
+          // })
           .filter((project) => {
             // Filter by selected countries
             const matchesSelectedCountries =
@@ -224,7 +262,10 @@ export const FilterProjectsProvider = ({ children }) => {
             // Filter by selected organizations
             const matchesSelectedOrganizations =
               selectedOrganizations.length === 0 ||
-              project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
+              // project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
+              project.tags
+                ?.map((tag) => tag.name)
+                .some((tag) => selectedOrganizations.includes(tag))
 
             // Filter by project name
             const matchesProjectName =
@@ -347,6 +388,17 @@ export const FilterProjectsProvider = ({ children }) => {
               records: filteredRecords,
             }
           })
+          .map((project) => {
+            // Filter by map bounding box
+            if (!enableFollowScreen) {
+              return project
+            }
+
+            return {
+              ...project,
+              records: project.records.filter((record) => isRecordWithinMapBounds(record, mapBbox)),
+            }
+          })
           .filter((project) => {
             // Filter out projects that have no records
             let projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
@@ -366,6 +418,9 @@ export const FilterProjectsProvider = ({ children }) => {
       showYourData,
       isAnyActiveFilters,
       showProjectsWithNoRecords,
+      enableFollowScreen,
+      isRecordWithinMapBounds,
+      mapBbox,
     ],
   )
 
@@ -377,7 +432,9 @@ export const FilterProjectsProvider = ({ children }) => {
     const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
     const paramsSampleEventId =
       queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
-    doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    if (projectData.results.length === projectData.count) {
+      doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
+    }
 
     setDisplayedProjects(
       filteredProjects.sort((a, b) => a.project_name.localeCompare(b.project_name)),
@@ -399,6 +456,8 @@ export const FilterProjectsProvider = ({ children }) => {
     showYourData,
     applyFilterToProjects,
     queryParams,
+    enableFollowScreen,
+    mapBbox,
   ])
 
   const countriesSelectOnOpen = () => {
@@ -588,6 +647,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setMethodDataSharingFilters([])
     setProjectNameFilter('')
     setShowYourData(false)
+    setEnableFollowScreen(false)
     updateURLParams(queryParams)
   }
 
@@ -665,6 +725,9 @@ export const FilterProjectsProvider = ({ children }) => {
         isAnyActiveFilters,
         showProjectsWithNoRecords,
         setShowProjectsWithNoRecords,
+        enableFollowScreen,
+        setEnableFollowScreen,
+        setMapBbox,
       }}
     >
       {children}

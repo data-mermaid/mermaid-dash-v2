@@ -33,6 +33,8 @@ import {
   StyledReefItemBold,
   StyledVisibleBackground,
   StyledChevronSpan,
+  DesktopFollowScreenButton,
+  StyledLabel,
 } from './MetricsPane.styles'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { CloseButton } from '../generic'
@@ -41,7 +43,7 @@ import mapPin from '../../assets/map-pin.png'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 
-const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator }) => {
+const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator, view }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
@@ -58,6 +60,8 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     userIsMemberOfProject,
     checkedProjects,
     getActiveProjectCount,
+    enableFollowScreen,
+    setEnableFollowScreen,
   } = useFilterProjectsContext()
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
@@ -320,6 +324,19 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     }
   }
 
+  const handleFollowScreen = (e) => {
+    setEnableFollowScreen((prevState) => !prevState)
+
+    const { checked } = e.target
+    const queryParams = getURLParams()
+    if (checked) {
+      queryParams.set('follow_screen', 'true')
+    } else {
+      queryParams.delete('follow_screen')
+    }
+    updateURLParams(queryParams)
+  }
+
   return (
     <StyledMetricsWrapper
       $showMetricsPane={showMetricsPane}
@@ -330,6 +347,26 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       {isMobileWidth || showMetricsPane ? MetricsContent() : null}
       {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
+      ) : null}
+      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+        <DesktopFollowScreenButton
+          onClick={() =>
+            handleFollowScreen({
+              target: { checked: !enableFollowScreen },
+            })
+          }
+        >
+          <input
+            type="checkbox"
+            id="follow-screen"
+            checked={enableFollowScreen}
+            onChange={handleFollowScreen}
+            onClick={(e) => e.stopPropagation()}
+          />
+          <StyledLabel htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
+            Update metrics based on map view
+          </StyledLabel>
+        </DesktopFollowScreenButton>
       ) : null}
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
@@ -362,6 +399,7 @@ MetricsPane.propTypes = {
   showMetricsPane: PropTypes.bool.isRequired,
   setShowMetricsPane: PropTypes.func.isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
+  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
 }
 
 export default MetricsPane

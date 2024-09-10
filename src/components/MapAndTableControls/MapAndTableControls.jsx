@@ -1,6 +1,5 @@
 import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
-import L from 'leaflet'
 import { bbox } from '@turf/bbox'
 import { points } from '@turf/helpers'
 
@@ -37,7 +36,7 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
-const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = true }) => {
+const MapAndTableControls = ({ map = undefined, view, setView }) => {
   const { displayedProjects, projectDataCount, getActiveProjectCount, isAnyActiveFilters } =
     useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
@@ -47,25 +46,15 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
-    const coordinates = displayedProjects.flatMap((project) => {
-      if (isLeafletMap) {
-        return project.records.map((record) => [record.latitude, record.longitude])
-      } else {
-        return project.records.map((record) => [record.longitude, record.latitude])
-      }
-    })
+    const coordinates = displayedProjects.flatMap((project) =>
+      project.records.map((record) => [record.longitude, record.latitude]),
+    )
 
     if (coordinates.length === 0) {
       return
     }
 
-    let bounds
-
-    if (isLeafletMap) {
-      bounds = L.latLngBounds(coordinates)
-    } else {
-      bounds = bbox(points(coordinates))
-    }
+    const bounds = bbox(points(coordinates))
     map.fitBounds(bounds)
   }
 
@@ -83,12 +72,8 @@ const MapAndTableControls = ({ map = undefined, view, setView, isLeafletMap = tr
         return
       }
       const { latitude, longitude } = foundSampleEvent
-      if (isLeafletMap) {
-        map.setView([latitude, longitude], 18)
-      } else {
-        map.setCenter([longitude, latitude])
-        map.setZoom(18)
-      }
+      map.setCenter([longitude, latitude])
+      map.setZoom(18)
     }
   }
 
@@ -133,7 +118,6 @@ MapAndTableControls.propTypes = {
   map: PropTypes.object,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
-  isLeafletMap: PropTypes.bool,
 }
 
 export default MapAndTableControls
