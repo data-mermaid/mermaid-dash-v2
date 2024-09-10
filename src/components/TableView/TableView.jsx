@@ -58,8 +58,14 @@ const TableView = ({ view, setView, mermaidUserData }) => {
         if (!checkedProjects.includes(project.project_id)) {
           return null
         }
-        const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
-          formatProjectDataHelper(project)
+        const {
+          projectName,
+          formattedDateRange,
+          countries,
+          organizations,
+          surveyCount,
+          transects,
+        } = formatProjectDataHelper(project)
         return {
           id: i,
           projectName,
@@ -159,6 +165,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       initialState: {
         pageSize: PAGE_SIZE_DEFAULT,
       },
+      autoResetSortBy: false,
     },
     useSortBy,
     usePagination,
