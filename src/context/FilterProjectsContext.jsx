@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
-import { URL_PARAMS, COLLECTION_METHODS } from '../constants/constants'
+import { URL_PARAMS, COLLECTION_METHODS, POLICY_MAPPINGS } from '../constants/constants'
 
 const isValidDateFormat = (dateString) => {
   // Regular expression to match the date format YYYY-MM-DD
@@ -61,6 +61,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [displayedCountries, setDisplayedCountries] = useState([])
   const [remainingDisplayedCountries, setRemainingDisplayedCountries] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
+  const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(false)
   const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
@@ -233,8 +234,37 @@ export const FilterProjectsProvider = ({ children }) => {
       const fallbackSampleDateBefore = new Date(Date.now())
 
       return projectData.results
+        .filter((project) => {
+          // Filter by selected countries
+          const matchesSelectedCountries =
+            selectedCountries.length === 0 ||
+            selectedCountries.includes(project.records[0]?.country_name)
+
+          // Filter by selected organizations
+          const matchesSelectedOrganizations =
+            selectedOrganizations.length === 0 ||
+            project.tags?.map((tag) => tag.name).some((tag) => selectedOrganizations.includes(tag))
+
+          // Filter by project name
+          const matchesProjectName =
+            projectNameFilter === '' ||
+            project.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
+
+          // Filter out projects that the user is not a member of
+          const onlyShowProjectsUserIsAMemberOf = showYourData
+            ? userIsMemberOfProject(project.project_id, mermaidUserData)
+            : true
+
+          const isProjectVisible =
+            matchesSelectedCountries &&
+            matchesSelectedOrganizations &&
+            matchesProjectName &&
+            onlyShowProjectsUserIsAMemberOf
+
+          return isProjectVisible
+        })
         .map((project) => {
-          // Filter project if sample date falls within selected date range
+          // Applies date filters
           if (!sampleDateAfter && !sampleDateBefore) {
             return project
           }
@@ -249,86 +279,15 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Filter by method data sharing
-          const policyMappings = {
-            bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
-            bf_2: {
-              policy: 'data_policy_beltfish',
-              name: 'beltfish',
-              value: 'public summary',
-            },
-            bf_3: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
-            cb_1: {
-              policy: 'data_policy_bleachingqc',
-              name: 'colonies_bleached',
-              value: 'public',
-            },
-            cb_2: {
-              policy: 'data_policy_bleachingqc',
-              name: 'colonies_bleached',
-              value: 'public summary',
-            },
-            cb_3: {
-              policy: 'data_policy_bleachingqc',
-              name: 'colonies_bleached',
-              value: 'private',
-            },
-            bp_1: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'public' },
-            bp_2: {
-              policy: 'data_policy_benthicpit',
-              name: 'benthicpit',
-              value: 'public summary',
-            },
-            bp_3: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'private' },
-            bl_1: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'public' },
-            bl_2: {
-              policy: 'data_policy_benthiclit',
-              name: 'benthiclit',
-              value: 'public summary',
-            },
-            bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
-            qbp_1: {
-              policy: 'data_policy_benthicpqt',
-              name: 'benthicpqt',
-              value: 'public',
-            },
-            qbp_2: {
-              policy: 'data_policy_benthicpqt',
-              name: 'benthicpqt',
-              value: 'public summary',
-            },
-            qbp_3: {
-              policy: 'data_policy_benthicpqt',
-              name: 'benthicpqt',
-              value: 'private',
-            },
-            hc_1: {
-              policy: 'data_policy_habitatcomplexity',
-              name: 'habitatcomplexity',
-              value: 'public',
-            },
-            hc_2: {
-              policy: 'data_policy_habitatcomplexity',
-              name: 'habitatcomplexity',
-              value: 'public summary',
-            },
-            hc_3: {
-              policy: 'data_policy_habitatcomplexity',
-              name: 'habitatcomplexity',
-              value: 'private',
-            },
-          }
-
+          // Applies method data sharing filters
           const filteredRecords = project.records.filter((record) => {
-            // Check if this record should be excluded based on methodDataSharingFilters
-            const shouldOmitRecord = methodDataSharingFilters.some((filter) => {
-              const { policy, value, name } = policyMappings[filter] || {}
+            const recordHasSampleUnitsAndMatches = !methodDataSharingFilters.some((filter) => {
+              const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
               return sampleUnitExists && isPolicyValueMatch
             })
-            // Return the inverse of shouldOmitRecord to keep only the records that should not be omitted
-            return !shouldOmitRecord
+            return recordHasSampleUnitsAndMatches
           })
 
           return {
@@ -347,38 +306,10 @@ export const FilterProjectsProvider = ({ children }) => {
             records: project.records.filter((record) => isRecordWithinMapBounds(record, mapBbox)),
           }
         })
-
         .filter((project) => {
-          // Filter by selected countries
-          const matchesSelectedCountries =
-            selectedCountries.length === 0 ||
-            selectedCountries.includes(project.records[0]?.country_name)
-
-          // Filter by selected organizations
-          const matchesSelectedOrganizations =
-            selectedOrganizations.length === 0 ||
-            project.records[0]?.tags?.some((tag) => selectedOrganizations.includes(tag.name))
-
-          // Filter by project name
-          const matchesProjectName =
-            projectNameFilter === '' ||
-            project.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
-
-          // Filter out projects that the user is not a member of
-          const onlyShowProjectsUserIsAMemberOf = showYourData
-            ? userIsMemberOfProject(project.project_id, mermaidUserData)
-            : true
-
           // Filter out projects that have no records
-          const projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
-
-          const isProjectVisible =
-            matchesSelectedCountries &&
-            matchesSelectedOrganizations &&
-            matchesProjectName &&
-            onlyShowProjectsUserIsAMemberOf &&
-            projectHasRecords
-
+          let projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
+          const isProjectVisible = projectHasRecords || showProjectsWithNoRecords
           return isProjectVisible
         })
     },
@@ -392,6 +323,7 @@ export const FilterProjectsProvider = ({ children }) => {
       sampleDateBefore,
       showYourData,
       isAnyActiveFilters,
+      showProjectsWithNoRecords,
       enableFollowScreen,
       isRecordWithinMapBounds,
       mapBbox,
@@ -697,6 +629,8 @@ export const FilterProjectsProvider = ({ children }) => {
         getURLParams,
         updateURLParams,
         isAnyActiveFilters,
+        showProjectsWithNoRecords,
+        setShowProjectsWithNoRecords,
         enableFollowScreen,
         setEnableFollowScreen,
         setMapBbox,

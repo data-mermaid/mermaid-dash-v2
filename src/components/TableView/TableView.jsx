@@ -33,7 +33,12 @@ const StyledTableContainer = styled.div`
 `
 
 const TableView = ({ view, setView, mermaidUserData }) => {
-  const { displayedProjects, userIsMemberOfProject, checkedProjects } = useFilterProjectsContext()
+  const {
+    displayedProjects,
+    userIsMemberOfProject,
+    checkedProjects,
+    setShowProjectsWithNoRecords,
+  } = useFilterProjectsContext()
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -41,14 +46,26 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const queryParams = getURLParams()
   const queryParamsProjectId = queryParams.get('project_id')
 
+  const _onUnmount = useEffect(() => {
+    return () => {
+      setShowProjectsWithNoRecords(false)
+    }
+  }, [setShowProjectsWithNoRecords])
+
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects
       .map((project, i) => {
         if (!checkedProjects.includes(project.project_id)) {
           return null
         }
-        const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
-          formatProjectDataHelper(project)
+        const {
+          projectName,
+          formattedDateRange,
+          countries,
+          organizations,
+          surveyCount,
+          transects,
+        } = formatProjectDataHelper(project)
         return {
           id: i,
           projectName,
@@ -148,6 +165,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       initialState: {
         pageSize: PAGE_SIZE_DEFAULT,
       },
+      autoResetSortBy: false,
     },
     useSortBy,
     usePagination,

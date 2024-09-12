@@ -3,7 +3,7 @@ export const formatProjectDataHelper = (project) => {
   const data = {
     years: new Set(),
     countries: new Set(),
-    organizations: new Set(),
+    organizations: project.tags?.map((tag) => tag.name) || [],
     surveyCount: records.length,
     transects: 0,
   }
@@ -11,7 +11,6 @@ export const formatProjectDataHelper = (project) => {
   records.forEach((record) => {
     data.years.add(record.sample_date.substring(0, 4))
     data.countries.add(record.country_name)
-    record.tags?.forEach((tag) => data.organizations.add(tag.name))
     const sumOfSampleUnitCounts = Object.values(record.protocols).reduce((sum, protocol) => {
       return sum + protocol.sample_unit_count
     }, 0)
@@ -26,13 +25,13 @@ export const formatProjectDataHelper = (project) => {
         ? years[0]
         : `${years[0]}-${years[years.length - 1]}`
   const countries = [...data.countries].sort((a, b) => a.localeCompare(b)).join(', ')
-  const organizations = [...data.organizations].sort((a, b) => a.localeCompare(b)).join(', ')
+  const organizations = [...data.organizations.sort((a, b) => a.localeCompare(b))].join(', ')
 
   return {
     projectName: project.project_name,
     formattedDateRange,
     countries,
-    organizations,
+    organizations: organizations,
     surveyCount: data.surveyCount,
     transects: data.transects,
   }
