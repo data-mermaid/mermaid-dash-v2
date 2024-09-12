@@ -35,3 +35,72 @@ export const COLLECTION_METHODS = {
     dataSharingOptions: ['hc_all', 'hc_1', 'hc_2', 'hc_3'],
   },
 }
+
+export const POLICY_MAPPINGS = {
+  bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
+  bf_2: {
+    policy: 'data_policy_beltfish',
+    name: 'beltfish',
+    value: 'public summary',
+  },
+  bf_3: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
+  cb_1: {
+    policy: 'data_policy_bleachingqc',
+    name: 'colonies_bleached',
+    value: 'public',
+  },
+  cb_2: {
+    policy: 'data_policy_bleachingqc',
+    name: 'colonies_bleached',
+    value: 'public summary',
+  },
+  cb_3: {
+    policy: 'data_policy_bleachingqc',
+    name: 'colonies_bleached',
+    value: 'private',
+  },
+  bp_1: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'public' },
+  bp_2: {
+    policy: 'data_policy_benthicpit',
+    name: 'benthicpit',
+    value: 'public summary',
+  },
+  bp_3: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'private' },
+  bl_1: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'public' },
+  bl_2: {
+    policy: 'data_policy_benthiclit',
+    name: 'benthiclit',
+    value: 'public summary',
+  },
+  bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
+  qbp_1: {
+    policy: 'data_policy_benthicpqt',
+    name: 'benthicpqt',
+    value: 'public',
+  },
+  qbp_2: {
+    policy: 'data_policy_benthicpqt',
+    name: 'benthicpqt',
+    value: 'public summary',
+  },
+  qbp_3: {
+    policy: 'data_policy_benthicpqt',
+    name: 'benthicpqt',
+    value: 'private',
+  },
+  hc_1: {
+    policy: 'data_policy_habitatcomplexity',
+    name: 'habitatcomplexity',
+    value: 'public',
+  },
+  hc_2: {
+    policy: 'data_policy_habitatcomplexity',
+    name: 'habitatcomplexity',
+    value: 'public summary',
+  },
+  hc_3: {
+    policy: 'data_policy_habitatcomplexity',
+    name: 'habitatcomplexity',
+    value: 'private',
+  },
+}
