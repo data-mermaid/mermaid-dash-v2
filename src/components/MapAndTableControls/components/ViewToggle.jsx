@@ -150,7 +150,6 @@ const ViewToggle = ({ view, setView }) => {
                 id="show-0-projects"
                 checked={showProjectsWithNoRecords}
                 onChange={handleShowProjectsWithNoRecords}
-                onClick={(e) => e.stopPropagation()}
               />
               <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
                 Show projects with 0 surveys
