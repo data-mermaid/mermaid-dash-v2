@@ -281,15 +281,13 @@ export const FilterProjectsProvider = ({ children }) => {
         .map((project) => {
           // Applies method data sharing filters
           const filteredRecords = project.records.filter((record) => {
-            // Check if this record should be excluded based on methodDataSharingFilters
-            const shouldOmitRecord = methodDataSharingFilters.some((filter) => {
+            const recordHasSampleUnitsAndMatches = !methodDataSharingFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
               return sampleUnitExists && isPolicyValueMatch
             })
-            // Return the inverse of shouldOmitRecord to keep only the records that should not be omitted
-            return !shouldOmitRecord
+            return recordHasSampleUnitsAndMatches
           })
 
           return {
