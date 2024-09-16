@@ -11,6 +11,9 @@ import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { IconClose } from '../../assets/icons'
+import { Column, Row } from '../generic/positioning'
+import theme from '../../styles/theme'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -27,7 +30,7 @@ const ControlContainer = styled.div`
   `)}
 `
 
-const ZoomToSecondaryButton = styled(ButtonSecondary)`
+const MapAndTableControlsButtonSecondary = styled(ButtonSecondary)`
   padding-left: 2rem;
   padding-right: 2rem;
   display: flex;
@@ -36,10 +39,40 @@ const ZoomToSecondaryButton = styled(ButtonSecondary)`
   align-items: center;
 `
 
+const FilterControlContainer = styled(Column)`
+  height: 6rem;
+  border: solid 1px ${theme.color.secondaryBorder};
+`
+
+const FilterControlButton = styled(MapAndTableControlsButtonSecondary)`
+  border: none;
+  border-top: solid 1px ${theme.color.secondaryBorder};
+`
+
+const ZoomToFilterButton = styled(FilterControlButton)`
+  border-right: solid 1px ${theme.color.secondaryBorder};
+`
+
+const CloseButton = styled(FilterControlButton)`
+  width: 100%;
+  justify-content: center;
+
+  & svg {
+    height: 24px;
+    width: 24px;
+  }
+`
+
 const MapAndTableControls = ({ map = undefined, view, setView }) => {
-  const { displayedProjects, projectDataCount, getActiveProjectCount, isAnyActiveFilters } =
-    useFilterProjectsContext()
+  const {
+    clearAllFilters,
+    displayedProjects,
+    getActiveProjectCount,
+    isAnyActiveFilters,
+    projectDataCount,
+  } = useFilterProjectsContext()
   const { isDesktopWidth } = useResponsive()
+  const isMapView = view === 'mapView'
   const queryParams = new URLSearchParams(location.search)
 
   const handleZoomToFilteredData = () => {
@@ -84,31 +117,36 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
   return (
     <ControlContainer>
       {isAnyActiveFilters() ? (
-        <FilterIndicatorPill
-          searchFilteredRowLength={getActiveProjectCount()}
-          unfilteredRowLength={projectDataCount}
-        />
+        <FilterControlContainer>
+          <FilterIndicatorPill
+            searchFilteredRowLength={getActiveProjectCount()}
+            unfilteredRowLength={projectDataCount}
+          />
+          <Row>
+            {isMapView ? (
+              <ZoomToFilterButton onClick={handleZoomToFilteredData}>
+                <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
+                Zoom
+              </ZoomToFilterButton>
+            ) : null}
+            <CloseButton type="button" onClick={clearAllFilters}>
+              <IconClose /> Clear
+            </CloseButton>
+          </Row>
+        </FilterControlContainer>
       ) : null}
       {isDesktopWidth ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
       ) : null}
-      {isAnyActiveFilters() && view === 'mapView' ? (
-        <ZoomToSecondaryButton
-          onClick={handleZoomToFilteredData}
-          aria-labelledby="Zoom to filtered data button"
-        >
-          <img src={zoomToFiltered} alt="Zoom to filtered data" />
-          {isDesktopWidth ? <span>Filtered Data</span> : null}
-        </ZoomToSecondaryButton>
-      ) : null}
-      {hasSelectedSite() && view === 'mapView' ? (
-        <ZoomToSecondaryButton
+
+      {hasSelectedSite() && isMapView ? (
+        <MapAndTableControlsButtonSecondary
           onClick={handleZoomToSelectedSite}
           aria-labelledby="Zoom to selected site button"
         >
           <img src={zoomToSelectedSites} alt="Zoom to selected site" />
           {isDesktopWidth ? <span>Selected Site</span> : null}
-        </ZoomToSecondaryButton>
+        </MapAndTableControlsButtonSecondary>
       ) : null}
     </ControlContainer>
   )
