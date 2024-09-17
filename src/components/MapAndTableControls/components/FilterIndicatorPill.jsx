@@ -1,13 +1,9 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
-import { IconClose } from '../../../assets/icons'
 import theme from '../../../styles/theme'
-import { IconButton } from '../../generic'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
-import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
 
 const FilterIndictorPillContainer = styled.div`
-  border: solid 1px ${theme.color.border};
   color: ${theme.color.textColor};
   padding: ${theme.spacing.xxsmall} ${theme.spacing.medium};
   white-space: nowrap;
@@ -20,23 +16,18 @@ const FilterIndictorPillContainer = styled.div`
   font-size: ${theme.typography.defaultFontSize};
 `
 
-const FilterAmount = styled.p`
+const FilterAmount = styled.span`
   font-weight: bold;
   padding: 0 0.4em;
 `
 
 const FilterIndicatorPill = ({ searchFilteredRowLength = null, unfilteredRowLength }) => {
-  const { clearAllFilters } = useFilterProjectsContext()
-
   return (
     <FilterIndictorPillContainer>
-      Filtered
       <FilterAmount>
         {searchFilteredRowLength} / {unfilteredRowLength}
-      </FilterAmount>{' '}
-      <IconButton type="button" onClick={clearAllFilters}>
-        <IconClose />
-      </IconButton>
+      </FilterAmount>
+      Filtered
     </FilterIndictorPillContainer>
   )
 }
