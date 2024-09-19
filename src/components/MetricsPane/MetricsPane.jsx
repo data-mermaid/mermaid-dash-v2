@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useContext } from 'react'
 import PropTypes from 'prop-types'
 import useResponsive from '../../hooks/useResponsive'
 import {
@@ -35,13 +35,18 @@ import {
   StyledChevronSpan,
   DesktopFollowScreenButton,
   StyledLabel,
+  SelectedSiteActionBar,
 } from './MetricsPane.styles'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
-import { CloseButton } from '../generic'
+import { ButtonSecondary } from '../generic'
 import { IconClose } from '../../assets/icons'
 import mapPin from '../../assets/map-pin.png'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
+import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
+import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/selectedSite'
+import { useMap } from 'react-map-gl'
+import { MAIN_MAP_ID } from '../../constants/constants'
 
 const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator, view }) => {
   const [numSurveys, setNumSurveys] = useState(0)
@@ -65,6 +70,8 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
   } = useFilterProjectsContext()
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
+  const isMapView = view === 'mapView'
+  const map = useMap()[MAIN_MAP_ID] // the docs for react-map-gl are not clear on the return object for useMap. This is what works in testing. Further, its not a 'ref' its the actual map instance.
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
@@ -155,9 +162,6 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
           <img src={mapPin} alt="map-pin" />
         </StyledMapPinContainer>
         <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
-        <CloseButton onClick={handleClearSelectedSampleEvent}>
-          <IconClose aria-label="close" />
-        </CloseButton>
       </SelectedSiteSiteCardContainer>
     </StyledVisibleBackground>
   )
@@ -316,6 +320,16 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
       return (
         <>
           <SelectedSiteHeader />
+          <SelectedSiteActionBar>
+            {getIsSiteSelected() && isMapView ? (
+              <ButtonSecondary onClick={() => zoomToSelectedSite({ displayedProjects, map })}>
+                <ZoomToSiteIcon /> &nbsp;Zoom
+              </ButtonSecondary>
+            ) : null}
+            <ButtonSecondary onClick={handleClearSelectedSampleEvent}>
+              <IconClose /> Clear
+            </ButtonSecondary>
+          </SelectedSiteActionBar>
           <SelectedSiteBody />
         </>
       )

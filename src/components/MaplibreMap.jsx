@@ -11,6 +11,7 @@ import useResponsive from '../hooks/useResponsive'
 import { useRef } from 'react'
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 import customIcon from '../assets/map-pin.png'
+import { MAIN_MAP_ID } from '../constants/constants'
 
 const defaultLon = -79
 const defaultLat = 32
@@ -314,6 +315,7 @@ const MaplibreMap = ({ view, setView }) => {
   return (
     <>
       <Map
+        id={MAIN_MAP_ID}
         ref={mapRef}
         style={{ width: '100%', height: '100%' }}
         initialViewState={{

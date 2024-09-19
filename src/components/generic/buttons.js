@@ -62,6 +62,9 @@ const buttonSecondaryCss = css`
   background-color: ${theme.color.white};
   color: ${theme.color.secondaryText};
   border: solid 1px ${theme.color.secondaryBorder};
+  display: flex;
+  align-items: center;
+  justify-content: center;
   ${hoverState(css`
     background-color: ${theme.color.secondaryHover};
   `)}
