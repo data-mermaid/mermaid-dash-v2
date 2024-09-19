@@ -29,11 +29,11 @@ import {
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { useAuth0 } from '@auth0/auth0-react'
 
 const deleteIconSize = {
@@ -102,7 +102,7 @@ const FilterPane = ({ mermaidUserData }) => {
     countriesSelectOnOpen,
     organizationsSelectOnOpen,
     getActiveProjectCount,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
     colonies_bleached: false,

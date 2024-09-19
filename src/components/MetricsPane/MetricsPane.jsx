@@ -37,8 +37,8 @@ import {
   StyledLabel,
   SelectedSiteActionBar,
 } from './MetricsPane.styles'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
 import { ButtonSecondary } from '../generic'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose } from '../../assets/icons'
 import mapPin from '../../assets/map-pin.png'
 import coralReefSvg from '../../assets/coral_reef.svg'
@@ -67,7 +67,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     getActiveProjectCount,
     enableFollowScreen,
     setEnableFollowScreen,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
   const isMapView = view === 'mapView'
