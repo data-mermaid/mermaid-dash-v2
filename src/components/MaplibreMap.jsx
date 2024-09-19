@@ -1,10 +1,10 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import PropTypes from 'prop-types'
 import Map from 'react-map-gl/maplibre'
 
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { AttributionControl, Layer, NavigationControl, Source } from 'react-map-gl'
-import { useFilterProjectsContext } from '../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../context/FilterProjectsContext'
 import usePrevious from '../hooks/usePrevious'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useResponsive from '../hooks/useResponsive'
@@ -103,7 +103,7 @@ const MaplibreMap = ({ view, setView }) => {
     checkedProjects,
     enableFollowScreen,
     setMapBbox,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()

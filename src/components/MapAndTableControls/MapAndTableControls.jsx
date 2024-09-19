@@ -10,10 +10,11 @@ import { ButtonSecondary } from '../generic'
 import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose } from '../../assets/icons'
 import { Column, Row } from '../generic/positioning'
 import theme from '../../styles/theme'
+import { useContext } from 'react'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -70,7 +71,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     getActiveProjectCount,
     isAnyActiveFilters,
     projectDataCount,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
   const isMapView = view === 'mapView'
   const queryParams = new URLSearchParams(location.search)

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useContext } from 'react'
 import PropTypes from 'prop-types'
 import useResponsive from '../../hooks/useResponsive'
 import {
@@ -36,7 +36,7 @@ import {
   DesktopFollowScreenButton,
   StyledLabel,
 } from './MetricsPane.styles'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { CloseButton } from '../generic'
 import { IconClose } from '../../assets/icons'
 import mapPin from '../../assets/map-pin.png'
@@ -62,7 +62,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     getActiveProjectCount,
     enableFollowScreen,
     setEnableFollowScreen,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')
 

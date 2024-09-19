@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
 import LoadingIndicator from './components/LoadingIndicator'
@@ -6,7 +6,7 @@ import TableView from '../TableView/TableView'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import { Modal } from '../generic'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
 import { useAuth0 } from '@auth0/auth0-react'
 import {
@@ -27,7 +27,7 @@ import MaplibreMap from '../MaplibreMap'
 
 const MermaidDash = () => {
   const { projectData, setProjectData, mermaidUserData, setMermaidUserData, setCheckedProjects } =
-    useFilterProjectsContext()
+    useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)

@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types'
-import { useRef } from 'react'
+import { useContext, useRef } from 'react'
 import styled from 'styled-components'
 import { ButtonPrimary, ButtonSecondary } from '../../generic'
 import { IconMapOutline, IconTable, IconTrayDownload } from '../../../assets/dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
-import { useFilterProjectsContext } from '../../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
 const StyledViewToggleContainer = styled.div`
@@ -49,8 +49,7 @@ const ViewToggle = ({ view, setView }) => {
     setShowProjectsWithNoRecords,
     selectedOrganizations,
     showYourData,
-    isAnyActiveFilters,
-  } = useFilterProjectsContext()
+  } = useContext(FilterProjectsContext)
   const location = useLocation()
   const navigate = useNavigate()
   const queryParams = new URLSearchParams(location.search)

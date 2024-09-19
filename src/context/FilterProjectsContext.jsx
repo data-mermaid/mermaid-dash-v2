@@ -3,6 +3,7 @@ import { createContext, useContext, useState, useEffect, useCallback, useMemo } 
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { URL_PARAMS, COLLECTION_METHODS, POLICY_MAPPINGS } from '../constants/constants'
+import { useWhatChanged } from '@simbathesailor/use-what-changed'
 
 const isValidDateFormat = (dateString) => {
   // Regular expression to match the date format YYYY-MM-DD
@@ -35,7 +36,7 @@ const isValidDateFormat = (dateString) => {
   return true
 }
 
-const FilterProjectsContext = createContext()
+export const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
   const location = useLocation()
@@ -640,8 +641,6 @@ export const FilterProjectsProvider = ({ children }) => {
     </FilterProjectsContext.Provider>
   )
 }
-
-export const useFilterProjectsContext = () => useContext(FilterProjectsContext)
 
 FilterProjectsProvider.propTypes = {
   children: PropTypes.node.isRequired,
