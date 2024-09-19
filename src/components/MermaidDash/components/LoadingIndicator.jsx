@@ -49,24 +49,29 @@ const StyledHeader = styled.header`
   `)}
 `
 
-const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingIndicator }) => {
+const LoadingIndicator = ({
+  loadedProjectsCount,
+  totalProjectsCount,
+  showLoadingIndicator,
+  setShowLoadingIndicator,
+}) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (!projectData.count || !projectData.results) {
-      return
+    if (totalProjectsCount === 0 || !totalProjectsCount) {
+      return // we cant divide by zero
     }
-    setLoadingProgressValue(Math.floor((projectData.results.length / projectData.count) * 100))
-  }, [projectData])
+    setLoadingProgressValue(Math.floor((loadedProjectsCount / totalProjectsCount) * 100))
+  }, [loadedProjectsCount, totalProjectsCount])
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
-        setTimeout(() => {
-          setShowLoadingIndicator(false)
+      setTimeout(() => {
+        setShowLoadingIndicator(false)
       }, 10000)
     }
   }, [loadingProgressValue, setShowLoadingIndicator])
-    
+
   return showLoadingIndicator === true ? (
     <StyledLoadingContainer>
       <StyledHeader>
@@ -82,10 +87,8 @@ const LoadingIndicator = ({ projectData, showLoadingIndicator, setShowLoadingInd
 }
 
 LoadingIndicator.propTypes = {
-  projectData: PropTypes.shape({
-    count: PropTypes.number,
-    results: PropTypes.array,
-  }).isRequired,
+  loadedProjectsCount: PropTypes.number.isRequired,
+  totalProjectsCount: PropTypes.number,
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
 }
