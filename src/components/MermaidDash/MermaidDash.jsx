@@ -25,7 +25,7 @@ import {
 } from './MermaidDash.styles'
 import MaplibreMap from '../MaplibreMap'
 
-const MermaidDash = () => {
+const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
   const { projectData, setProjectData, mermaidUserData, setMermaidUserData, setCheckedProjects } =
     useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useState(true)
@@ -37,6 +37,8 @@ const MermaidDash = () => {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [loadedProjectsCount, setLoadedProjectCount] = useState(0)
+  const [totalProjectsCount, setTotalProjectsCount] = useState(null)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -46,10 +48,17 @@ const MermaidDash = () => {
 
   const fetchData = useCallback(
     async (token = '') => {
+      if (isApiDataDoneLoading) {
+        return
+      }
       try {
+        setLoadedProjectCount(0)
+        setTotalProjectsCount(null)
         const apiEndpoint = import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
+        let newApiData = { results: [] }
+        let newCheckedProjects = []
 
         while (nextPageUrl) {
           const response = await fetch(nextPageUrl, {
@@ -64,29 +73,35 @@ const MermaidDash = () => {
           }
 
           const data = await response.json()
-          setProjectData((prevData) => {
-            return {
-              ...prevData,
-              count: data.count,
-              next: data.next,
-              previous: data.previous,
-              results: prevData.results
-                ? [...prevData.results, ...data.results]
-                : [...data.results],
-            }
-          })
-          setCheckedProjects((prevCheckedProjects) => [
-            ...prevCheckedProjects,
-            ...data.results.map((project) => project.project_id),
-          ])
+          if (!data.results) {
+            return
+          }
+          const resultsProjectIds = data.results.map((project) => project.project_id)
+
+          newApiData = {
+            ...newApiData,
+            count: data.count,
+            results: [...newApiData.results, ...data.results],
+          }
+          newCheckedProjects = [...newCheckedProjects, ...resultsProjectIds]
+          setLoadedProjectCount((prevCount) => prevCount + data.results.length)
+          setTotalProjectsCount(data.count)
           nextPageUrl = data.next
         }
+
+        setProjectData(newApiData)
+        setCheckedProjects(newCheckedProjects)
+        setIsApiDataDoneLoading(true) // ensures we dont accidentally refetch data. Tends to happen with dev server hot reloading.
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     },
-    [setProjectData, setCheckedProjects],
+    [isApiDataDoneLoading, setProjectData, setCheckedProjects],
   )
+
+  useEffect(() => {
+    console.log('loaded proj count', loadedProjectsCount)
+  }, [loadedProjectsCount])
 
   const fetchUserProfile = useCallback(async () => {
     try {
@@ -214,7 +229,7 @@ const MermaidDash = () => {
     )
   }
 
-  const renderMap = () => (
+  const map = (
     <StyledMapContainer>
       <MaplibreMap
         showFilterPane={showFilterPane}
@@ -224,18 +239,20 @@ const MermaidDash = () => {
         projectDataCount={projectData?.count || 0}
       />
       <LoadingIndicator
-        projectData={projectData}
+        loadedProjectsCount={loadedProjectsCount}
+        totalProjectsCount={totalProjectsCount}
         showLoadingIndicator={showLoadingIndicator}
         setShowLoadingIndicator={setShowLoadingIndicator}
       />
     </StyledMapContainer>
   )
 
-  const renderTable = () => (
+  const table = (
     <StyledTableContainer>
       <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
       <LoadingIndicator
-        projectData={projectData}
+        loadedProjectsCount={loadedProjectsCount}
+        totalProjectsCount={totalProjectsCount}
         showLoadingIndicator={showLoadingIndicator}
         setShowLoadingIndicator={setShowLoadingIndicator}
       />
@@ -259,7 +276,7 @@ const MermaidDash = () => {
       </StyledMobileToggleFilterPaneButton>
       <StyledContentContainer>
         {renderFilter(showFilterModal)}
-        {isMobileWidth || view === 'mapView' ? renderMap() : renderTable()}
+        {isMobileWidth || view === 'mapView' ? map : table}
         {renderMetrics()}
       </StyledContentContainer>
     </StyledDashboardContainer>
