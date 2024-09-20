@@ -48,7 +48,7 @@ import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/sel
 import { useMap } from 'react-map-gl'
 import { MAIN_MAP_ID } from '../../constants/constants'
 
-const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator, view }) => {
+const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
@@ -285,7 +285,6 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
         onClick={toggleMobileMetricsPane}
         $isDesktopWidth={isDesktopWidth}
         $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-        $showLoadingIndicator={showLoadingIndicator}
       >
         <MetricsCard>
           <P>{getActiveProjectCount()}</P>
@@ -355,7 +354,6 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
     <StyledMetricsWrapper
       $showMetricsPane={showMetricsPane}
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      $showLoadingIndicator={showLoadingIndicator}
       $isDesktopWidth={isDesktopWidth}
     >
       {isMobileWidth || showMetricsPane ? MetricsContent() : null}
@@ -412,7 +410,6 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, showLoadingIndicator
 MetricsPane.propTypes = {
   showMetricsPane: PropTypes.bool.isRequired,
   setShowMetricsPane: PropTypes.func.isRequired,
-  showLoadingIndicator: PropTypes.bool.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
 }
 
