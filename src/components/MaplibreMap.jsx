@@ -97,12 +97,12 @@ const sitesSource = {
 
 const MaplibreMap = ({ view, setView }) => {
   const {
-    displayedProjects,
-    selectedMarkerId,
-    setSelectedMarkerId,
     checkedProjects,
+    displayedProjects,
     enableFollowScreen,
+    selectedMarkerId,
     setMapBbox,
+    setSelectedMarkerId,
   } = useContext(FilterProjectsContext)
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
