@@ -108,19 +108,19 @@ const MaplibreMap = ({ view, setView }) => {
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
   const navigate = useNavigate()
-  const getURLParams = useCallback(() => {
+  const getURLParamsSnapshot = useCallback(() => {
     return new URLSearchParams(location.search)
   }, [location.search])
-  const queryParams = getURLParams()
-  const queryParamsLat = queryParams.get('lat')
-  const queryParamsLng = queryParams.get('lng')
-  const queryParamsZoom = queryParams.get('zoom')
-  const initialMapCenter = isValidLatLng(queryParamsLat, queryParamsLng)
-    ? [queryParamsLat, queryParamsLng]
+  const initialQueryParams = getURLParamsSnapshot()
+  const initialQueryParamsLat = initialQueryParams.get('lat')
+  const initialQueryParamsLng = initialQueryParams.get('lng')
+  const initialQueryParamsZoom = initialQueryParams.get('zoom')
+  const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
+    ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
-  const initialMapZoom = isValidZoom(queryParamsZoom) ? queryParamsZoom : defaultMapZoom
-  const [mapCenter, setMapCenter] = useState(initialMapCenter)
-  const [mapZoom, setMapZoom] = useState(initialMapZoom)
+  const initialMapZoom = isValidZoom(initialQueryParamsZoom)
+    ? initialQueryParamsZoom
+    : defaultMapZoom
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [sitesFeatureClass, setSitesFeatureClass] = useState(null)
   const { isDesktopWidth } = useResponsive()
@@ -129,8 +129,8 @@ const MaplibreMap = ({ view, setView }) => {
   const mapRef = useRef()
 
   const updateURLParams = useCallback(
-    (queryParams) => {
-      navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
+    (newQueryParams) => {
+      navigate(`${location.pathname}?${newQueryParams.toString()}`, { replace: true })
     },
     [navigate, location.pathname],
   )
@@ -202,15 +202,13 @@ const MaplibreMap = ({ view, setView }) => {
     const map = mapRef.current.getMap()
     const { lat, lng } = map.getCenter()
     const zoom = map.getZoom()
-    const queryParams = getURLParams()
+    const newQueryParams = getURLParamsSnapshot()
     const bounds = map.getBounds()
 
-    queryParams.set('lat', lat)
-    queryParams.set('lng', lng)
-    queryParams.set('zoom', zoom)
-    updateURLParams(queryParams)
-    setMapCenter([lat, lng])
-    setMapZoom(zoom)
+    newQueryParams.set('lat', lat)
+    newQueryParams.set('lng', lng)
+    newQueryParams.set('zoom', zoom)
+    updateURLParams(newQueryParams)
     setMapBbox(bounds)
   }
 
@@ -238,8 +236,9 @@ const MaplibreMap = ({ view, setView }) => {
 
       if (clickedFeature.layer.id === 'sites-unclustered-layer') {
         const { sample_event_id } = clickedFeature.properties
-        queryParams.set('sample_event_id', sample_event_id)
-        updateURLParams(queryParams)
+        const newQueryParams = getURLParamsSnapshot()
+        newQueryParams.set('sample_event_id', sample_event_id)
+        updateURLParams(newQueryParams)
         setSelectedMarkerId(sample_event_id)
 
         return
@@ -269,13 +268,9 @@ const MaplibreMap = ({ view, setView }) => {
     }
   }
 
-  const MapAndTableControlsWrapper = () => {
-    const map = mapRef.current
-
-    if (map) {
-      return <MapAndTableControls map={map.getMap()} view={view} setView={setView} />
-    }
-  }
+  const mapAndTableControlsWrapper = mapRef.current ? (
+    <MapAndTableControls map={mapRef.current.getMap()} view={view} setView={setView} />
+  ) : null
 
   const hideMapStyleLayers = (map) => {
     const layerIdsToHide = [
@@ -319,9 +314,9 @@ const MaplibreMap = ({ view, setView }) => {
         ref={mapRef}
         style={{ width: '100%', height: '100%' }}
         initialViewState={{
-          longitude: (mapCenter && mapCenter[1]) || defaultLon,
-          latitude: (mapCenter && mapCenter[0]) || defaultLat,
-          zoom: mapZoom || defaultMapZoom,
+          longitude: initialMapCenter?.[1] ?? defaultLon,
+          latitude: initialMapCenter?.[0] ?? defaultLat,
+          zoom: initialMapZoom ?? defaultMapZoom,
         }}
         mapStyle="https://demotiles.maplibre.org/style.json"
         onLoad={handleMapLoad}
@@ -334,7 +329,7 @@ const MaplibreMap = ({ view, setView }) => {
         // disable the default attribution
         attributionControl={false}
       >
-        <MapAndTableControlsWrapper />
+        {mapAndTableControlsWrapper}
         <AttributionControl
           compact={true}
           customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
