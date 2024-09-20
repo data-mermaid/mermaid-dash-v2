@@ -26,7 +26,7 @@ export const StyledMetricsWrapper = styled.div`
     z-index: 5;
     background-color: transparent;
     width: 90%;
-    bottom: ${(props) => (props.$showLoadingIndicator ? '5rem;' : '0.5rem;')}
+    bottom: 0.5rem;
     left: 50%;
     transform: translateX(-50%);
     display: grid;
@@ -66,7 +66,7 @@ export const SummarizedMetrics = styled.div`
     ${(props) =>
       props.$showMobileExpandedMetricsPane ? 'align-items: flex-start;' : 'align-items: flex-end;'}
     ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
-    height: ${(props) => (props.$showLoadingIndicator ? '6.7rem;' : '11.2rem;')}
+    height: 11.2rem;
   `)}
 `
 

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react'
+import { createContext, useState, useEffect, useCallback, useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { URL_PARAMS, COLLECTION_METHODS, POLICY_MAPPINGS } from '../constants/constants'
@@ -35,14 +35,13 @@ const isValidDateFormat = (dateString) => {
   return true
 }
 
-const FilterProjectsContext = createContext()
+export const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const [projectData, setProjectData] = useState({})
   const [countries, setCountries] = useState([])
-  const [organizations, setOrganizations] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
@@ -577,71 +576,59 @@ export const FilterProjectsProvider = ({ children }) => {
   return (
     <FilterProjectsContext.Provider
       value={{
-        URL_PARAMS,
-        projectData,
-        setProjectData,
-        countries,
-        setCountries,
-        organizations,
-        setOrganizations,
-        projectDataCount: projectData?.count || 0,
-        displayedProjects,
-        setDisplayedProjects,
-        selectedCountries,
-        setSelectedCountries,
-        selectedOrganizations,
-        setSelectedOrganizations,
-        sampleDateAfter,
-        setSampleDateAfter,
-        sampleDateBefore,
-        setSampleDateBefore,
-        methodDataSharingFilters,
-        setMethodDataSharingFilters,
-        projectNameFilter,
-        setProjectNameFilter,
-        selectedMarkerId,
-        setSelectedMarkerId,
         checkedProjects,
-        setCheckedProjects,
-        showYourData,
-        setShowYourData,
-        mermaidUserData,
-        setMermaidUserData,
-        handleSelectedCountriesChange,
-        handleSelectedOrganizationsChange,
+        clearAllFilters,
+        countriesSelectOnOpen,
+        displayedCountries,
+        displayedOrganizations,
+        displayedProjects,
+        enableFollowScreen,
         formattedDate,
-        formatEndDate,
+        getActiveProjectCount,
+        getURLParams,
         handleChangeSampleDateAfter,
         handleChangeSampleDateBefore,
         handleMethodDataSharingFilter,
         handleProjectNameFilter,
-        clearAllFilters,
+        handleSelectedCountriesChange,
+        handleSelectedOrganizationsChange,
         handleYourDataFilter,
-        userIsMemberOfProject,
-        displayedCountries,
-        setDisplayedCountries,
-        remainingDisplayedCountries,
-        displayedOrganizations,
-        setDisplayedOrganizations,
-        countriesSelectOnOpen,
-        organizationsSelectOnOpen,
-        getActiveProjectCount,
-        getURLParams,
-        updateURLParams,
         isAnyActiveFilters,
-        showProjectsWithNoRecords,
-        setShowProjectsWithNoRecords,
-        enableFollowScreen,
+        mermaidUserData,
+        methodDataSharingFilters,
+        organizationsSelectOnOpen,
+        projectData,
+        projectDataCount: projectData?.count || 0,
+        projectNameFilter,
+        remainingDisplayedCountries,
+        sampleDateAfter,
+        sampleDateBefore,
+        selectedCountries,
+        selectedMarkerId,
+        selectedOrganizations,
+        setCheckedProjects,
+        setCountries,
+        setDisplayedCountries,
+        setDisplayedOrganizations,
         setEnableFollowScreen,
         setMapBbox,
+        setMermaidUserData,
+        setProjectData,
+        setSelectedCountries,
+        setSelectedMarkerId,
+        setSelectedOrganizations,
+        setShowProjectsWithNoRecords,
+        setShowYourData,
+        showProjectsWithNoRecords,
+        showYourData,
+        updateURLParams,
+        userIsMemberOfProject,
       }}
     >
       {children}
     </FilterProjectsContext.Provider>
   )
 }
-
-export const useFilterProjectsContext = () => useContext(FilterProjectsContext)
 
 FilterProjectsProvider.propTypes = {
   children: PropTypes.node.isRequired,

@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
 import styled from 'styled-components'
 import ContentPageLayout from './components/ContentPageLayout'
@@ -20,7 +20,7 @@ import {
 import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
 import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
-import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
 const StyledTableContainer = styled.div`
@@ -34,11 +34,11 @@ const StyledTableContainer = styled.div`
 
 const TableView = ({ view, setView, mermaidUserData }) => {
   const {
-    displayedProjects,
-    userIsMemberOfProject,
     checkedProjects,
+    displayedProjects,
     setShowProjectsWithNoRecords,
-  } = useFilterProjectsContext()
+    userIsMemberOfProject,
+  } = useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()

@@ -7,11 +7,13 @@ import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { FilterProjectsProvider } from './context/FilterProjectsContext'
 import { MapProvider } from 'react-map-gl'
+import { useState } from 'react'
 
 const App = () => {
   const navigateTo = useNavigate()
   const theme = createTheme(mermaidMuiThemeConfig)
   const location = useLocation()
+  const [isApiDataDoneLoading, setIsApiDataDoneLoading] = useState(false) // storing this state here ensures dev server hot reloading doesnt cause us to fetch the data again
 
   const onRedirectCallback = (appState) => {
     navigateTo(appState && appState.returnTo ? appState.returnTo : location.pathname)
@@ -34,7 +36,15 @@ const App = () => {
           <FilterProjectsProvider>
             <GlobalStyle />
             <Routes>
-              <Route path="/" element={<MermaidDash />} />
+              <Route
+                path="/"
+                element={
+                  <MermaidDash
+                    isApiDataDoneLoading={isApiDataDoneLoading}
+                    setIsApiDataDoneLoading={setIsApiDataDoneLoading}
+                  />
+                }
+              />
             </Routes>
           </FilterProjectsProvider>
         </MapProvider>
