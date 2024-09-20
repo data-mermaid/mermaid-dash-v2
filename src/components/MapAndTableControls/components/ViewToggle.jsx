@@ -43,11 +43,11 @@ const StyledLabel = styled.label`
 
 const ViewToggle = ({ view, setView }) => {
   const {
-    displayedProjects,
     checkedProjects,
-    showProjectsWithNoRecords,
-    setShowProjectsWithNoRecords,
+    displayedProjects,
     selectedOrganizations,
+    setShowProjectsWithNoRecords,
+    showProjectsWithNoRecords,
     showYourData,
   } = useContext(FilterProjectsContext)
   const location = useLocation()
