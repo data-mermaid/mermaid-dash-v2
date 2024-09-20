@@ -49,16 +49,12 @@ const StyledHeader = styled.header`
   `)}
 `
 
-const LoadingIndicator = ({
-  loadedProjectsCount,
-  totalProjectsCount,
-  showLoadingIndicator,
-  setShowLoadingIndicator,
-}) => {
+const LoadingIndicator = ({ loadedProjectsCount, totalProjectsCount, isApiDataDoneLoading }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataDoneLoading)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (totalProjectsCount === 0 || !totalProjectsCount) {
+    if (totalProjectsCount === 0) {
       return // we cant divide by zero
     }
     setLoadingProgressValue(Math.floor((loadedProjectsCount / totalProjectsCount) * 100))
@@ -88,9 +84,8 @@ const LoadingIndicator = ({
 
 LoadingIndicator.propTypes = {
   loadedProjectsCount: PropTypes.number.isRequired,
-  totalProjectsCount: PropTypes.number,
-  showLoadingIndicator: PropTypes.bool.isRequired,
-  setShowLoadingIndicator: PropTypes.func.isRequired,
+  totalProjectsCount: PropTypes.number.isRequired,
+  isApiDataDoneLoading: PropTypes.bool,
 }
 
 export default LoadingIndicator

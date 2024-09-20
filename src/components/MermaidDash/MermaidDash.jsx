@@ -1,4 +1,6 @@
 import { useEffect, useState, useCallback, useContext } from 'react'
+import PropTypes from 'prop-types'
+
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
 import LoadingIndicator from './components/LoadingIndicator'
@@ -34,11 +36,10 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(true)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [loadedProjectsCount, setLoadedProjectCount] = useState(0)
-  const [totalProjectsCount, setTotalProjectsCount] = useState(null)
+  const [totalProjectsCount, setTotalProjectsCount] = useState(0)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -53,7 +54,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       }
       try {
         setLoadedProjectCount(0)
-        setTotalProjectsCount(null)
+        setTotalProjectsCount(0)
         const apiEndpoint = import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
@@ -96,12 +97,8 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
         console.error('Error fetching data:', error)
       }
     },
-    [isApiDataDoneLoading, setProjectData, setCheckedProjects],
+    [isApiDataDoneLoading, setProjectData, setCheckedProjects, setIsApiDataDoneLoading],
   )
-
-  useEffect(() => {
-    console.log('loaded proj count', loadedProjectsCount)
-  }, [loadedProjectsCount])
 
   const fetchUserProfile = useCallback(async () => {
     try {
@@ -241,8 +238,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       <LoadingIndicator
         loadedProjectsCount={loadedProjectsCount}
         totalProjectsCount={totalProjectsCount}
-        showLoadingIndicator={showLoadingIndicator}
-        setShowLoadingIndicator={setShowLoadingIndicator}
+        isApiDataDoneLoading={isApiDataDoneLoading}
       />
     </StyledMapContainer>
   )
@@ -253,8 +249,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       <LoadingIndicator
         loadedProjectsCount={loadedProjectsCount}
         totalProjectsCount={totalProjectsCount}
-        showLoadingIndicator={showLoadingIndicator}
-        setShowLoadingIndicator={setShowLoadingIndicator}
+        isApiDataDoneLoading={isApiDataDoneLoading}
       />
     </StyledTableContainer>
   )
@@ -263,7 +258,6 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
     <MetricsPane
       showMetricsPane={showMetricsPane}
       setShowMetricsPane={setShowMetricsPane}
-      showLoadingIndicator={showLoadingIndicator}
       view={view}
     />
   )
@@ -283,4 +277,8 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
   )
 }
 
+MermaidDash.propTypes = {
+  isApiDataDoneLoading: PropTypes.bool,
+  setIsApiDataDoneLoading: PropTypes.func,
+}
 export default MermaidDash
