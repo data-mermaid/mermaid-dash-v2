@@ -236,9 +236,9 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
         projectDataCount={projectData?.count || 0}
       />
       <LoadingIndicator
-        loadedProjectsCount={loadedProjectsCount}
-        totalProjectsCount={totalProjectsCount}
-        isApiDataDoneLoading={isApiDataDoneLoading}
+        currentProgress={loadedProjectsCount}
+        finalProgress={totalProjectsCount}
+        isLoadingIndicatorPreventedFromShowing={isApiDataDoneLoading}
       />
     </StyledMapContainer>
   )
@@ -247,9 +247,9 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
     <StyledTableContainer>
       <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
       <LoadingIndicator
-        loadedProjectsCount={loadedProjectsCount}
-        totalProjectsCount={totalProjectsCount}
-        isApiDataDoneLoading={isApiDataDoneLoading}
+        currentProgress={loadedProjectsCount}
+        finalProgress={totalProjectsCount}
+        isLoadingIndicatorPreventedFromShowing={isApiDataDoneLoading}
       />
     </StyledTableContainer>
   )
