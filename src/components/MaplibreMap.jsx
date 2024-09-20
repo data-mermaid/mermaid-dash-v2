@@ -29,7 +29,7 @@ const sitesClusterLayer = {
   filter: ['has', 'point_count'],
   paint: {
     'circle-color': '#a53434',
-    'circle-radius': ['step', ['get', 'point_count'], 20, 100, 30, 750, 40],
+    'circle-radius': ['step', ['get', 'point_count'], 15, 50, 20, 500, 25],
     'circle-stroke-width': 1,
     'circle-stroke-color': '#fff',
   },
