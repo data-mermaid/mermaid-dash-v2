@@ -11,8 +11,13 @@ import {
   IconText,
 } from '../../assets/dashboardOnlyIcons'
 import { IconGlobe, IconUser } from '../../assets/icons'
+import { Row } from '../generic/positioning'
 
 export const StyledMetricsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1rem;
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
   ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
@@ -168,7 +173,6 @@ export const MobileExpandedMetricsPane = styled.div`
 export const SelectedSiteMetricsCardContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin: 1rem;
   padding: 1rem;
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
@@ -296,4 +300,12 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
 
 export const StyledLabel = styled.label`
   cursor: pointer;
+`
+export const SelectedSiteActionBar = styled(Row)`
+  width: 100%;
+  gap: ${theme.spacing.small};
+
+  & > button {
+    width: 100%;
+  }
 `

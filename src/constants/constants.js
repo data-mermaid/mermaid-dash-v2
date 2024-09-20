@@ -1,3 +1,4 @@
+export const MAIN_MAP_ID = 'main-map'
 export const PAGE_SIZE_DEFAULT = 15
 export const URL_PARAMS = {
   COUNTRIES: 'countries',

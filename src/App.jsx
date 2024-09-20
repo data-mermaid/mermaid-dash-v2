@@ -6,6 +6,7 @@ import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
 import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
 import { Auth0Provider } from '@auth0/auth0-react'
 import { FilterProjectsProvider } from './context/FilterProjectsContext'
+import { MapProvider } from 'react-map-gl'
 
 const App = () => {
   const navigateTo = useNavigate()
@@ -29,12 +30,14 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Auth0Provider {...authConfig}>
-        <FilterProjectsProvider>
-          <GlobalStyle />
-          <Routes>
-            <Route path="/" element={<MermaidDash />} />
-          </Routes>
-        </FilterProjectsProvider>
+        <MapProvider>
+          <FilterProjectsProvider>
+            <GlobalStyle />
+            <Routes>
+              <Route path="/" element={<MermaidDash />} />
+            </Routes>
+          </FilterProjectsProvider>
+        </MapProvider>
       </Auth0Provider>
     </ThemeProvider>
   )

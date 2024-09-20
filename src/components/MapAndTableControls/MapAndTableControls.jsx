@@ -7,7 +7,6 @@ import FilterIndicatorPill from './components/FilterIndicatorPill'
 import ViewToggle from './components/ViewToggle'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import { ButtonSecondary } from '../generic'
-import zoomToSelectedSites from '../../assets/zoom_to_selected_sites.svg'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import useResponsive from '../../hooks/useResponsive'
 import { useFilterProjectsContext } from '../../context/FilterProjectsContext'
@@ -137,16 +136,6 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
       ) : null}
       {isDesktopWidth ? (
         <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
-
-      {hasSelectedSite() && isMapView ? (
-        <MapAndTableControlsButtonSecondary
-          onClick={handleZoomToSelectedSite}
-          aria-labelledby="Zoom to selected site button"
-        >
-          <img src={zoomToSelectedSites} alt="Zoom to selected site" />
-          {isDesktopWidth ? <span>Selected Site</span> : null}
-        </MapAndTableControlsButtonSecondary>
       ) : null}
     </ControlContainer>
   )
