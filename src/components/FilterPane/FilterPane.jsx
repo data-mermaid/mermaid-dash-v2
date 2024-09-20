@@ -205,7 +205,7 @@ const FilterPane = ({ mermaidUserData }) => {
       !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
   }
 
-  const renderMethods = () => (
+  const methodsList = (
     <StyledMethodListContainer>
       <StyledUnorderedList>
         {Object.keys(COLLECTION_METHODS).map((method) => {
@@ -276,7 +276,7 @@ const FilterPane = ({ mermaidUserData }) => {
     </StyledMethodListContainer>
   )
 
-  const renderDisplayedProjects = () => (
+  const projectsList = (
     <StyledProjectListContainer>
       <StyledUnorderedList>
         {displayedProjects.length ? (
@@ -472,7 +472,7 @@ const FilterPane = ({ mermaidUserData }) => {
             </>
           ) : null}
           <StyledHeader>Methods / Data Sharing</StyledHeader>
-          {renderMethods()}
+          {methodsList}
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledProjectsHeader>
@@ -486,7 +486,7 @@ const FilterPane = ({ mermaidUserData }) => {
         placeholder="Type to filter projects"
         onChange={handleProjectNameFilter}
       />
-      {renderDisplayedProjects()}
+      {projectsList}
     </StyledFilterPaneContainer>
   )
 }
