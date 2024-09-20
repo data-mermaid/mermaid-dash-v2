@@ -56,17 +56,17 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
-    selectedMarkerId,
-    setSelectedMarkerId,
-    displayedProjects,
-    getURLParams,
-    updateURLParams,
-    mermaidUserData,
-    userIsMemberOfProject,
     checkedProjects,
-    getActiveProjectCount,
+    displayedProjects,
     enableFollowScreen,
+    getActiveProjectCount,
+    getURLParams,
+    mermaidUserData,
+    selectedMarkerId,
     setEnableFollowScreen,
+    setSelectedMarkerId,
+    updateURLParams,
+    userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const [metricsView, setMetricsView] = useState('summary')

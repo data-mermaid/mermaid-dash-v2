@@ -70,38 +70,37 @@ const FilterPane = ({ mermaidUserData }) => {
   const location = useLocation()
   const { isAuthenticated } = useAuth0()
   const {
-    projectData,
-    setCountries,
-    setOrganizations,
-    displayedProjects,
-    selectedCountries,
-    setSelectedCountries,
-    selectedOrganizations,
-    setSelectedOrganizations,
-    sampleDateAfter,
-    sampleDateBefore,
-    methodDataSharingFilters,
-    projectNameFilter,
     checkedProjects,
-    setCheckedProjects,
-    showYourData,
-    handleSelectedCountriesChange,
-    handleSelectedOrganizationsChange,
+    countriesSelectOnOpen,
+    displayedCountries,
+    displayedOrganizations,
+    displayedProjects,
     formattedDate,
+    getActiveProjectCount,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
     handleMethodDataSharingFilter,
     handleProjectNameFilter,
+    handleSelectedCountriesChange,
+    handleSelectedOrganizationsChange,
     handleYourDataFilter,
-    userIsMemberOfProject,
-    displayedCountries,
-    setDisplayedCountries,
-    remainingDisplayedCountries,
-    displayedOrganizations,
-    setDisplayedOrganizations,
-    countriesSelectOnOpen,
+    methodDataSharingFilters,
     organizationsSelectOnOpen,
-    getActiveProjectCount,
+    projectData,
+    projectNameFilter,
+    remainingDisplayedCountries,
+    sampleDateAfter,
+    sampleDateBefore,
+    selectedCountries,
+    selectedOrganizations,
+    setCheckedProjects,
+    setCountries,
+    setDisplayedCountries,
+    setDisplayedOrganizations,
+    setSelectedCountries,
+    setSelectedOrganizations,
+    showYourData,
+    userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
@@ -125,27 +124,7 @@ const FilterPane = ({ mermaidUserData }) => {
       ),
     ]
     setCountries(uniqueCountries)
-
-    const uniqueOrganizations = [
-      ...new Set(
-        projectData.results
-          .map((project) => {
-            return project.records[0]?.tags?.map((tag) => tag.name)
-          })
-          .filter((tag) => tag !== undefined)
-          .flat()
-          .sort((a, b) => a.localeCompare(b)),
-      ),
-    ]
-
-    setOrganizations(uniqueOrganizations)
-  }, [
-    projectData.results,
-    setCountries,
-    setDisplayedCountries,
-    setDisplayedOrganizations,
-    setOrganizations,
-  ])
+  }, [projectData.results, setCountries, setDisplayedCountries, setDisplayedOrganizations])
 
   const getURLParams = useCallback(() => {
     return new URLSearchParams(location.search)

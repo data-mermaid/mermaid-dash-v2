@@ -34,10 +34,10 @@ const StyledTableContainer = styled.div`
 
 const TableView = ({ view, setView, mermaidUserData }) => {
   const {
-    displayedProjects,
-    userIsMemberOfProject,
     checkedProjects,
+    displayedProjects,
     setShowProjectsWithNoRecords,
+    userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
