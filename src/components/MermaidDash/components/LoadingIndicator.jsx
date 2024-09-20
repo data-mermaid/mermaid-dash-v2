@@ -49,16 +49,22 @@ const StyledHeader = styled.header`
   `)}
 `
 
-const LoadingIndicator = ({ loadedProjectsCount, totalProjectsCount, isApiDataDoneLoading }) => {
+const LoadingIndicator = ({
+  currentProgress,
+  finalProgress,
+  isLoadingIndicatorPreventedFromShowing,
+}) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataDoneLoading)
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState(
+    !isLoadingIndicatorPreventedFromShowing,
+  )
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (totalProjectsCount === 0) {
+    if (finalProgress === 0) {
       return // we cant divide by zero
     }
-    setLoadingProgressValue(Math.floor((loadedProjectsCount / totalProjectsCount) * 100))
-  }, [loadedProjectsCount, totalProjectsCount])
+    setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
+  }, [currentProgress, finalProgress])
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
@@ -83,9 +89,9 @@ const LoadingIndicator = ({ loadedProjectsCount, totalProjectsCount, isApiDataDo
 }
 
 LoadingIndicator.propTypes = {
-  loadedProjectsCount: PropTypes.number.isRequired,
-  totalProjectsCount: PropTypes.number.isRequired,
-  isApiDataDoneLoading: PropTypes.bool,
+  currentProgress: PropTypes.number.isRequired,
+  finalProgress: PropTypes.number.isRequired,
+  isLoadingIndicatorPreventedFromShowing: PropTypes.bool,
 }
 
 export default LoadingIndicator
