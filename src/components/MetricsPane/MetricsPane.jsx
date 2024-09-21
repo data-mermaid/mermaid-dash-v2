@@ -5,9 +5,7 @@ import {
   StyledMetricsWrapper,
   SummarizedMetrics,
   MetricsCard,
-  P,
-  H3,
-  SurveysAndTransectsContainer,
+  MultipleMetricCardsRow,
   MobileExpandedMetricsPane,
   DesktopToggleMetricsPaneButton,
   MobileExpandMetricsPaneButton,
@@ -36,6 +34,10 @@ import {
   DesktopFollowScreenButton,
   StyledLabel,
   SelectedSiteActionBar,
+  MetricCardH3,
+  MetricCardPBig,
+  MetricCardPMedium,
+  InlineOnDesktopMetricWrapper,
 } from './MetricsPane.styles'
 import { ButtonSecondary } from '../generic'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
@@ -48,11 +50,10 @@ import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/sel
 import { useMap } from 'react-map-gl'
 import { MAIN_MAP_ID } from '../../constants/constants'
 
-const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
+const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view, showLoadingIndicator }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
-  const [yearRange, setYearRange] = useState('')
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
@@ -95,11 +96,20 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
 
     const sortedYears = Array.from(years).sort()
     const yearRange =
-      sortedYears.length === 0
-        ? 'No data to obtain year range'
-        : sortedYears.length === 1
-          ? `Showing data from ${sortedYears[0]}`
-          : `Showing data from ${sortedYears[0]} to ${sortedYears[sortedYears.length - 1]}`
+      sortedYears.length === 0 ? (
+        <InlineOnDesktopMetricWrapper>No data to obtain year range</InlineOnDesktopMetricWrapper>
+      ) : sortedYears.length === 1 ? (
+        <InlineOnDesktopMetricWrapper>
+          <MetricCardH3>Year</MetricCardH3> <span>{sortedYears[0]}</span>
+        </InlineOnDesktopMetricWrapper>
+      ) : (
+        <InlineOnDesktopMetricWrapper>
+          <MetricCardH3>Years</MetricCardH3>{' '}
+          <span>
+            {sortedYears[0]} - {sortedYears[sortedYears.length - 1]}
+          </span>
+        </InlineOnDesktopMetricWrapper>
+      )
 
     return {
       numSurveys: surveys,
@@ -110,11 +120,10 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
   }, [displayedProjects, checkedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
-    const { numSurveys, numTransects, numUniqueCountries, yearRange } = calculateMetrics
+    const { numSurveys, numTransects, numUniqueCountries } = calculateMetrics
     setNumSurveys(numSurveys)
     setNumTransects(numTransects)
     setNumUniqueCountries(numUniqueCountries)
-    setYearRange(yearRange)
   }, [calculateMetrics])
 
   const _getSelectedSampleEvent = useEffect(() => {
@@ -279,63 +288,73 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
     )
   }
 
-  const RenderSummarizedMetrics = () => {
-    return (
-      <SummarizedMetrics
-        onClick={toggleMobileMetricsPane}
-        $isDesktopWidth={isDesktopWidth}
-        $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      >
-        <MetricsCard>
-          <P>{getActiveProjectCount()}</P>
-          <H3>Projects </H3>
-        </MetricsCard>
-        <SurveysAndTransectsContainer>
-          <MetricsCard>
-            <P>{numSurveys}</P>
-            <H3>Surveys</H3>
-          </MetricsCard>
-          <MetricsCard>
-            <P>{numTransects}</P>
-            <H3>Transects</H3>
-          </MetricsCard>
-        </SurveysAndTransectsContainer>
+  const countryLabel = numUniqueCountries === 1 ? 'Country' : 'Countries'
+
+  const transectAndProjectCountCards = (
+    <>
+      <MetricsCard>
+        <MetricCardPMedium>{numTransects.toLocaleString()}</MetricCardPMedium>
+        <MetricCardH3>Transects</MetricCardH3>
+      </MetricsCard>
+      <MetricsCard>
+        <MetricCardPMedium>{getActiveProjectCount().toLocaleString()}</MetricCardPMedium>
+        <MetricCardH3>Projects </MetricCardH3>
+      </MetricsCard>
+    </>
+  )
+
+  const displayedProjectsMetrics = (
+    <SummarizedMetrics
+      onClick={toggleMobileMetricsPane}
+      $isDesktopWidth={isDesktopWidth}
+      $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+      $showLoadingIndicator={showLoadingIndicator}
+    >
+      <MetricsCard>
+        <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
+        <MetricCardH3>Surveys</MetricCardH3>
+      </MetricsCard>
+      <MetricsCard>
         {isDesktopWidth ? (
-          <MetricsCard>
-            <P>{yearRange}</P>
-          </MetricsCard>
+          <InlineOnDesktopMetricWrapper>
+            <span>{numUniqueCountries.toLocaleString()}</span>{' '}
+            <MetricCardH3>{countryLabel}</MetricCardH3>
+          </InlineOnDesktopMetricWrapper>
+        ) : (
+          <>
+            <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
+            <MetricCardH3>{countryLabel}</MetricCardH3>
+          </>
+        )}
+      </MetricsCard>
+      {isDesktopWidth ? (
+        <MultipleMetricCardsRow>{transectAndProjectCountCards}</MultipleMetricCardsRow>
+      ) : (
+        transectAndProjectCountCards
+      )}
+
+      {isDesktopWidth ? <MetricsCard>{calculateMetrics.yearRange}</MetricsCard> : null}
+    </SummarizedMetrics>
+  )
+
+  const metricsContent = selectedSampleEvent ? (
+    <>
+      <SelectedSiteHeader />
+      <SelectedSiteActionBar>
+        {getIsSiteSelected() && isMapView ? (
+          <ButtonSecondary onClick={() => zoomToSelectedSite({ displayedProjects, map })}>
+            <ZoomToSiteIcon /> &nbsp;Zoom
+          </ButtonSecondary>
         ) : null}
-
-        <MetricsCard>
-          <P>{numUniqueCountries}</P>
-          <H3>{numUniqueCountries === 1 ? 'Country' : 'Countries'}</H3>
-        </MetricsCard>
-      </SummarizedMetrics>
-    )
-  }
-
-  const MetricsContent = () => {
-    if (selectedSampleEvent) {
-      return (
-        <>
-          <SelectedSiteHeader />
-          <SelectedSiteActionBar>
-            {getIsSiteSelected() && isMapView ? (
-              <ButtonSecondary onClick={() => zoomToSelectedSite({ displayedProjects, map })}>
-                <ZoomToSiteIcon /> &nbsp;Zoom
-              </ButtonSecondary>
-            ) : null}
-            <ButtonSecondary onClick={handleClearSelectedSampleEvent}>
-              <IconClose /> Clear
-            </ButtonSecondary>
-          </SelectedSiteActionBar>
-          <SelectedSiteBody />
-        </>
-      )
-    } else {
-      return <RenderSummarizedMetrics />
-    }
-  }
+        <ButtonSecondary onClick={handleClearSelectedSampleEvent}>
+          <IconClose /> Clear
+        </ButtonSecondary>
+      </SelectedSiteActionBar>
+      <SelectedSiteBody />
+    </>
+  ) : (
+    <>{displayedProjectsMetrics}</>
+  )
 
   const handleFollowScreen = (e) => {
     setEnableFollowScreen((prevState) => !prevState)
@@ -354,9 +373,10 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view }) => {
     <StyledMetricsWrapper
       $showMetricsPane={showMetricsPane}
       $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+      $showLoadingIndicator={showLoadingIndicator}
       $isDesktopWidth={isDesktopWidth}
     >
-      {isMobileWidth || showMetricsPane ? MetricsContent() : null}
+      {isMobileWidth || showMetricsPane ? metricsContent : null}
       {isMobileWidth && showMobileExpandedMetricsPane ? (
         <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
       ) : null}
@@ -411,6 +431,7 @@ MetricsPane.propTypes = {
   showMetricsPane: PropTypes.bool.isRequired,
   setShowMetricsPane: PropTypes.func.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  showLoadingIndicator: PropTypes.bool.isRequired,
 }
 
 export default MetricsPane

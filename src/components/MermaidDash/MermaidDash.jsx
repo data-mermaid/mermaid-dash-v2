@@ -40,6 +40,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [loadedProjectsCount, setLoadedProjectCount] = useState(0)
   const [totalProjectsCount, setTotalProjectsCount] = useState(0)
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataDoneLoading)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -238,7 +239,8 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       <LoadingIndicator
         currentProgress={loadedProjectsCount}
         finalProgress={totalProjectsCount}
-        isLoadingIndicatorPreventedFromShowing={isApiDataDoneLoading}
+        showLoadingIndicator={showLoadingIndicator}
+        setShowLoadingIndicator={setShowLoadingIndicator}
       />
     </StyledMapContainer>
   )
@@ -249,7 +251,8 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       <LoadingIndicator
         currentProgress={loadedProjectsCount}
         finalProgress={totalProjectsCount}
-        isLoadingIndicatorPreventedFromShowing={isApiDataDoneLoading}
+        showLoadingIndicator={showLoadingIndicator}
+        setShowLoadingIndicator={setShowLoadingIndicator}
       />
     </StyledTableContainer>
   )
@@ -259,6 +262,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
       showMetricsPane={showMetricsPane}
       setShowMetricsPane={setShowMetricsPane}
       view={view}
+      showLoadingIndicator={showLoadingIndicator}
     />
   )
 
