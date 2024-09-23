@@ -229,7 +229,7 @@ const MaplibreMap = ({ view, setView }) => {
 
         mapRef.current.easeTo({
           center: features[0].geometry.coordinates,
-          zoom,
+          zoom: zoom + 2,
         })
         return
       }
