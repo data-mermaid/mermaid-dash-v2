@@ -52,12 +52,10 @@ const StyledHeader = styled.header`
 const LoadingIndicator = ({
   currentProgress,
   finalProgress,
-  isLoadingIndicatorPreventedFromShowing,
+  showLoadingIndicator,
+  setShowLoadingIndicator,
 }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(
-    !isLoadingIndicatorPreventedFromShowing,
-  )
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
     if (finalProgress === 0) {
@@ -91,7 +89,8 @@ const LoadingIndicator = ({
 LoadingIndicator.propTypes = {
   currentProgress: PropTypes.number.isRequired,
   finalProgress: PropTypes.number.isRequired,
-  isLoadingIndicatorPreventedFromShowing: PropTypes.bool,
+  showLoadingIndicator: PropTypes.bool.isRequired,
+  setShowLoadingIndicator: PropTypes.func.isRequired,
 }
 
 export default LoadingIndicator

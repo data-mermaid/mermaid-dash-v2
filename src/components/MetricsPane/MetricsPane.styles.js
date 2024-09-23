@@ -21,22 +21,22 @@ export const StyledMetricsWrapper = styled.div`
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
   ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
+  z-index: 5;
+  background-color: ${(props) =>
+    props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
-    z-index: 5;
-    background-color: transparent;
-    width: 90%;
+    width: 100%;
     bottom: 0.5rem;
-    left: 50%;
-    transform: translateX(-50%);
     display: grid;
-    ${(props) =>
-      props.$showMobileExpandedMetricsPane &&
-      `
+    transform: ${(props) => (props.$showLoadingIndicator ? 'translateY(-3.2rem)' : 'none')}
+      ${(props) =>
+        props.$showMobileExpandedMetricsPane &&
+        `
       top: 7.9rem;
       width: 100vw;
       bottom: 0;
-    `}
+    `};
   `)}
 `
 
@@ -48,6 +48,7 @@ export const SummarizedMetrics = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0.5rem;
 
   /* Hide scrollbar */
   &::-webkit-scrollbar {
@@ -63,10 +64,6 @@ export const SummarizedMetrics = styled.div`
     justify-content: space-between;
     gap: 0.5rem;
     margin: 0;
-    ${(props) =>
-      props.$showMobileExpandedMetricsPane ? 'align-items: flex-start;' : 'align-items: flex-end;'}
-    ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
-    height: 11.2rem;
   `)}
 `
 
@@ -123,7 +120,7 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   `)}
 `
 
-export const SurveysAndTransectsContainer = styled.div`
+export const MultipleMetricCardsRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -131,7 +128,6 @@ export const SurveysAndTransectsContainer = styled.div`
   gap: 0.5rem;
   ${mediaQueryTabletLandscapeOnly(css`
     width: auto;
-    order: -1;
     flex-grow: 2;
     height: 100%;
   `)}
@@ -144,29 +140,68 @@ export const MetricsCard = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin-bottom: 0.5rem;
+  padding: 1rem;
+  gap: 0.5rem;
   ${mediaQueryTabletLandscapeOnly(css`
     margin: 0;
-    width: auto;
     flex-grow: 1;
     height: 100%;
   `)}
 `
 
-export const H3 = styled.h3`
+export const MetricCardH3 = styled.h3`
+  all: unset;
   padding: 0;
-  margin: 0.5rem;
-`
-
-export const P = styled.p`
-  padding: 0;
-  margin: 0.5rem;
+  margin: 0;
   font-size: ${theme.typography.defaultFontSize};
+  text-transform: uppercase;
+  letter-spacing: 0.1rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    font-size: 13px;
+  `)}
 `
+const pStyles = css`
+  padding: 0;
+  margin: 0;
+`
+const pMobileStyles = css`
+  font-size: 20px;
+  font-weight: 400;
+`
+export const MetricCardPBig = styled.p`
+  ${pStyles}
+  font-size: 64px;
+  font-weight: 400;
+  ${mediaQueryTabletLandscapeOnly(css`
+    ${pMobileStyles}
+  `)}
+`
+export const MetricCardPMedium = styled.p`
+  ${pStyles}
+  font-size: 36px;
+  font-weight: 400;
+  ${mediaQueryTabletLandscapeOnly(css`
+    ${pMobileStyles}
+  `)}
+`
+export const InlineOnDesktopMetricWrapper = styled.div`
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  `)}
 
+  & span {
+    ${pStyles}
+    font-weight: 700;
+    ${mediaQueryTabletLandscapeOnly(css`
+      ${pMobileStyles}
+    `)}
+  }
+`
 export const MobileExpandedMetricsPane = styled.div`
   background-color: ${theme.color.grey1};
-  height: calc(100vh - 14rem);
+  height: calc(100vh - 24rem);
   width: 100vw;
 `
 

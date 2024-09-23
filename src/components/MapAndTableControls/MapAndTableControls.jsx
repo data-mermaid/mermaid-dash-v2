@@ -73,7 +73,6 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
   } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
   const isMapView = view === 'mapView'
-  const queryParams = new URLSearchParams(location.search)
 
   const handleZoomToFilteredData = () => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
@@ -89,29 +88,6 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
 
     const bounds = bbox(points(coordinates))
     map.fitBounds(bounds)
-  }
-
-  const handleZoomToSelectedSite = () => {
-    if (!map) {
-      return
-    }
-
-    if (queryParams.has('sample_event_id')) {
-      const sample_event_id = queryParams.get('sample_event_id')
-      const foundSampleEvent = displayedProjects
-        .flatMap((project) => project.records)
-        .find((record) => record.sample_event_id === sample_event_id)
-      if (!foundSampleEvent) {
-        return
-      }
-      const { latitude, longitude } = foundSampleEvent
-      map.setCenter([longitude, latitude])
-      map.setZoom(18)
-    }
-  }
-
-  const hasSelectedSite = () => {
-    return queryParams.has('sample_event_id')
   }
 
   return (

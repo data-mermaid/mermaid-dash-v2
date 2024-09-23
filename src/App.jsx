@@ -13,7 +13,7 @@ const App = () => {
   const navigateTo = useNavigate()
   const theme = createTheme(mermaidMuiThemeConfig)
   const location = useLocation()
-  const [isApiDataDoneLoading, setIsApiDataDoneLoading] = useState(false) // storing this state here ensures dev server hot reloading doesnt cause us to fetch the data again
+  const [isApiDataLoaded, setIsApiDataLoaded] = useState(false) // storing this state here ensures dev server hot reloading doesnt cause us to fetch the data again
 
   const onRedirectCallback = (appState) => {
     navigateTo(appState && appState.returnTo ? appState.returnTo : location.pathname)
@@ -40,8 +40,8 @@ const App = () => {
                 path="/"
                 element={
                   <MermaidDash
-                    isApiDataDoneLoading={isApiDataDoneLoading}
-                    setIsApiDataDoneLoading={setIsApiDataDoneLoading}
+                    isApiDataLoaded={isApiDataLoaded}
+                    setIsApiDataLoaded={setIsApiDataLoaded}
                   />
                 }
               />
