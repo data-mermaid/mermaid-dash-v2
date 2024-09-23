@@ -38,8 +38,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [loadedProjectsCount, setLoadedProjectCount] = useState(0)
-  const [totalProjectsCount, setTotalProjectsCount] = useState(0)
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
@@ -54,8 +52,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         return
       }
       try {
-        setLoadedProjectCount(0)
-        setTotalProjectsCount(0)
         const apiEndpoint = import.meta.env.VITE_REACT_APP_MERMAID_API_ENDPOINT
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
@@ -86,13 +82,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             results: [...newApiData.results, ...data.results],
           }
           newCheckedProjects = [...newCheckedProjects, ...resultsProjectIds]
-          setLoadedProjectCount((prevCount) => prevCount + data.results.length)
-          setTotalProjectsCount(data.count)
+          setProjectData(newApiData)
+          setCheckedProjects(newCheckedProjects)
+
           nextPageUrl = data.next
         }
 
-        setProjectData(newApiData)
-        setCheckedProjects(newCheckedProjects)
         setIsApiDataLoaded(true) // ensures we dont accidentally refetch data. Tends to happen with dev server hot reloading.
       } catch (error) {
         console.error('Error fetching data:', error)
@@ -237,8 +232,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         projectDataCount={projectData?.count || 0}
       />
       <LoadingIndicator
-        currentProgress={loadedProjectsCount}
-        finalProgress={totalProjectsCount}
+        currentProgress={projectData?.results?.length || 0}
+        finalProgress={projectData?.count || 0}
         showLoadingIndicator={showLoadingIndicator}
         setShowLoadingIndicator={setShowLoadingIndicator}
       />
@@ -249,8 +244,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     <StyledTableContainer>
       <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
       <LoadingIndicator
-        currentProgress={loadedProjectsCount}
-        finalProgress={totalProjectsCount}
+        currentProgress={projectData?.results?.length || 0}
+        finalProgress={projectData?.count || 0}
         showLoadingIndicator={showLoadingIndicator}
         setShowLoadingIndicator={setShowLoadingIndicator}
       />
