@@ -27,7 +27,7 @@ import {
 } from './MermaidDash.styles'
 import MaplibreMap from '../MaplibreMap'
 
-const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
+const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const { projectData, setProjectData, mermaidUserData, setMermaidUserData, setCheckedProjects } =
     useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useState(true)
@@ -40,7 +40,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [loadedProjectsCount, setLoadedProjectCount] = useState(0)
   const [totalProjectsCount, setTotalProjectsCount] = useState(0)
-  const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataDoneLoading)
+  const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -50,7 +50,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
 
   const fetchData = useCallback(
     async (token = '') => {
-      if (isApiDataDoneLoading) {
+      if (isApiDataLoaded) {
         return
       }
       try {
@@ -93,12 +93,12 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
 
         setProjectData(newApiData)
         setCheckedProjects(newCheckedProjects)
-        setIsApiDataDoneLoading(true) // ensures we dont accidentally refetch data. Tends to happen with dev server hot reloading.
+        setIsApiDataLoaded(true) // ensures we dont accidentally refetch data. Tends to happen with dev server hot reloading.
       } catch (error) {
         console.error('Error fetching data:', error)
       }
     },
-    [isApiDataDoneLoading, setProjectData, setCheckedProjects, setIsApiDataDoneLoading],
+    [isApiDataLoaded, setProjectData, setCheckedProjects, setIsApiDataLoaded],
   )
 
   const fetchUserProfile = useCallback(async () => {
@@ -282,7 +282,7 @@ const MermaidDash = ({ isApiDataDoneLoading, setIsApiDataDoneLoading }) => {
 }
 
 MermaidDash.propTypes = {
-  isApiDataDoneLoading: PropTypes.bool,
-  setIsApiDataDoneLoading: PropTypes.func,
+  isApiDataLoaded: PropTypes.bool,
+  setIsApiDataLoaded: PropTypes.func,
 }
 export default MermaidDash
