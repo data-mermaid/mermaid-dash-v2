@@ -27,9 +27,9 @@ export const StyledMetricsWrapper = styled.div`
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;
-    bottom: 0.5rem;
+    bottom: 0;
     display: grid;
-    transform: ${(props) => (props.$showLoadingIndicator ? 'translateY(-3.2rem)' : 'none')};
+    grid-template-rows: auto 1fr;
     ${(props) =>
       props.$showMobileExpandedMetricsPane &&
       `
@@ -201,7 +201,6 @@ export const InlineOnDesktopMetricWrapper = styled.div`
 `
 export const MobileExpandedMetricsPane = styled.div`
   background-color: ${theme.color.grey1};
-  height: calc(100vh - 24rem);
   width: 100%;
 `
 
