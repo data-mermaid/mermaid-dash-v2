@@ -49,8 +49,15 @@ import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
 import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/selectedSite'
 import { useMap } from 'react-map-gl'
 import { MAIN_MAP_ID } from '../../constants/constants'
+import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 
-const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view, showLoadingIndicator }) => {
+const MetricsPane = ({
+  setShowLoadingIndicator,
+  setShowMetricsPane,
+  showLoadingIndicator,
+  showMetricsPane,
+  view,
+}) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
@@ -63,6 +70,7 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view, showLoadingInd
     getActiveProjectCount,
     getURLParams,
     mermaidUserData,
+    projectData,
     selectedMarkerId,
     setEnableFollowScreen,
     setSelectedMarkerId,
@@ -423,6 +431,15 @@ const MetricsPane = ({ showMetricsPane, setShowMetricsPane, view, showLoadingInd
           {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}
         </MobileExpandMetricsPaneButton>
       )}
+      {isMobileWidth ? (
+        <LoadingIndicator
+          currentProgress={projectData?.results?.length || 0}
+          finalProgress={projectData?.count || 0}
+          showLoadingIndicator={showLoadingIndicator}
+          setShowLoadingIndicator={setShowLoadingIndicator}
+          isRelativelyPositioned={true}
+        />
+      ) : null}
     </StyledMetricsWrapper>
   )
 }
@@ -432,6 +449,7 @@ MetricsPane.propTypes = {
   setShowMetricsPane: PropTypes.func.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
+  setShowLoadingIndicator: PropTypes.func.isRequired,
 }
 
 export default MetricsPane

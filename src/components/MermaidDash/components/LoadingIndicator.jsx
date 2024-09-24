@@ -5,7 +5,10 @@ import theme from '../../../styles/theme'
 import { mediaQueryTabletLandscapeOnly } from '../../../styles/mediaQueries'
 
 const StyledLoadingContainer = styled.div`
-  position: absolute;
+  position: ${(props) =>
+    props.$isRelativelyPositioned
+      ? 'relative'
+      : 'absolute'}; // if the loader is in the metric pane, it needs relative positioning, otherwise in the map pane, it needs absolute.
   width: '20rem';
   bottom: 1.5rem;
   left: 1.5rem;
@@ -16,7 +19,7 @@ const StyledLoadingContainer = styled.div`
     left: auto;
     display: flex;
     flex-direction: row;
-    width: 90vw;
+    width: calc(100% - 2rem); // leave room for 'padding'
     justify-content: center;
     background-color: ${theme.color.white};
     justify-self: center;
@@ -54,6 +57,7 @@ const LoadingIndicator = ({
   finalProgress,
   showLoadingIndicator,
   setShowLoadingIndicator,
+  isRelativelyPositioned = false,
 }) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
 
@@ -73,7 +77,7 @@ const LoadingIndicator = ({
   }, [loadingProgressValue, setShowLoadingIndicator])
 
   return showLoadingIndicator === true ? (
-    <StyledLoadingContainer>
+    <StyledLoadingContainer $isRelativelyPositioned={isRelativelyPositioned}>
       <StyledHeader>
         {loadingProgressValue === 100
           ? `Done ${loadingProgressValue}%`
@@ -89,8 +93,9 @@ const LoadingIndicator = ({
 LoadingIndicator.propTypes = {
   currentProgress: PropTypes.number.isRequired,
   finalProgress: PropTypes.number.isRequired,
-  showLoadingIndicator: PropTypes.bool.isRequired,
+  isRelativelyPositioned: PropTypes.bool,
   setShowLoadingIndicator: PropTypes.func.isRequired,
+  showLoadingIndicator: PropTypes.bool.isRequired,
 }
 
 export default LoadingIndicator

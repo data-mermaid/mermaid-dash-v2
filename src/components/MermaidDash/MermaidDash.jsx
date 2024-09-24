@@ -231,12 +231,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         setView={setView}
         projectDataCount={projectData?.count || 0}
       />
-      <LoadingIndicator
-        currentProgress={projectData?.results?.length || 0}
-        finalProgress={projectData?.count || 0}
-        showLoadingIndicator={showLoadingIndicator}
-        setShowLoadingIndicator={setShowLoadingIndicator}
-      />
+      {isMobileWidth ? null : (
+        <LoadingIndicator
+          currentProgress={projectData?.results?.length || 0}
+          finalProgress={projectData?.count || 0}
+          showLoadingIndicator={showLoadingIndicator}
+          setShowLoadingIndicator={setShowLoadingIndicator}
+          isRelativelyPositioned={false}
+        />
+      )}
     </StyledMapContainer>
   )
 
@@ -252,15 +255,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     </StyledTableContainer>
   )
 
-  const renderMetrics = () => (
-    <MetricsPane
-      showMetricsPane={showMetricsPane}
-      setShowMetricsPane={setShowMetricsPane}
-      view={view}
-      showLoadingIndicator={showLoadingIndicator}
-    />
-  )
-
   return (
     <StyledDashboardContainer>
       <Header />
@@ -270,7 +264,13 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <StyledContentContainer>
         {renderFilter(showFilterModal)}
         {isMobileWidth || view === 'mapView' ? map : table}
-        {renderMetrics()}
+        <MetricsPane
+          showMetricsPane={showMetricsPane}
+          setShowMetricsPane={setShowMetricsPane}
+          view={view}
+          showLoadingIndicator={showLoadingIndicator}
+          setShowLoadingIndicator={setShowLoadingIndicator}
+        />
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
