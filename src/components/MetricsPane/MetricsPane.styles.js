@@ -105,6 +105,7 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   `)}
 
   ${mediaQueryTabletLandscapeOnly(css`
+    width: 100%;
     font-size: ${theme.typography.largeIconSize};
     display: block;
     position: absolute;
@@ -114,7 +115,6 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
     border: none;
     color: ${theme.color.white};
     ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
-    ${(props) => props.$showMobileExpandedMetricsPane && 'width: 100vw;'}
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
   `)}
@@ -202,7 +202,7 @@ export const InlineOnDesktopMetricWrapper = styled.div`
 export const MobileExpandedMetricsPane = styled.div`
   background-color: ${theme.color.grey1};
   height: calc(100vh - 24rem);
-  width: 100vw;
+  width: 100%;
 `
 
 export const SelectedSiteMetricsCardContainer = styled.div`

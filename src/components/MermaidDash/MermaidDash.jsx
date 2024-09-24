@@ -252,15 +252,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     </StyledTableContainer>
   )
 
-  const renderMetrics = () => (
-    <MetricsPane
-      showMetricsPane={showMetricsPane}
-      setShowMetricsPane={setShowMetricsPane}
-      view={view}
-      showLoadingIndicator={showLoadingIndicator}
-    />
-  )
-
   return (
     <StyledDashboardContainer>
       <Header />
@@ -270,7 +261,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <StyledContentContainer>
         {renderFilter(showFilterModal)}
         {isMobileWidth || view === 'mapView' ? map : table}
-        {renderMetrics()}
+        <MetricsPane
+          showMetricsPane={showMetricsPane}
+          setShowMetricsPane={setShowMetricsPane}
+          view={view}
+          showLoadingIndicator={showLoadingIndicator}
+        />
       </StyledContentContainer>
     </StyledDashboardContainer>
   )
