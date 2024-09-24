@@ -42,6 +42,7 @@ const MapAndTableControlsButtonSecondary = styled(ButtonSecondary)`
 const FilterControlContainer = styled(Column)`
   height: 6rem;
   border: solid 1px ${theme.color.secondaryBorder};
+  background-color: ${theme.color.white};
 `
 
 const FilterControlButton = styled(MapAndTableControlsButtonSecondary)`
@@ -56,6 +57,7 @@ const ZoomToFilterButton = styled(FilterControlButton)`
 const CloseButton = styled(FilterControlButton)`
   width: 100%;
   justify-content: center;
+  background-color: transparent;
 
   & svg {
     height: 24px;
