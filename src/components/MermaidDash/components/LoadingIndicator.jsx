@@ -16,7 +16,7 @@ const StyledLoadingContainer = styled.div`
     left: auto;
     display: flex;
     flex-direction: row;
-    width: 90vw;
+    width: calc(100% - 2rem);
     justify-content: center;
     background-color: ${theme.color.white};
     justify-self: center;
