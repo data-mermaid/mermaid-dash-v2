@@ -29,11 +29,11 @@ export const StyledMetricsWrapper = styled.div`
     width: 100%;
     bottom: 0.5rem;
     display: grid;
-    transform: ${(props) => (props.$showLoadingIndicator ? 'translateY(-3.2rem)' : 'none')}
-      ${(props) =>
-        props.$showMobileExpandedMetricsPane &&
-        `
-      top: 7.9rem;
+    transform: ${(props) => (props.$showLoadingIndicator ? 'translateY(-3.2rem)' : 'none')};
+    ${(props) =>
+      props.$showMobileExpandedMetricsPane &&
+      `
+     top: 9.8rem;
       width: 100vw;
       bottom: 0;
     `};
