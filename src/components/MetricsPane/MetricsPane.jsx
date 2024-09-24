@@ -11,45 +11,17 @@ import {
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
   BiggerIconCaretUp,
-  SelectedSiteMetricsCardContainer,
-  SelectedSiteSiteCardContainer,
-  SelectedSiteContentContainer,
-  BiggerIconPersonCircle,
-  StyledHeader,
-  StyledSummaryMetadataContainer,
-  StyledMetricsSelector,
-  BiggerIconTextBoxMultiple,
-  BiggerIconCalendar,
-  BiggerIconUser,
-  BiggerIconGlobe,
-  BiggerIconText,
-  StyledSvgContainer,
-  StyledMapPinContainer,
-  StyledReefContainer,
-  StyledReefRow,
-  StyledReefItem,
-  StyledReefItemBold,
-  StyledVisibleBackground,
   StyledChevronSpan,
   DesktopFollowScreenButton,
   StyledLabel,
-  SelectedSiteActionBar,
   MetricCardH3,
   MetricCardPBig,
   MetricCardPMedium,
   InlineOnDesktopMetricWrapper,
 } from './MetricsPane.styles'
-import { ButtonSecondary } from '../generic'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { IconClose } from '../../assets/icons'
-import mapPin from '../../assets/map-pin.png'
-import coralReefSvg from '../../assets/coral_reef.svg'
-import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
-import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
-import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/selectedSite'
-import { useMap } from 'react-map-gl'
-import { MAIN_MAP_ID } from '../../constants/constants'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
+import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -78,9 +50,6 @@ const MetricsPane = ({
     userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
-  const [metricsView, setMetricsView] = useState('summary')
-  const isMapView = view === 'mapView'
-  const map = useMap()[MAIN_MAP_ID] // the docs for react-map-gl are not clear on the return object for useMap. This is what works in testing. Further, its not a 'ref' its the actual map instance.
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
@@ -160,142 +129,6 @@ const MetricsPane = ({
     handleShowMobileExpandedMetricsPane()
   }
 
-  const handleClearSelectedSampleEvent = () => {
-    setSelectedSampleEvent(null)
-    setSelectedMarkerId(null)
-    const queryParams = getURLParams()
-    queryParams.delete('sample_event_id')
-    updateURLParams(queryParams)
-  }
-
-  const handleChangeMetricsView = (event) => {
-    setMetricsView(event.target.name)
-  }
-
-  const SelectedSiteHeader = () => (
-    <StyledVisibleBackground>
-      <SelectedSiteSiteCardContainer>
-        <StyledMapPinContainer>
-          <img src={mapPin} alt="map-pin" />
-        </StyledMapPinContainer>
-        <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
-      </SelectedSiteSiteCardContainer>
-    </StyledVisibleBackground>
-  )
-
-  const SelectedSiteBody = () => {
-    if (!isDesktopWidth) {
-      return
-    }
-
-    const sampleEventAdmins = selectedSampleEvent.project_admins
-      .map((admin) => admin.name)
-      .join(', ')
-    const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
-
-    return (
-      <>
-        <SelectedSiteMetricsCardContainer>
-          <BiggerIconTextBoxMultiple />
-          <SelectedSiteContentContainer>
-            <StyledHeader>Project</StyledHeader>
-            <span>
-              {selectedSampleEvent.project_name}{' '}
-              {userIsMemberOfProject(selectedSampleEvent.project_id, mermaidUserData) ? (
-                <IconPersonCircle />
-              ) : null}
-            </span>
-          </SelectedSiteContentContainer>
-        </SelectedSiteMetricsCardContainer>
-        <SelectedSiteMetricsCardContainer>
-          <BiggerIconCalendar />
-          <SelectedSiteContentContainer>
-            <StyledHeader>Sample Date</StyledHeader>
-            <span>{selectedSampleEvent.sample_date}</span>
-          </SelectedSiteContentContainer>
-        </SelectedSiteMetricsCardContainer>
-        <StyledSummaryMetadataContainer>
-          <StyledMetricsSelector>
-            <input
-              id="metrics-summary"
-              type="radio"
-              name="summary"
-              checked={metricsView === 'summary'}
-              onChange={handleChangeMetricsView}
-            />
-            <label htmlFor="metrics-summary">Summary</label>
-          </StyledMetricsSelector>
-          <StyledMetricsSelector>
-            <input
-              id="metrics-metadata"
-              type="radio"
-              name="metadata"
-              checked={metricsView === 'metadata'}
-              onChange={handleChangeMetricsView}
-            />
-            <label htmlFor="metrics-metadata">Metadata</label>
-          </StyledMetricsSelector>
-        </StyledSummaryMetadataContainer>
-        {metricsView === 'summary' ? (
-          <span>Placeholder: show summary metrics here</span>
-        ) : (
-          <>
-            <SelectedSiteMetricsCardContainer>
-              <BiggerIconPersonCircle />
-              <SelectedSiteContentContainer>
-                <StyledHeader>Management Regime</StyledHeader>
-                <span>{selectedSampleEvent.management_name}</span>
-              </SelectedSiteContentContainer>
-            </SelectedSiteMetricsCardContainer>
-            <SelectedSiteMetricsCardContainer>
-              <BiggerIconUser />
-              <SelectedSiteContentContainer>
-                <StyledHeader>Admins</StyledHeader>
-                <span>{sampleEventAdmins}</span>
-              </SelectedSiteContentContainer>
-            </SelectedSiteMetricsCardContainer>
-            <SelectedSiteMetricsCardContainer>
-              <BiggerIconGlobe />
-              <SelectedSiteContentContainer>
-                <StyledHeader>Organizations</StyledHeader>
-                <span>{sampleEventOrganizations}</span>
-              </SelectedSiteContentContainer>
-            </SelectedSiteMetricsCardContainer>
-            <SelectedSiteMetricsCardContainer>
-              <StyledSvgContainer>
-                <img src={coralReefSvg} alt="coral reef" />
-              </StyledSvgContainer>
-              <SelectedSiteContentContainer>
-                <StyledHeader>Reef Habitat</StyledHeader>
-                <StyledReefContainer>
-                  <StyledReefRow>
-                    <StyledReefItemBold>Reef Zone</StyledReefItemBold>
-                    <StyledReefItem>{selectedSampleEvent.reef_zone}</StyledReefItem>
-                  </StyledReefRow>
-                  <StyledReefRow>
-                    <StyledReefItemBold>Reef Type</StyledReefItemBold>
-                    <StyledReefItem>{selectedSampleEvent.reef_type}</StyledReefItem>
-                  </StyledReefRow>
-                  <StyledReefRow>
-                    <StyledReefItemBold>Reef Exposure</StyledReefItemBold>
-                    <StyledReefItem>{selectedSampleEvent.reef_exposure}</StyledReefItem>
-                  </StyledReefRow>
-                </StyledReefContainer>
-              </SelectedSiteContentContainer>
-            </SelectedSiteMetricsCardContainer>
-            <SelectedSiteMetricsCardContainer>
-              <BiggerIconText />
-              <SelectedSiteContentContainer>
-                <StyledHeader>Notes</StyledHeader>
-                <span>{selectedSampleEvent.site_notes}</span>
-              </SelectedSiteContentContainer>
-            </SelectedSiteMetricsCardContainer>
-          </>
-        )}
-      </>
-    )
-  }
-
   const countryLabel = numUniqueCountries === 1 ? 'Country' : 'Countries'
 
   const transectAndProjectCountCards = (
@@ -346,20 +179,11 @@ const MetricsPane = ({
   )
 
   const metricsContent = selectedSampleEvent ? (
-    <>
-      <SelectedSiteHeader />
-      <SelectedSiteActionBar>
-        {getIsSiteSelected() && isMapView ? (
-          <ButtonSecondary onClick={() => zoomToSelectedSite({ displayedProjects, map })}>
-            <ZoomToSiteIcon /> &nbsp;Zoom
-          </ButtonSecondary>
-        ) : null}
-        <ButtonSecondary onClick={handleClearSelectedSampleEvent}>
-          <IconClose /> Clear
-        </ButtonSecondary>
-      </SelectedSiteActionBar>
-      <SelectedSiteBody />
-    </>
+    <SelectedSiteMetrics
+      view={view}
+      selectedSampleEvent={selectedSampleEvent}
+      setSelectedSampleEvent={setSelectedSampleEvent}
+    />
   ) : (
     <>{displayedProjectsMetrics}</>
   )
