@@ -9,12 +9,12 @@ import {
 import { IconGlobe, IconUser } from '../../assets/icons'
 import { Row } from '../generic/positioning'
 import theme from '../../styles/theme'
+import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 
 export const SelectedSiteMetricsCardContainer = styled.div`
   display: flex;
   flex-direction: row;
   padding: 1rem;
-  border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
 `
 export const SelectedSiteSiteCardContainer = styled(SelectedSiteMetricsCardContainer)`
@@ -25,6 +25,12 @@ export const SelectedSiteContentContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 27.5rem;
+`
+
+export const SelectedSiteContentContainerWiderOnMobile = styled(SelectedSiteContentContainer)`
+  ${mediaQueryTabletLandscapeOnly(css`
+    width: 100%;
+  `)}
 `
 export const biggerIcons = css`
   width: ${theme.typography.mediumIconSize};
@@ -97,4 +103,29 @@ export const SelectedSiteActionBar = styled(Row)`
   & > button {
     width: 100%;
   }
+`
+
+export const TabButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+`
+export const TabButton = styled.button`
+  all: unset;
+  padding: 0.5rem;
+  background-color: ${(props) =>
+    props.$isSelected ? theme.color.primaryColor : theme.color.grey0};
+  color: ${(props) => (props.$isSelected ? theme.color.white : theme.color.black)};
+  width: 100%;
+  text-align: center;
+`
+export const TabContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: ${theme.color.grey0} ${theme.color.grey1};
+  margin-right: -1rem; // make scrollbar not take up too much space
+  scrollbar-gutter: stable; // if no scrollbar, make sure the 'padded look from the parent is preserved
 `

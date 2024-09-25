@@ -19,7 +19,7 @@ const StyledLoadingContainer = styled.div`
     left: auto;
     display: flex;
     flex-direction: row;
-    width: calc(100% - 2rem); // leave room for 'padding'
+    width: 100%;
     justify-content: center;
     background-color: ${theme.color.white};
     justify-self: center;
