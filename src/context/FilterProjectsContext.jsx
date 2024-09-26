@@ -573,6 +573,16 @@ export const FilterProjectsProvider = ({ children }) => {
     return count
   }
 
+  const updateCurrentSampleEvent = useCallback(
+    (sampleEventId) => {
+      const newQueryParams = new URLSearchParams(location.search)
+      newQueryParams.set('sample_event_id', sampleEventId)
+      updateURLParams(newQueryParams)
+      setSelectedMarkerId(sampleEventId)
+    },
+    [location.search, updateURLParams],
+  )
+
   return (
     <FilterProjectsContext.Provider
       value={{
@@ -621,6 +631,7 @@ export const FilterProjectsProvider = ({ children }) => {
         setShowYourData,
         showProjectsWithNoRecords,
         showYourData,
+        updateCurrentSampleEvent,
         updateURLParams,
         userIsMemberOfProject,
       }}

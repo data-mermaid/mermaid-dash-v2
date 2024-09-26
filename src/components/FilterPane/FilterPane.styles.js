@@ -1,4 +1,4 @@
-import { FormControl, MenuItem, OutlinedInput, Chip, TextField, ListSubheader } from '@mui/material'
+import { FormControl, OutlinedInput, Chip, TextField, ListSubheader } from '@mui/material'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
@@ -127,12 +127,6 @@ export const StyledDateInput = styled.div`
     background: none;
     border: none;
     cursor: pointer;
-  }
-`
-
-export const StyledMenuItem = styled(MenuItem)`
-  &.MuiMenuItem-root {
-    font-size: ${theme.typography.defaultFontSize};
   }
 `
 
