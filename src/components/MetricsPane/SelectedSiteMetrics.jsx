@@ -37,6 +37,8 @@ import mapPin from '../../assets/map-pin.png'
 import useResponsive from '../../hooks/useResponsive'
 import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
 import { MermaidMenuItem, MermaidSelect } from '../generic/MermaidSelect'
+import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
+import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -83,9 +85,41 @@ export const SelectedSiteMetrics = ({
     updateURLParams(queryParams)
   }
 
-  const handleSampleDateChange = ({ target: { value } }) => {
+  const handleSurveyChange = ({ target: { value } }) => {
     updateCurrentSampleEvent(value)
   }
+
+  const surveysAtSimilarSites = getSurverysAtSimilarSites({
+    projectData: displayedProjects,
+    surveyToCompareTo: selectedSampleEvent,
+  })
+
+  const getProjectSiteLabel = (survey) => `${survey.project_name} - ${survey.site_name}`
+
+  // we only show one survey per site in the project-site drop down since the user will be able to select other surveys at each site from the sample date drop down
+  const surveysAtSimilarSitesLimitedToOneSurveyPerSite = surveysAtSimilarSites
+    .sort((a, b) => new Date(b.sample_date).getTime() - new Date(a.sample_date).getTime()) // we first sort the similar sites so that we get the most recent survey at a site showing as selected in the sample date drop down
+    .reduce(
+      (accumulatedSurveys, newSurvey) => {
+        const doesSurveyFromSameSiteAlreadyExist = accumulatedSurveys.some(
+          (accumulatedSurvey) => accumulatedSurvey.site_id === newSurvey.site_id,
+        )
+
+        return doesSurveyFromSameSiteAlreadyExist
+          ? accumulatedSurveys
+          : [...accumulatedSurveys, newSurvey]
+      },
+      [selectedSampleEvent], // we initialize with selected sample event so that the dropdown current value will show the current survey selected
+    )
+    .sort((a, b) => getProjectSiteLabel(a).localeCompare(getProjectSiteLabel(b)))
+
+  const similarSiteMenuItems = surveysAtSimilarSitesLimitedToOneSurveyPerSite.map(
+    ({ sample_event_id, ...restOfSurvey }) => (
+      <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
+        {getProjectSiteLabel(restOfSurvey)}
+      </MermaidMenuItem>
+    ),
+  )
 
   const selectedSiteHeader = (
     <StyledVisibleBackground>
@@ -93,18 +127,26 @@ export const SelectedSiteMetrics = ({
         <StyledMapPinContainer>
           <img src={mapPin} alt="map-pin" />
         </StyledMapPinContainer>
-        <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
+        {similarSiteMenuItems.length > 1 ? (
+          <MermaidSelect value={selectedSampleEvent.sample_event_id} onChange={handleSurveyChange}>
+            {similarSiteMenuItems}
+          </MermaidSelect>
+        ) : (
+          <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
+        )}
       </SelectedSiteSiteCardContainer>
     </StyledVisibleBackground>
   )
 
-  const projectSiteSurveyDateMenuItems = projectRecordsForSite.map(
-    ({ sample_date, sample_event_id }) => (
-      <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
-        {sample_date}
-      </MermaidMenuItem>
-    ),
-  )
+  const otherSurveysAtSameProjectSiteMenuItems = projectRecordsForSite
+    .sort((a, b) => new Date(a.sample_date).getTime() - new Date(b.sample_date).getTime())
+    .map(({ sample_date, sample_event_id }) => {
+      return (
+        <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
+          {getMermaidLocaleDateString(sample_date)}
+        </MermaidMenuItem>
+      )
+    })
 
   const selectedSiteBody =
     showMobileExpandedMetricsPane || isDesktopWidth ? (
@@ -125,15 +167,15 @@ export const SelectedSiteMetrics = ({
           <BiggerIconCalendar />
           <SelectedSiteContentContainer>
             <StyledHeader as="label">Sample Date</StyledHeader>
-            {projectRecordsForSite.length > 1 ? (
+            {otherSurveysAtSameProjectSiteMenuItems.length > 1 ? (
               <MermaidSelect
                 value={selectedSampleEvent.sample_event_id}
-                onChange={handleSampleDateChange}
+                onChange={handleSurveyChange}
               >
-                {projectSiteSurveyDateMenuItems}
+                {otherSurveysAtSameProjectSiteMenuItems}
               </MermaidSelect>
             ) : (
-              <span>{selectedSampleEvent.sample_date}</span>
+              <span>{getMermaidLocaleDateString(selectedSampleEvent.sample_date)}</span>
             )}
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
