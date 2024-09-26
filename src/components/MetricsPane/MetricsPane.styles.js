@@ -15,12 +15,12 @@ export const StyledMetricsWrapper = styled.div`
   z-index: 5;
   background-color: ${(props) =>
     props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
+  height: 100%;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;
     bottom: 0;
-    display: grid;
-    grid-template-rows: auto 1fr;
+    height: auto;
     ${(props) =>
       props.$showMobileExpandedMetricsPane &&
       `
@@ -102,12 +102,13 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
     position: absolute;
     top: -5rem;
     justify-self: center;
-    background-color: transparent;
     border: none;
     color: ${theme.color.white};
-    ${(props) => props.$showMobileExpandedMetricsPane && `background-color: ${theme.color.grey1};`}
+    background-color: ${(props) =>
+      props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
+    left: 0;
   `)}
 `
 
@@ -190,33 +191,12 @@ export const InlineOnDesktopMetricWrapper = styled.div`
     `)}
   }
 `
-export const MobileExpandedMetricsPane = styled.div`
-  background-color: ${theme.color.grey1};
-  width: 100%;
-`
 
 export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
   margin: 0 0 0.5rem 0;
   flex-grow: 1;
-`
-
-export const StyledSummaryMetadataContainer = styled.fieldset`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  margin: 0 1rem 0 1rem;
-  border: 0;
-  padding: 0;
-`
-export const StyledMetricsSelector = styled.div`
-  display: flex;
-  width: calc(50% - 0.5rem);
-  border: 1px solid ${theme.color.grey0};
-  background-color: ${theme.color.white};
-  justify-content: center;
-  padding: 0.5rem;
 `
 
 export const StyledChevronSpan = styled.span`

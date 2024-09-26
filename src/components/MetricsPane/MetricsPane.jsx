@@ -6,7 +6,6 @@ import {
   SummarizedMetrics,
   MetricsCard,
   MultipleMetricCardsRow,
-  MobileExpandedMetricsPane,
   DesktopToggleMetricsPaneButton,
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
@@ -41,13 +40,10 @@ const MetricsPane = ({
     enableFollowScreen,
     getActiveProjectCount,
     getURLParams,
-    mermaidUserData,
     projectData,
     selectedMarkerId,
     setEnableFollowScreen,
-    setSelectedMarkerId,
     updateURLParams,
-    userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -183,6 +179,7 @@ const MetricsPane = ({
       view={view}
       selectedSampleEvent={selectedSampleEvent}
       setSelectedSampleEvent={setSelectedSampleEvent}
+      showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
     />
   ) : (
     <>{displayedProjectsMetrics}</>
@@ -209,9 +206,6 @@ const MetricsPane = ({
       $isDesktopWidth={isDesktopWidth}
     >
       {isMobileWidth || showMetricsPane ? metricsContent : null}
-      {isMobileWidth && showMobileExpandedMetricsPane ? (
-        <MobileExpandedMetricsPane>Placeholder: more metrics here</MobileExpandedMetricsPane>
-      ) : null}
       {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
         <DesktopFollowScreenButton
           onClick={() =>

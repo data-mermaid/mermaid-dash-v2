@@ -8,13 +8,15 @@ export const StyledDashboardContainer = styled.div`
   display: flex;
   flex-direction: column;
   height: 100dvh;
+  overflow: hidden;
 `
 
 export const StyledContentContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-top: 4.9rem;
+  margin-top: ${theme.spacing.headerHeight};
   flex-grow: 1;
+  overflow: hidden;
 `
 
 export const StyledFilterWrapper = styled.div`
