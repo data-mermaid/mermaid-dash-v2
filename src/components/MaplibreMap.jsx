@@ -335,11 +335,8 @@ const MaplibreMap = ({ view, setView }) => {
           customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
           position={isDesktopWidth ? 'bottom-right' : 'top-right'}
         />
-        <NavigationControl
-          showCompass={false}
-          showZoom={isDesktopWidth ? true : false}
-          position="bottom-right"
-        />
+        {isDesktopWidth ? <NavigationControl showCompass={false} position="bottom-right" /> : null}
+
         <Source
           id="basemap-source"
           type="raster"
