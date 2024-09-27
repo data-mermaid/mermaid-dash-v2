@@ -36,6 +36,7 @@ import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
 import useResponsive from '../../hooks/useResponsive'
 import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
+import { MermaidMenuItem, MermaidSelect } from '../generic/MermaidSelect'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -52,9 +53,10 @@ export const SelectedSiteMetrics = ({
     setSelectedMarkerId,
     updateURLParams,
     userIsMemberOfProject,
+    updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
   const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
-  const siteNotes = selectedSampleEvent.site_notes
+  const { site_notes: siteNotes, project_id: projectId, site_id: siteId } = selectedSampleEvent
   const initialAreSurveyNotesTruncated = siteNotes.length > 250
   const [areSurveyNotesTruncated, setAreSurveyNotesTruncated] = useState(
     initialAreSurveyNotesTruncated,
@@ -68,6 +70,11 @@ export const SelectedSiteMetrics = ({
   const { isDesktopWidth } = useResponsive()
   const isMapView = view === 'mapView'
   const map = useMap()[MAIN_MAP_ID] // the docs for react-map-gl are not clear on the return object for useMap. This is what works in testing. Further, its not a 'ref' its the actual map instance.
+  const sampleEventAdmins = selectedSampleEvent.project_admins.map((admin) => admin.name).join(', ')
+  const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
+  const project = displayedProjects.find((project) => project.project_id === projectId)
+  const projectRecordsForSite = project.records.filter((record) => record.site_id === siteId)
+
   const handleClearSelectedSampleEvent = () => {
     setSelectedSampleEvent(null)
     setSelectedMarkerId(null)
@@ -76,8 +83,9 @@ export const SelectedSiteMetrics = ({
     updateURLParams(queryParams)
   }
 
-  const sampleEventAdmins = selectedSampleEvent.project_admins.map((admin) => admin.name).join(', ')
-  const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
+  const handleSampleDateChange = ({ target: { value } }) => {
+    updateCurrentSampleEvent(value)
+  }
 
   const selectedSiteHeader = (
     <StyledVisibleBackground>
@@ -88,6 +96,14 @@ export const SelectedSiteMetrics = ({
         <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
       </SelectedSiteSiteCardContainer>
     </StyledVisibleBackground>
+  )
+
+  const projectSiteSurveyDateMenuItems = projectRecordsForSite.map(
+    ({ sample_date, sample_event_id }) => (
+      <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
+        {sample_date}
+      </MermaidMenuItem>
+    ),
   )
 
   const selectedSiteBody =
@@ -108,8 +124,17 @@ export const SelectedSiteMetrics = ({
         <SelectedSiteMetricsCardContainer>
           <BiggerIconCalendar />
           <SelectedSiteContentContainer>
-            <StyledHeader>Sample Date</StyledHeader>
-            <span>{selectedSampleEvent.sample_date}</span>
+            <StyledHeader as="label">Sample Date</StyledHeader>
+            {projectRecordsForSite.length > 1 ? (
+              <MermaidSelect
+                value={selectedSampleEvent.sample_event_id}
+                onChange={handleSampleDateChange}
+              >
+                {projectSiteSurveyDateMenuItems}
+              </MermaidSelect>
+            ) : (
+              <span>{selectedSampleEvent.sample_date}</span>
+            )}
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
         <TabButtonContainer>

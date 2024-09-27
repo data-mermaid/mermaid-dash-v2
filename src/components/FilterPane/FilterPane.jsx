@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types'
-import { Select, Box, IconButton } from '@mui/material'
+import { Box, IconButton } from '@mui/material'
+
 import {
   StyledHeader,
   StyledFormContainer,
@@ -16,7 +17,6 @@ import {
   StyledMethodListContainer,
   StyledDateInputContainer,
   StyledDateInput,
-  StyledMenuItem,
   StyledListSubheader,
   StyledClickableArea,
   StyledLabel,
@@ -28,36 +28,18 @@ import {
   TieredStyledClickableArea,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
-import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { useEffect, useState, useCallback, useContext } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+import { MermaidMenuItem, MermaidSelect } from '../generic/MermaidSelect'
+import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useAuth0 } from '@auth0/auth0-react'
+import { useEffect, useState, useCallback, useContext } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 
 const deleteIconSize = {
   height: '15px',
   width: '15px',
-}
-
-const selectCustomStyles = {
-  '&.MuiInputBase-root': {
-    minHeight: '3.5rem',
-  },
-  '& .MuiSelect-select': {
-    paddingRight: '1rem',
-    paddingLeft: '1rem',
-    paddingTop: '0.5rem',
-    paddingBottom: '0.5rem',
-  },
-  MenuProps: {
-    PaperProps: {
-      sx: {
-        maxHeight: '50vh',
-      },
-    },
-  },
 }
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
@@ -315,13 +297,11 @@ const FilterPane = ({ mermaidUserData }) => {
       <StyledHeader>Countries</StyledHeader>
       <StyledFormContainer>
         <StyledFormControl>
-          <Select
+          <MermaidSelect
             multiple
             value={selectedCountries}
             onChange={handleSelectedCountriesChange}
             input={<StyledOutlinedInput />}
-            sx={selectCustomStyles}
-            MenuProps={selectCustomStyles.MenuProps}
             onOpen={countriesSelectOnOpen}
             renderValue={(selected) => (
               <Box sx={selectBoxCustomStyles}>
@@ -345,33 +325,31 @@ const FilterPane = ({ mermaidUserData }) => {
               <StyledListSubheader>Countries based on current filters</StyledListSubheader>
             ) : null}
             {displayedCountries.map((country) => (
-              <StyledMenuItem key={`matches-${country}`} value={country}>
+              <MermaidMenuItem key={`matches-${country}`} value={country}>
                 <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
                 {country}
-              </StyledMenuItem>
+              </MermaidMenuItem>
             ))}
             {remainingDisplayedCountries.length ? (
               <StyledListSubheader>Other countries</StyledListSubheader>
             ) : null}
             {remainingDisplayedCountries.map((country) => (
-              <StyledMenuItem key={`nonmatches-${country}`} value={country}>
+              <MermaidMenuItem key={`nonmatches-${country}`} value={country}>
                 <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
                 {country}
-              </StyledMenuItem>
+              </MermaidMenuItem>
             ))}
-          </Select>
+          </MermaidSelect>
         </StyledFormControl>
       </StyledFormContainer>
       <StyledHeader>Organizations</StyledHeader>
       <StyledFormContainer>
         <StyledFormControl>
-          <Select
+          <MermaidSelect
             multiple
             value={selectedOrganizations}
             onChange={handleSelectedOrganizationsChange}
             input={<StyledOutlinedInput />}
-            sx={selectCustomStyles}
-            MenuProps={selectCustomStyles.MenuProps}
             onOpen={organizationsSelectOnOpen}
             renderValue={(selected) => (
               <Box sx={selectBoxCustomStyles}>
@@ -397,16 +375,16 @@ const FilterPane = ({ mermaidUserData }) => {
                 : 'No organizations match current filters'}
             </StyledListSubheader>
             {displayedOrganizations.map((organization) => (
-              <StyledMenuItem key={organization} value={organization}>
+              <MermaidMenuItem key={organization} value={organization}>
                 <input
                   type="checkbox"
                   checked={selectedOrganizations.includes(organization)}
                   readOnly
                 />
                 {organization}
-              </StyledMenuItem>
+              </MermaidMenuItem>
             ))}
-          </Select>
+          </MermaidSelect>
         </StyledFormControl>
       </StyledFormContainer>
       <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>

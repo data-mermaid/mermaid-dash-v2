@@ -103,7 +103,7 @@ const MaplibreMap = ({ view, setView }) => {
     enableFollowScreen,
     selectedMarkerId,
     setMapBbox,
-    setSelectedMarkerId,
+    updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
   const prevDisplayedProjects = usePrevious(displayedProjects)
   const location = useLocation()
@@ -236,10 +236,7 @@ const MaplibreMap = ({ view, setView }) => {
 
       if (clickedFeature.layer.id === 'sites-unclustered-layer') {
         const { sample_event_id } = clickedFeature.properties
-        const newQueryParams = getURLParamsSnapshot()
-        newQueryParams.set('sample_event_id', sample_event_id)
-        updateURLParams(newQueryParams)
-        setSelectedMarkerId(sample_event_id)
+        updateCurrentSampleEvent(sample_event_id)
 
         return
       }
