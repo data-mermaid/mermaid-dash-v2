@@ -34,10 +34,14 @@ export const MermaidOutlinedInput = styled(OutlinedInput)`
   &.MuiOutlinedInput-root {
     background-color: ${theme.color.white};
     border-radius: 0;
-    font-size: ${theme.typography.smallFontSize};
+    font-size: ${theme.typography.defaultFontSize};
+    font-family: ${theme.typography.fontFamily};
+    color: ${theme.color.textColor};
   }
   .MuiChip-label {
-    font-size: ${theme.typography.smallFontSize};
+    font-size: ${theme.typography.defaultFontSize};
+    font-family: ${theme.typography.fontFamily};
+    color: ${theme.color.textColor};
   }
 `
 export const MermaidChip = styled(Chip)`

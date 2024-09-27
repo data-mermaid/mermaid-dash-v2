@@ -101,7 +101,7 @@ export const SelectedSiteMetrics = ({
   const getProjectSiteOptionLabel = (survey) => `${survey.project_name} - ${survey.site_name}`
 
   // we only show one survey per site in the project-site drop down since the user will be able to select other surveys at each site from the sample date drop down
-  const surveysAtSimilarSitesLimitedToOneSurveyPerSite = surveysAtSimilarSites
+  const oneSurveyPerSimilarSiteList = surveysAtSimilarSites
     .sort((a, b) => new Date(b.sample_date).getTime() - new Date(a.sample_date).getTime()) // we first sort the similar sites so that we get the most recent survey at a site showing as selected in the sample date drop down
     .reduce(
       (accumulatedSurveys, newSurvey) => {
@@ -117,7 +117,7 @@ export const SelectedSiteMetrics = ({
     )
     .sort((a, b) => getProjectSiteOptionLabel(a).localeCompare(getProjectSiteOptionLabel(b)))
 
-  const similarSiteMenuItems = surveysAtSimilarSitesLimitedToOneSurveyPerSite.map(
+  const similarSiteMenuItems = oneSurveyPerSimilarSiteList.map(
     ({ sample_event_id, ...restOfSurvey }) => (
       <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
         {getProjectSiteOptionLabel(restOfSurvey)}
@@ -176,7 +176,7 @@ export const SelectedSiteMetrics = ({
 
   const otherSurveysAtSameProjectSiteMenuItems = projectRecordsForSite
     ?.sort((a, b) => new Date(a.sample_date).getTime() - new Date(b.sample_date).getTime())
-    ?.map(({ sample_date, sample_event_id }) => {
+    .map(({ sample_date, sample_event_id }) => {
       return (
         <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
           {getMermaidLocaleDateString(sample_date)}
@@ -203,7 +203,7 @@ export const SelectedSiteMetrics = ({
           <BiggerIconCalendar />
           <SelectedSiteContentContainer>
             <StyledHeader as="label">Sample Date</StyledHeader>
-            {otherSurveysAtSameProjectSiteMenuItems.length > 1 ? (
+            {otherSurveysAtSameProjectSiteMenuItems?.length > 1 ? (
               <MermaidFormContainer>
                 <MermaidFormControl>
                   <MermaidSelect
