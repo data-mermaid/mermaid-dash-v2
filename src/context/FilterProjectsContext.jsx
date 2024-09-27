@@ -233,7 +233,7 @@ export const FilterProjectsProvider = ({ children }) => {
       const fallbackSampleDateBefore = new Date(Date.now())
 
       return projectData.results
-        .filter((project) => {
+        ?.filter((project) => {
           // Filter by selected countries
           const matchesSelectedCountries =
             selectedCountries.length === 0 ||
@@ -370,7 +370,7 @@ export const FilterProjectsProvider = ({ children }) => {
     const uniqueCountries = [
       ...new Set(
         filteredProjects
-          .map((project) => {
+          ?.map((project) => {
             if (selectedOrganizations.length === 0) {
               return project.records[0]?.country_name
             } else {

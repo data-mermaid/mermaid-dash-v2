@@ -199,7 +199,10 @@ const MaplibreMap = ({ view, setView }) => {
   ])
 
   const handleMoveEnd = () => {
-    const map = mapRef.current.getMap()
+    const map = mapRef.current?.getMap()
+    if (!map) {
+      return
+    }
     const { lat, lng } = map.getCenter()
     const zoom = map.getZoom()
     const newQueryParams = getURLParamsSnapshot()

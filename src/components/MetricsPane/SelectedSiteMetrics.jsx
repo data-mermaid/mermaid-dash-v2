@@ -175,8 +175,8 @@ export const SelectedSiteMetrics = ({
   )
 
   const otherSurveysAtSameProjectSiteMenuItems = projectRecordsForSite
-    .sort((a, b) => new Date(a.sample_date).getTime() - new Date(b.sample_date).getTime())
-    .map(({ sample_date, sample_event_id }) => {
+    ?.sort((a, b) => new Date(a.sample_date).getTime() - new Date(b.sample_date).getTime())
+    ?.map(({ sample_date, sample_event_id }) => {
       return (
         <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
           {getMermaidLocaleDateString(sample_date)}
