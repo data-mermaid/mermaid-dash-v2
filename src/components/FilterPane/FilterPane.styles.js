@@ -1,4 +1,4 @@
-import { FormControl, OutlinedInput, Chip, TextField, ListSubheader } from '@mui/material'
+import { TextField } from '@mui/material'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
@@ -23,30 +23,6 @@ export const StyledFilterPaneContainer = styled.div`
     min-width: 80vw;
     min-height: 85dvh;
   `)}
-`
-
-export const StyledFormControl = styled(FormControl)`
-  &.MuiFormControl-root {
-    width: 100%;
-  }
-`
-
-export const StyledOutlinedInput = styled(OutlinedInput)`
-  &.MuiOutlinedInput-root {
-    background-color: ${theme.color.white};
-    border-radius: 0;
-  }
-  .MuiChip-label {
-    font-size: ${theme.typography.smallFontSize};
-  }
-`
-
-export const StyledChip = styled(Chip)`
-  &.MuiChip-root {
-    border-radius: 0.5rem;
-    border: 0.5px solid ${theme.color.black};
-    font-size: ${theme.typography.defaultFontSize};
-  }
 `
 
 export const StyledExpandFilters = styled.button`
@@ -130,13 +106,6 @@ export const StyledDateInput = styled.div`
   }
 `
 
-export const StyledListSubheader = styled(ListSubheader)`
-  &.MuiListSubheader-root {
-    font-weight: 600;
-    color: ${theme.color.primaryColor};
-    font-size: ${theme.typography.defaultFontSize};
-  }
-`
 export const StyledClickableArea = styled.div`
   cursor: pointer;
   display: flex;
@@ -157,9 +126,6 @@ export const StyledCategoryContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
   margin-right: 1rem;
-`
-export const StyledFormContainer = styled.div`
-  border: 1px solid ${theme.color.grey0};
 `
 
 export const StyledEmptyListItem = styled.div`

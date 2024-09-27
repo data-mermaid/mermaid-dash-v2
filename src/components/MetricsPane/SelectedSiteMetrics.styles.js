@@ -17,10 +17,7 @@ export const SelectedSiteMetricsCardContainer = styled.div`
   padding: 1rem;
   background-color: ${theme.color.white};
 `
-export const SelectedSiteSiteCardContainer = styled(SelectedSiteMetricsCardContainer)`
-  text-transform: uppercase;
-  align-items: center;
-`
+
 export const SelectedSiteContentContainer = styled.div`
   display: flex;
   flex-direction: column;

@@ -2,40 +2,43 @@ import PropTypes from 'prop-types'
 import { Box, IconButton } from '@mui/material'
 
 import {
-  StyledHeader,
-  StyledFormContainer,
-  StyledProjectsHeader,
-  StyledFilterPaneContainer,
-  StyledFormControl,
-  StyledOutlinedInput,
-  StyledChip,
-  StyledExpandFilters,
-  ShowMoreFiltersContainer,
-  StyledProjectNameFilter,
-  StyledProjectListContainer,
-  StyledUnorderedList,
-  StyledMethodListContainer,
-  StyledDateInputContainer,
-  StyledDateInput,
-  StyledListSubheader,
-  StyledClickableArea,
-  StyledLabel,
-  StyledCategoryContainer,
-  StyledEmptyListItem,
-  ToggleMethodDataSharingButton,
   ExpandableFilterRowContainer,
+  ShowMoreFiltersContainer,
+  StyledCategoryContainer,
+  StyledClickableArea,
+  StyledDateInput,
+  StyledDateInputContainer,
+  StyledEmptyListItem,
+  StyledExpandFilters,
+  StyledFilterPaneContainer,
+  StyledHeader,
+  StyledLabel,
   StyledLi,
+  StyledMethodListContainer,
+  StyledProjectListContainer,
+  StyledProjectNameFilter,
+  StyledProjectsHeader,
+  StyledUnorderedList,
   TieredStyledClickableArea,
+  ToggleMethodDataSharingButton,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
-import { MermaidMenuItem, MermaidSelect } from '../generic/MermaidSelect'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useEffect, useState, useCallback, useContext } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
+import {
+  MermaidChip,
+  MermaidFormContainer,
+  MermaidFormControl,
+  MermaidListSubheader,
+  MermaidMenuItem,
+  MermaidOutlinedInput,
+  MermaidSelect,
+} from '../generic/MermaidMui'
 
 const deleteIconSize = {
   height: '15px',
@@ -295,18 +298,18 @@ const FilterPane = ({ mermaidUserData }) => {
   return (
     <StyledFilterPaneContainer>
       <StyledHeader>Countries</StyledHeader>
-      <StyledFormContainer>
-        <StyledFormControl>
+      <MermaidFormContainer>
+        <MermaidFormControl>
           <MermaidSelect
             multiple
             value={selectedCountries}
             onChange={handleSelectedCountriesChange}
-            input={<StyledOutlinedInput />}
+            input={<MermaidOutlinedInput />}
             onOpen={countriesSelectOnOpen}
             renderValue={(selected) => (
               <Box sx={selectBoxCustomStyles}>
                 {selected.map((value) => (
-                  <StyledChip
+                  <MermaidChip
                     key={value}
                     label={value}
                     onDelete={() => handleDeleteCountry(value)}
@@ -322,7 +325,7 @@ const FilterPane = ({ mermaidUserData }) => {
             )}
           >
             {remainingDisplayedCountries.length ? (
-              <StyledListSubheader>Countries based on current filters</StyledListSubheader>
+              <MermaidListSubheader>Countries based on current filters</MermaidListSubheader>
             ) : null}
             {displayedCountries.map((country) => (
               <MermaidMenuItem key={`matches-${country}`} value={country}>
@@ -331,7 +334,7 @@ const FilterPane = ({ mermaidUserData }) => {
               </MermaidMenuItem>
             ))}
             {remainingDisplayedCountries.length ? (
-              <StyledListSubheader>Other countries</StyledListSubheader>
+              <MermaidListSubheader>Other countries</MermaidListSubheader>
             ) : null}
             {remainingDisplayedCountries.map((country) => (
               <MermaidMenuItem key={`nonmatches-${country}`} value={country}>
@@ -340,21 +343,21 @@ const FilterPane = ({ mermaidUserData }) => {
               </MermaidMenuItem>
             ))}
           </MermaidSelect>
-        </StyledFormControl>
-      </StyledFormContainer>
+        </MermaidFormControl>
+      </MermaidFormContainer>
       <StyledHeader>Organizations</StyledHeader>
-      <StyledFormContainer>
-        <StyledFormControl>
+      <MermaidFormContainer>
+        <MermaidFormControl>
           <MermaidSelect
             multiple
             value={selectedOrganizations}
             onChange={handleSelectedOrganizationsChange}
-            input={<StyledOutlinedInput />}
+            input={<MermaidOutlinedInput />}
             onOpen={organizationsSelectOnOpen}
             renderValue={(selected) => (
               <Box sx={selectBoxCustomStyles}>
                 {selected.map((value) => (
-                  <StyledChip
+                  <MermaidChip
                     key={value}
                     label={value}
                     onDelete={() => handleDeleteOrganization(value)}
@@ -369,11 +372,11 @@ const FilterPane = ({ mermaidUserData }) => {
               </Box>
             )}
           >
-            <StyledListSubheader>
+            <MermaidListSubheader>
               {displayedOrganizations.length
                 ? 'Organizations based on current filters'
                 : 'No organizations match current filters'}
-            </StyledListSubheader>
+            </MermaidListSubheader>
             {displayedOrganizations.map((organization) => (
               <MermaidMenuItem key={organization} value={organization}>
                 <input
@@ -385,8 +388,8 @@ const FilterPane = ({ mermaidUserData }) => {
               </MermaidMenuItem>
             ))}
           </MermaidSelect>
-        </StyledFormControl>
-      </StyledFormContainer>
+        </MermaidFormControl>
+      </MermaidFormContainer>
       <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
         Show {showMoreFilters ? 'fewer' : 'more'} filters
       </StyledExpandFilters>

@@ -12,7 +12,6 @@ import {
   SelectedSiteContentContainer,
   SelectedSiteContentContainerWiderOnMobile,
   SelectedSiteMetricsCardContainer,
-  SelectedSiteSiteCardContainer,
   StyledMapPinContainer,
   StyledReefContainer,
   StyledReefItem,
@@ -36,10 +35,15 @@ import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
 import useResponsive from '../../hooks/useResponsive'
 import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
-import { MermaidMenuItem, MermaidSelect } from '../generic/MermaidSelect'
 import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
-
+import {
+  MermaidFormContainer,
+  MermaidFormControl,
+  MermaidMenuItem,
+  MermaidOutlinedInput,
+  MermaidSelect,
+} from '../generic/MermaidMui'
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
 export const SelectedSiteMetrics = ({
@@ -74,8 +78,8 @@ export const SelectedSiteMetrics = ({
   const map = useMap()[MAIN_MAP_ID] // the docs for react-map-gl are not clear on the return object for useMap. This is what works in testing. Further, its not a 'ref' its the actual map instance.
   const sampleEventAdmins = selectedSampleEvent.project_admins.map((admin) => admin.name).join(', ')
   const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
-  const project = displayedProjects.find((project) => project.project_id === projectId)
-  const projectRecordsForSite = project.records.filter((record) => record.site_id === siteId)
+  const project = displayedProjects?.find((project) => project.project_id === projectId)
+  const projectRecordsForSite = project?.records?.filter((record) => record.site_id === siteId)
 
   const handleClearSelectedSampleEvent = () => {
     setSelectedSampleEvent(null)
@@ -94,7 +98,7 @@ export const SelectedSiteMetrics = ({
     surveyToCompareTo: selectedSampleEvent,
   })
 
-  const getProjectSiteLabel = (survey) => `${survey.project_name} - ${survey.site_name}`
+  const getProjectSiteOptionLabel = (survey) => `${survey.project_name} - ${survey.site_name}`
 
   // we only show one survey per site in the project-site drop down since the user will be able to select other surveys at each site from the sample date drop down
   const surveysAtSimilarSitesLimitedToOneSurveyPerSite = surveysAtSimilarSites
@@ -111,30 +115,62 @@ export const SelectedSiteMetrics = ({
       },
       [selectedSampleEvent], // we initialize with selected sample event so that the dropdown current value will show the current survey selected
     )
-    .sort((a, b) => getProjectSiteLabel(a).localeCompare(getProjectSiteLabel(b)))
+    .sort((a, b) => getProjectSiteOptionLabel(a).localeCompare(getProjectSiteOptionLabel(b)))
 
   const similarSiteMenuItems = surveysAtSimilarSitesLimitedToOneSurveyPerSite.map(
     ({ sample_event_id, ...restOfSurvey }) => (
       <MermaidMenuItem key={sample_event_id} value={sample_event_id}>
-        {getProjectSiteLabel(restOfSurvey)}
+        {getProjectSiteOptionLabel(restOfSurvey)}
       </MermaidMenuItem>
     ),
   )
 
+  const projectSiteSelectCardContent = (
+    <>
+      <StyledHeader>Select Project/Site</StyledHeader>
+      <MermaidFormContainer>
+        <MermaidFormControl>
+          <MermaidSelect
+            input={<MermaidOutlinedInput />}
+            value={selectedSampleEvent.sample_event_id}
+            onChange={handleSurveyChange}
+          >
+            {similarSiteMenuItems}
+          </MermaidSelect>
+        </MermaidFormControl>
+      </MermaidFormContainer>
+    </>
+  )
+
+  const mobileProjectSiteContent = showMobileExpandedMetricsPane ? (
+    projectSiteSelectCardContent
+  ) : (
+    <>
+      <StyledHeader>Project/Site</StyledHeader>
+      <span>{getProjectSiteOptionLabel(selectedSampleEvent)}</span>
+    </>
+  )
+  const projectSiteContent = isDesktopWidth
+    ? projectSiteSelectCardContent
+    : mobileProjectSiteContent
+
   const selectedSiteHeader = (
     <StyledVisibleBackground>
-      <SelectedSiteSiteCardContainer>
+      <SelectedSiteMetricsCardContainer>
         <StyledMapPinContainer>
           <img src={mapPin} alt="map-pin" />
         </StyledMapPinContainer>
-        {similarSiteMenuItems.length > 1 ? (
-          <MermaidSelect value={selectedSampleEvent.sample_event_id} onChange={handleSurveyChange}>
-            {similarSiteMenuItems}
-          </MermaidSelect>
-        ) : (
-          <StyledHeader>{selectedSampleEvent.site_name}</StyledHeader>
-        )}
-      </SelectedSiteSiteCardContainer>
+        <SelectedSiteContentContainerWiderOnMobile>
+          {similarSiteMenuItems.length > 1 ? (
+            <>{projectSiteContent}</>
+          ) : (
+            <>
+              <StyledHeader>Site</StyledHeader>
+              <span>{selectedSampleEvent.site_name}</span>
+            </>
+          )}
+        </SelectedSiteContentContainerWiderOnMobile>
+      </SelectedSiteMetricsCardContainer>
     </StyledVisibleBackground>
   )
 
@@ -168,12 +204,17 @@ export const SelectedSiteMetrics = ({
           <SelectedSiteContentContainer>
             <StyledHeader as="label">Sample Date</StyledHeader>
             {otherSurveysAtSameProjectSiteMenuItems.length > 1 ? (
-              <MermaidSelect
-                value={selectedSampleEvent.sample_event_id}
-                onChange={handleSurveyChange}
-              >
-                {otherSurveysAtSameProjectSiteMenuItems}
-              </MermaidSelect>
+              <MermaidFormContainer>
+                <MermaidFormControl>
+                  <MermaidSelect
+                    value={selectedSampleEvent.sample_event_id}
+                    onChange={handleSurveyChange}
+                    input={<MermaidOutlinedInput />}
+                  >
+                    {otherSurveysAtSameProjectSiteMenuItems}
+                  </MermaidSelect>
+                </MermaidFormControl>
+              </MermaidFormContainer>
             ) : (
               <span>{getMermaidLocaleDateString(selectedSampleEvent.sample_date)}</span>
             )}
