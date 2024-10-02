@@ -1,5 +1,6 @@
 import { css } from 'styled-components'
 import colorHelper from 'color'
+import { fontFamily } from '@mui/system'
 
 const primary = colorHelper('#174b82')
 const secondary = colorHelper('#DDDCE4')
@@ -182,6 +183,7 @@ const timing = {
 }
 
 const typography = {
+  fontFamily: "'Open Sans', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'",
   largeFontSize: '2.5rem',
   mediumFontSize: '2rem',
   defaultFontSize: '1.6rem',
