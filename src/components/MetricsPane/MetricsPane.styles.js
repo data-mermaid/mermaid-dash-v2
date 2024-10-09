@@ -7,8 +7,8 @@ import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
 export const StyledMetricsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding: 1rem;
+  gap: 0.5rem;
+  padding: 0.5rem;
   ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
   ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
