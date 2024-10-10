@@ -4,7 +4,8 @@ import { hoverState } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
 const buttonActive = css`
-  transition: ${theme.timing.activeTransition};
+  transition-property: background, color;
+  transition-duration: ${theme.timing.activeTransition};
 `
 
 export const CloseButton = styled.button`
@@ -19,13 +20,15 @@ export const CloseButton = styled.button`
   width: 4rem;
   height: 4rem;
   cursor: pointer;
-  transition: ${theme.timing.hoverTransition};
+  transition-property: background, color;
+  transition-duration: ${theme.timing.hoverTransition};
   ${hoverState(css`
     background: ${theme.color.secondaryHover};
   `)}
 `
 const buttonCss = css`
-  transition: ${theme.timing.activeTransition};
+  transition-property: background, color;
+  transition-duration: ${theme.timing.activeTransition};
   padding: ${theme.spacing.buttonPadding};
   border-width: 0;
   display: inline-block;
