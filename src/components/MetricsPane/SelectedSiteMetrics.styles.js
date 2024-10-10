@@ -118,6 +118,7 @@ export const TabButton = styled.button`
   color: ${(props) => (props.$isSelected ? theme.color.white : theme.color.black)};
   width: 100%;
   text-align: center;
+  cursor: pointer;
 `
 export const TabContent = styled.div`
   display: flex;
