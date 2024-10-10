@@ -13,6 +13,7 @@ export const StyledMetricsWrapper = styled.div`
   ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
   position: relative;
   z-index: 5;
+  overflow-y: auto;
   background-color: ${(props) =>
     props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
   height: 100%;
@@ -21,13 +22,14 @@ export const StyledMetricsWrapper = styled.div`
     width: 100%;
     bottom: 0;
     height: auto;
-    ${(props) =>
-      props.$showMobileExpandedMetricsPane &&
-      `
-     top: 9.8rem;
-      width: 100vw;
-      bottom: 0;
-    `};
+    ${({ $showMobileExpandedMetricsPane }) =>
+      $showMobileExpandedMetricsPane &&
+      css`
+        top: ${theme.spacing.headerHeight};
+        margin: 0.5rem;
+        margin-bottom: 0;
+        width: calc(100vw - 1rem);
+      `};
   `)}
 `
 
@@ -68,14 +70,12 @@ export const BiggerIconCaretUp = styled(IconCaretUp)`
 export const BiggerIconCaretDown = styled(IconCaretDown)`
   width: ${theme.typography.largeIconSize};
   height: ${theme.typography.largeIconSize};
-  top: 0.7rem;
-  position: relative;
 `
 
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
-  top: 1.3rem;
-  left: -10rem;
+  top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
+  right: ${({ $showMetricsPane }) => ($showMetricsPane ? '35rem' : 0)};
   height: 6rem;
   z-index: 5;
   width: 10rem;
@@ -98,17 +98,17 @@ export const MobileExpandMetricsPaneButton = styled(ButtonSecondary)`
   ${mediaQueryTabletLandscapeOnly(css`
     width: 100%;
     font-size: ${theme.typography.largeIconSize};
-    display: block;
-    position: absolute;
-    top: -5rem;
-    justify-self: center;
+    display: flex;
     border: none;
     color: ${theme.color.white};
+    position: sticky;
+    top: -0.5rem;
+    margin: -0.5rem 0;
+    z-index: 1;
     background-color: ${(props) =>
       props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
     -webkit-text-stroke-width: 1px;
     -webkit-text-stroke-color: black;
-    left: 0;
   `)}
 `
 

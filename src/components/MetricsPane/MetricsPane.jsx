@@ -22,6 +22,9 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 
+const ARROW_RIGHT = String.fromCharCode(10095)
+const ARROW_LEFT = String.fromCharCode(10094)
+
 const MetricsPane = ({
   setShowLoadingIndicator,
   setShowMetricsPane,
@@ -199,66 +202,62 @@ const MetricsPane = ({
   }
 
   return (
-    <StyledMetricsWrapper
-      $showMetricsPane={showMetricsPane}
-      $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      $showLoadingIndicator={showLoadingIndicator}
-      $isDesktopWidth={isDesktopWidth}
-    >
-      {isMobileWidth || showMetricsPane ? metricsContent : null}
-      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
-        <DesktopFollowScreenButton
-          onClick={() =>
-            handleFollowScreen({
-              target: { checked: !enableFollowScreen },
-            })
-          }
-        >
-          <input
-            type="checkbox"
-            id="follow-screen"
-            checked={enableFollowScreen}
-            onChange={handleFollowScreen}
-            onClick={(e) => e.stopPropagation()}
+    <>
+      <StyledMetricsWrapper
+        $showMetricsPane={showMetricsPane}
+        $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+        $showLoadingIndicator={showLoadingIndicator}
+        $isDesktopWidth={isDesktopWidth}
+      >
+        {isMobileWidth ? (
+          <MobileExpandMetricsPaneButton
+            onClick={handleShowMobileExpandedMetricsPane}
+            $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+            aria-label={showMobileExpandedMetricsPane ? 'Collapse Metrics' : 'Expand Metrics'}
+          >
+            {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}
+          </MobileExpandMetricsPaneButton>
+        ) : null}
+        {isMobileWidth || showMetricsPane ? metricsContent : null}
+        {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+          <DesktopFollowScreenButton
+            onClick={() =>
+              handleFollowScreen({
+                target: { checked: !enableFollowScreen },
+              })
+            }
+          >
+            <input
+              type="checkbox"
+              id="follow-screen"
+              checked={enableFollowScreen}
+              onChange={handleFollowScreen}
+              onClick={(e) => e.stopPropagation()}
+            />
+            <StyledLabel htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
+              Update metrics based on map view
+            </StyledLabel>
+          </DesktopFollowScreenButton>
+        ) : null}
+        {isMobileWidth ? (
+          <LoadingIndicator
+            currentProgress={projectData?.results?.length || 0}
+            finalProgress={projectData?.count || 0}
+            showLoadingIndicator={showLoadingIndicator}
+            setShowLoadingIndicator={setShowLoadingIndicator}
+            isRelativelyPositioned={true}
           />
-          <StyledLabel htmlFor="follow-screen" onClick={(e) => e.stopPropagation()}>
-            Update metrics based on map view
-          </StyledLabel>
-        </DesktopFollowScreenButton>
-      ) : null}
+        ) : null}
+      </StyledMetricsWrapper>
       {isDesktopWidth ? (
-        <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane}>
-          {showMetricsPane ? (
-            <>
-              <span>Metrics</span>
-              <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
-            </>
-          ) : (
-            <>
-              <span>Metrics</span>
-              <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
-            </>
-          )}
-        </DesktopToggleMetricsPaneButton>
-      ) : (
-        <MobileExpandMetricsPaneButton
-          onClick={handleShowMobileExpandedMetricsPane}
-          $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-          aria-label={showMobileExpandedMetricsPane ? 'Collapse Metrics' : 'Expand Metrics'}
-        >
-          {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}
-        </MobileExpandMetricsPaneButton>
-      )}
-      {isMobileWidth ? (
-        <LoadingIndicator
-          currentProgress={projectData?.results?.length || 0}
-          finalProgress={projectData?.count || 0}
-          showLoadingIndicator={showLoadingIndicator}
-          setShowLoadingIndicator={setShowLoadingIndicator}
-          isRelativelyPositioned={true}
-        />
+          <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane} $showMetricsPane={showMetricsPane}>
+            <span>Metrics</span>
+            <StyledChevronSpan>
+              {showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}
+            </StyledChevronSpan>
+          </DesktopToggleMetricsPaneButton>
       ) : null}
-    </StyledMetricsWrapper>
+    </>
   )
 }
 
