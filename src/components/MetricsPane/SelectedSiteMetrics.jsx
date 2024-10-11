@@ -19,11 +19,10 @@ import {
   StyledReefRow,
   StyledSvgContainer,
   StyledVisibleBackground,
-  TabButton,
   TabButtonContainer,
   TabContent,
 } from './SelectedSiteMetrics.styles'
-import { ButtonSecondary, ButtonThatLooksLikeLink } from '../generic'
+import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink } from '../generic'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/selectedSite'
 import { IconClose } from '../../assets/icons'
@@ -227,18 +226,17 @@ export const SelectedSiteMetrics = ({
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
         <TabButtonContainer>
-          <TabButton
-            $isSelected={metricsView === TAB_NAMES.summary}
-            onClick={() => setMetricsView(TAB_NAMES.summary)}
-          >
-            Summary
-          </TabButton>
-          <TabButton
-            $isSelected={metricsView === TAB_NAMES.metadata}
-            onClick={() => setMetricsView(TAB_NAMES.metadata)}
-          >
-            Metadata
-          </TabButton>
+          {metricsView === TAB_NAMES.summary ? (
+            <>
+              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.summary)}>Summary</ButtonPrimary>
+              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.metadata)}>Metadata</ButtonSecondary>
+            </>
+          ) : (
+            <>
+              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.summary)}>Summary</ButtonSecondary>
+              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.metadata)}>Metadata</ButtonPrimary>
+            </>
+          )}
         </TabButtonContainer>
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
