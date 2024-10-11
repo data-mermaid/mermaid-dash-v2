@@ -121,10 +121,4 @@ export const TabContent = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   height: 100%;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: ${theme.color.grey0} ${theme.color.grey1};
-  scrollbar-gutter: stable; // if no scrollbar, make sure the 'padded look from the parent is preserved
-  // Commented-out as it was causing unalignment in the pane. Not deleting if I learn it is needed in future.
-  /* margin-right: -1rem; // make scrollbar not take up too much space */
 `
