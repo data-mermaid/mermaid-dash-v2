@@ -15,7 +15,7 @@ export const zoomToSelectedSite = ({ displayedProjects, map }) => {
     }
     const { latitude, longitude } = foundSampleEvent
     map.setCenter([longitude, latitude])
-    map.setZoom(18)
+    map.setZoom(17)
   }
 }
 
