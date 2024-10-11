@@ -69,7 +69,7 @@ const LoadingIndicator = ({
   }, [currentProgress, finalProgress])
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
-    if (loadingProgressValue === 101) {
+    if (loadingProgressValue === 100) {
       setTimeout(() => {
         setShowLoadingIndicator(false)
       }, 10000)
