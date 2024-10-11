@@ -183,6 +183,7 @@ const MetricsPane = ({
       selectedSampleEvent={selectedSampleEvent}
       setSelectedSampleEvent={setSelectedSampleEvent}
       showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+      setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
     />
   ) : (
     <>{displayedProjectsMetrics}</>

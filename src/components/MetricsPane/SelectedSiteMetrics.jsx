@@ -51,6 +51,7 @@ export const SelectedSiteMetrics = ({
   view,
   setSelectedSampleEvent,
   showMobileExpandedMetricsPane = false,
+  setShowMobileExpandedMetricsPane,
 }) => {
   const {
     displayedProjects,
@@ -91,6 +92,11 @@ export const SelectedSiteMetrics = ({
 
   const handleSurveyChange = ({ target: { value } }) => {
     updateCurrentSampleEvent(value)
+  }
+
+  const handleZoomClick = () => {
+    zoomToSelectedSite({ displayedProjects, map })
+    setShowMobileExpandedMetricsPane(false)
   }
 
   const surveysAtSimilarSites = getSurverysAtSimilarSites({
@@ -308,7 +314,7 @@ export const SelectedSiteMetrics = ({
       {selectedSiteHeader}
       <SelectedSiteActionBar>
         {getIsSiteSelected() && isMapView ? (
-          <ButtonSecondary onClick={() => zoomToSelectedSite({ displayedProjects, map })}>
+          <ButtonSecondary onClick={handleZoomClick}>
             <ZoomToSiteIcon /> &nbsp;Zoom
           </ButtonSecondary>
         ) : null}
@@ -325,5 +331,6 @@ SelectedSiteMetrics.propTypes = {
   selectedSampleEvent: PropTypes.object.isRequired,
   setSelectedSampleEvent: PropTypes.func.isRequired,
   showMobileExpandedMetricsPane: PropTypes.bool,
+  setShowMobileExpandedMetricsPane: PropTypes.func.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
 }
