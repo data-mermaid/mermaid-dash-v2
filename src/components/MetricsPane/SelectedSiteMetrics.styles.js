@@ -109,17 +109,13 @@ export const SelectedSiteActionBar = styled(Row)`
 export const TabButtonContainer = styled.div`
   display: flex;
   width: 100%;
+  justify-content: stretch;
+
+  & button {
+    width: 100%;
+  }
 `
-export const TabButton = styled.button`
-  all: unset;
-  padding: 0.5rem;
-  background-color: ${(props) =>
-    props.$isSelected ? theme.color.primaryColor : theme.color.grey0};
-  color: ${(props) => (props.$isSelected ? theme.color.white : theme.color.black)};
-  width: 100%;
-  text-align: center;
-  cursor: pointer;
-`
+
 export const TabContent = styled.div`
   display: flex;
   flex-direction: column;
