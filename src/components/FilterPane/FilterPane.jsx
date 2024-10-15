@@ -1,12 +1,11 @@
 import PropTypes from 'prop-types'
-import { Box, IconButton } from '@mui/material'
+import { Box } from '@mui/material'
 
 import {
   ExpandableFilterRowContainer,
   ShowMoreFiltersContainer,
   StyledCategoryContainer,
   StyledClickableArea,
-  StyledDateInput,
   StyledDateInputContainer,
   StyledEmptyListItem,
   StyledExpandFilters,
@@ -40,6 +39,7 @@ import {
   MermaidSelect,
 } from '../generic/MermaidMui'
 import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers'
 
 const EARLIEST_DATE = '1900-01-01'
 
@@ -132,25 +132,24 @@ const FilterPane = ({ mermaidUserData }) => {
   const handleStartDateChange = (newStartDate) => {
     setStartDate(newStartDate)
 
-    const isBeforeEndDate = () => {
-      if (endDate === '') {
-        return true
-      }
+    // const isBeforeEndDate = () => {
+    //   if (endDate === '') {
+    //     return true
+    //   }
 
-      if (dayjs(newStartDate).isBefore(dayjs(endDate))) {
-        return true
-      }
-    }
+    //   if (dayjs(newStartDate).isBefore(dayjs(endDate))) {
+    //     return true
+    //   }
+    // }
 
-    if (
-      newStartDate === '' ||
-      (isDateValid(newStartDate) &&
-        isBeforeEndDate() &&
-        dayjs(newStartDate).isAfter(dayjs(EARLIEST_DATE)))
-    ) {
-      console.log('start date is being set', newStartDate, isDateValid(newStartDate))
-      handleChangeSampleDateAfter(newStartDate)
-    }
+    // if (
+    //   newStartDate === '' ||
+    //   (isDateValid(newStartDate) &&
+    //     isBeforeEndDate() &&
+    //     dayjs(newStartDate).isAfter(dayjs(EARLIEST_DATE)))
+    // ) {
+    handleChangeSampleDateAfter(newStartDate)
+    // }
   }
 
   const handleEndDateChange = (newEndDate) => {
@@ -162,7 +161,6 @@ const FilterPane = ({ mermaidUserData }) => {
         dayjs(newEndDate).isAfter(dayjs(sampleDateAfter)) &&
         dayjs(newEndDate).isAfter(dayjs(EARLIEST_DATE)))
     ) {
-      console.log('end date is being set')
       handleChangeSampleDateBefore(newEndDate)
     }
   }
@@ -434,39 +432,24 @@ const FilterPane = ({ mermaidUserData }) => {
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
           <StyledDateInputContainer>
-            <StyledDateInput>
-              <input
-                type="date"
-                value={formattedDate(startDate)}
-                onChange={(e) => handleStartDateChange(e.target.value)}
-              />
-              {startDate && (
-                <IconButton
-                  aria-label="clear date"
-                  onClick={() => handleStartDateChange('')}
-                  className="clear-button"
-                >
-                  <IconClose />
-                </IconButton>
-              )}
-            </StyledDateInput>
-
-            <StyledDateInput>
-              <input
-                type="date"
-                value={formattedDate(endDate)}
-                onChange={(e) => handleEndDateChange(e.target.value)}
-              />
-              {endDate && (
-                <IconButton
-                  aria-label="clear date"
-                  onClick={() => handleEndDateChange('')}
-                  className="clear-button"
-                >
-                  <IconClose />
-                </IconButton>
-              )}
-            </StyledDateInput>
+            <DatePicker
+              value={startDate}
+              onChange={(date) => handleStartDateChange(date)}
+              format="YYYY-MM-DD"
+              maxDate={dayjs(endDate)}
+              slotProps={{
+                field: { clearable: true, onClear: () => handleStartDateChange(null) },
+              }}
+            />
+            <DatePicker
+              value={endDate}
+              onChange={(date) => handleEndDateChange(date)}
+              format="YYYY-MM-DD"
+              minDate={startDate ? dayjs(startDate) : undefined}
+              slotProps={{
+                field: { clearable: true, onClear: () => handleEndDateChange(null) },
+              }}
+            />
           </StyledDateInputContainer>
           {isAuthenticated ? (
             <>

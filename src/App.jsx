@@ -8,6 +8,8 @@ import { Auth0Provider } from '@auth0/auth0-react'
 import { FilterProjectsProvider } from './context/FilterProjectsContext'
 import { MapProvider } from 'react-map-gl'
 import { useState } from 'react'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const App = () => {
   const navigateTo = useNavigate()
@@ -32,22 +34,24 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <Auth0Provider {...authConfig}>
-        <MapProvider>
-          <FilterProjectsProvider>
-            <GlobalStyle />
-            <Routes>
-              <Route
-                path="/"
-                element={
-                  <MermaidDash
-                    isApiDataLoaded={isApiDataLoaded}
-                    setIsApiDataLoaded={setIsApiDataLoaded}
-                  />
-                }
-              />
-            </Routes>
-          </FilterProjectsProvider>
-        </MapProvider>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <MapProvider>
+            <FilterProjectsProvider>
+              <GlobalStyle />
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    <MermaidDash
+                      isApiDataLoaded={isApiDataLoaded}
+                      setIsApiDataLoaded={setIsApiDataLoaded}
+                    />
+                  }
+                />
+              </Routes>
+            </FilterProjectsProvider>
+          </MapProvider>
+        </LocalizationProvider>
       </Auth0Provider>
     </ThemeProvider>
   )

@@ -84,28 +84,6 @@ export const StyledDateInputContainer = styled.div`
   justify-content: space-between;
 `
 
-export const StyledDateInput = styled.div`
-  position: relative;
-  width: calc(50% - 0.5rem);
-  margin-bottom: 1rem;
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: ${theme.color.white};
-    border: 1px solid ${theme.color.grey0};
-    border-radius: 0;
-  }
-  .clear-button {
-    position: absolute;
-    right: 1.8rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-  }
-`
-
 export const StyledClickableArea = styled.div`
   cursor: pointer;
   display: flex;
