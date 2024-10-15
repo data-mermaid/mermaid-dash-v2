@@ -39,6 +39,11 @@ import {
   MermaidOutlinedInput,
   MermaidSelect,
 } from '../generic/MermaidMui'
+import dayjs from 'dayjs'
+
+const EARLIEST_DATE = '1900-01-01'
+
+const isDateValid = (date) => dayjs(date, 'YYYY-MM-DD', true).isValid()
 
 const deleteIconSize = {
   height: '15px',
@@ -95,6 +100,8 @@ const FilterPane = ({ mermaidUserData }) => {
     quadrat_benthic_percent: false,
     habitatcomplexity: false,
   })
+  const [startDate, setStartDate] = useState(sampleDateAfter)
+  const [endDate, setEndDate] = useState(sampleDateBefore)
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -122,12 +129,42 @@ const FilterPane = ({ mermaidUserData }) => {
     [navigate, location.pathname],
   )
 
-  const handleClearSampleDateAfter = () => {
-    handleChangeSampleDateAfter('')
+  const handleStartDateChange = (newStartDate) => {
+    setStartDate(newStartDate)
+
+    const isBeforeEndDate = () => {
+      if (endDate === '') {
+        return true
+      }
+
+      if (dayjs(newStartDate).isBefore(dayjs(endDate))) {
+        return true
+      }
+    }
+
+    if (
+      newStartDate === '' ||
+      (isDateValid(newStartDate) &&
+        isBeforeEndDate() &&
+        dayjs(newStartDate).isAfter(dayjs(EARLIEST_DATE)))
+    ) {
+      console.log('start date is being set', newStartDate, isDateValid(newStartDate))
+      handleChangeSampleDateAfter(newStartDate)
+    }
   }
 
-  const handleClearSampleDateBefore = () => {
-    handleChangeSampleDateBefore('')
+  const handleEndDateChange = (newEndDate) => {
+    setEndDate(newEndDate)
+
+    if (
+      newEndDate === '' ||
+      (isDateValid(newEndDate) &&
+        dayjs(newEndDate).isAfter(dayjs(sampleDateAfter)) &&
+        dayjs(newEndDate).isAfter(dayjs(EARLIEST_DATE)))
+    ) {
+      console.log('end date is being set')
+      handleChangeSampleDateBefore(newEndDate)
+    }
   }
 
   const handleDeleteCountry = (country) => {
@@ -400,13 +437,13 @@ const FilterPane = ({ mermaidUserData }) => {
             <StyledDateInput>
               <input
                 type="date"
-                value={formattedDate(sampleDateAfter)}
-                onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
+                value={formattedDate(startDate)}
+                onChange={(e) => handleStartDateChange(e.target.value)}
               />
-              {sampleDateAfter && (
+              {startDate && (
                 <IconButton
                   aria-label="clear date"
-                  onClick={handleClearSampleDateAfter}
+                  onClick={() => handleStartDateChange('')}
                   className="clear-button"
                 >
                   <IconClose />
@@ -417,13 +454,13 @@ const FilterPane = ({ mermaidUserData }) => {
             <StyledDateInput>
               <input
                 type="date"
-                value={formattedDate(sampleDateBefore)}
-                onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
+                value={formattedDate(endDate)}
+                onChange={(e) => handleEndDateChange(e.target.value)}
               />
-              {sampleDateBefore && (
+              {endDate && (
                 <IconButton
                   aria-label="clear date"
-                  onClick={handleClearSampleDateBefore}
+                  onClick={() => handleEndDateChange('')}
                   className="clear-button"
                 >
                   <IconClose />
