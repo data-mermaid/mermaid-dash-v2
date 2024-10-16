@@ -41,10 +41,6 @@ import {
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 
-const EARLIEST_DATE = '1900-01-01'
-
-const isDateValid = (date) => dayjs(date, 'YYYY-MM-DD', true).isValid()
-
 const deleteIconSize = {
   height: '15px',
   width: '15px',
@@ -65,7 +61,6 @@ const FilterPane = ({ mermaidUserData }) => {
     displayedCountries,
     displayedOrganizations,
     displayedProjects,
-    formattedDate,
     getActiveProjectCount,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
@@ -132,35 +127,21 @@ const FilterPane = ({ mermaidUserData }) => {
   const handleStartDateChange = (newStartDate) => {
     setStartDate(newStartDate)
 
-    // const isBeforeEndDate = () => {
-    //   if (endDate === '') {
-    //     return true
-    //   }
+    const isStartDateValid = newStartDate === null || newStartDate?.isValid()
+    const isBeforeEndDate = endDate === null || newStartDate?.isBefore(endDate)
 
-    //   if (dayjs(newStartDate).isBefore(dayjs(endDate))) {
-    //     return true
-    //   }
-    // }
-
-    // if (
-    //   newStartDate === '' ||
-    //   (isDateValid(newStartDate) &&
-    //     isBeforeEndDate() &&
-    //     dayjs(newStartDate).isAfter(dayjs(EARLIEST_DATE)))
-    // ) {
-    handleChangeSampleDateAfter(newStartDate)
-    // }
+    if (isStartDateValid && isBeforeEndDate) {
+      handleChangeSampleDateAfter(newStartDate)
+    }
   }
 
   const handleEndDateChange = (newEndDate) => {
     setEndDate(newEndDate)
 
-    if (
-      newEndDate === '' ||
-      (isDateValid(newEndDate) &&
-        dayjs(newEndDate).isAfter(dayjs(sampleDateAfter)) &&
-        dayjs(newEndDate).isAfter(dayjs(EARLIEST_DATE)))
-    ) {
+    const isEndDateValid = newEndDate === null || newEndDate?.isValid()
+    const isAfterBeforeDate = startDate === null || newEndDate?.isAfter(startDate)
+
+    if (isEndDateValid && isAfterBeforeDate) {
       handleChangeSampleDateBefore(newEndDate)
     }
   }
@@ -437,18 +418,14 @@ const FilterPane = ({ mermaidUserData }) => {
               onChange={(date) => handleStartDateChange(date)}
               format="YYYY-MM-DD"
               maxDate={dayjs(endDate)}
-              slotProps={{
-                field: { clearable: true, onClear: () => handleStartDateChange(null) },
-              }}
+              slotProps={{ field: { clearable: true } }}
             />
             <DatePicker
               value={endDate}
               onChange={(date) => handleEndDateChange(date)}
               format="YYYY-MM-DD"
               minDate={startDate ? dayjs(startDate) : undefined}
-              slotProps={{
-                field: { clearable: true, onClear: () => handleEndDateChange(null) },
-              }}
+              slotProps={{ field: { clearable: true } }}
             />
           </StyledDateInputContainer>
           {isAuthenticated ? (

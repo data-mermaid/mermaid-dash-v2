@@ -460,28 +460,28 @@ export const FilterProjectsProvider = ({ children }) => {
     return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
   }
 
-  const handleChangeSampleDateAfter = (sampleDateAfter) => {
+  const handleChangeSampleDateAfter = (newSampleDateAfter) => {
     const queryParams = getURLParams()
-    if (sampleDateAfter === '') {
+    if (newSampleDateAfter === null) {
       queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
-      setSampleDateAfter('')
+      setSampleDateAfter(null)
     } else {
-      const formattedSampleDateAfter = formattedDate(sampleDateAfter)
+      const formattedSampleDateAfter = formattedDate(newSampleDateAfter)
       queryParams.set(URL_PARAMS.SAMPLE_DATE_AFTER, formattedSampleDateAfter)
-      setSampleDateAfter(dayjs(sampleDateAfter))
+      setSampleDateAfter(newSampleDateAfter)
     }
     updateURLParams(queryParams)
   }
 
-  const handleChangeSampleDateBefore = (sampleDateBefore) => {
+  const handleChangeSampleDateBefore = (newSampleDateBefore) => {
     const queryParams = getURLParams()
-    if (sampleDateBefore === '') {
+    if (newSampleDateBefore === null) {
       queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
-      setSampleDateBefore('')
+      setSampleDateBefore(null)
     } else {
-      const formattedSampleDateBefore = formattedDate(sampleDateBefore)
+      const formattedSampleDateBefore = formattedDate(newSampleDateBefore)
       queryParams.set(URL_PARAMS.SAMPLE_DATE_BEFORE, formattedSampleDateBefore)
-      setSampleDateBefore(formatEndDate(sampleDateBefore))
+      setSampleDateBefore(formatEndDate(newSampleDateBefore))
     }
     updateURLParams(queryParams)
   }
@@ -547,8 +547,8 @@ export const FilterProjectsProvider = ({ children }) => {
     updateURLParams(queryParams)
     setSelectedCountries([])
     setSelectedOrganizations([])
-    setSampleDateAfter('')
-    setSampleDateBefore('')
+    setSampleDateAfter(null)
+    setSampleDateBefore(null)
     setMethodDataSharingFilters([])
     setProjectNameFilter('')
     setShowYourData(false)
