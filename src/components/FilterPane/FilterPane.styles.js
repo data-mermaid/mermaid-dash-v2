@@ -77,12 +77,17 @@ export const StyledUnorderedList = styled.ul`
   padding: 0;
 `
 
-export const StyledDateInputContainer = styled.div`
+export const StyledDateRangeContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-right: 1rem;
   margin-top: 1rem;
   gap: 1rem;
+`
+
+export const StyledDateInputContainer = styled.div`
+  flex-grow: 1;
+  flex-basis: 0;
 `
 
 export const StyledDateField = styled(TextField)`
@@ -92,8 +97,17 @@ export const StyledDateField = styled(TextField)`
     margin-top: 0.5rem;
   }
 
+  // Targets the container, not sure how to get the class
+  > div {
+    padding-right: 0.5rem;
+  }
+
   fieldset {
     border-radius: 0;
+  }
+
+  input {
+    padding-left: 0.5rem;
   }
 `
 

@@ -12,7 +12,7 @@ import {
   StyledCategoryContainer,
   StyledClickableArea,
   StyledDateField,
-  StyledDateInputContainer,
+  StyledDateRangeContainer,
   StyledEmptyListItem,
   StyledExpandFilters,
   StyledFilterPaneContainer,
@@ -26,6 +26,7 @@ import {
   StyledUnorderedList,
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
+  StyledDateInputContainer,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
@@ -413,10 +414,11 @@ const FilterPane = ({ mermaidUserData }) => {
       {showMoreFilters ? (
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
-          <StyledDateInputContainer>
-            <div>
+          <StyledDateRangeContainer>
+            <StyledDateInputContainer>
               <span>From</span>
               <DatePicker
+                id="start-date"
                 value={startDate}
                 onChange={(date) => handleStartDateChange(date)}
                 format="YYYY-MM-DD"
@@ -424,10 +426,11 @@ const FilterPane = ({ mermaidUserData }) => {
                 slots={{ textField: StyledDateField }}
                 slotProps={{ textField: { clearable: true, size: 'small' } }}
               />
-            </div>
-            <div>
+            </StyledDateInputContainer>
+            <StyledDateInputContainer>
               <span>To</span>
               <DatePicker
+                id="end-date"
                 value={endDate}
                 onChange={(date) => handleEndDateChange(date)}
                 format="YYYY-MM-DD"
@@ -435,8 +438,8 @@ const FilterPane = ({ mermaidUserData }) => {
                 slots={{ textField: StyledDateField }}
                 slotProps={{ textField: { clearable: true, size: 'small' } }}
               />
-            </div>
-          </StyledDateInputContainer>
+            </StyledDateInputContainer>
+          </StyledDateRangeContainer>
           {isAuthenticated ? (
             <>
               <StyledHeader>Your Data</StyledHeader>
