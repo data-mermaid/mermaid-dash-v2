@@ -88,13 +88,15 @@ export const StyledDateRangeContainer = styled.div`
 export const StyledDateInputContainer = styled.div`
   flex-grow: 1;
   flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 `
 
 export const StyledDateField = styled(TextField)`
   &.MuiFormControl-root {
     border: 1px solid ${theme.color.grey0};
     background-color: ${theme.color.inputBackground};
-    margin-top: 0.5rem;
   }
 
   // Targets the container, not sure how to get the class
