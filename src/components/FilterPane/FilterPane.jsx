@@ -1,11 +1,17 @@
+import { useEffect, useState, useCallback, useContext } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import { Box } from '@mui/material'
+import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers'
 
 import {
   ExpandableFilterRowContainer,
   ShowMoreFiltersContainer,
   StyledCategoryContainer,
   StyledClickableArea,
+  StyledDateField,
   StyledDateInputContainer,
   StyledEmptyListItem,
   StyledExpandFilters,
@@ -26,9 +32,6 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { useAuth0 } from '@auth0/auth0-react'
-import { useEffect, useState, useCallback, useContext } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import {
   MermaidChip,
   MermaidFormContainer,
@@ -38,8 +41,6 @@ import {
   MermaidOutlinedInput,
   MermaidSelect,
 } from '../generic/MermaidMui'
-import dayjs from 'dayjs'
-import { DatePicker } from '@mui/x-date-pickers'
 
 const deleteIconSize = {
   height: '15px',
@@ -413,20 +414,28 @@ const FilterPane = ({ mermaidUserData }) => {
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
           <StyledDateInputContainer>
-            <DatePicker
-              value={startDate}
-              onChange={(date) => handleStartDateChange(date)}
-              format="YYYY-MM-DD"
-              maxDate={dayjs(endDate)}
-              slotProps={{ field: { clearable: true } }}
-            />
-            <DatePicker
-              value={endDate}
-              onChange={(date) => handleEndDateChange(date)}
-              format="YYYY-MM-DD"
-              minDate={startDate ? dayjs(startDate) : undefined}
-              slotProps={{ field: { clearable: true } }}
-            />
+            <div>
+              <span>From</span>
+              <DatePicker
+                value={startDate}
+                onChange={(date) => handleStartDateChange(date)}
+                format="YYYY-MM-DD"
+                maxDate={dayjs(endDate)}
+                slots={{ textField: StyledDateField }}
+                slotProps={{ textField: { clearable: true, size: 'small' } }}
+              />
+            </div>
+            <div>
+              <span>To</span>
+              <DatePicker
+                value={endDate}
+                onChange={(date) => handleEndDateChange(date)}
+                format="YYYY-MM-DD"
+                minDate={startDate ? dayjs(startDate) : undefined}
+                slots={{ textField: StyledDateField }}
+                slotProps={{ textField: { clearable: true, size: 'small' } }}
+              />
+            </div>
           </StyledDateInputContainer>
           {isAuthenticated ? (
             <>

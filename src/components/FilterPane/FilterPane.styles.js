@@ -81,7 +81,20 @@ export const StyledDateInputContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-right: 1rem;
-  justify-content: space-between;
+  margin-top: 1rem;
+  gap: 1rem;
+`
+
+export const StyledDateField = styled(TextField)`
+  &.MuiFormControl-root {
+    border: 1px solid ${theme.color.grey0};
+    background-color: ${theme.color.inputBackground};
+    margin-top: 0.5rem;
+  }
+
+  fieldset {
+    border-radius: 0;
+  }
 `
 
 export const StyledClickableArea = styled.div`
