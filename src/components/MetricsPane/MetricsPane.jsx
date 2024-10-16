@@ -21,6 +21,7 @@ import {
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
+import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 
 const ARROW_RIGHT = String.fromCharCode(10095)
 const ARROW_LEFT = String.fromCharCode(10094)
@@ -48,6 +49,7 @@ const MetricsPane = ({
     setEnableFollowScreen,
     updateURLParams,
     selectedProject,
+    setSelectedProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -179,7 +181,10 @@ const MetricsPane = ({
   )
 
   const metricsContent = selectedProject ? (
-    <p>{selectedProject.project_id}</p>
+    <SelectedProjectMetrics
+      selectedProject={selectedProject}
+      setSelectedProject={setSelectedProject}
+    />
   ) : selectedSampleEvent ? (
     <SelectedSiteMetrics
       view={view}
