@@ -100,6 +100,11 @@ const FilterPane = ({ mermaidUserData }) => {
   const [startDate, setStartDate] = useState(sampleDateAfter)
   const [endDate, setEndDate] = useState(sampleDateBefore)
 
+  const _updateDates = useEffect(() => {
+    setStartDate(sampleDateAfter)
+    setEndDate(sampleDateBefore)
+  }, [sampleDateAfter, sampleDateBefore])
+
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
       return
