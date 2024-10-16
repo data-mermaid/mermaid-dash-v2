@@ -97,13 +97,6 @@ const FilterPane = ({ mermaidUserData }) => {
     quadrat_benthic_percent: false,
     habitatcomplexity: false,
   })
-  const [startDate, setStartDate] = useState(sampleDateAfter)
-  const [endDate, setEndDate] = useState(sampleDateBefore)
-
-  const _updateDates = useEffect(() => {
-    setStartDate(sampleDateAfter)
-    setEndDate(sampleDateBefore)
-  }, [sampleDateAfter, sampleDateBefore])
 
   const _generateCountryandOrganizationList = useEffect(() => {
     if (!projectData.results?.length) {
@@ -133,7 +126,7 @@ const FilterPane = ({ mermaidUserData }) => {
 
   const handleStartDateChange = (newStartDate) => {
     const isStartDateValid = newStartDate?.isValid()
-    const isBeforeEndDate = !endDate || newStartDate?.isBefore(endDate)
+    const isBeforeEndDate = !sampleDateBefore || newStartDate?.isBefore(sampleDateBefore)
 
     if (!newStartDate || (isStartDateValid && isBeforeEndDate)) {
       handleChangeSampleDateAfter(newStartDate)
@@ -142,7 +135,7 @@ const FilterPane = ({ mermaidUserData }) => {
 
   const handleEndDateChange = (newEndDate) => {
     const isEndDateValid = newEndDate?.isValid()
-    const isAfterBeforeDate = !startDate || newEndDate?.isAfter(startDate)
+    const isAfterBeforeDate = !sampleDateAfter || newEndDate?.isAfter(sampleDateAfter)
 
     if (!newEndDate || (isEndDateValid && isAfterBeforeDate)) {
       handleChangeSampleDateBefore(newEndDate)
@@ -420,10 +413,10 @@ const FilterPane = ({ mermaidUserData }) => {
               <span>From</span>
               <DatePicker
                 id="start-date"
-                value={startDate}
+                value={sampleDateAfter}
                 onChange={(date) => handleStartDateChange(date)}
                 format="YYYY-MM-DD"
-                maxDate={dayjs(endDate)}
+                maxDate={dayjs(sampleDateBefore)}
                 slots={{ textField: StyledDateField }}
                 slotProps={{ textField: { clearable: true, size: 'small' } }}
               />
@@ -432,10 +425,10 @@ const FilterPane = ({ mermaidUserData }) => {
               <span>To</span>
               <DatePicker
                 id="end-date"
-                value={endDate}
+                value={sampleDateBefore}
                 onChange={(date) => handleEndDateChange(date)}
                 format="YYYY-MM-DD"
-                minDate={startDate ? dayjs(startDate) : undefined}
+                minDate={sampleDateAfter ? dayjs(sampleDateAfter) : undefined}
                 slots={{ textField: StyledDateField }}
                 slotProps={{ textField: { clearable: true, size: 'small' } }}
               />
