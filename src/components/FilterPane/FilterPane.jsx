@@ -132,23 +132,19 @@ const FilterPane = ({ mermaidUserData }) => {
   )
 
   const handleStartDateChange = (newStartDate) => {
-    setStartDate(newStartDate)
+    const isStartDateValid = newStartDate?.isValid()
+    const isBeforeEndDate = !endDate || newStartDate?.isBefore(endDate)
 
-    const isStartDateValid = newStartDate === null || newStartDate?.isValid()
-    const isBeforeEndDate = endDate === null || newStartDate?.isBefore(endDate)
-
-    if (isStartDateValid && isBeforeEndDate) {
+    if (!newStartDate || (isStartDateValid && isBeforeEndDate)) {
       handleChangeSampleDateAfter(newStartDate)
     }
   }
 
   const handleEndDateChange = (newEndDate) => {
-    setEndDate(newEndDate)
+    const isEndDateValid = newEndDate?.isValid()
+    const isAfterBeforeDate = !startDate || newEndDate?.isAfter(startDate)
 
-    const isEndDateValid = newEndDate === null || newEndDate?.isValid()
-    const isAfterBeforeDate = startDate === null || newEndDate?.isAfter(startDate)
-
-    if (isEndDateValid && isAfterBeforeDate) {
+    if (!newEndDate || (isEndDateValid && isAfterBeforeDate)) {
       handleChangeSampleDateBefore(newEndDate)
     }
   }
