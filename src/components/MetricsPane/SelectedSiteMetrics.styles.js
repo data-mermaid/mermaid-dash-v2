@@ -109,25 +109,16 @@ export const SelectedSiteActionBar = styled(Row)`
 export const TabButtonContainer = styled.div`
   display: flex;
   width: 100%;
+  justify-content: stretch;
+
+  & button {
+    width: 100%;
+  }
 `
-export const TabButton = styled.button`
-  all: unset;
-  padding: 0.5rem;
-  background-color: ${(props) =>
-    props.$isSelected ? theme.color.primaryColor : theme.color.grey0};
-  color: ${(props) => (props.$isSelected ? theme.color.white : theme.color.black)};
-  width: 100%;
-  text-align: center;
-`
+
 export const TabContent = styled.div`
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
   height: 100%;
-  overflow-y: auto;
-  scrollbar-width: thin;
-  scrollbar-color: ${theme.color.grey0} ${theme.color.grey1};
-  scrollbar-gutter: stable; // if no scrollbar, make sure the 'padded look from the parent is preserved
-  // Commented-out as it was causing unalignment in the pane. Not deleting if I learn it is needed in future.
-  /* margin-right: -1rem; // make scrollbar not take up too much space */
 `
