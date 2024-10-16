@@ -38,6 +38,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
     displayedProjects,
     setShowProjectsWithNoRecords,
     userIsMemberOfProject,
+    setSelectedProject,
   } = useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
@@ -180,12 +181,13 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   }
 
   const handleTableRowClick = (projectData) => {
-    console.log('TODO: display project data in metrics pane', projectData)
     queryParams.delete('sample_event_id')
     if (queryParamsProjectId !== projectData.project_id) {
       queryParams.set('project_id', projectData.project_id)
+      setSelectedProject(projectData)
     } else {
       queryParams.delete('project_id')
+      setSelectedProject(null)
     }
     updateURLParams(queryParams)
   }
@@ -193,11 +195,11 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const _displaySelectedProjectInMetricsPane = useEffect(() => {
     if (queryParamsProjectId) {
       const selectedProject = displayedProjects.find(
-        (project) => project.project_id === queryParamsProjectId,
+        ({ project_id }) => project_id === queryParamsProjectId,
       )
-      console.log('TODO: display the initially selected project in metrics pane', selectedProject)
+      setSelectedProject(selectedProject)
     }
-  }, [displayedProjects, queryParamsProjectId])
+  }, [displayedProjects, queryParamsProjectId, setSelectedProject])
 
   const table = tableData.length ? (
     <>

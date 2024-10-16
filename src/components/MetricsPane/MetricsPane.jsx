@@ -47,6 +47,7 @@ const MetricsPane = ({
     selectedMarkerId,
     setEnableFollowScreen,
     updateURLParams,
+    selectedProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -177,7 +178,9 @@ const MetricsPane = ({
     </SummarizedMetrics>
   )
 
-  const metricsContent = selectedSampleEvent ? (
+  const metricsContent = selectedProject ? (
+    <p>{selectedProject.project_id}</p>
+  ) : selectedSampleEvent ? (
     <SelectedSiteMetrics
       view={view}
       selectedSampleEvent={selectedSampleEvent}
@@ -186,7 +189,7 @@ const MetricsPane = ({
       setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
     />
   ) : (
-    <>{displayedProjectsMetrics}</>
+    displayedProjectsMetrics
   )
 
   const handleFollowScreen = (e) => {
@@ -251,12 +254,13 @@ const MetricsPane = ({
         ) : null}
       </StyledMetricsWrapper>
       {isDesktopWidth ? (
-          <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane} $showMetricsPane={showMetricsPane}>
-            <span>Metrics</span>
-            <StyledChevronSpan>
-              {showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}
-            </StyledChevronSpan>
-          </DesktopToggleMetricsPaneButton>
+        <DesktopToggleMetricsPaneButton
+          onClick={handleShowMetricsPane}
+          $showMetricsPane={showMetricsPane}
+        >
+          <span>Metrics</span>
+          <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
+        </DesktopToggleMetricsPaneButton>
       ) : null}
     </>
   )
