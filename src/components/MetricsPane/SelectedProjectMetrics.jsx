@@ -18,13 +18,19 @@ import {
   ProjectTitle,
 } from './SelectedProjectMetrics.styles'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+import useResponsive from '../../hooks/useResponsive'
 
 const MAX_NOTES_LENGTH = 250
 
-export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) => {
+export const SelectedProjectMetrics = ({
+  selectedProject,
+  setSelectedProject,
+  showMobileExpandedMetricsPane = false,
+}) => {
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
   const { updateURLParams } = useContext(FilterProjectsContext)
+  const { isDesktopWidth } = useResponsive()
 
   const [truncateNotes, setTruncateNotes] = useState(true)
   const { project_name, project_id, records } = selectedProject
@@ -62,59 +68,63 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         <IconClose /> Clear
       </ButtonSecondary>
 
-      {project_admins ? (
-        <ProjectCard>
-          <AdminIcon />
-          <ProjectCardContent>
-            <ProjectCardHeader>
-              <CardTitle>Admins</CardTitle>
-              <ContactLink
-                href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Contact
-              </ContactLink>
-            </ProjectCardHeader>
-            {project_admins?.map(({ name }) => name).join(', ')}
-          </ProjectCardContent>
-        </ProjectCard>
-      ) : null}
+      {showMobileExpandedMetricsPane || isDesktopWidth ? (
+        <>
+          {project_admins ? (
+            <ProjectCard>
+              <AdminIcon />
+              <ProjectCardContent>
+                <ProjectCardHeader>
+                  <CardTitle>Admins</CardTitle>
+                  <ContactLink
+                    href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Contact
+                  </ContactLink>
+                </ProjectCardHeader>
+                {project_admins?.map(({ name }) => name).join(', ')}
+              </ProjectCardContent>
+            </ProjectCard>
+          ) : null}
 
-      {project_notes ? (
-        <ProjectCard>
-          <ProjectNotesIcon />
-          <ProjectCardContent>
-            <CardTitle>Project Notes</CardTitle>
-            {truncateNotes ? (
-              <>
-                {project_notes.substring(0, MAX_NOTES_LENGTH)}...
-                <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
-                  Read more
-                </ButtonThatLooksLikeLinkUnderlined>
-              </>
-            ) : (
-              project_notes
-            )}
-          </ProjectCardContent>
-        </ProjectCard>
-      ) : null}
+          {project_notes ? (
+            <ProjectCard>
+              <ProjectNotesIcon />
+              <ProjectCardContent>
+                <CardTitle>Project Notes</CardTitle>
+                {truncateNotes ? (
+                  <>
+                    {project_notes.substring(0, MAX_NOTES_LENGTH)}...
+                    <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
+                      Read more
+                    </ButtonThatLooksLikeLinkUnderlined>
+                  </>
+                ) : (
+                  project_notes
+                )}
+              </ProjectCardContent>
+            </ProjectCard>
+          ) : null}
 
-      {data_policy_beltfish ? (
-        <ProjectCard>
-          <DataSharingIcon />
-          <ProjectCardContent>
-            <CardTitle>Data Sharing</CardTitle>
-            <DataSharingGrid>
-              <PolicyType>Fish Belt</PolicyType>
-              <PolicyValue>{data_policy_beltfish}</PolicyValue>
-              <PolicyType>Benthic</PolicyType>
-              <PolicyValue>{data_policy_benthiclit}</PolicyValue>
-              <PolicyType>Bleaching</PolicyType>
-              <PolicyValue>{data_policy_bleachingqc}</PolicyValue>
-            </DataSharingGrid>
-          </ProjectCardContent>
-        </ProjectCard>
+          {data_policy_beltfish ? (
+            <ProjectCard>
+              <DataSharingIcon />
+              <ProjectCardContent>
+                <CardTitle>Data Sharing</CardTitle>
+                <DataSharingGrid>
+                  <PolicyType>Fish Belt</PolicyType>
+                  <PolicyValue>{data_policy_beltfish}</PolicyValue>
+                  <PolicyType>Benthic</PolicyType>
+                  <PolicyValue>{data_policy_benthiclit}</PolicyValue>
+                  <PolicyType>Bleaching</PolicyType>
+                  <PolicyValue>{data_policy_bleachingqc}</PolicyValue>
+                </DataSharingGrid>
+              </ProjectCardContent>
+            </ProjectCard>
+          ) : null}
+        </>
       ) : null}
     </>
   )
@@ -123,4 +133,5 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
 SelectedProjectMetrics.propTypes = {
   selectedProject: PropTypes.object,
   setSelectedProject: PropTypes.func,
+  showMobileExpandedMetricsPane: PropTypes.bool,
 }
