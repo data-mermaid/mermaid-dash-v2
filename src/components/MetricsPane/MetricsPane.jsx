@@ -180,23 +180,23 @@ const MetricsPane = ({
     </SummarizedMetrics>
   )
 
-  const metricsContent = selectedProject ? (
-    <SelectedProjectMetrics
-      selectedProject={selectedProject}
-      setSelectedProject={setSelectedProject}
-      showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-    />
-  ) : selectedSampleEvent ? (
-    <SelectedSiteMetrics
-      view={view}
-      selectedSampleEvent={selectedSampleEvent}
-      setSelectedSampleEvent={setSelectedSampleEvent}
-      showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
-    />
-  ) : (
-    displayedProjectsMetrics
-  )
+  const metricsContent =
+    selectedProject && isDesktopWidth ? (
+      <SelectedProjectMetrics
+        selectedProject={selectedProject}
+        setSelectedProject={setSelectedProject}
+      />
+    ) : selectedSampleEvent ? (
+      <SelectedSiteMetrics
+        view={view}
+        selectedSampleEvent={selectedSampleEvent}
+        setSelectedSampleEvent={setSelectedSampleEvent}
+        showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+        setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
+      />
+    ) : (
+      displayedProjectsMetrics
+    )
 
   const handleFollowScreen = (e) => {
     setEnableFollowScreen((prevState) => !prevState)
