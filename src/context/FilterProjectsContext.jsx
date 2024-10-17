@@ -4,37 +4,6 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import dayjs from 'dayjs'
 import { URL_PARAMS, COLLECTION_METHODS, POLICY_MAPPINGS } from '../constants/constants'
 
-const isValidDateFormat = (dateString) => {
-  // Regular expression to match the date format YYYY-MM-DD
-  const regex = /^(\d{4})-(\d{2})-(\d{2})$/
-  const match = dateString.match(regex)
-
-  if (!match) {
-    return false
-  }
-
-  const year = parseInt(match[1], 10)
-  const month = parseInt(match[2], 10)
-  const day = parseInt(match[3], 10)
-
-  const currentYear = new Date().getFullYear()
-  if (year < 1900 || year > currentYear) {
-    return false
-  }
-
-  if (month < 1 || month > 12) {
-    return false
-  }
-
-  // Check if the day is valid for the given month and year
-  const date = new Date(year, month - 1, day)
-  if (date.getFullYear() !== year || date.getMonth() + 1 !== month || date.getDate() !== day) {
-    return false
-  }
-
-  return true
-}
-
 export const FilterProjectsContext = createContext()
 
 export const FilterProjectsProvider = ({ children }) => {
@@ -45,8 +14,8 @@ export const FilterProjectsProvider = ({ children }) => {
   const [displayedProjects, setDisplayedProjects] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
-  const [sampleDateAfter, setSampleDateAfter] = useState('')
-  const [sampleDateBefore, setSampleDateBefore] = useState('')
+  const [sampleDateAfter, setSampleDateAfter] = useState(null)
+  const [sampleDateBefore, setSampleDateBefore] = useState(null)
   const [methodDataSharingFilters, setMethodDataSharingFilters] = useState([])
   const [projectNameFilter, setProjectNameFilter] = useState('')
   const [checkedProjects, setCheckedProjects] = useState([])
@@ -84,11 +53,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    const handleDateFilter = (key, setDate, formatFn) => {
+    const handleDateFilter = (key, setDate, isEndDate) => {
       if (queryParams.has(key)) {
-        const dateValue = queryParams.get(key)
-        if (isValidDateFormat(dateValue)) {
-          setDate(formatFn(dateValue))
+        // Get Date w/ Strict Check Validation: https://day.js.org/docs/en/parse/is-valid
+        const dateValue = dayjs(queryParams.get(key), 'YYYY-MM-DD', true)
+        if (dateValue.isValid()) {
+          setDate(isEndDate ? formatEndDate(dateValue) : dateValue)
         } else {
           queryParams.delete(key)
           updateURLParams(queryParams)
@@ -136,10 +106,8 @@ export const FilterProjectsProvider = ({ children }) => {
 
     setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
     setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
-    handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter, (date) =>
-      formattedDate(dayjs(date)),
-    )
-    handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, formatEndDate)
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter)
+    handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, true)
     handleMethodDataSharingFilter()
     setProjectNameValue()
     setFollowScreen()
@@ -267,13 +235,13 @@ export const FilterProjectsProvider = ({ children }) => {
           if (!sampleDateAfter && !sampleDateBefore) {
             return project
           }
-          const beginDate = sampleDateAfter || fallbackSampleDateAfter
-          const finishDate = sampleDateBefore || fallbackSampleDateBefore
+          const beginDate = sampleDateAfter?.toDate() || fallbackSampleDateAfter
+          const finishDate = sampleDateBefore?.toDate() || fallbackSampleDateBefore
           return {
             ...project,
             records: project.records.filter((record) => {
               const recordDate = new Date(record.sample_date)
-              return recordDate <= new Date(finishDate) && recordDate >= new Date(beginDate)
+              return recordDate <= finishDate && recordDate >= beginDate
             }),
           }
         })
@@ -460,28 +428,28 @@ export const FilterProjectsProvider = ({ children }) => {
     return dayjs(date).set('hour', 23).set('minute', 59).set('second', 59).set('millisecond', 999)
   }
 
-  const handleChangeSampleDateAfter = (sampleDateAfter) => {
+  const handleChangeSampleDateAfter = (newSampleDateAfter) => {
     const queryParams = getURLParams()
-    if (sampleDateAfter === '') {
+    if (newSampleDateAfter === null) {
       queryParams.delete(URL_PARAMS.SAMPLE_DATE_AFTER)
-      setSampleDateAfter('')
+      setSampleDateAfter(null)
     } else {
-      const formattedSampleDateAfter = formattedDate(sampleDateAfter)
+      const formattedSampleDateAfter = formattedDate(newSampleDateAfter)
       queryParams.set(URL_PARAMS.SAMPLE_DATE_AFTER, formattedSampleDateAfter)
-      setSampleDateAfter(dayjs(sampleDateAfter))
+      setSampleDateAfter(newSampleDateAfter)
     }
     updateURLParams(queryParams)
   }
 
-  const handleChangeSampleDateBefore = (sampleDateBefore) => {
+  const handleChangeSampleDateBefore = (newSampleDateBefore) => {
     const queryParams = getURLParams()
-    if (sampleDateBefore === '') {
+    if (newSampleDateBefore === null) {
       queryParams.delete(URL_PARAMS.SAMPLE_DATE_BEFORE)
-      setSampleDateBefore('')
+      setSampleDateBefore(null)
     } else {
-      const formattedSampleDateBefore = formattedDate(sampleDateBefore)
+      const formattedSampleDateBefore = formattedDate(newSampleDateBefore)
       queryParams.set(URL_PARAMS.SAMPLE_DATE_BEFORE, formattedSampleDateBefore)
-      setSampleDateBefore(formatEndDate(sampleDateBefore))
+      setSampleDateBefore(formatEndDate(newSampleDateBefore))
     }
     updateURLParams(queryParams)
   }
@@ -547,8 +515,8 @@ export const FilterProjectsProvider = ({ children }) => {
     updateURLParams(queryParams)
     setSelectedCountries([])
     setSelectedOrganizations([])
-    setSampleDateAfter('')
-    setSampleDateBefore('')
+    setSampleDateAfter(null)
+    setSampleDateBefore(null)
     setMethodDataSharingFilters([])
     setProjectNameFilter('')
     setShowYourData(false)

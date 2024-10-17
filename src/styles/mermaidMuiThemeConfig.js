@@ -12,4 +12,7 @@ export default {
       main: `${theme.color.callout}`,
     },
   },
+  typography: {
+    htmlFontSize: 10, // This is because in globalStyles.js we set font-size to 62.5%
+  },
 }

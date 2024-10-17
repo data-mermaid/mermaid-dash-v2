@@ -1,13 +1,18 @@
+import { useEffect, useState, useCallback, useContext } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import { Box, IconButton } from '@mui/material'
+import { Box } from '@mui/material'
+import dayjs from 'dayjs'
+import { DatePicker } from '@mui/x-date-pickers'
 
 import {
   ExpandableFilterRowContainer,
   ShowMoreFiltersContainer,
   StyledCategoryContainer,
   StyledClickableArea,
-  StyledDateInput,
-  StyledDateInputContainer,
+  StyledDateField,
+  StyledDateRangeContainer,
   StyledEmptyListItem,
   StyledExpandFilters,
   StyledFilterPaneContainer,
@@ -21,15 +26,13 @@ import {
   StyledUnorderedList,
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
+  StyledDateInputContainer,
 } from './FilterPane.styles'
 import { filterPane } from '../../constants/language'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { useAuth0 } from '@auth0/auth0-react'
-import { useEffect, useState, useCallback, useContext } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
 import {
   MermaidChip,
   MermaidFormContainer,
@@ -60,7 +63,6 @@ const FilterPane = ({ mermaidUserData }) => {
     displayedCountries,
     displayedOrganizations,
     displayedProjects,
-    formattedDate,
     getActiveProjectCount,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
@@ -122,12 +124,22 @@ const FilterPane = ({ mermaidUserData }) => {
     [navigate, location.pathname],
   )
 
-  const handleClearSampleDateAfter = () => {
-    handleChangeSampleDateAfter('')
+  const handleStartDateChange = (newStartDate) => {
+    const isStartDateValid = newStartDate?.isValid()
+    const isBeforeEndDate = !sampleDateBefore || newStartDate?.isBefore(sampleDateBefore)
+
+    if (!newStartDate || (isStartDateValid && isBeforeEndDate)) {
+      handleChangeSampleDateAfter(newStartDate)
+    }
   }
 
-  const handleClearSampleDateBefore = () => {
-    handleChangeSampleDateBefore('')
+  const handleEndDateChange = (newEndDate) => {
+    const isEndDateValid = newEndDate?.isValid()
+    const isAfterBeforeDate = !sampleDateAfter || newEndDate?.isAfter(sampleDateAfter)
+
+    if (!newEndDate || (isEndDateValid && isAfterBeforeDate)) {
+      handleChangeSampleDateBefore(newEndDate)
+    }
   }
 
   const handleDeleteCountry = (country) => {
@@ -396,41 +408,42 @@ const FilterPane = ({ mermaidUserData }) => {
       {showMoreFilters ? (
         <ShowMoreFiltersContainer>
           <StyledHeader>Date Range</StyledHeader>
-          <StyledDateInputContainer>
-            <StyledDateInput>
-              <input
-                type="date"
-                value={formattedDate(sampleDateAfter)}
-                onChange={(e) => handleChangeSampleDateAfter(e.target.value)}
+          <StyledDateRangeContainer>
+            <StyledDateInputContainer>
+              <span>From</span>
+              <DatePicker
+                id="start-date"
+                value={sampleDateAfter}
+                onChange={(date) => handleStartDateChange(date)}
+                format="YYYY-MM-DD"
+                maxDate={dayjs(sampleDateBefore)}
+                slots={{ textField: StyledDateField }}
+                slotProps={{
+                  textField: { clearable: true, size: 'small' },
+                  actionBar: ({ wrapperVariant }) => ({
+                    actions: wrapperVariant === 'desktop' ? [] : ['clear', 'cancel', 'accept'],
+                  }),
+                }}
               />
-              {sampleDateAfter && (
-                <IconButton
-                  aria-label="clear date"
-                  onClick={handleClearSampleDateAfter}
-                  className="clear-button"
-                >
-                  <IconClose />
-                </IconButton>
-              )}
-            </StyledDateInput>
-
-            <StyledDateInput>
-              <input
-                type="date"
-                value={formattedDate(sampleDateBefore)}
-                onChange={(e) => handleChangeSampleDateBefore(e.target.value)}
+            </StyledDateInputContainer>
+            <StyledDateInputContainer>
+              <span>To</span>
+              <DatePicker
+                id="end-date"
+                value={sampleDateBefore}
+                onChange={(date) => handleEndDateChange(date)}
+                format="YYYY-MM-DD"
+                minDate={sampleDateAfter ? dayjs(sampleDateAfter) : undefined}
+                slots={{ textField: StyledDateField }}
+                slotProps={{
+                  textField: { clearable: true, size: 'small' },
+                  actionBar: ({ wrapperVariant }) => ({
+                    actions: wrapperVariant === 'desktop' ? [] : ['clear', 'cancel', 'accept'],
+                  }),
+                }}
               />
-              {sampleDateBefore && (
-                <IconButton
-                  aria-label="clear date"
-                  onClick={handleClearSampleDateBefore}
-                  className="clear-button"
-                >
-                  <IconClose />
-                </IconButton>
-              )}
-            </StyledDateInput>
-          </StyledDateInputContainer>
+            </StyledDateInputContainer>
+          </StyledDateRangeContainer>
           {isAuthenticated ? (
             <>
               <StyledHeader>Your Data</StyledHeader>

@@ -77,32 +77,39 @@ export const StyledUnorderedList = styled.ul`
   padding: 0;
 `
 
-export const StyledDateInputContainer = styled.div`
+export const StyledDateRangeContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-right: 1rem;
-  justify-content: space-between;
+  margin-top: 1rem;
+  gap: 1rem;
 `
 
-export const StyledDateInput = styled.div`
-  position: relative;
-  width: calc(50% - 0.5rem);
-  margin-bottom: 1rem;
-  input {
-    width: 100%;
-    padding: 0.5rem;
-    background-color: ${theme.color.white};
+export const StyledDateInputContainer = styled.div`
+  flex-grow: 1;
+  flex-basis: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+
+export const StyledDateField = styled(TextField)`
+  &.MuiFormControl-root {
     border: 1px solid ${theme.color.grey0};
+    background-color: ${theme.color.inputBackground};
+  }
+
+  // Targets the container, not sure how to get the class
+  > div {
+    padding-right: 0.5rem;
+  }
+
+  fieldset {
     border-radius: 0;
   }
-  .clear-button {
-    position: absolute;
-    right: 1.8rem;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
+
+  input {
+    padding-left: 0.5rem;
   }
 `
 
