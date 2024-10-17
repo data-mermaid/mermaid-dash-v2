@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components'
 import theme from '../../styles/theme'
-import { HamburgerMenu, IconTextBoxMultiple } from '../../assets/dashboardOnlyIcons'
-import { IconSharing, IconUser } from '../../assets/icons'
+import { IconTextBoxMultiple } from '../../assets/dashboardOnlyIcons'
+import { IconNotes, IconSharing, IconUser } from '../../assets/icons'
 
 export const ProjectCard = styled.div`
   display: flex;
@@ -22,6 +22,7 @@ export const ProjectCardContent = styled.div`
   gap: 0.5rem;
   overflow-x: hidden;
   overflow-wrap: anywhere;
+  width: 100%;
 `
 
 export const ProjectCardHeader = styled.div`
@@ -37,6 +38,21 @@ export const ContactLink = styled.a`
   color: ${theme.color.primaryColor};
 `
 
+export const DataSharingGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+  width: 100%;
+`
+
+export const PolicyType = styled.span`
+  font-weight: bold;
+`
+
+export const PolicyValue = styled.span`
+  text-transform: capitalize;
+`
+
 const iconSize = css`
   width: ${theme.typography.mediumIconSize};
   height: ${theme.typography.mediumIconSize};
@@ -50,7 +66,7 @@ export const AdminIcon = styled(IconUser)`
   ${iconSize};
 `
 
-export const ProjectNotesIcon = styled(HamburgerMenu)`
+export const ProjectNotesIcon = styled(IconNotes)`
   ${iconSize};
 `
 

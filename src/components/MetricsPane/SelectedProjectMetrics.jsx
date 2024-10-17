@@ -6,8 +6,11 @@ import {
   AdminIcon,
   CardTitle,
   ContactLink,
+  DataSharingGrid,
   DataSharingIcon,
   HeaderIcon,
+  PolicyType,
+  PolicyValue,
   ProjectCard,
   ProjectCardContent,
   ProjectCardHeader,
@@ -25,8 +28,13 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
 
   const [truncateNotes, setTruncateNotes] = useState(true)
   const { project_name, project_id, records } = selectedProject
-  const projectAdmins = records[0]?.project_admins.map(({ name }) => name).join(', ')
-  const projectNotes = records[0]?.project_notes
+  const {
+    project_admins,
+    project_notes,
+    data_policy_beltfish,
+    data_policy_benthiclit,
+    data_policy_bleachingqc,
+  } = records[0] || {}
 
   const handleClearProject = () => {
     queryParams.delete('project_id')
@@ -39,8 +47,8 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       return
     }
 
-    setTruncateNotes(projectNotes.length > MAX_NOTES_LENGTH)
-  }, [selectedProject, projectNotes.length])
+    setTruncateNotes(project_notes?.length > MAX_NOTES_LENGTH)
+  }, [selectedProject, project_notes])
 
   console.log(selectedProject)
   return (
@@ -54,49 +62,60 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         <IconClose /> Clear
       </ButtonSecondary>
 
-      <ProjectCard>
-        <AdminIcon />
-        <ProjectCardContent>
-          <ProjectCardHeader>
-            <CardTitle>Admins</CardTitle>
-            <ContactLink
-              href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Contact
-            </ContactLink>
-          </ProjectCardHeader>
-          {projectAdmins}
-        </ProjectCardContent>
-      </ProjectCard>
+      {project_admins ? (
+        <ProjectCard>
+          <AdminIcon />
+          <ProjectCardContent>
+            <ProjectCardHeader>
+              <CardTitle>Admins</CardTitle>
+              <ContactLink
+                href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contact
+              </ContactLink>
+            </ProjectCardHeader>
+            {project_admins?.map(({ name }) => name).join(', ')}
+          </ProjectCardContent>
+        </ProjectCard>
+      ) : null}
 
-      {projectNotes ? (
+      {project_notes ? (
         <ProjectCard>
           <ProjectNotesIcon />
           <ProjectCardContent>
             <CardTitle>Project Notes</CardTitle>
             {truncateNotes ? (
               <>
-                {projectNotes.substring(0, MAX_NOTES_LENGTH)}...
+                {project_notes.substring(0, MAX_NOTES_LENGTH)}...
                 <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
                   Read more
                 </ButtonThatLooksLikeLinkUnderlined>
               </>
             ) : (
-              projectNotes
+              project_notes
             )}
           </ProjectCardContent>
         </ProjectCard>
       ) : null}
 
-      <ProjectCard>
-        <DataSharingIcon />
-        <ProjectCardContent>
-          <CardTitle>Data Sharing</CardTitle>
-          Sharing content/list goes here
-        </ProjectCardContent>
-      </ProjectCard>
+      {data_policy_beltfish ? (
+        <ProjectCard>
+          <DataSharingIcon />
+          <ProjectCardContent>
+            <CardTitle>Data Sharing</CardTitle>
+            <DataSharingGrid>
+              <PolicyType>Fish Belt</PolicyType>
+              <PolicyValue>{data_policy_beltfish}</PolicyValue>
+              <PolicyType>Benthic</PolicyType>
+              <PolicyValue>{data_policy_benthiclit}</PolicyValue>
+              <PolicyType>Bleaching</PolicyType>
+              <PolicyValue>{data_policy_bleachingqc}</PolicyValue>
+            </DataSharingGrid>
+          </ProjectCardContent>
+        </ProjectCard>
+      ) : null}
     </>
   )
 }
