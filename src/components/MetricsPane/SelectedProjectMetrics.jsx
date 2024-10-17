@@ -1,5 +1,6 @@
+import { useContext, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { ButtonSecondary } from '../generic'
+import { ButtonSecondary, ButtonThatLooksLikeLinkUnderlined } from '../generic'
 import { IconClose } from '../../assets/icons'
 import {
   AdminIcon,
@@ -13,13 +14,19 @@ import {
   ProjectNotesIcon,
   ProjectTitle,
 } from './SelectedProjectMetrics.styles'
-import { useContext } from 'react'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
+const NOTES_TRUNCATE_LENGTH = 50
 
 export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) => {
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
   const { updateURLParams } = useContext(FilterProjectsContext)
+
+  const [truncateNotes, setTruncateNotes] = useState(true)
+  const { project_name, project_id, records } = selectedProject
+  const projectAdmins = records[0]?.project_admins.map(({ name }) => name).join(', ')
+  const projectNotes = records[0]?.project_notes
 
   const handleClearProject = () => {
     queryParams.delete('project_id')
@@ -27,12 +34,20 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     updateURLParams(queryParams)
   }
 
+  const _resetTruncateNotesOnProjectChange = useEffect(() => {
+    if (!selectedProject) {
+      return
+    }
+
+    setTruncateNotes(true)
+  }, [selectedProject])
+
   console.log(selectedProject)
   return (
     <>
       <ProjectCard>
         <HeaderIcon />
-        <ProjectTitle>{selectedProject.project_name}</ProjectTitle>
+        <ProjectTitle>{project_name}</ProjectTitle>
       </ProjectCard>
 
       <ButtonSecondary onClick={handleClearProject}>
@@ -45,23 +60,35 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
           <ProjectCardHeader>
             <CardTitle>Admins</CardTitle>
             <ContactLink
-              href={`https://datamermaid.org/contact-project?project_id=${selectedProject.project_id}`}
+              href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
               target="_blank"
+              rel="noopener noreferrer"
             >
               Contact
             </ContactLink>
           </ProjectCardHeader>
-          List of admins goes here
+          {projectAdmins}
         </ProjectCardContent>
       </ProjectCard>
 
-      <ProjectCard>
-        <ProjectNotesIcon />
-        <ProjectCardContent>
-          <CardTitle>Project Notes</CardTitle>
-          Notes go here
-        </ProjectCardContent>
-      </ProjectCard>
+      {projectNotes ? (
+        <ProjectCard>
+          <ProjectNotesIcon />
+          <ProjectCardContent>
+            <CardTitle>Project Notes</CardTitle>
+            {truncateNotes ? (
+              <>
+                {projectNotes.substring(0, NOTES_TRUNCATE_LENGTH)}...
+                <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
+                  Read more
+                </ButtonThatLooksLikeLinkUnderlined>
+              </>
+            ) : (
+              projectNotes
+            )}
+          </ProjectCardContent>
+        </ProjectCard>
+      ) : null}
 
       <ProjectCard>
         <DataSharingIcon />

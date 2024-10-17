@@ -18,7 +18,10 @@ export const ProjectTitle = styled.h2`
 export const ProjectCardContent = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: start;
   gap: 0.5rem;
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
 `
 
 export const ProjectCardHeader = styled.div`
