@@ -418,7 +418,12 @@ const FilterPane = ({ mermaidUserData }) => {
                 format="YYYY-MM-DD"
                 maxDate={dayjs(sampleDateBefore)}
                 slots={{ textField: StyledDateField }}
-                slotProps={{ textField: { clearable: true, size: 'small' } }}
+                slotProps={{
+                  textField: { clearable: true, size: 'small' },
+                  actionBar: ({ wrapperVariant }) => ({
+                    actions: wrapperVariant === 'desktop' ? [] : ['clear', 'cancel', 'accept'],
+                  }),
+                }}
               />
             </StyledDateInputContainer>
             <StyledDateInputContainer>
@@ -430,7 +435,12 @@ const FilterPane = ({ mermaidUserData }) => {
                 format="YYYY-MM-DD"
                 minDate={sampleDateAfter ? dayjs(sampleDateAfter) : undefined}
                 slots={{ textField: StyledDateField }}
-                slotProps={{ textField: { clearable: true, size: 'small' } }}
+                slotProps={{
+                  textField: { clearable: true, size: 'small' },
+                  actionBar: ({ wrapperVariant }) => ({
+                    actions: wrapperVariant === 'desktop' ? [] : ['clear', 'cancel', 'accept'],
+                  }),
+                }}
               />
             </StyledDateInputContainer>
           </StyledDateRangeContainer>
