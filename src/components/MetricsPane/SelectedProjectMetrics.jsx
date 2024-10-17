@@ -16,7 +16,7 @@ import {
 } from './SelectedProjectMetrics.styles'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-const NOTES_TRUNCATE_LENGTH = 50
+const MAX_NOTES_LENGTH = 250
 
 export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) => {
   const getURLParams = () => new URLSearchParams(location.search)
@@ -39,8 +39,8 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       return
     }
 
-    setTruncateNotes(true)
-  }, [selectedProject])
+    setTruncateNotes(projectNotes.length > MAX_NOTES_LENGTH)
+  }, [selectedProject, projectNotes.length])
 
   console.log(selectedProject)
   return (
@@ -78,7 +78,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
             <CardTitle>Project Notes</CardTitle>
             {truncateNotes ? (
               <>
-                {projectNotes.substring(0, NOTES_TRUNCATE_LENGTH)}...
+                {projectNotes.substring(0, MAX_NOTES_LENGTH)}...
                 <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
                   Read more
                 </ButtonThatLooksLikeLinkUnderlined>
