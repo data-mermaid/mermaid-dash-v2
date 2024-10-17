@@ -50,7 +50,6 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     setTruncateNotes(project_notes?.length > MAX_NOTES_LENGTH)
   }, [selectedProject, project_notes])
 
-  console.log(selectedProject)
   return (
     <>
       <ProjectCard>
