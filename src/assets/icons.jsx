@@ -39,6 +39,7 @@ import menu from '@iconify-icons/mdi/menu'
 import menuDown from '@iconify-icons/mdi/menu-down'
 import menuUp from '@iconify-icons/mdi/menu-up'
 import multiFileTable from '@iconify-icons/mdi/file-table-box-multiple-outline'
+import notes from '@iconify-icons/mdi/text-subject'
 import openInNew from '@iconify-icons/mdi/open-in-new'
 import pencilIcon from '@iconify-icons/mdi/pencil'
 import playButton from '@iconify-icons/mdi/play-circle-outline'
@@ -93,6 +94,7 @@ export const IconInfo = (props) => <InlineIcon icon={informationIcon} {...props}
 export const IconLibraryBooks = (props) => <InlineIcon icon={libraryBooks} {...props} />
 export const IconMenu = (props) => <InlineIcon icon={menu} {...props} />
 export const IconMgmt = (props) => <InlineIcon icon={fileTable} {...props} />
+export const IconNotes = (props) => <InlineIcon icon={notes} {...props} />
 export const IconOpenInNew = (props) => <InlineIcon icon={openInNew} {...props} />
 export const IconPen = (props) => <InlineIcon icon={pencilIcon} {...props} />
 export const IconPlus = (props) => <InlineIcon icon={plus} {...props} />

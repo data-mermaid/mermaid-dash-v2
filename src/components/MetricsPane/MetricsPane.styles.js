@@ -9,8 +9,15 @@ export const StyledMetricsWrapper = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem;
-  ${(props) => props.$showMetricsPane && 'min-width: 35rem;'}
-  ${(props) => !props.$showMetricsPane && 'max-width: 40rem;'}
+  ${({ $showMetricsPane }) =>
+    $showMetricsPane
+      ? css`
+          min-width: 35rem;
+          max-width: 35rem;
+        `
+      : css`
+          max-width: 40rem;
+        `}
   position: relative;
   z-index: 5;
   overflow-y: auto;
@@ -20,6 +27,7 @@ export const StyledMetricsWrapper = styled.div`
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;
+    max-width: unset;
     bottom: 0;
     height: auto;
     ${({ $showMobileExpandedMetricsPane }) =>

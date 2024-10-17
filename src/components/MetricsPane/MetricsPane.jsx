@@ -21,6 +21,7 @@ import {
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
+import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 
 const ARROW_RIGHT = String.fromCharCode(10095)
 const ARROW_LEFT = String.fromCharCode(10094)
@@ -47,6 +48,8 @@ const MetricsPane = ({
     selectedMarkerId,
     setEnableFollowScreen,
     updateURLParams,
+    selectedProject,
+    setSelectedProject,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -177,17 +180,23 @@ const MetricsPane = ({
     </SummarizedMetrics>
   )
 
-  const metricsContent = selectedSampleEvent ? (
-    <SelectedSiteMetrics
-      view={view}
-      selectedSampleEvent={selectedSampleEvent}
-      setSelectedSampleEvent={setSelectedSampleEvent}
-      showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
-    />
-  ) : (
-    <>{displayedProjectsMetrics}</>
-  )
+  const metricsContent =
+    selectedProject && isDesktopWidth ? (
+      <SelectedProjectMetrics
+        selectedProject={selectedProject}
+        setSelectedProject={setSelectedProject}
+      />
+    ) : selectedSampleEvent ? (
+      <SelectedSiteMetrics
+        view={view}
+        selectedSampleEvent={selectedSampleEvent}
+        setSelectedSampleEvent={setSelectedSampleEvent}
+        showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+        setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
+      />
+    ) : (
+      displayedProjectsMetrics
+    )
 
   const handleFollowScreen = (e) => {
     setEnableFollowScreen((prevState) => !prevState)
@@ -251,12 +260,13 @@ const MetricsPane = ({
         ) : null}
       </StyledMetricsWrapper>
       {isDesktopWidth ? (
-          <DesktopToggleMetricsPaneButton onClick={handleShowMetricsPane} $showMetricsPane={showMetricsPane}>
-            <span>Metrics</span>
-            <StyledChevronSpan>
-              {showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}
-            </StyledChevronSpan>
-          </DesktopToggleMetricsPaneButton>
+        <DesktopToggleMetricsPaneButton
+          onClick={handleShowMetricsPane}
+          $showMetricsPane={showMetricsPane}
+        >
+          <span>Metrics</span>
+          <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
+        </DesktopToggleMetricsPaneButton>
       ) : null}
     </>
   )

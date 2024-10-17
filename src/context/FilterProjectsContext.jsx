@@ -23,6 +23,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const queryParamsSampleEventId = queryParams.get('sample_event_id')
   const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
+  const [selectedProject, setSelectedProject] = useState(null)
   const [showYourData, setShowYourData] = useState(false)
   const [mermaidUserData, setMermaidUserData] = useState({})
   const [displayedOrganizations, setDisplayedOrganizations] = useState([])
@@ -584,6 +585,7 @@ export const FilterProjectsProvider = ({ children }) => {
         selectedCountries,
         selectedMarkerId,
         selectedOrganizations,
+        selectedProject,
         setCheckedProjects,
         setCountries,
         setDisplayedCountries,
@@ -595,6 +597,7 @@ export const FilterProjectsProvider = ({ children }) => {
         setSelectedCountries,
         setSelectedMarkerId,
         setSelectedOrganizations,
+        setSelectedProject,
         setShowProjectsWithNoRecords,
         setShowYourData,
         showProjectsWithNoRecords,

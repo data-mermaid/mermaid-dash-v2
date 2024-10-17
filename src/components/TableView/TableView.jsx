@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { usePagination, useSortBy, useTable } from 'react-table'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import ContentPageLayout from './components/ContentPageLayout'
 import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
 import {
@@ -22,6 +22,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
+import theme from '../../styles/theme'
 
 const StyledTableContainer = styled.div`
   height: calc(100vh - 50px);
@@ -32,12 +33,22 @@ const StyledTableContainer = styled.div`
   width: 100%;
 `
 
+const StyledTr = styled(Tr)`
+  ${({ $isSelected }) =>
+    $isSelected
+      ? css`
+          background-color: ${theme.color.backgroundColor} !important;
+        `
+      : undefined}
+`
+
 const TableView = ({ view, setView, mermaidUserData }) => {
   const {
     checkedProjects,
     displayedProjects,
     setShowProjectsWithNoRecords,
     userIsMemberOfProject,
+    setSelectedProject,
   } = useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
@@ -180,12 +191,13 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   }
 
   const handleTableRowClick = (projectData) => {
-    console.log('TODO: display project data in metrics pane', projectData)
     queryParams.delete('sample_event_id')
     if (queryParamsProjectId !== projectData.project_id) {
       queryParams.set('project_id', projectData.project_id)
+      setSelectedProject(projectData)
     } else {
       queryParams.delete('project_id')
+      setSelectedProject(null)
     }
     updateURLParams(queryParams)
   }
@@ -193,11 +205,11 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const _displaySelectedProjectInMetricsPane = useEffect(() => {
     if (queryParamsProjectId) {
       const selectedProject = displayedProjects.find(
-        (project) => project.project_id === queryParamsProjectId,
+        ({ project_id }) => project_id === queryParamsProjectId,
       )
-      console.log('TODO: display the initially selected project in metrics pane', selectedProject)
+      setSelectedProject(selectedProject)
     }
-  }, [displayedProjects, queryParamsProjectId])
+  }, [displayedProjects, queryParamsProjectId, setSelectedProject])
 
   const table = tableData.length ? (
     <>
@@ -245,9 +257,11 @@ const TableView = ({ view, setView, mermaidUserData }) => {
               prepareRow(row)
               const rowProps = row.getRowProps()
               const { key: rowKey, ...restRowProps } = rowProps
+              const isRowSelected =
+                row?.original?.rawProjectData?.project_id === queryParamsProjectId
 
               return (
-                <Tr key={rowKey} {...restRowProps}>
+                <StyledTr key={rowKey} $isSelected={isRowSelected} {...restRowProps}>
                   {row.cells.map((cell) => {
                     const cellProps = cell.getCellProps()
                     const { key: cellKey, ...restCellProps } = cellProps
@@ -272,7 +286,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
                       </Td>
                     )
                   })}
-                </Tr>
+                </StyledTr>
               )
             })}
           </tbody>
