@@ -34,7 +34,9 @@ export const FilterProjectsProvider = ({ children }) => {
   const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
-  const displayedSurveys = displayedProjects.flatMap((project) => project.records)
+  const filteredSurveys = displayedProjects
+    .filter((project) => checkedProjects.includes(project.project_id))
+    .flatMap((project) => project.records)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -563,7 +565,7 @@ export const FilterProjectsProvider = ({ children }) => {
         displayedCountries,
         displayedOrganizations,
         displayedProjects,
-        displayedSurveys,
+        filteredSurveys,
         enableFollowScreen,
         formattedDate,
         getActiveProjectCount,

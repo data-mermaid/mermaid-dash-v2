@@ -9,9 +9,9 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateHardCoralCover = () => {
-  const { displayedSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const hardCoralAveragesPerSurvey = displayedSurveys
+  const hardCoralAveragesPerSurvey = filteredSurveys
     .map((record) => {
       const { protocols } = record
 

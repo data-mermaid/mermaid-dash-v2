@@ -9,9 +9,9 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateFishBiomass = () => {
-  const { displayedSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const surveyFishbeltBiomassValues = displayedSurveys
+  const surveyFishbeltBiomassValues = filteredSurveys
     .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)
     .filter(Boolean)
 

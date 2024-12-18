@@ -9,7 +9,7 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateBleaching = () => {
-  const { displayedSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys } = useContext(FilterProjectsContext)
 
   const initialColoniesBleachedSummarizedBySeverity = {
     numColoniesTotal: 0,
@@ -21,7 +21,7 @@ export const AggregateBleaching = () => {
     totalColonies80to100: 0,
     totalColoniesDead: 0,
   }
-  const coloniesBleachedSummarizedBySeverity = displayedSurveys
+  const coloniesBleachedSummarizedBySeverity = filteredSurveys
     .filter((record) => !!record.protocols?.colonies_bleached)
     .reduce((accumulator, record) => {
       const {

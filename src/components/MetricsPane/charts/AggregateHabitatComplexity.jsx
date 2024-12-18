@@ -9,9 +9,9 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateHabitatComplexity = () => {
-  const { displayedSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const habitatComplexityValues = displayedSurveys
+  const habitatComplexityValues = filteredSurveys
     .map((record) => record.protocols.habitatcomplexity?.score_avg_avg)
     .filter(Boolean)
 
