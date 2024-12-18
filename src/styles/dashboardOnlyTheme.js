@@ -7,8 +7,16 @@ const color = {
 }
 
 const plotlyChart = {
-  fishBiomass: { marker: { color: '#769fca' } },
-  hardCoralCover: { marker: { low: '#d13823', medium: '#f3a224', high: '#277d1d' } },
+  aggregateCharts: {
+    fishBiomass: { marker: { color: '#769fca' } },
+    hardCoralCover: { marker: { low: '#d13823', medium: '#f3a224', high: '#277d1d' } },
+    bleaching: {
+      marker: {
+        color: ['#3c6e9a', '#6288ad', '#85a3c1', '#a8bed5', '#cbdaea', '#eff7ff', '#b4b4b4'],
+      },
+    },
+  },
+
   layout: {
     bargap: 0.1,
     height: 270,

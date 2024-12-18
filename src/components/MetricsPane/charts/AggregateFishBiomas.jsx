@@ -28,7 +28,7 @@ export const AggregateFishBiomass = () => {
             x: surveyFishbeltBiomassValues,
             type: 'histogram',
             marker: {
-              color: chartTheme.fishBiomass.marker.color,
+              color: chartTheme.aggregateCharts.fishBiomass.marker.color,
             },
             xbins: {
               size: 100,
@@ -46,7 +46,7 @@ export const AggregateFishBiomass = () => {
           },
           yaxis: {
             ...chartTheme.layout.yaxis,
-            title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys', standoff: 5 },
+            title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
           },
         }}
         config={chartTheme.config}

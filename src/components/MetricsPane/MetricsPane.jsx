@@ -25,6 +25,7 @@ import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
 import { AggregateHardCoralCover } from './charts/AggregateHardCoralCover'
 import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
+import { AggregateBleaching } from './charts/AggregateBleaching'
 
 const ARROW_RIGHT = String.fromCharCode(10095)
 const ARROW_LEFT = String.fromCharCode(10094)
@@ -188,6 +189,11 @@ const MetricsPane = ({
       <MetricsPaneChartTabs
         id="fish-biomass"
         aggregatePanelContent={<AggregateFishBiomass />}
+        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+      />
+      <MetricsPaneChartTabs
+        id="Bleaching"
+        aggregatePanelContent={<AggregateBleaching />}
         timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
       />
     </SummarizedMetrics>

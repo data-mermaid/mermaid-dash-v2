@@ -36,7 +36,7 @@ export const AggregateHardCoralCover = () => {
     .filter(Boolean)
 
   const markerColors = hardCoralAveragesPerSurvey.map((_, index) => {
-    const colors = chartTheme.hardCoralCover.marker
+    const colors = chartTheme.aggregateCharts.hardCoralCover.marker
 
     if (index <= 5) {
       return colors.low
