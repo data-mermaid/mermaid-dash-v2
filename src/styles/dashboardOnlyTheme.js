@@ -46,6 +46,7 @@ const plotlyChart = {
       'resetScale2d',
     ],
     displaylogo: false,
+    responsive: true,
   },
 }
 const dashboardOnlyTheme = { color, plotlyChart }
