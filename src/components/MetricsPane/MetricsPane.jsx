@@ -22,6 +22,9 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
+import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
+import { AggregateHardCoralCover } from './charts/AggregateHardCoralCover'
+import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
 
 const ARROW_RIGHT = String.fromCharCode(10095)
 const ARROW_LEFT = String.fromCharCode(10094)
@@ -177,6 +180,16 @@ const MetricsPane = ({
       )}
 
       {isDesktopWidth ? <MetricsCard>{calculateMetrics.yearRange}</MetricsCard> : null}
+      <MetricsPaneChartTabs
+        id="hard-coral-cover"
+        aggregatePanelContent={<AggregateHardCoralCover />}
+        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+      />
+      <MetricsPaneChartTabs
+        id="fish-biomass"
+        aggregatePanelContent={<AggregateFishBiomass />}
+        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+      />
     </SummarizedMetrics>
   )
 

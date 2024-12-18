@@ -1,6 +1,5 @@
 import { css } from 'styled-components'
 import colorHelper from 'color'
-import { fontFamily } from '@mui/system'
 
 const primary = colorHelper('#174b82')
 const secondary = colorHelper('#DDDCE4')
