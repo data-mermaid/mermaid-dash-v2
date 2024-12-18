@@ -8,7 +8,7 @@ const color = {
 
 const plotlyChart = {
   aggregateCharts: {
-    fishBiomass: { marker: { color: '#769fca' } },
+    default: { marker: { color: '#769fca' } },
     hardCoralCover: { marker: { low: '#d13823', medium: '#f3a224', high: '#277d1d' } },
     bleaching: {
       marker: {
