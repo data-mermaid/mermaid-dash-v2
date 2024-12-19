@@ -8,30 +8,30 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
-export const AggregateFishBiomass = () => {
+export const AggregateHabitatComplexity = () => {
   const { displayedSurveys } = useContext(FilterProjectsContext)
 
-  const surveyFishbeltBiomassValues = displayedSurveys
-    .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)
+  const habitatComplexityValues = displayedSurveys
+    .map((record) => record.protocols.habitatcomplexity?.score_avg_avg)
     .filter(Boolean)
 
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
-        <ChartSubtitle>{surveyFishbeltBiomassValues.length} Surveys</ChartSubtitle>
+        <MetricCardH3>Habitat Complexity </MetricCardH3>
+        <ChartSubtitle>{habitatComplexityValues.length} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot
         data={[
           {
-            x: surveyFishbeltBiomassValues,
+            x: habitatComplexityValues,
             type: 'histogram',
             marker: {
               color: chartTheme.aggregateCharts.default.marker.color,
             },
             xbins: {
-              size: 100,
+              size: 1,
             },
           },
         ]}
@@ -41,8 +41,9 @@ export const AggregateFishBiomass = () => {
             ...chartTheme.layout.xaxis,
             title: {
               ...chartTheme.layout.xaxis.title,
-              text: 'Fish biomass (kg/ha)',
+              text: 'Score',
             },
+            tickvals: [0, 1, 2, 3, 4, 5],
           },
           yaxis: {
             ...chartTheme.layout.yaxis,
