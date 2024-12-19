@@ -40,16 +40,29 @@ export const StyledMetricsWrapper = styled.div`
       `};
   `)}
 `
+export const DisplayedProjectsMetricsWrapper = styled.div`
+  overflow-y: scroll;
+  height: 100%;
+`
+export const ChartsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
 
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: ${(props) => (props.$showMobileExpandedMetricsPane ? 'flex' : 'none')};
+  `)}
+`
 export const SummarizedMetrics = styled.div`
   width: 100%;
   overflow-y: scroll;
-  ${(props) => props.$isDesktopWidth && 'height: calc(100vh - 10rem);'}
   z-index: 2;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  margin-bottom: 0.5rem;
 
   /* Hide scrollbar */
   &::-webkit-scrollbar {
@@ -65,6 +78,7 @@ export const SummarizedMetrics = styled.div`
     justify-content: space-between;
     gap: 0.5rem;
     margin: 0;
+    margin-bottom: 0.5rem;
   `)}
 `
 
