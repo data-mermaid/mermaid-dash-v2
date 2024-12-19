@@ -153,6 +153,7 @@ const MetricsPane = ({
     </>
   )
 
+  const comingSoonPlaceholder = <div style={{ height: '270px' }}>Coming soon</div>
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
@@ -190,23 +191,23 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="hard-coral-cover"
           aggregatePanelContent={<AggregateHardCoralCover />}
-          timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+          timeSeriesPanelContent={comingSoonPlaceholder}
         />
         <MetricsPaneChartTabs
           id="fish-biomass"
           aggregatePanelContent={<AggregateFishBiomass />}
-          timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+          timeSeriesPanelContent={comingSoonPlaceholder}
         />
 
         <MetricsPaneChartTabs
           id="Bleaching"
           aggregatePanelContent={<AggregateBleaching />}
-          timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+          timeSeriesPanelContent={comingSoonPlaceholder}
         />
         <MetricsPaneChartTabs
           id="habitat-complexity"
           aggregatePanelContent={<AggregateHabitatComplexity />}
-          timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
+          timeSeriesPanelContent={comingSoonPlaceholder}
         />
       </ChartsWrapper>
     </DisplayedProjectsMetricsWrapper>

@@ -15,6 +15,33 @@ export const AggregateFishBiomass = () => {
     .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)
     .filter(Boolean)
 
+  const plotlyDataConfiguration = [
+    {
+      x: surveyFishbeltBiomassValues,
+      type: 'histogram',
+      marker: {
+        color: chartTheme.aggregateCharts.default.marker.color,
+      },
+      xbins: {
+        size: 100,
+      },
+    },
+  ]
+
+  const plotlyLayoutConfiguration = {
+    ...chartTheme.layout,
+    xaxis: {
+      ...chartTheme.layout.xaxis,
+      title: {
+        ...chartTheme.layout.xaxis.title,
+        text: 'Fish biomass (kg/ha)',
+      },
+    },
+    yaxis: {
+      ...chartTheme.layout.yaxis,
+      title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
+    },
+  }
   return (
     <ChartWrapper>
       <TitlesWrapper>
@@ -23,32 +50,8 @@ export const AggregateFishBiomass = () => {
       </TitlesWrapper>
 
       <Plot
-        data={[
-          {
-            x: surveyFishbeltBiomassValues,
-            type: 'histogram',
-            marker: {
-              color: chartTheme.aggregateCharts.default.marker.color,
-            },
-            xbins: {
-              size: 100,
-            },
-          },
-        ]}
-        layout={{
-          ...chartTheme.layout,
-          xaxis: {
-            ...chartTheme.layout.xaxis,
-            title: {
-              ...chartTheme.layout.xaxis.title,
-              text: 'Fish biomass (kg/ha)',
-            },
-          },
-          yaxis: {
-            ...chartTheme.layout.yaxis,
-            title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
-          },
-        }}
+        data={plotlyDataConfiguration}
+        layout={plotlyLayoutConfiguration}
         config={chartTheme.config}
         style={{ width: '100%', height: '100%' }}
       />

@@ -15,6 +15,34 @@ export const AggregateHabitatComplexity = () => {
     .map((record) => record.protocols.habitatcomplexity?.score_avg_avg)
     .filter(Boolean)
 
+  const plotlyDataConfiguration = [
+    {
+      x: habitatComplexityValues,
+      type: 'histogram',
+      marker: {
+        color: chartTheme.aggregateCharts.default.marker.color,
+      },
+      xbins: {
+        size: 1,
+      },
+    },
+  ]
+  const plotlyLayoutConfiguration = {
+    ...chartTheme.layout,
+    xaxis: {
+      ...chartTheme.layout.xaxis,
+      title: {
+        ...chartTheme.layout.xaxis.title,
+        text: 'Score',
+      },
+      tickvals: [0, 1, 2, 3, 4, 5],
+    },
+    yaxis: {
+      ...chartTheme.layout.yaxis,
+      title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
+    },
+  }
+
   return (
     <ChartWrapper>
       <TitlesWrapper>
@@ -23,33 +51,8 @@ export const AggregateHabitatComplexity = () => {
       </TitlesWrapper>
 
       <Plot
-        data={[
-          {
-            x: habitatComplexityValues,
-            type: 'histogram',
-            marker: {
-              color: chartTheme.aggregateCharts.default.marker.color,
-            },
-            xbins: {
-              size: 1,
-            },
-          },
-        ]}
-        layout={{
-          ...chartTheme.layout,
-          xaxis: {
-            ...chartTheme.layout.xaxis,
-            title: {
-              ...chartTheme.layout.xaxis.title,
-              text: 'Score',
-            },
-            tickvals: [0, 1, 2, 3, 4, 5],
-          },
-          yaxis: {
-            ...chartTheme.layout.yaxis,
-            title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
-          },
-        }}
+        data={plotlyDataConfiguration}
+        layout={plotlyLayoutConfiguration}
         config={chartTheme.config}
         style={{ width: '100%', height: '100%' }}
       />
