@@ -19,12 +19,19 @@ export const Tab = styled.button`
     props['aria-selected'] ? theme.color.white : theme.color.background};
 
   border: ${(props) =>
-    props['aria-selected'] ? `${theme.spacing.borderSmall} solid ${theme.color.border}` : 'none'};
+    props['aria-selected']
+      ? `${theme.spacing.borderSmall} solid ${theme.color.border}`
+      : `${theme.spacing.borderSmall} solid transparent`};
 
   border-bottom: none;
 
   &:hover {
     cursor: pointer;
+    border-top: ${theme.spacing.borderSmall} solid ${theme.color.border};
+    ${({ $tabPosition }) => ($tabPosition === 'left' ? 'border-left' : 'border-right')}: ${theme
+      .spacing.borderSmall} solid ${theme.color.border};
+    background-color: ${(props) =>
+      props['aria-selected'] ? theme.color.white : theme.color.secondaryHover};
   }
 `
 

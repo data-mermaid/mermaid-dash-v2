@@ -9,7 +9,7 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateBleaching = () => {
-  const { displayedSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys } = useContext(FilterProjectsContext)
 
   const initialColoniesBleachedSummarizedBySeverity = {
     numColoniesTotal: 0,
@@ -21,7 +21,7 @@ export const AggregateBleaching = () => {
     totalColonies80to100: 0,
     totalColoniesDead: 0,
   }
-  const coloniesBleachedSummarizedBySeverity = displayedSurveys
+  const coloniesBleachedSummarizedBySeverity = filteredSurveys
     .filter((record) => !!record.protocols?.colonies_bleached)
     .reduce((accumulator, record) => {
       const {
@@ -81,53 +81,57 @@ export const AggregateBleaching = () => {
     totalColoniesNormal,
   } = coloniesBleachedSummarizedBySeverity
 
+  const plotlyDataConfiguration = [
+    {
+      y: [
+        totalColoniesNormal,
+        totalColoniesPale,
+        totalColonies0to20,
+        totalColonies20to50,
+        totalColonies50to80,
+        totalColonies80to100,
+        totalColoniesDead,
+      ],
+      x: ['Normal', 'Pale', '0-20%', '20-50%', '50-80%', '80-100%', 'Dead'],
+      type: 'bar',
+      marker: {
+        color: chartTheme.aggregateCharts.bleaching.marker.color,
+      },
+      xbins: {
+        size: 100,
+      },
+    },
+  ]
+
+  const plotlyLayoutConfiguration = {
+    ...chartTheme.layout,
+    margin: { ...chartTheme.layout.margin, b: 60 },
+    xaxis: {
+      ...chartTheme.layout.xaxis,
+      title: {
+        ...chartTheme.layout.xaxis.title,
+        text: 'Bleaching severity',
+      },
+    },
+    yaxis: {
+      ...chartTheme.layout.yaxis,
+      title: {
+        ...chartTheme.layout.yaxis.title,
+        text: 'Number of coral colonies',
+      },
+    },
+  }
+
   return (
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
-        <ChartSubtitle>{Math.round(numColoniesTotal)} Colonies</ChartSubtitle>
+        <ChartSubtitle>{Math.round(numColoniesTotal).toLocaleString()} Colonies</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot
-        data={[
-          {
-            y: [
-              totalColoniesNormal,
-              totalColoniesPale,
-              totalColonies0to20,
-              totalColonies20to50,
-              totalColonies50to80,
-              totalColonies80to100,
-              totalColoniesDead,
-            ],
-            x: ['Normal', 'Pale', '0-20%', '20-50%', '50-80%', '80-100%', 'Dead'],
-            type: 'bar',
-            marker: {
-              color: chartTheme.aggregateCharts.bleaching.marker.color,
-            },
-            xbins: {
-              size: 100,
-            },
-          },
-        ]}
-        layout={{
-          ...chartTheme.layout,
-          margin: { ...chartTheme.layout.margin, b: 60 },
-          xaxis: {
-            ...chartTheme.layout.xaxis,
-            title: {
-              ...chartTheme.layout.xaxis.title,
-              text: 'Bleaching severity',
-            },
-          },
-          yaxis: {
-            ...chartTheme.layout.yaxis,
-            title: {
-              ...chartTheme.layout.yaxis.title,
-              text: 'Number of coral colonies',
-            },
-          },
-        }}
+        data={plotlyDataConfiguration}
+        layout={plotlyLayoutConfiguration}
         config={chartTheme.config}
         style={{ width: '100%', height: '100%' }}
       />

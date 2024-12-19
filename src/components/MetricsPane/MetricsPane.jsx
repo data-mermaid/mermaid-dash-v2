@@ -17,6 +17,8 @@ import {
   MetricCardPBig,
   MetricCardPMedium,
   InlineOnDesktopMetricWrapper,
+  DisplayedProjectsMetricsWrapper,
+  ChartsWrapper,
 } from './MetricsPane.styles'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
@@ -151,58 +153,64 @@ const MetricsPane = ({
     </>
   )
 
+  const comingSoonPlaceholder = <div style={{ height: '270px' }}>Coming soon</div>
   const displayedProjectsMetrics = (
-    <SummarizedMetrics
-      onClick={toggleMobileMetricsPane}
-      $isDesktopWidth={isDesktopWidth}
-      $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-      $showLoadingIndicator={showLoadingIndicator}
-    >
-      <MetricsCard>
-        <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
-        <MetricCardH3>Surveys</MetricCardH3>
-      </MetricsCard>
-      <MetricsCard>
+    <DisplayedProjectsMetricsWrapper>
+      <SummarizedMetrics
+        onClick={toggleMobileMetricsPane}
+        $isDesktopWidth={isDesktopWidth}
+        $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
+        $showLoadingIndicator={showLoadingIndicator}
+      >
+        <MetricsCard>
+          <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
+          <MetricCardH3>Surveys</MetricCardH3>
+        </MetricsCard>
+        <MetricsCard>
+          {isDesktopWidth ? (
+            <InlineOnDesktopMetricWrapper>
+              <span>{numUniqueCountries.toLocaleString()}</span>{' '}
+              <MetricCardH3>{countryLabel}</MetricCardH3>
+            </InlineOnDesktopMetricWrapper>
+          ) : (
+            <>
+              <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
+              <MetricCardH3>{countryLabel}</MetricCardH3>
+            </>
+          )}
+        </MetricsCard>
         {isDesktopWidth ? (
-          <InlineOnDesktopMetricWrapper>
-            <span>{numUniqueCountries.toLocaleString()}</span>{' '}
-            <MetricCardH3>{countryLabel}</MetricCardH3>
-          </InlineOnDesktopMetricWrapper>
+          <MultipleMetricCardsRow>{transectAndProjectCountCards}</MultipleMetricCardsRow>
         ) : (
-          <>
-            <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
-            <MetricCardH3>{countryLabel}</MetricCardH3>
-          </>
+          transectAndProjectCountCards
         )}
-      </MetricsCard>
-      {isDesktopWidth ? (
-        <MultipleMetricCardsRow>{transectAndProjectCountCards}</MultipleMetricCardsRow>
-      ) : (
-        transectAndProjectCountCards
-      )}
 
-      {isDesktopWidth ? <MetricsCard>{calculateMetrics.yearRange}</MetricsCard> : null}
-      <MetricsPaneChartTabs
-        id="hard-coral-cover"
-        aggregatePanelContent={<AggregateHardCoralCover />}
-        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
-      />
-      <MetricsPaneChartTabs
-        id="fish-biomass"
-        aggregatePanelContent={<AggregateFishBiomass />}
-        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
-      />
-      <MetricsPaneChartTabs
-        id="Bleaching"
-        aggregatePanelContent={<AggregateBleaching />}
-        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
-      />
-      <MetricsPaneChartTabs
-        id="habitat-complexity"
-        aggregatePanelContent={<AggregateHabitatComplexity />}
-        timeSeriesPanelContent={<div style={{ height: '270px' }}>Coming soon</div>}
-      />
-    </SummarizedMetrics>
+        {isDesktopWidth ? <MetricsCard>{calculateMetrics.yearRange}</MetricsCard> : null}
+      </SummarizedMetrics>
+      <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
+        <MetricsPaneChartTabs
+          id="hard-coral-cover"
+          aggregatePanelContent={<AggregateHardCoralCover />}
+          timeSeriesPanelContent={comingSoonPlaceholder}
+        />
+        <MetricsPaneChartTabs
+          id="fish-biomass"
+          aggregatePanelContent={<AggregateFishBiomass />}
+          timeSeriesPanelContent={comingSoonPlaceholder}
+        />
+
+        <MetricsPaneChartTabs
+          id="Bleaching"
+          aggregatePanelContent={<AggregateBleaching />}
+          timeSeriesPanelContent={comingSoonPlaceholder}
+        />
+        <MetricsPaneChartTabs
+          id="habitat-complexity"
+          aggregatePanelContent={<AggregateHabitatComplexity />}
+          timeSeriesPanelContent={comingSoonPlaceholder}
+        />
+      </ChartsWrapper>
+    </DisplayedProjectsMetricsWrapper>
   )
 
   const metricsContent =
