@@ -126,7 +126,7 @@ export const AggregateBleaching = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
-        <ChartSubtitle>{Math.round(numColoniesTotal)} Colonies</ChartSubtitle>
+        <ChartSubtitle>{Math.round(numColoniesTotal).toLocaleString()} Colonies</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

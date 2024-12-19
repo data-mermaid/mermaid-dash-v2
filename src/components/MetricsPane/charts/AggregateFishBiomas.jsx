@@ -46,7 +46,7 @@ export const AggregateFishBiomass = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
-        <ChartSubtitle>{surveyFishbeltBiomassValues.length} Surveys</ChartSubtitle>
+        <ChartSubtitle>{surveyFishbeltBiomassValues.length.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

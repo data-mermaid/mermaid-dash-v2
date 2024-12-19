@@ -24,6 +24,7 @@ export const MetricsPaneChartTabs = ({ id, aggregatePanelContent, timeSeriesPane
           aria-selected={isAggregateSelected}
           aria-controls={tabsPanelAggregateId}
           onClick={() => setSelectedTab(TAB_IDS.AGGREGATE)}
+          $tabPosition="left"
         >
           Aggregate
         </Tab>
@@ -34,6 +35,7 @@ export const MetricsPaneChartTabs = ({ id, aggregatePanelContent, timeSeriesPane
           aria-selected={isTimeSeriesSelected}
           aria-controls={tabsPanelTimeSeriesId}
           onClick={() => setSelectedTab(TAB_IDS.TIME_SERIES)}
+          $tabPosition="right"
         >
           Time Series
         </Tab>

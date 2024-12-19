@@ -29,8 +29,18 @@ const plotlyChart = {
     },
 
     showLegend: false,
-    xaxis: { linecolor: 'black', linewidth: 2, title: { standoff: 5 } },
-    yaxis: { linecolor: 'black', linewidth: 2, title: { standoff: 5 } },
+    xaxis: {
+      fixedrange: true,
+      linecolor: 'black',
+      linewidth: 2,
+      title: { standoff: 5 },
+    },
+    yaxis: {
+      fixedrange: true,
+      linecolor: 'black',
+      linewidth: 2,
+      title: { standoff: 5 },
+    },
     modebar: {
       orientation: 'v',
     },

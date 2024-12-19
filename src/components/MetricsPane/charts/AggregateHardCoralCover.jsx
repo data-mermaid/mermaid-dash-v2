@@ -79,7 +79,7 @@ export const AggregateHardCoralCover = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Hard Coral Cover </MetricCardH3>
-        <ChartSubtitle>{hardCoralAveragesPerSurvey.length} Surveys</ChartSubtitle>
+        <ChartSubtitle>{hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

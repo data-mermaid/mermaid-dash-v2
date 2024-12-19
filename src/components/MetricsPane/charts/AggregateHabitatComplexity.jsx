@@ -47,7 +47,7 @@ export const AggregateHabitatComplexity = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity </MetricCardH3>
-        <ChartSubtitle>{habitatComplexityValues.length} Surveys</ChartSubtitle>
+        <ChartSubtitle>{habitatComplexityValues.length.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot
