@@ -20,6 +20,7 @@ const plotlyChart = {
   layout: {
     bargap: 0.1,
     height: 270,
+    autosize: true,
     margin: {
       l: 50,
       r: 30,
