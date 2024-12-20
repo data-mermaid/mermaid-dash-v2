@@ -37,7 +37,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
@@ -128,18 +128,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       }
     }
 
-    if (isLoading) {
-      return
-    }
     handleFetchData()
-  }, [
-    isLoading,
-    isAuthenticated,
-    getAccessTokenSilently,
-    fetchUserProfile,
-    fetchData,
-    setMermaidUserData,
-  ])
+  }, [isAuthenticated, getAccessTokenSilently, fetchUserProfile, fetchData, setMermaidUserData])
 
   const updateURLParams = useCallback(
     (queryParams) => {
