@@ -4,10 +4,6 @@ import theme from '../../styles/theme'
 import { ButtonSecondary } from '../generic'
 import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
 
-export const MetricsAndMetricsToggleButtonWrapper = styled.div`
-  position: relative; // This is needed for the absolute positioning of children
-`
-
 export const StyledMetricsWrapper = styled.div`
   display: flex;
   flex-direction: column;
@@ -22,8 +18,8 @@ export const StyledMetricsWrapper = styled.div`
       : css`
           max-width: 40rem;
         `}
+  position: relative;
   z-index: 5;
-  overflow-y: auto;
   background-color: ${(props) =>
     props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
   height: 100%;
@@ -99,7 +95,7 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
-  top: 1.3rem;
+  top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
   right: ${({ $showMetricsPane }) => ($showMetricsPane ? '35rem' : 0)};
   height: 6rem;
   z-index: 5;

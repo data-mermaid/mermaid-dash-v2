@@ -19,7 +19,6 @@ import {
   InlineOnDesktopMetricWrapper,
   DisplayedProjectsMetricsWrapper,
   ChartsWrapper,
-  MetricsAndMetricsToggleButtonWrapper,
 } from './MetricsPane.styles'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
@@ -246,7 +245,7 @@ const MetricsPane = ({
   }
 
   return (
-    <MetricsAndMetricsToggleButtonWrapper>
+    <>
       <StyledMetricsWrapper
         $showMetricsPane={showMetricsPane}
         $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
@@ -302,7 +301,7 @@ const MetricsPane = ({
           <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
         </DesktopToggleMetricsPaneButton>
       ) : null}
-    </MetricsAndMetricsToggleButtonWrapper>
+    </>
   )
 }
 
