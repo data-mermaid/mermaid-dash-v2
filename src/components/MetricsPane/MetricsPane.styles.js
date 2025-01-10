@@ -97,9 +97,9 @@ export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
   right: ${({ $showMetricsPane }) => ($showMetricsPane ? '35rem' : 0)};
-  height: 6rem;
+  height: 4rem;
   z-index: 5;
-  width: 10rem;
+  width: 4rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -233,6 +233,20 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
   width: 31rem;
   border: solid 1px ${theme.color.secondaryBorder}
   background-color: ${theme.color.grey1};
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: none;
+  `)}
+`
+
+export const FollowToggleContainer = styled.div`
+  position: absolute;
+  top: 1.3rem;
+  left: -9rem;
+  height: 4rem;
+  z-index: 400;
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
   ${mediaQueryTabletLandscapeOnly(css`
     display: none;
   `)}

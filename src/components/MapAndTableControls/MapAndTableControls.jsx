@@ -1,25 +1,22 @@
+import { useContext } from 'react'
 import PropTypes from 'prop-types'
+
 import styled, { css } from 'styled-components'
 import { bbox } from '@turf/bbox'
 import { points } from '@turf/helpers'
 
-import FilterIndicatorPill from './components/FilterIndicatorPill'
-import ViewToggle from './components/ViewToggle'
-import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
-import { ButtonSecondary } from '../generic'
-import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
-import useResponsive from '../../hooks/useResponsive'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { IconClose } from '../../assets/icons'
-import { Column, Row } from '../generic/positioning'
-import theme from '../../styles/theme'
-import { useContext } from 'react'
+import useResponsive from '../../hooks/useResponsive'
+
+import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+
+import ViewToggle from './components/ViewToggle'
 
 const ControlContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: 10.5rem;
-  height: 6rem;
+  left: 5rem;
+  height: 4rem;
   z-index: 400;
   display: flex;
   flex-direction: row;
@@ -30,51 +27,9 @@ const ControlContainer = styled.div`
   `)}
 `
 
-const MapAndTableControlsButtonSecondary = styled(ButtonSecondary)`
-  padding-left: 2rem;
-  padding-right: 2rem;
-  display: flex;
-  flex-direction: row;
-  gap: 0.5rem;
-  align-items: center;
-`
-
-const FilterControlContainer = styled(Column)`
-  height: 6rem;
-  border: solid 1px ${theme.color.secondaryBorder};
-  background-color: ${theme.color.white};
-`
-
-const FilterControlButton = styled(MapAndTableControlsButtonSecondary)`
-  border: none;
-  border-top: solid 1px ${theme.color.secondaryBorder};
-`
-
-const ZoomToFilterButton = styled(FilterControlButton)`
-  border-right: solid 1px ${theme.color.secondaryBorder};
-`
-
-const CloseButton = styled(FilterControlButton)`
-  width: 100%;
-  justify-content: center;
-  background-color: transparent;
-
-  & svg {
-    height: 24px;
-    width: 24px;
-  }
-`
-
 const MapAndTableControls = ({ map = undefined, view, setView }) => {
-  const {
-    clearAllFilters,
-    displayedProjects,
-    getActiveProjectCount,
-    isAnyActiveFilters,
-    projectDataCount,
-  } = useContext(FilterProjectsContext)
+  const { displayedProjects } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
-  const isMapView = view === 'mapView'
 
   const handleZoomToFilteredData = () => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
@@ -94,28 +49,13 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
 
   return (
     <ControlContainer>
-      {isAnyActiveFilters() ? (
-        <FilterControlContainer>
-          <FilterIndicatorPill
-            searchFilteredRowLength={getActiveProjectCount()}
-            unfilteredRowLength={projectDataCount}
-          />
-          <Row>
-            {isMapView ? (
-              <ZoomToFilterButton onClick={handleZoomToFilteredData}>
-                <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
-                Zoom
-              </ZoomToFilterButton>
-            ) : null}
-            <CloseButton type="button" onClick={clearAllFilters}>
-              <IconClose /> Clear
-            </CloseButton>
-          </Row>
-        </FilterControlContainer>
-      ) : null}
-      {isDesktopWidth ? (
-        <ViewToggle view={view} setView={setView} displayedProjects={displayedProjects} />
-      ) : null}
+      {isDesktopWidth && (
+        <ViewToggle
+          view={view}
+          setView={setView}
+          handleZoomToFilteredData={handleZoomToFilteredData}
+        />
+      )}
     </ControlContainer>
   )
 }

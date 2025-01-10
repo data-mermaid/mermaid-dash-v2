@@ -27,3 +27,5 @@ export const IconText = (props) => <InlineIcon icon={text} {...props} />
 export const IconTextBoxMultiple = (props) => <InlineIcon icon={textBoxMultiple} {...props} />
 export const IconUserCircle = (props) => <InlineIcon icon={userCircle} {...props} />
 export const IconMinus = (props) => <InlineIcon icon={minus} {...props} />
+export const ARROW_RIGHT = String.fromCharCode(10095)
+export const ARROW_LEFT = String.fromCharCode(10094)

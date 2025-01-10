@@ -1,17 +1,19 @@
 import { useCallback, useContext, useEffect, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
-import Map from 'react-map-gl/maplibre'
 
+import Map from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { AttributionControl, Layer, NavigationControl, Source } from 'react-map-gl'
+
 import { FilterProjectsContext } from '../context/FilterProjectsContext'
 import usePrevious from '../hooks/usePrevious'
-import { useLocation, useNavigate } from 'react-router-dom'
 import useResponsive from '../hooks/useResponsive'
-import { useRef } from 'react'
-import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
+
 import customIcon from '../assets/map-pin.png'
 import { MAIN_MAP_ID } from '../constants/constants'
+
+import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
 const defaultLon = -79
 const defaultLat = 32
@@ -96,7 +98,7 @@ const sitesSource = {
   clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
-const MaplibreMap = ({ view, setView }) => {
+const MaplibreMap = ({ mapRef, view, setView }) => {
   const {
     checkedProjects,
     displayedProjects,
@@ -126,28 +128,12 @@ const MaplibreMap = ({ view, setView }) => {
   const { isDesktopWidth } = useResponsive()
   const prevCheckedProjects = usePrevious(checkedProjects)
 
-  const mapRef = useRef()
-
   const updateURLParams = useCallback(
     (newQueryParams) => {
       navigate(`${location.pathname}?${newQueryParams.toString()}`, { replace: true })
     },
     [navigate, location.pathname],
   )
-
-  const toggleMapZoomControlAndAttribution = () => {
-    // const map = mapRef.current.getMap()
-    // if (!map) {
-    //   return
-    // }
-    // if (isDesktopWidth) {
-    //   map.zoomControl.setPosition('bottomright')
-    //   map.zoomControl.addTo(map)
-    // } else {
-    //   map.attributionControl.setPrefix(false)
-    //   map.zoomControl.remove()
-    // }
-  }
 
   const _updateMapBbox = useEffect(() => {
     const map = mapRef.current?.getMap()
@@ -213,10 +199,6 @@ const MaplibreMap = ({ view, setView }) => {
     newQueryParams.set('zoom', zoom)
     updateURLParams(newQueryParams)
     setMapBbox(bounds)
-  }
-
-  const handleResize = () => {
-    toggleMapZoomControlAndAttribution()
   }
 
   const handleClick = async (event) => {
@@ -321,21 +303,21 @@ const MaplibreMap = ({ view, setView }) => {
         mapStyle="https://demotiles.maplibre.org/style.json"
         onLoad={handleMapLoad}
         onMoveEnd={handleMoveEnd}
-        onResize={handleResize}
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         interactiveLayerIds={['sites-cluster-layer', 'sites-unclustered-layer']}
-        // disable the default attribution
         attributionControl={false}
       >
         {mapAndTableControlsWrapper}
-        <AttributionControl
-          compact={true}
-          customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
-          position={isDesktopWidth ? 'bottom-right' : 'top-right'}
-        />
-        {isDesktopWidth ? <NavigationControl showCompass={false} position="bottom-right" /> : null}
+        {isDesktopWidth && (
+          <AttributionControl
+            compact={true}
+            customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
+            position={'bottom-right'}
+          />
+        )}
+        {isDesktopWidth && <NavigationControl showCompass={false} position="bottom-right" />}
 
         <Source
           id="basemap-source"

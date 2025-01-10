@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 
@@ -8,12 +9,11 @@ const TooltipContainer = styled.div`
 `
 
 const TooltipText = styled.span`
-  visibility: hidden;
-  min-width: 100px;
-  width: 100%;
+  display: none;
+  width: ${({ tooltipTextWith }) => tooltipTextWith || '14ch'};
   font-size: ${theme.typography.smallFontSize};
-  background-color: white; /* White background */
-  color: black; /* Black text */
+  background-color: white;
+  color: black;
   text-align: center;
   border-radius: 4px;
   border-width: ${theme.spacing.borderSmall};
@@ -22,45 +22,60 @@ const TooltipText = styled.span`
   padding: 5px;
   position: absolute;
   z-index: 100;
-  top: 125%; /* Position below the tooltip container */
-  left: 50%;
+  top: 125%;
+  left: ${({ leftPlacement, rightPlacement }) =>
+    leftPlacement ? '40px' : rightPlacement ? '-25px' : '50%'};
   transform: translateX(-50%);
-  opacity: 0;
   transition: ${theme.timing.TooltipTransition};
   &::before {
     content: '';
     position: absolute;
-    bottom: 100%; /* Position the black border below the tooltip */
-    left: 50%;
-    margin-left: -7px; /* Center the arrow */
+    bottom: 100%;
+    left: ${({ leftPlacement, rightPlacement }) =>
+      leftPlacement ? '10%' : rightPlacement ? '90%' : '50%'};
+    margin-left: -7px;
     border-width: 7px;
     border-style: solid;
-    border-color: transparent transparent black transparent; /* Black border */
+    border-color: transparent transparent black transparent;
   }
   &::after {
     content: '';
     position: absolute;
-    bottom: calc(100% - 1px); /* Slightly move to overlap black border */
-    left: 50%;
-    margin-left: -6px; /* Center the white arrow */
+    bottom: calc(100% - 1px);
+    left: ${({ leftPlacement, rightPlacement }) =>
+      leftPlacement ? '10%' : rightPlacement ? '90%' : '50%'};
+    margin-left: -6px;
     border-width: 6px;
     border-style: solid;
-    border-color: transparent transparent white transparent; /* White arrow */
+    border-color: transparent transparent white transparent;
   }
 `
 
 const TooltipWrapper = styled(TooltipContainer)`
+  margin-left: ${({ tooltipMarginLeft }) => tooltipMarginLeft || '0'};
+
   &:hover ${TooltipText} {
-    visibility: visible;
-    opacity: 1; /* Show tooltip on hover */
+    display: block;
   }
 `
 
-export const Tooltip = ({ children, text }) => (
-  <TooltipContainer>
-    <TooltipWrapper>
+export const Tooltip = ({ children, text, styleProps = undefined }) => {
+  return (
+    <TooltipWrapper tooltipMarginLeft={styleProps?.tooltipMarginLeft}>
       {children}
-      <TooltipText>{text}</TooltipText>
+      <TooltipText
+        tooltipTextWith={styleProps?.tooltipTextWith}
+        leftPlacement={styleProps?.leftPlacement}
+        rightPlacement={styleProps?.rightPlacement}
+      >
+        {text}
+      </TooltipText>
     </TooltipWrapper>
-  </TooltipContainer>
-)
+  )
+}
+
+Tooltip.propTypes = {
+  children: PropTypes.node.isRequired,
+  text: PropTypes.string.isRequired,
+  styleProps: PropTypes.object,
+}
