@@ -10,7 +10,7 @@ const TooltipContainer = styled.div`
 
 const TooltipText = styled.span`
   display: none;
-  width: ${({ tooltipTextWith }) => tooltipTextWith || '14ch'};
+  width: ${({ $tooltipTextWith }) => $tooltipTextWith || '14ch'};
   font-size: ${theme.typography.smallFontSize};
   background-color: white;
   color: black;
@@ -23,16 +23,16 @@ const TooltipText = styled.span`
   position: absolute;
   z-index: 100;
   top: 125%;
-  left: ${({ leftPlacement, rightPlacement }) =>
-    leftPlacement ? '40px' : rightPlacement ? '-25px' : '50%'};
+  left: ${({ $leftPlacement, $rightPlacement }) =>
+    $leftPlacement ? '40px' : $rightPlacement ? '-25px' : '50%'};
   transform: translateX(-50%);
   transition: ${theme.timing.TooltipTransition};
   &::before {
     content: '';
     position: absolute;
     bottom: 100%;
-    left: ${({ leftPlacement, rightPlacement }) =>
-      leftPlacement ? '10%' : rightPlacement ? '90%' : '50%'};
+    left: ${({ $leftPlacement, $rightPlacement }) =>
+      leftPlacement ? '10%' : $rightPlacement ? '90%' : '50%'};
     margin-left: -7px;
     border-width: 7px;
     border-style: solid;
@@ -42,8 +42,8 @@ const TooltipText = styled.span`
     content: '';
     position: absolute;
     bottom: calc(100% - 1px);
-    left: ${({ leftPlacement, rightPlacement }) =>
-      leftPlacement ? '10%' : rightPlacement ? '90%' : '50%'};
+    left: ${({ $leftPlacement, $rightPlacement }) =>
+      $leftPlacement ? '10%' : $rightPlacement ? '90%' : '50%'};
     margin-left: -6px;
     border-width: 6px;
     border-style: solid;
@@ -61,12 +61,12 @@ const TooltipWrapper = styled(TooltipContainer)`
 
 export const Tooltip = ({ children, text, styleProps = undefined }) => {
   return (
-    <TooltipWrapper tooltipMarginLeft={styleProps?.tooltipMarginLeft}>
+    <TooltipWrapper $tooltipMarginLeft={styleProps?.tooltipMarginLeft}>
       {children}
       <TooltipText
-        tooltipTextWith={styleProps?.tooltipTextWith}
-        leftPlacement={styleProps?.leftPlacement}
-        rightPlacement={styleProps?.rightPlacement}
+        $tooltipTextWith={styleProps?.tooltipTextWith}
+        $leftPlacement={styleProps?.leftPlacement}
+        $rightPlacement={styleProps?.rightPlacement}
       >
         {text}
       </TooltipText>
