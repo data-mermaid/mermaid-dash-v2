@@ -221,11 +221,9 @@ const MetricsPane = ({
       />
     ) : selectedSampleEvent ? (
       <SelectedSiteMetrics
-        view={view}
         selectedSampleEvent={selectedSampleEvent}
         setSelectedSampleEvent={setSelectedSampleEvent}
         showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
-        setShowMobileExpandedMetricsPane={setShowMobileExpandedMetricsPane}
       />
     ) : (
       displayedProjectsMetrics

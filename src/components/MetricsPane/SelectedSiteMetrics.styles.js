@@ -6,7 +6,7 @@ import {
   IconCalendar,
   IconText,
 } from '../../assets/dashboardOnlyIcons'
-import { IconGlobe, IconUser } from '../../assets/icons'
+import { IconClose, IconGlobe, IconUser } from '../../assets/icons'
 import { Row } from '../generic/positioning'
 import theme from '../../styles/theme'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
@@ -21,7 +21,7 @@ export const SelectedSiteMetricsCardContainer = styled.div`
 export const SelectedSiteContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 27.5rem;
+  width: 26rem;
 
   & span {
     overflow-wrap: break-word;
@@ -62,6 +62,11 @@ export const BiggerIconGlobe = styled(IconGlobe)`
 export const BiggerIconText = styled(IconText)`
   ${biggerIcons}
 `
+
+export const BiggerIconClose = styled(IconClose)`
+  font-size: ${theme.typography.largeFontSize};
+`
+
 export const StyledMapPinContainer = styled.div`
   margin-right: 0.8rem;
 `

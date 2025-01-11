@@ -1,14 +1,21 @@
+import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+import useResponsive from '../../hooks/useResponsive'
+
+import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
+import coralReefSvg from '../../assets/coral_reef.svg'
+import mapPin from '../../assets/map-pin.png'
 import { StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
+  BiggerIconClose,
   BiggerIconGlobe,
   BiggerIconPersonCircle,
   BiggerIconText,
   BiggerIconTextBoxMultiple,
   BiggerIconUser,
-  SelectedSiteActionBar,
   SelectedSiteContentContainer,
   SelectedSiteContentContainerWiderOnMobile,
   SelectedSiteMetricsCardContainer,
@@ -22,20 +29,7 @@ import {
   TabButtonContainer,
   TabContent,
 } from './SelectedSiteMetrics.styles'
-import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink } from '../generic'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { getIsSiteSelected, zoomToSelectedSite } from '../../helperFunctions/selectedSite'
-import { IconClose } from '../../assets/icons'
-import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
-import { MAIN_MAP_ID } from '../../constants/constants'
-import { useContext, useState } from 'react'
-import { useMap } from 'react-map-gl'
-import coralReefSvg from '../../assets/coral_reef.svg'
-import mapPin from '../../assets/map-pin.png'
-import useResponsive from '../../hooks/useResponsive'
-import ZoomToSiteIcon from '../../assets/zoom_to_selected_sites.svg?react'
-import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
-import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink, IconButton } from '../generic'
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -43,14 +37,16 @@ import {
   MermaidOutlinedInput,
   MermaidSelect,
 } from '../generic/MermaidMui'
+
+import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
+import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
 export const SelectedSiteMetrics = ({
   selectedSampleEvent,
-  view,
   setSelectedSampleEvent,
   showMobileExpandedMetricsPane = false,
-  setShowMobileExpandedMetricsPane,
 }) => {
   const {
     displayedProjects,
@@ -74,8 +70,6 @@ export const SelectedSiteMetrics = ({
     </ButtonThatLooksLikeLink>
   ) : null
   const { isDesktopWidth } = useResponsive()
-  const isMapView = view === 'mapView'
-  const map = useMap()[MAIN_MAP_ID] // the docs for react-map-gl are not clear on the return object for useMap. This is what works in testing. Further, its not a 'ref' its the actual map instance.
   const sampleEventAdmins = selectedSampleEvent.project_admins.map((admin) => admin.name).join(', ')
   const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
   const project = displayedProjects?.find((project) => project.project_id === projectId)
@@ -91,11 +85,6 @@ export const SelectedSiteMetrics = ({
 
   const handleSurveyChange = ({ target: { value } }) => {
     updateCurrentSampleEvent(value)
-  }
-
-  const handleZoomClick = () => {
-    zoomToSelectedSite({ displayedProjects, map })
-    setShowMobileExpandedMetricsPane(false)
   }
 
   const surveysAtSimilarSites = getSurverysAtSimilarSites({
@@ -175,6 +164,9 @@ export const SelectedSiteMetrics = ({
             </>
           )}
         </SelectedSiteContentContainerWiderOnMobile>
+        <IconButton type="button" onClick={handleClearSelectedSampleEvent}>
+          <BiggerIconClose />
+        </IconButton>
       </SelectedSiteMetricsCardContainer>
     </StyledVisibleBackground>
   )
@@ -228,13 +220,21 @@ export const SelectedSiteMetrics = ({
         <TabButtonContainer>
           {metricsView === TAB_NAMES.summary ? (
             <>
-              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.summary)}>Summary</ButtonPrimary>
-              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.metadata)}>Metadata</ButtonSecondary>
+              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.summary)}>
+                Summary
+              </ButtonPrimary>
+              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.metadata)}>
+                Metadata
+              </ButtonSecondary>
             </>
           ) : (
             <>
-              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.summary)}>Summary</ButtonSecondary>
-              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.metadata)}>Metadata</ButtonPrimary>
+              <ButtonSecondary onClick={() => setMetricsView(TAB_NAMES.summary)}>
+                Summary
+              </ButtonSecondary>
+              <ButtonPrimary onClick={() => setMetricsView(TAB_NAMES.metadata)}>
+                Metadata
+              </ButtonPrimary>
             </>
           )}
         </TabButtonContainer>
@@ -310,16 +310,6 @@ export const SelectedSiteMetrics = ({
   return (
     <>
       {selectedSiteHeader}
-      <SelectedSiteActionBar>
-        {getIsSiteSelected() && isMapView ? (
-          <ButtonSecondary onClick={handleZoomClick}>
-            <ZoomToSiteIcon /> &nbsp;Zoom
-          </ButtonSecondary>
-        ) : null}
-        <ButtonSecondary onClick={handleClearSelectedSampleEvent}>
-          <IconClose /> Clear
-        </ButtonSecondary>
-      </SelectedSiteActionBar>
       {selectedSiteBody}
     </>
   )
@@ -329,6 +319,4 @@ SelectedSiteMetrics.propTypes = {
   selectedSampleEvent: PropTypes.object.isRequired,
   setSelectedSampleEvent: PropTypes.func.isRequired,
   showMobileExpandedMetricsPane: PropTypes.bool,
-  setShowMobileExpandedMetricsPane: PropTypes.func.isRequired,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
 }
