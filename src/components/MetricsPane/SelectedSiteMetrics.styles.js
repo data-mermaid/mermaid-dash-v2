@@ -5,6 +5,8 @@ import {
   IconTextBoxMultiple,
   IconCalendar,
   IconText,
+  IconMapOutline,
+  IconTable,
 } from '../../assets/dashboardOnlyIcons'
 import { IconClose, IconGlobe, IconUser } from '../../assets/icons'
 import { Row } from '../generic/positioning'
@@ -37,29 +39,41 @@ export const biggerIcons = css`
   width: ${theme.typography.mediumIconSize};
   height: ${theme.typography.mediumIconSize};
   position: relative;
+`
+
+export const biggerIconsWithMargin = css`
+  ${biggerIcons}
   margin-right: 0.8rem;
 `
 
 export const BiggerIconPersonCircle = styled(IconPersonCircle)`
-  ${biggerIcons}
+  ${biggerIconsWithMargin}
 `
 export const BiggerIconTextBoxMultiple = styled(IconTextBoxMultiple)`
-  ${biggerIcons}
+  ${biggerIconsWithMargin}
 `
 
 export const BiggerIconCalendar = styled(IconCalendar)`
-  ${biggerIcons}
+  ${biggerIconsWithMargin}
 `
 
 export const BiggerIconUser = styled(IconUser)`
-  ${biggerIcons}
+  ${biggerIconsWithMargin}
 `
 
 export const BiggerIconGlobe = styled(IconGlobe)`
-  ${biggerIcons}
+  ${biggerIconsWithMargin}
 `
 
 export const BiggerIconText = styled(IconText)`
+  ${biggerIconsWithMargin}
+`
+
+export const BiggerIconMapOutline = styled(IconMapOutline)`
+  ${biggerIcons}
+`
+
+export const BiggerIconTable = styled(IconTable)`
   ${biggerIcons}
 `
 

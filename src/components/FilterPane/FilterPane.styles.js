@@ -11,8 +11,9 @@ export const StyledHeader = styled.h2`
   margin-bottom: 0.5rem;
 `
 
-export const StyledProjectsHeader = styled(StyledHeader)`
+export const StyledCountryHeader = styled(StyledHeader)`
   display: flex;
+  align-items: center;
   justify-content: space-between;
 `
 

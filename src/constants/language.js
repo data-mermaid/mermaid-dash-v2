@@ -37,6 +37,25 @@ export const table = {
   noFilterResultsSubText: 'No records match the current filter term.',
 }
 
+export const tooltipText = {
+  showFilters: 'Show filters',
+  hideFilters: 'Hide filters',
+  showMetrics: 'Show metrics',
+  hideMetrics: 'Hide metrics',
+  mapView: 'Map View',
+  tableView: 'Table View',
+  enableFollowMap: 'Enable metrics update based on map view',
+  disableFollowMap: 'Disable metrics update based on map view',
+  zoomToData: 'Zoom to filtered data',
+  showAllData: 'Show all data',
+  downloadData: 'Download data',
+}
+
+export const toastMessageText = {
+  followMapEnabled: 'Metrics will now update based on the map view',
+  followMapDisabled: 'Metrics will no longer update based on the map view',
+}
+
 export default {
   shareView,
   table,

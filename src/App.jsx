@@ -1,6 +1,7 @@
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import GlobalStyle from './styles/globalStyles.js'
+import { ToastContainer } from 'react-toastify'
 import { createTheme, ThemeProvider } from '@mui/material/styles'
 import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
 import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
@@ -38,6 +39,7 @@ const App = () => {
           <MapProvider>
             <FilterProjectsProvider>
               <GlobalStyle />
+              <ToastContainer />
               <Routes>
                 <Route
                   path="/"

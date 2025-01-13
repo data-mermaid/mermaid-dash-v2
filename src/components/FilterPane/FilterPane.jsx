@@ -2,9 +2,17 @@ import { useEffect, useState, useCallback, useContext } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
+
 import { Box } from '@mui/material'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
+
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
+import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
+import { filterPane } from '../../constants/language'
+import { IconClose, IconPlus } from '../../assets/icons'
+import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 
 import {
   ExpandableFilterRowContainer,
@@ -22,17 +30,12 @@ import {
   StyledMethodListContainer,
   StyledProjectListContainer,
   StyledProjectNameFilter,
-  StyledProjectsHeader,
   StyledUnorderedList,
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
+  StyledCountryHeader,
 } from './FilterPane.styles'
-import { filterPane } from '../../constants/language'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { IconClose, IconPlus } from '../../assets/icons'
-import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
-import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import {
   MermaidChip,
   MermaidFormContainer,
@@ -42,6 +45,8 @@ import {
   MermaidOutlinedInput,
   MermaidSelect,
 } from '../generic/MermaidMui'
+
+import FilterIndicatorPill from '../MapAndTableControls/components/FilterIndicatorPill'
 
 const deleteIconSize = {
   height: '15px',
@@ -60,6 +65,7 @@ const FilterPane = ({ mermaidUserData }) => {
   const {
     checkedProjects,
     countriesSelectOnOpen,
+    clearAllFilters,
     displayedCountries,
     displayedOrganizations,
     displayedProjects,
@@ -71,6 +77,7 @@ const FilterPane = ({ mermaidUserData }) => {
     handleSelectedCountriesChange,
     handleSelectedOrganizationsChange,
     handleYourDataFilter,
+    isAnyActiveFilters,
     methodDataSharingFilters,
     organizationsSelectOnOpen,
     projectData,
@@ -309,7 +316,16 @@ const FilterPane = ({ mermaidUserData }) => {
 
   return (
     <StyledFilterPaneContainer>
-      <StyledHeader>Countries</StyledHeader>
+      <StyledCountryHeader>
+        <StyledHeader>Countries</StyledHeader>
+        {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count ? (
+          <FilterIndicatorPill
+            searchFilteredRowLength={getActiveProjectCount()}
+            unfilteredRowLength={projectData?.count || 0}
+            clearFilters={clearAllFilters}
+          />
+        ) : null}
+      </StyledCountryHeader>
       <MermaidFormContainer>
         <MermaidFormControl>
           <MermaidSelect
@@ -469,12 +485,7 @@ const FilterPane = ({ mermaidUserData }) => {
           {methodsList}
         </ShowMoreFiltersContainer>
       ) : null}
-      <StyledProjectsHeader>
-        <span>Projects</span>
-        <span>
-          {getActiveProjectCount()}/{projectData.count}
-        </span>
-      </StyledProjectsHeader>
+      <StyledHeader>Projects</StyledHeader>
       <StyledProjectNameFilter
         value={projectNameFilter}
         placeholder="Type to filter projects"
