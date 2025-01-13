@@ -29,7 +29,7 @@ import {
   TabButtonContainer,
   TabContent,
 } from './SelectedSiteMetrics.styles'
-import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink, IconButton } from '../generic'
+import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink, CloseButton } from '../generic'
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -164,9 +164,9 @@ export const SelectedSiteMetrics = ({
             </>
           )}
         </SelectedSiteContentContainerWiderOnMobile>
-        <IconButton type="button" onClick={handleClearSelectedSampleEvent}>
+        <CloseButton type="button" onClick={handleClearSelectedSampleEvent}>
           <BiggerIconClose />
-        </IconButton>
+        </CloseButton>
       </SelectedSiteMetricsCardContainer>
     </StyledVisibleBackground>
   )

@@ -36,7 +36,7 @@ const TooltipText = styled.span`
     margin-left: -7px;
     border-width: 7px;
     border-style: solid;
-    border-color: transparent transparent black transparent;
+    border-color: transparent transparent ${theme.color.grey0} transparent;
   }
   &::after {
     content: '';

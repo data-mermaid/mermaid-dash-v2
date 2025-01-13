@@ -1,6 +1,6 @@
 import { useContext, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
-import { ButtonThatLooksLikeLinkUnderlined, IconButton } from '../generic'
+import { ButtonThatLooksLikeLinkUnderlined, CloseButton } from '../generic'
 import { BiggerIconClose } from './SelectedSiteMetrics.styles'
 import {
   AdminIcon,
@@ -55,9 +55,9 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       <ProjectCard>
         <HeaderIcon />
         <ProjectTitle>{project_name}</ProjectTitle>
-        <IconButton type="button" onClick={handleClearProject}>
+        <CloseButton type="button" onClick={handleClearProject}>
           <BiggerIconClose />
-        </IconButton>
+        </CloseButton>
       </ProjectCard>
 
       {project_admins ? (
