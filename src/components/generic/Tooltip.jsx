@@ -32,7 +32,7 @@ const TooltipText = styled.span`
     position: absolute;
     bottom: 100%;
     left: ${({ $leftPlacement, $rightPlacement }) =>
-      leftPlacement ? '10%' : $rightPlacement ? '90%' : '50%'};
+      $leftPlacement ? '10%' : $rightPlacement ? '90%' : '50%'};
     margin-left: -7px;
     border-width: 7px;
     border-style: solid;
