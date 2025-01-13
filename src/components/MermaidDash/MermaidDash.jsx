@@ -1,16 +1,15 @@
-import { useEffect, useState, useCallback, useContext } from 'react'
+import { useEffect, useState, useCallback, useContext, useRef } from 'react'
+import { useAuth0 } from '@auth0/auth0-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-import Header from '../Header/Header'
-import FilterPane from '../FilterPane/FilterPane'
-import LoadingIndicator from './components/LoadingIndicator'
-import TableView from '../TableView/TableView'
-import { useLocation, useNavigate } from 'react-router-dom'
-import MetricsPane from '../MetricsPane/MetricsPane'
-import { Modal } from '../generic'
+import bbox from '@turf/bbox'
+import { points } from '@turf/helpers'
+import { toast } from 'react-toastify'
+
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
-import { useAuth0 } from '@auth0/auth0-react'
+
 import {
   StyledDashboardContainer,
   StyledContentContainer,
@@ -24,12 +23,35 @@ import {
   MobileCloseFilterPaneButton,
   MobileFooterContainer,
   StyledChevronSpan,
+  StyledMobileZoomToDataButton,
+  StyledMobileFollowMapButton,
 } from './MermaidDash.styles'
+import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
+import zoomToMap from '../../assets/zoom-map.svg'
+import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/dashboardOnlyIcons'
+import { toastMessageText, tooltipText } from '../../constants/language'
+
+import Header from '../Header/Header'
+import FilterPane from '../FilterPane/FilterPane'
+import TableView from '../TableView/TableView'
+import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
+import { Tooltip } from '../generic/Tooltip'
+import { Modal } from '../generic'
+import LoadingIndicator from './components/LoadingIndicator'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
-  const { projectData, setProjectData, mermaidUserData, setMermaidUserData, setCheckedProjects } =
-    useContext(FilterProjectsContext)
+  const {
+    projectData,
+    setProjectData,
+    mermaidUserData,
+    enableFollowScreen,
+    setMermaidUserData,
+    setCheckedProjects,
+    displayedProjects,
+    getURLParams,
+    setEnableFollowScreen,
+  } = useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useState(true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -39,6 +61,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
+
+  const mapRef = useRef()
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -177,6 +201,43 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setShowFilterModal(!showFilterModal)
   }
 
+  const handleZoomToFilteredData = () => {
+    const map = mapRef.current.getMap()
+
+    if (!map || !displayedProjects || displayedProjects.length === 0) {
+      return
+    }
+    const coordinates = displayedProjects.flatMap((project) =>
+      project.records.map((record) => [record.longitude, record.latitude]),
+    )
+
+    if (coordinates.length === 0) {
+      return
+    }
+
+    const bounds = bbox(points(coordinates))
+    map.fitBounds(bounds)
+  }
+
+  const handleFollowScreen = (e) => {
+    setEnableFollowScreen((prevState) => !prevState)
+
+    const newState = !enableFollowScreen
+    const queryParams = getURLParams()
+    const followScreenToastMessage = enableFollowScreen
+      ? toastMessageText.followMapDisabled
+      : toastMessageText.followMapEnabled
+
+    if (newState) {
+      queryParams.set('follow_screen', 'true')
+    } else {
+      queryParams.delete('follow_screen')
+    }
+
+    updateURLParams(queryParams)
+    toast.info(followScreenToastMessage)
+  }
+
   const renderFilter = () => {
     const modalContent = <FilterPane mermaidUserData={mermaidUserData} />
 
@@ -207,16 +268,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          {showFilterPane ? (
-            <>
-              <StyledChevronSpan>{String.fromCharCode(10094)}</StyledChevronSpan>
-            </>
-          ) : (
-            <>
-              <StyledChevronSpan>{String.fromCharCode(10095)}</StyledChevronSpan>
-            </>
-          )}
-          <span>Filters</span>
+          <Tooltip
+            text={showFilterPane ? tooltipText.hideFilters : tooltipText.showFilters}
+            styleProps={{ leftPlacement: true }}
+          >
+            <StyledChevronSpan>{showFilterPane ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
+          </Tooltip>
         </DesktopToggleFilterPaneButton>
       </StyledFilterWrapper>
     )
@@ -225,6 +282,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const map = (
     <StyledMapContainer>
       <MaplibreMap
+        mapRef={mapRef}
         showFilterPane={showFilterPane}
         showMetricsPane={showMetricsPane}
         view={view}
@@ -261,6 +319,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <StyledMobileToggleFilterPaneButton onClick={handleShowFilterModal}>
         <BiggerFilterIcon />
       </StyledMobileToggleFilterPaneButton>
+      <StyledMobileZoomToDataButton onClick={handleZoomToFilteredData}>
+        <img src={zoomToFiltered} />
+      </StyledMobileZoomToDataButton>
+      <StyledMobileFollowMapButton
+        enableFollowScreen={enableFollowScreen}
+        onClick={handleFollowScreen}
+      >
+        <img src={zoomToMap} />
+      </StyledMobileFollowMapButton>
       <StyledContentContainer>
         {renderFilter(showFilterModal)}
         {isMobileWidth || view === 'mapView' ? map : table}
