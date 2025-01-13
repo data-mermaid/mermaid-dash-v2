@@ -136,7 +136,7 @@ export const GenericStickyTable = styled(Table)`
 `
 
 export const EmptySpace = styled.div`
-  height: 9.1rem;
+  height: 14rem;
   background-color: white;
   z-index: 3;
   position: sticky;
