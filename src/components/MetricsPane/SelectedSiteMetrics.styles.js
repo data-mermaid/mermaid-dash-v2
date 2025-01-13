@@ -21,7 +21,7 @@ export const SelectedSiteMetricsCardContainer = styled.div`
 export const SelectedSiteContentContainer = styled.div`
   display: flex;
   flex-direction: column;
-  width: 26rem;
+  width: 25rem;
 
   & span {
     overflow-wrap: break-word;

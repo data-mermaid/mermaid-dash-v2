@@ -13,6 +13,8 @@ export const ProjectCard = styled.div`
 
 export const ProjectTitle = styled.h2`
   margin: 0;
+  width: 24rem;
+  overflow-wrap: break-word;
 `
 
 export const ProjectCardContent = styled.div`
@@ -61,6 +63,7 @@ const iconSize = css`
 
 export const HeaderIcon = styled(IconTextBoxMultiple)`
   ${iconSize};
+  margin-top: 0.6rem;
 `
 export const AdminIcon = styled(IconUser)`
   ${iconSize};
