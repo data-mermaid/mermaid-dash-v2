@@ -1,7 +1,11 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
+
 import theme from '../../../styles/theme'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+
+import { IconButton } from '../../generic'
+import { IconClose } from '../../../assets/icons'
 
 const FilterIndictorPillContainer = styled.div`
   color: ${theme.color.textColor};
@@ -14,6 +18,8 @@ const FilterIndictorPillContainer = styled.div`
   height: 100%;
   background-color: ${dashboardOnlyTheme.color.yellow};
   font-size: ${theme.typography.defaultFontSize};
+  border: solid 1px ${theme.color.border};
+  border-radius: 5px;
 `
 
 const FilterAmount = styled.span`
@@ -21,13 +27,20 @@ const FilterAmount = styled.span`
   padding: 0 0.4em;
 `
 
-const FilterIndicatorPill = ({ searchFilteredRowLength = null, unfilteredRowLength }) => {
+const FilterIndicatorPill = ({
+  searchFilteredRowLength = null,
+  unfilteredRowLength,
+  clearFilters,
+}) => {
   return (
     <FilterIndictorPillContainer>
+      Filtered
       <FilterAmount>
         {searchFilteredRowLength} / {unfilteredRowLength}
       </FilterAmount>
-      Filtered
+      <IconButton type="button" onClick={clearFilters}>
+        <IconClose />
+      </IconButton>
     </FilterIndictorPillContainer>
   )
 }
@@ -35,6 +48,7 @@ const FilterIndicatorPill = ({ searchFilteredRowLength = null, unfilteredRowLeng
 FilterIndicatorPill.propTypes = {
   searchFilteredRowLength: PropTypes.number,
   unfilteredRowLength: PropTypes.number.isRequired,
+  clearFilters: PropTypes.func.isRequired,
 }
 
 export default FilterIndicatorPill

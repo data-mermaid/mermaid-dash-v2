@@ -78,10 +78,10 @@ export const BiggerFilterIcon = styled(IconFilter)`
 export const DesktopToggleFilterPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  right: -10rem;
-  height: 6rem;
+  right: -4rem;
+  height: 4rem;
   z-index: 5;
-  width: 10rem;
+  width: 4rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -97,7 +97,37 @@ export const StyledMobileToggleFilterPaneButton = styled(ButtonSecondary)`
   ${mediaQueryTabletLandscapeOnly(css`
     display: block;
     top: calc(${theme.spacing.headerHeight} + 1rem);
-    left: 2rem;
+    left: 0.5rem;
+    z-index: 5;
+  `)};
+`
+
+export const StyledMobileZoomToDataButton = styled(ButtonSecondary)`
+  position: absolute;
+  display: none;
+  height: 6rem;
+  width: 6rem;
+  line-height: 0;
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: block;
+    top: calc(${theme.spacing.headerHeight} + 1rem);
+    left: 7rem;
+    z-index: 5;
+  `)};
+`
+
+export const StyledMobileFollowMapButton = styled(ButtonSecondary)`
+  position: absolute;
+  display: none;
+  height: 6rem;
+  width: 6rem;
+  line-height: 0;
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: block;
+    background-color: ${({ enableFollowScreen }) =>
+      enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+    top: calc(${theme.spacing.headerHeight} + 1rem);
+    right: 0.5rem;
     z-index: 5;
   `)};
 `

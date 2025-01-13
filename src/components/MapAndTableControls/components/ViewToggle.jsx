@@ -1,13 +1,21 @@
-import PropTypes from 'prop-types'
 import { useContext, useRef } from 'react'
-import styled from 'styled-components'
-import { ButtonPrimary, ButtonSecondary } from '../../generic'
-import { IconMapOutline, IconTable, IconTrayDownload } from '../../../assets/dashboardOnlyIcons'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { formatProjectDataHelper } from '../../../helperFunctions'
 import { CSVLink } from 'react-csv'
+import PropTypes from 'prop-types'
+
+import styled from 'styled-components'
+
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
+
 import theme from '../../../styles/theme'
+import { BiggerIconMapOutline, BiggerIconTable } from '../../MetricsPane/SelectedSiteMetrics.styles'
+import { ButtonSecondary } from '../../generic'
+import { IconTrayDownload } from '../../../assets/dashboardOnlyIcons'
+import zoomToFiltered from '../../../assets/zoom_to_filtered.svg'
+import { tooltipText } from '../../../constants/language'
+
+import { Tooltip } from '../../generic/Tooltip'
+import { formatProjectDataHelper } from '../../../helperFunctions'
 
 const StyledViewToggleContainer = styled.div`
   z-index: 400;
@@ -15,12 +23,13 @@ const StyledViewToggleContainer = styled.div`
   flex-direction: row;
 `
 
-const ButtonSecondaryWithMargin = styled(ButtonSecondary)`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 1rem;
-  padding: 0 2rem;
+const StyledViewToggleSecondaryButton = styled(ButtonSecondary)`
+  height: 100%;
+`
+
+const StyledDataViewButton = styled(StyledViewToggleSecondaryButton)`
+  background-color: ${({ isActive }) =>
+    isActive ? theme.color.secondaryColor : theme.color.white};
 `
 
 const StyledCSVLink = styled(CSVLink)`
@@ -41,7 +50,7 @@ const StyledLabel = styled.label`
   cursor: pointer;
 `
 
-const ViewToggle = ({ view, setView }) => {
+const ViewToggle = ({ view, setView, handleZoomToFilteredData }) => {
   const {
     checkedProjects,
     displayedProjects,
@@ -49,6 +58,7 @@ const ViewToggle = ({ view, setView }) => {
     setShowProjectsWithNoRecords,
     showProjectsWithNoRecords,
     showYourData,
+    isAnyActiveFilters,
   } = useContext(FilterProjectsContext)
   const location = useLocation()
   const navigate = useNavigate()
@@ -111,31 +121,31 @@ const ViewToggle = ({ view, setView }) => {
 
   return (
     <StyledViewToggleContainer view={view}>
+      <Tooltip text={tooltipText.mapView}>
+        <StyledDataViewButton isActive={view === 'mapView'} onClick={handleMapView}>
+          <BiggerIconMapOutline />
+        </StyledDataViewButton>
+      </Tooltip>
+      <Tooltip text={tooltipText.tableView}>
+        <StyledDataViewButton isActive={view === 'tableView'} onClick={handleTableView}>
+          <BiggerIconTable />
+        </StyledDataViewButton>
+      </Tooltip>
       {view === 'mapView' ? (
-        <>
-          <ButtonPrimary onClick={handleMapView}>
-            <IconMapOutline />
-            Map
-          </ButtonPrimary>
-          <ButtonSecondary onClick={handleTableView}>
-            <IconTable />
-            Table
-          </ButtonSecondary>
-        </>
+        <Tooltip
+          text={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
+          styleProps={{ tooltipMarginLeft: '1rem', tooltipTextWith: '20ch' }}
+        >
+          <StyledViewToggleSecondaryButton onClick={handleZoomToFilteredData}>
+            <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
+          </StyledViewToggleSecondaryButton>
+        </Tooltip>
       ) : (
         <>
-          <ButtonSecondary onClick={handleMapView}>
-            <IconMapOutline />
-            <div>Map</div>
-          </ButtonSecondary>
-          <ButtonPrimary onClick={handleTableView}>
-            <IconTable />
-            <div>Table</div>
-          </ButtonPrimary>
-          <ButtonSecondaryWithMargin onClick={handleDownload}>
+          <StyledViewToggleSecondaryButton onClick={handleDownload}>
             <IconTrayDownload />
             <span>Download</span>
-          </ButtonSecondaryWithMargin>
+          </StyledViewToggleSecondaryButton>
           <StyledCSVLink
             data={tableContent}
             headers={tableHeaders}
@@ -164,6 +174,7 @@ const ViewToggle = ({ view, setView }) => {
 ViewToggle.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
+  handleZoomToFilteredData: PropTypes.func.isRequired,
 }
 
 export default ViewToggle

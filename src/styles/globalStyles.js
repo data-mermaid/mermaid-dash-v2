@@ -26,7 +26,6 @@ const GlobalStyle = createGlobalStyle`
     }
     select, input, textarea, p, a, button{
         line-height: ${theme.typography.lineHeight};
-
     }
     *,*::before,*::after {
         box-sizing: border-box;
