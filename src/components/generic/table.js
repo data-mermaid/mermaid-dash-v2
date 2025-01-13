@@ -113,7 +113,7 @@ const stickyStyles = css`
   position: sticky;
   white-space: nowrap;
   z-index: 3;
-  top: 9rem;
+  top: 10.6rem;
   &::before {
     /* 
     this is to account for the border-bottom
@@ -136,7 +136,7 @@ export const GenericStickyTable = styled(Table)`
 `
 
 export const EmptySpace = styled.div`
-  height: 14rem;
+  height: 10.7rem;
   background-color: white;
   z-index: 3;
   position: sticky;

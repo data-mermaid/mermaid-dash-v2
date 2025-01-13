@@ -29,7 +29,7 @@ import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
 import TableControls from '../MapAndTableControls/components/TableControls'
 
 const StyledTableContainer = styled.div`
-  height: calc(100vh - 50px);
+  height: calc(100vh - 55px);
   flex-grow: 1;
   overflow: scroll;
   display: flex;

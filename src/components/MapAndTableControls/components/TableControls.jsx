@@ -38,13 +38,13 @@ const StyledCSVLink = styled(CSVLink)`
 
 const TableControlContainer = styled.div`
   position: absolute;
-  top: 7.7rem;
-  left: 0.5rem;
-  height: 6rem;
-  z-index: 400;
+  top: 6.1rem;
+  left: 1.1rem;
+  height: 4rem;
+  z-index: 5;
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
+  gap: 1rem;
 `
 const TableControls = () => {
   const csvLinkRef = useRef()
