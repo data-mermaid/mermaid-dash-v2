@@ -112,19 +112,17 @@ const TableControls = () => {
         filename={downloadedFileName()}
         ref={csvLinkRef}
       />
-      {(selectedOrganizations.length || showYourData) && (
-        <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
-          <input
-            type="checkbox"
-            id="show-0-projects"
-            checked={showProjectsWithNoRecords}
-            onChange={handleShowProjectsWithNoRecords}
-          />
-          <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
-            Show projects with 0 surveys
-          </StyledLabel>
-        </ZeroSurveysButton>
-      )}
+      <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
+        <input
+          type="checkbox"
+          id="show-0-projects"
+          checked={showProjectsWithNoRecords}
+          onChange={handleShowProjectsWithNoRecords}
+        />
+        <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
+          Show projects with 0 surveys
+        </StyledLabel>
+      </ZeroSurveysButton>
     </TableControlContainer>
   )
 }
