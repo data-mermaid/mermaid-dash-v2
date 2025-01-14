@@ -98,7 +98,7 @@ export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
   right: ${({ $showMetricsPane }) => ($showMetricsPane ? '35rem' : 0)};
   height: 4rem;
-  z-index: 5;
+  z-index: 10;
   width: 4rem;
   border: none;
   background-color: ${theme.color.grey1};

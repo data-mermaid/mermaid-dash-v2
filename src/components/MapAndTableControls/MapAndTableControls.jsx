@@ -17,7 +17,7 @@ const ControlContainer = styled.div`
   top: 1.3rem;
   left: 5rem;
   height: 4rem;
-  z-index: 400;
+  z-index: 10;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;

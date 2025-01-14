@@ -41,7 +41,7 @@ const TableControlContainer = styled.div`
   top: 6.1rem;
   left: 1.1rem;
   height: 4rem;
-  z-index: 5;
+  z-index: 1;
   display: flex;
   flex-direction: row;
   gap: 1rem;

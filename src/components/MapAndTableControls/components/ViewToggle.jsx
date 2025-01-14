@@ -15,7 +15,6 @@ import { tooltipText } from '../../../constants/language'
 import { Tooltip } from '../../generic/Tooltip'
 
 const StyledViewToggleContainer = styled.div`
-  z-index: 400;
   display: flex;
   flex-direction: row;
 `

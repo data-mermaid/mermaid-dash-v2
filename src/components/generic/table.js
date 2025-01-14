@@ -112,7 +112,7 @@ export const StickyTableOverflowWrapper = styled(TableOverflowWrapper)`
 const stickyStyles = css`
   position: sticky;
   white-space: nowrap;
-  z-index: 3;
+  z-index: 1;
   top: 10.6rem;
   &::before {
     /* 
@@ -138,7 +138,7 @@ export const GenericStickyTable = styled(Table)`
 export const EmptySpace = styled.div`
   height: 10.7rem;
   background-color: white;
-  z-index: 3;
+  z-index: 1;
   position: sticky;
   top: 0;
 `
