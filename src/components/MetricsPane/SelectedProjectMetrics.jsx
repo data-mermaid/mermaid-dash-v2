@@ -18,7 +18,6 @@ import {
   ProjectTitle,
 } from './SelectedProjectMetrics.styles'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { DATA_SHARING_LABELS } from '../../constants/constants'
 
 const MAX_NOTES_LENGTH = 250
 
@@ -37,10 +36,6 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     data_policy_benthiclit,
     data_policy_bleachingqc,
   } = selectedProject
-
-  const getDataPolicyValue = (data_policy) => {
-    return DATA_SHARING_LABELS.includes(data_policy) ? data_policy : ''
-  }
 
   const handleClearProject = () => {
     queryParams.delete('project_id')
@@ -66,54 +61,60 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         </CloseButton>
       </ProjectCard>
 
-      <ProjectCard>
-        <AdminIcon />
-        <ProjectCardContent>
-          <ProjectCardHeader>
-            <CardTitle>Admins</CardTitle>
-            <ContactLink
-              href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Contact
-            </ContactLink>
-          </ProjectCardHeader>
-          {project_admins?.map(({ name }) => name).join(', ')}
-        </ProjectCardContent>
-      </ProjectCard>
+      {project_admins && (
+        <ProjectCard>
+          <AdminIcon />
+          <ProjectCardContent>
+            <ProjectCardHeader>
+              <CardTitle>Admins</CardTitle>
+              <ContactLink
+                href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Contact
+              </ContactLink>
+            </ProjectCardHeader>
+            {project_admins?.map(({ name }) => name).join(', ')}
+          </ProjectCardContent>
+        </ProjectCard>
+      )}
 
-      <ProjectCard>
-        <ProjectNotesIcon />
-        <ProjectCardContent>
-          <CardTitle>Project Notes</CardTitle>
-          {truncateNotes ? (
-            <>
-              {project_notes.substring(0, MAX_NOTES_LENGTH)}...
-              <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
-                Read more
-              </ButtonThatLooksLikeLinkUnderlined>
-            </>
-          ) : (
-            project_notes
-          )}
-        </ProjectCardContent>
-      </ProjectCard>
+      {project_notes && (
+        <ProjectCard>
+          <ProjectNotesIcon />
+          <ProjectCardContent>
+            <CardTitle>Project Notes</CardTitle>
+            {truncateNotes ? (
+              <>
+                {project_notes.substring(0, MAX_NOTES_LENGTH)}...
+                <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
+                  Read more
+                </ButtonThatLooksLikeLinkUnderlined>
+              </>
+            ) : (
+              project_notes
+            )}
+          </ProjectCardContent>
+        </ProjectCard>
+      )}
 
-      <ProjectCard>
-        <DataSharingIcon />
-        <ProjectCardContent>
-          <CardTitle>Data Sharing</CardTitle>
-          <DataSharingGrid>
-            <PolicyType>Fish Belt</PolicyType>
-            <PolicyValue>{getDataPolicyValue(data_policy_beltfish)}</PolicyValue>
-            <PolicyType>Benthic</PolicyType>
-            <PolicyValue>{getDataPolicyValue(data_policy_benthiclit)}</PolicyValue>
-            <PolicyType>Bleaching</PolicyType>
-            <PolicyValue>{getDataPolicyValue(data_policy_bleachingqc)}</PolicyValue>
-          </DataSharingGrid>
-        </ProjectCardContent>
-      </ProjectCard>
+      {(data_policy_beltfish || data_policy_benthiclit || data_policy_bleachingqc) && (
+        <ProjectCard>
+          <DataSharingIcon />
+          <ProjectCardContent>
+            <CardTitle>Data Sharing</CardTitle>
+            <DataSharingGrid>
+              <PolicyType>Fish Belt</PolicyType>
+              <PolicyValue>{data_policy_beltfish || ''}</PolicyValue>
+              <PolicyType>Benthic</PolicyType>
+              <PolicyValue>{data_policy_benthiclit || ''}</PolicyValue>
+              <PolicyType>Bleaching</PolicyType>
+              <PolicyValue>{data_policy_bleachingqc || ''}</PolicyValue>
+            </DataSharingGrid>
+          </ProjectCardContent>
+        </ProjectCard>
+      )}
     </>
   )
 }

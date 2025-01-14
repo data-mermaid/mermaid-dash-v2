@@ -9,7 +9,7 @@ import { DatePicker } from '@mui/x-date-pickers'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-import { URL_PARAMS, COLLECTION_METHODS, DATA_SHARING_LABELS } from '../../constants/constants'
+import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { filterPane } from '../../constants/language'
 import { IconClose, IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
@@ -35,7 +35,6 @@ import {
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
   StyledCountryHeader,
-  StyledCapitalizedLabel,
 } from './FilterPane.styles'
 import {
   MermaidChip,
@@ -55,6 +54,8 @@ const deleteIconSize = {
 }
 
 const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
+
+const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
 const FilterPane = ({ mermaidUserData }) => {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
@@ -265,9 +266,9 @@ const FilterPane = ({ mermaidUserData }) => {
                         checked={!methodDataSharingFilters.includes(option)}
                         onChange={handleMethodDataSharingFilter}
                       />
-                      <StyledCapitalizedLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
+                      <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
                         {DATA_SHARING_LABELS[index]}
-                      </StyledCapitalizedLabel>
+                      </StyledLabel>
                     </TieredStyledClickableArea>
                   ))}
                 </>

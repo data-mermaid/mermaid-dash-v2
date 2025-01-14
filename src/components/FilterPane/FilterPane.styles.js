@@ -130,10 +130,6 @@ export const StyledLabel = styled.label`
   flex-grow: 1;
 `
 
-export const StyledCapitalizedLabel = styled(StyledLabel)`
-  text-transform: capitalize;
-`
-
 export const StyledCategoryContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};

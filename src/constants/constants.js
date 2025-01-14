@@ -9,11 +9,6 @@ export const URL_PARAMS = {
   METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
 }
-export const PUBLIC_SUMMARY = 'public summary'
-export const PUBLIC = 'public'
-export const PRIVATE = 'private'
-
-export const DATA_SHARING_LABELS = [PUBLIC, PUBLIC_SUMMARY, PRIVATE]
 
 export const COLLECTION_METHODS = {
   beltfish: {
@@ -47,66 +42,66 @@ export const POLICY_MAPPINGS = {
   bf_2: {
     policy: 'data_policy_beltfish',
     name: 'beltfish',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   bf_3: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'private' },
   cb_1: {
     policy: 'data_policy_bleachingqc',
     name: 'colonies_bleached',
-    value: PUBLIC,
+    value: 'public',
   },
   cb_2: {
     policy: 'data_policy_bleachingqc',
     name: 'colonies_bleached',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   cb_3: {
     policy: 'data_policy_bleachingqc',
     name: 'colonies_bleached',
-    value: PRIVATE,
+    value: 'private',
   },
   bp_1: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'public' },
   bp_2: {
     policy: 'data_policy_benthicpit',
     name: 'benthicpit',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   bp_3: { policy: 'data_policy_benthicpit', name: 'benthicpit', value: 'private' },
   bl_1: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'public' },
   bl_2: {
     policy: 'data_policy_benthiclit',
     name: 'benthiclit',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   bl_3: { policy: 'data_policy_benthiclit', name: 'benthiclit', value: 'private' },
   qbp_1: {
     policy: 'data_policy_benthicpqt',
     name: 'benthicpqt',
-    value: PUBLIC,
+    value: 'public',
   },
   qbp_2: {
     policy: 'data_policy_benthicpqt',
     name: 'benthicpqt',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   qbp_3: {
     policy: 'data_policy_benthicpqt',
     name: 'benthicpqt',
-    value: PRIVATE,
+    value: 'private',
   },
   hc_1: {
     policy: 'data_policy_habitatcomplexity',
     name: 'habitatcomplexity',
-    value: PUBLIC,
+    value: 'public',
   },
   hc_2: {
     policy: 'data_policy_habitatcomplexity',
     name: 'habitatcomplexity',
-    value: PUBLIC_SUMMARY,
+    value: 'public summary',
   },
   hc_3: {
     policy: 'data_policy_habitatcomplexity',
     name: 'habitatcomplexity',
-    value: PRIVATE,
+    value: 'private',
   },
 }
