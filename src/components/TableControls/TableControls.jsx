@@ -52,10 +52,8 @@ const TableControls = () => {
   const {
     checkedProjects,
     displayedProjects,
-    selectedOrganizations,
     setShowProjectsWithNoRecords,
     showProjectsWithNoRecords,
-    showYourData,
   } = useContext(FilterProjectsContext)
 
   const tableHeaders = [
