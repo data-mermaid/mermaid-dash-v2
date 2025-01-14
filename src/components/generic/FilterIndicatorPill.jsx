@@ -1,11 +1,11 @@
 import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
-import theme from '../../../styles/theme'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import theme from '../../styles/theme'
+import dashboardOnlyTheme from '../../styles/dashboardOnlyTheme'
 
-import { IconButton } from '../../generic'
-import { IconClose } from '../../../assets/icons'
+import { IconButton } from '.'
+import { IconClose } from '../../assets/icons'
 
 const FilterIndictorPillContainer = styled.div`
   color: ${theme.color.textColor};

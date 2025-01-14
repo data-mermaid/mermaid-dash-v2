@@ -2,13 +2,13 @@ import { useContext, useRef } from 'react'
 import { CSVLink } from 'react-csv'
 
 import styled from 'styled-components'
-import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-import theme from '../../../styles/theme'
-import { IconTrayDownload } from '../../../assets/dashboardOnlyIcons'
-import { formatProjectDataHelper } from '../../../helperFunctions'
+import theme from '../../styles/theme'
+import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
+import { formatProjectDataHelper } from '../../helperFunctions'
 
-import { ButtonSecondary } from '../../generic'
+import { ButtonSecondary } from '../generic'
 
 const ButtonSecondaryWithMargin = styled(ButtonSecondary)`
   display: flex;
