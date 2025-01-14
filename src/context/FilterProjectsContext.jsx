@@ -278,6 +278,12 @@ export const FilterProjectsProvider = ({ children }) => {
             records: project.records.filter((record) => isRecordWithinMapBounds(record, mapBbox)),
           }
         })
+        .filter((project) => {
+          // Filter out projects that have no records
+          let projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
+          const isProjectVisible = projectHasRecords || showProjectsWithNoRecords
+          return isProjectVisible
+        })
     },
     [
       projectData.results,
