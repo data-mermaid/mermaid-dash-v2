@@ -1,8 +1,14 @@
-import PropTypes from 'prop-types'
 import { useContext, useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { usePagination, useSortBy, useTable } from 'react-table'
+import PropTypes from 'prop-types'
+
 import styled, { css } from 'styled-components'
-import ContentPageLayout from './components/ContentPageLayout'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
+import theme from '../../styles/theme'
+import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
 import {
   Tr,
@@ -17,15 +23,13 @@ import {
   PageSizeSelector,
   EmptySpace,
 } from '../generic'
-import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
-import { useLocation, useNavigate } from 'react-router-dom'
-import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
-import theme from '../../styles/theme'
+
+import ContentPageLayout from './components/ContentPageLayout'
+import ViewAndZoomControls from '../ViewAndZoomControls/ViewAndZoomControls'
+import TableControls from '../TableControls/TableControls'
 
 const StyledTableContainer = styled.div`
-  height: calc(100vh - 50px);
+  height: calc(100vh - 55px);
   flex-grow: 1;
   overflow: scroll;
   display: flex;
@@ -321,7 +325,8 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   return (
     <StyledTableContainer>
       <ContentPageLayout content={table} />
-      <MapAndTableControls view={view} setView={setView} />
+      <ViewAndZoomControls view={view} setView={setView} />
+      <TableControls />
     </StyledTableContainer>
   )
 }

@@ -46,7 +46,7 @@ import {
   MermaidSelect,
 } from '../generic/MermaidMui'
 
-import FilterIndicatorPill from '../MapAndTableControls/components/FilterIndicatorPill'
+import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 
 const deleteIconSize = {
   height: '15px',
