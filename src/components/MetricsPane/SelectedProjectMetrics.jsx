@@ -27,14 +27,15 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
   const { updateURLParams } = useContext(FilterProjectsContext)
 
   const [truncateNotes, setTruncateNotes] = useState(true)
-  const { project_name, project_id, records } = selectedProject
   const {
+    project_name,
+    project_id,
     project_admins,
     project_notes,
     data_policy_beltfish,
     data_policy_benthiclit,
     data_policy_bleachingqc,
-  } = records[0] || {}
+  } = selectedProject
 
   const handleClearProject = () => {
     queryParams.delete('project_id')
@@ -60,7 +61,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         </CloseButton>
       </ProjectCard>
 
-      {project_admins ? (
+      {project_admins && (
         <ProjectCard>
           <AdminIcon />
           <ProjectCardContent>
@@ -77,9 +78,9 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
             {project_admins?.map(({ name }) => name).join(', ')}
           </ProjectCardContent>
         </ProjectCard>
-      ) : null}
+      )}
 
-      {project_notes ? (
+      {project_notes && (
         <ProjectCard>
           <ProjectNotesIcon />
           <ProjectCardContent>
@@ -96,24 +97,24 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
             )}
           </ProjectCardContent>
         </ProjectCard>
-      ) : null}
+      )}
 
-      {data_policy_beltfish ? (
+      {(data_policy_beltfish || data_policy_benthiclit || data_policy_bleachingqc) && (
         <ProjectCard>
           <DataSharingIcon />
           <ProjectCardContent>
             <CardTitle>Data Sharing</CardTitle>
             <DataSharingGrid>
               <PolicyType>Fish Belt</PolicyType>
-              <PolicyValue>{data_policy_beltfish}</PolicyValue>
+              <PolicyValue>{data_policy_beltfish || ''}</PolicyValue>
               <PolicyType>Benthic</PolicyType>
-              <PolicyValue>{data_policy_benthiclit}</PolicyValue>
+              <PolicyValue>{data_policy_benthiclit || ''}</PolicyValue>
               <PolicyType>Bleaching</PolicyType>
-              <PolicyValue>{data_policy_bleachingqc}</PolicyValue>
+              <PolicyValue>{data_policy_bleachingqc || ''}</PolicyValue>
             </DataSharingGrid>
           </ProjectCardContent>
         </ProjectCard>
-      ) : null}
+      )}
     </>
   )
 }
