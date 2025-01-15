@@ -70,7 +70,10 @@ export const SelectedSiteMetrics = ({
     </ButtonThatLooksLikeLink>
   ) : null
   const { isDesktopWidth } = useResponsive()
-  const sampleEventAdmins = selectedSampleEvent.project_admins.map((admin) => admin.name).join(', ')
+  const sampleEventAdmins = selectedSampleEvent.project_admins
+    .filter((admin) => admin.name !== ' ')
+    .map((admin) => admin.name)
+    .join(', ')
   const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
   const project = displayedProjects?.find((project) => project.project_id === projectId)
   const projectRecordsForSite = project?.records?.filter((record) => record.site_id === siteId)
