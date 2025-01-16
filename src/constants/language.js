@@ -56,6 +56,13 @@ export const toastMessageText = {
   followMapDisabled: 'Metrics will no longer update based on the map view',
 }
 
+export const autocompleteGroupNames = {
+  countriesBasedOnCurrentFilters: 'Countries based on current filters',
+  otherCountries: 'Other countries',
+  organizationsBasedOnCurrentFilters: 'Organizations based on current filters',
+  noOrganizationsMatchCurrentFilters: 'No organizations match current filters',
+}
+
 export default {
   shareView,
   table,

@@ -3,15 +3,14 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
 
-import { Box } from '@mui/material'
 import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { filterPane } from '../../constants/language'
-import { IconClose, IconPlus } from '../../assets/icons'
+import { filterPane, autocompleteGroupNames } from '../../constants/language'
+import { IconPlus } from '../../assets/icons'
 import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
 
 import {
@@ -36,24 +35,9 @@ import {
   StyledDateInputContainer,
   StyledCountryHeader,
 } from './FilterPane.styles'
-import {
-  MermaidChip,
-  MermaidFormContainer,
-  MermaidFormControl,
-  MermaidListSubheader,
-  MermaidMenuItem,
-  MermaidOutlinedInput,
-  MermaidSelect,
-} from '../generic/MermaidMui'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
-
-const deleteIconSize = {
-  height: '15px',
-  width: '15px',
-}
-
-const selectBoxCustomStyles = { display: 'flex', flexWrap: 'wrap', gap: 0.5 }
+import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
 
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
@@ -149,11 +133,10 @@ const FilterPane = ({ mermaidUserData }) => {
     }
   }
 
-  const handleDeleteCountry = (country) => {
-    const updatedCountries = selectedCountries.filter(
-      (selectedCountry) => selectedCountry !== country,
-    )
+  const handleDeleteCountry = (countryToBeDeleted) => {
+    const updatedCountries = selectedCountries.filter((country) => country !== countryToBeDeleted)
     setSelectedCountries(updatedCountries)
+
     const queryParams = getURLParams()
     if (updatedCountries.length === 0) {
       queryParams.delete('country')
@@ -164,11 +147,12 @@ const FilterPane = ({ mermaidUserData }) => {
     updateURLParams(queryParams)
   }
 
-  const handleDeleteOrganization = (organization) => {
+  const handleDeleteOrganization = (organizationToBeDeleted) => {
     const updatedOrganizations = selectedOrganizations.filter(
-      (selectedOrganization) => selectedOrganization !== organization,
+      (organization) => organization !== organizationToBeDeleted,
     )
     setSelectedOrganizations(updatedOrganizations)
+
     const queryParams = getURLParams()
     if (updatedOrganizations.length === 0) {
       queryParams.delete('organization')
@@ -177,6 +161,20 @@ const FilterPane = ({ mermaidUserData }) => {
       queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
     }
     updateURLParams(queryParams)
+  }
+
+  const getCountriesAutocompleteGroup = (option) => {
+    return remainingDisplayedCountries.length
+      ? displayedCountries.includes(option)
+        ? autocompleteGroupNames.countriesBasedOnCurrentFilters
+        : autocompleteGroupNames.otherCountries
+      : ''
+  }
+
+  const getOrganizationsAutocompleteGroup = () => {
+    return displayedOrganizations.length
+      ? autocompleteGroupNames.organizationsBasedOnCurrentFilters
+      : autocompleteGroupNames.noOrganizationsMatchCurrentFilters
   }
 
   const handleCheckProject = (projectId) => {
@@ -326,98 +324,24 @@ const FilterPane = ({ mermaidUserData }) => {
           />
         ) : null}
       </StyledCountryHeader>
-      <MermaidFormContainer>
-        <MermaidFormControl>
-          <MermaidSelect
-            multiple
-            value={selectedCountries}
-            onChange={handleSelectedCountriesChange}
-            input={<MermaidOutlinedInput />}
-            onOpen={countriesSelectOnOpen}
-            renderValue={(selected) => (
-              <Box sx={selectBoxCustomStyles}>
-                {selected.map((value) => (
-                  <MermaidChip
-                    key={value}
-                    label={value}
-                    onDelete={() => handleDeleteCountry(value)}
-                    deleteIcon={
-                      <IconClose
-                        onMouseDown={(event) => event.stopPropagation()}
-                        {...deleteIconSize}
-                      />
-                    }
-                  />
-                ))}
-              </Box>
-            )}
-          >
-            {remainingDisplayedCountries.length ? (
-              <MermaidListSubheader>Countries based on current filters</MermaidListSubheader>
-            ) : null}
-            {displayedCountries.map((country) => (
-              <MermaidMenuItem key={`matches-${country}`} value={country}>
-                <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
-                {country}
-              </MermaidMenuItem>
-            ))}
-            {remainingDisplayedCountries.length ? (
-              <MermaidListSubheader>Other countries</MermaidListSubheader>
-            ) : null}
-            {remainingDisplayedCountries.map((country) => (
-              <MermaidMenuItem key={`nonmatches-${country}`} value={country}>
-                <input type="checkbox" checked={selectedCountries.includes(country)} readOnly />
-                {country}
-              </MermaidMenuItem>
-            ))}
-          </MermaidSelect>
-        </MermaidFormControl>
-      </MermaidFormContainer>
+      <AutocompleteCheckbox
+        selectedValues={selectedCountries}
+        displayOptions={displayedCountries}
+        remainingOptions={remainingDisplayedCountries}
+        autocompleteGroupBy={getCountriesAutocompleteGroup}
+        onOpen={countriesSelectOnOpen}
+        onChange={handleSelectedCountriesChange}
+        onDelete={handleDeleteCountry}
+      />
       <StyledHeader>Organizations</StyledHeader>
-      <MermaidFormContainer>
-        <MermaidFormControl>
-          <MermaidSelect
-            multiple
-            value={selectedOrganizations}
-            onChange={handleSelectedOrganizationsChange}
-            input={<MermaidOutlinedInput />}
-            onOpen={organizationsSelectOnOpen}
-            renderValue={(selected) => (
-              <Box sx={selectBoxCustomStyles}>
-                {selected.map((value) => (
-                  <MermaidChip
-                    key={value}
-                    label={value}
-                    onDelete={() => handleDeleteOrganization(value)}
-                    deleteIcon={
-                      <IconClose
-                        onMouseDown={(event) => event.stopPropagation()}
-                        {...deleteIconSize}
-                      />
-                    }
-                  />
-                ))}
-              </Box>
-            )}
-          >
-            <MermaidListSubheader>
-              {displayedOrganizations.length
-                ? 'Organizations based on current filters'
-                : 'No organizations match current filters'}
-            </MermaidListSubheader>
-            {displayedOrganizations.map((organization) => (
-              <MermaidMenuItem key={organization} value={organization}>
-                <input
-                  type="checkbox"
-                  checked={selectedOrganizations.includes(organization)}
-                  readOnly
-                />
-                {organization}
-              </MermaidMenuItem>
-            ))}
-          </MermaidSelect>
-        </MermaidFormControl>
-      </MermaidFormContainer>
+      <AutocompleteCheckbox
+        selectedValues={selectedOrganizations}
+        displayOptions={displayedOrganizations}
+        autocompleteGroupBy={getOrganizationsAutocompleteGroup}
+        onOpen={organizationsSelectOnOpen}
+        onChange={handleSelectedOrganizationsChange}
+        onDelete={handleDeleteOrganization}
+      />
       <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
         Show {showMoreFilters ? 'fewer' : 'more'} filters
       </StyledExpandFilters>
