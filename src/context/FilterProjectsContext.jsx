@@ -200,15 +200,18 @@ export const FilterProjectsProvider = ({ children }) => {
     return isWithinLatitude && isWithinLongitude
   }, [])
 
+  const noDataProjects = useMemo(
+    () =>
+      projectData.results
+        ?.filter(({ records }) => records.length === 0)
+        .map(({ project_id }) => project_id) || [],
+    [projectData.results],
+  )
+
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
       const fallbackSampleDateBefore = new Date(Date.now())
-      const noDataProjects = [
-        ...projectData.results
-          .filter(({ records }) => records.length === 0)
-          .map(({ project_id }) => project_id),
-      ]
 
       return projectData.results
         ?.filter((project) => {
