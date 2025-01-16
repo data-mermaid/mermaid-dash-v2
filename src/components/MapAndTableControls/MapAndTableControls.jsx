@@ -48,7 +48,7 @@ const StyledDataViewButton = styled(StyledViewToggleSecondaryButton)`
     isActive ? theme.color.secondaryColor : theme.color.white};
 `
 
-const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
+const MapAndTableControls = ({ map = undefined, view, setView }) => {
   const { displayedProjects, isAnyActiveFilters } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
   const location = useLocation()
@@ -115,10 +115,10 @@ const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
   )
 }
 
-ViewAndZoomControls.propTypes = {
+MapAndTableControls.propTypes = {
   map: PropTypes.object,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
 
-export default ViewAndZoomControls
+export default MapAndTableControls

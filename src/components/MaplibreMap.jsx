@@ -13,7 +13,7 @@ import useResponsive from '../hooks/useResponsive'
 import customIcon from '../assets/map-pin.png'
 import { MAIN_MAP_ID } from '../constants/constants'
 
-import ViewAndZoomControls from './ViewAndZoomControls/ViewAndZoomControls'
+import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
 const defaultLon = -79
 const defaultLat = 32
@@ -251,7 +251,7 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
   }
 
   const viewAndZoomControlsWrapper = mapRef.current ? (
-    <ViewAndZoomControls map={mapRef.current.getMap()} view={view} setView={setView} />
+    <MapAndTableControls map={mapRef.current.getMap()} view={view} setView={setView} />
   ) : null
 
   const hideMapStyleLayers = (map) => {
