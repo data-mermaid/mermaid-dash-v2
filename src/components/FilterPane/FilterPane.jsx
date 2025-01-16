@@ -42,6 +42,7 @@ import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
 const FilterPane = ({ mermaidUserData }) => {
+  const todayDate = dayjs()
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
@@ -356,7 +357,7 @@ const FilterPane = ({ mermaidUserData }) => {
                 value={sampleDateAfter}
                 onChange={(date) => handleStartDateChange(date)}
                 format="YYYY-MM-DD"
-                maxDate={dayjs(sampleDateBefore)}
+                maxDate={sampleDateBefore ? dayjs(sampleDateBefore) : todayDate}
                 slots={{ textField: StyledDateField }}
                 slotProps={{
                   textField: { clearable: true, size: 'small' },
@@ -374,6 +375,7 @@ const FilterPane = ({ mermaidUserData }) => {
                 onChange={(date) => handleEndDateChange(date)}
                 format="YYYY-MM-DD"
                 minDate={sampleDateAfter ? dayjs(sampleDateAfter) : undefined}
+                maxDate={todayDate}
                 slots={{ textField: StyledDateField }}
                 slotProps={{
                   textField: { clearable: true, size: 'small' },
