@@ -204,6 +204,11 @@ export const FilterProjectsProvider = ({ children }) => {
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
       const fallbackSampleDateBefore = new Date(Date.now())
+      const noDataProjects = [
+        ...projectData.results
+          .filter(({ records }) => records.length === 0)
+          .map(({ project_id }) => project_id),
+      ]
 
       return projectData.results
         ?.filter((project) => {
@@ -279,10 +284,13 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .filter((project) => {
-          // Filter out projects that have no records
-          const isProjectVisible = project.records.length > 0 || showProjectsWithNoRecords
+          if (showProjectsWithNoRecords) {
+            // If showProjectsWithNoRecords toggled on, show projects that is in the noDataProjects list or has records
+            return noDataProjects.includes(project.project_id) || project.records.length > 0
+          }
 
-          return isProjectVisible
+          // Else only show projects that has records
+          return project.records.length > 0
         })
     },
     [
