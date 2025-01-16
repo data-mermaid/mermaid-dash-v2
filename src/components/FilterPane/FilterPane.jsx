@@ -47,6 +47,9 @@ import {
 } from '../generic/MermaidMui'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
+import styled from 'styled-components'
+import { ButtonSecondary } from '../generic'
+import theme from '../../styles/theme'
 
 const deleteIconSize = {
   height: '15px',
@@ -95,6 +98,8 @@ const FilterPane = ({ mermaidUserData }) => {
     setSelectedOrganizations,
     showYourData,
     userIsMemberOfProject,
+    showProjectsWithNoRecords,
+    setShowProjectsWithNoRecords,
   } = useContext(FilterProjectsContext)
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
@@ -177,6 +182,10 @@ const FilterPane = ({ mermaidUserData }) => {
       queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
     }
     updateURLParams(queryParams)
+  }
+
+  const handleShowProjectsWithNoRecords = () => {
+    setShowProjectsWithNoRecords(!showProjectsWithNoRecords)
   }
 
   const handleCheckProject = (projectId) => {
@@ -483,6 +492,21 @@ const FilterPane = ({ mermaidUserData }) => {
           ) : null}
           <StyledHeader>Methods / Data Sharing</StyledHeader>
           {methodsList}
+          <StyledHeader>No Data</StyledHeader>
+          <StyledCategoryContainer>
+            <StyledClickableArea onClick={handleShowProjectsWithNoRecords}>
+              <input
+                type="checkbox"
+                name="showNoData"
+                id="show-no-data"
+                onChange={handleShowProjectsWithNoRecords}
+                checked={showProjectsWithNoRecords}
+              />
+              <StyledLabel htmlFor="show-no-data" onClick={(e) => e.stopPropagation()}>
+                Show Projects With No Data
+              </StyledLabel>
+            </StyledClickableArea>
+          </StyledCategoryContainer>
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledHeader>Projects</StyledHeader>

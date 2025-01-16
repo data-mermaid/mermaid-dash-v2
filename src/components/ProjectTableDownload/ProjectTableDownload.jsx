@@ -16,45 +16,17 @@ const ButtonSecondaryWithMargin = styled(ButtonSecondary)`
   align-items: center;
   gap: 1rem;
   padding: 0 2rem;
-`
-
-const ZeroSurveysButton = styled(ButtonSecondary)`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid ${theme.color.secondaryBorder};
-  width: 27rem;
-  cursor: pointer;
-`
-
-const StyledLabel = styled.label`
-  cursor: pointer;
+  margin-left: 1rem;
 `
 
 const StyledCSVLink = styled(CSVLink)`
   display: none;
 `
 
-const TableControlContainer = styled.div`
-  position: absolute;
-  top: 6.1rem;
-  left: 1.1rem;
-  height: 4rem;
-  z-index: 1;
-  display: flex;
-  flex-direction: row;
-  gap: 1rem;
-`
 const TableControls = () => {
   const csvLinkRef = useRef()
 
-  const {
-    checkedProjects,
-    displayedProjects,
-    setShowProjectsWithNoRecords,
-    showProjectsWithNoRecords,
-  } = useContext(FilterProjectsContext)
+  const { checkedProjects, displayedProjects } = useContext(FilterProjectsContext)
 
   const tableHeaders = [
     { label: 'Project Name', key: 'projectName' },
@@ -94,12 +66,8 @@ const TableControls = () => {
     csvLinkRef.current.link.click()
   }
 
-  const handleShowProjectsWithNoRecords = () => {
-    setShowProjectsWithNoRecords(!showProjectsWithNoRecords)
-  }
-
   return (
-    <TableControlContainer>
+    <>
       <ButtonSecondaryWithMargin onClick={handleDownload}>
         <IconTrayDownload />
         <span>Download</span>
@@ -110,18 +78,7 @@ const TableControls = () => {
         filename={downloadedFileName()}
         ref={csvLinkRef}
       />
-      <ZeroSurveysButton onClick={handleShowProjectsWithNoRecords}>
-        <input
-          type="checkbox"
-          id="show-0-projects"
-          checked={showProjectsWithNoRecords}
-          onChange={handleShowProjectsWithNoRecords}
-        />
-        <StyledLabel htmlFor="show-0-projects" onClick={(e) => e.stopPropagation()}>
-          Show projects with 0 surveys
-        </StyledLabel>
-      </ZeroSurveysButton>
-    </TableControlContainer>
+    </>
   )
 }
 

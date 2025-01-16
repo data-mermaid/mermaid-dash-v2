@@ -280,8 +280,8 @@ export const FilterProjectsProvider = ({ children }) => {
         })
         .filter((project) => {
           // Filter out projects that have no records
-          let projectHasRecords = !isAnyActiveFilters() || project.records.length > 0
-          const isProjectVisible = projectHasRecords || showProjectsWithNoRecords
+          const isProjectVisible = project.records.length > 0 || showProjectsWithNoRecords
+
           return isProjectVisible
         })
     },
