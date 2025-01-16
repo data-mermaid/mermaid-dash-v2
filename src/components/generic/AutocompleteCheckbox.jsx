@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types'
+import { matchSorter } from 'match-sorter'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
 import { IconClose } from '../../assets/icons'
@@ -40,6 +41,11 @@ const AutocompleteCheckbox = ({
       groupBy={autocompleteGroupBy}
       disableCloseOnSelect
       getOptionLabel={(option) => option}
+      filterOptions={(options, { inputValue }) =>
+        matchSorter(options, inputValue, {
+          keys: [(item) => item],
+        })
+      }
       renderOption={(props, option, { selected }) => {
         const { key, ...optionProps } = props
 
