@@ -407,9 +407,9 @@ export const FilterProjectsProvider = ({ children }) => {
     doesSelectedSampleEventPassFilters,
   ])
 
-  const handleSelectedCountriesChange = (event) => {
+  const handleSelectedCountriesChange = (selectedCountries) => {
     const queryParams = getURLParams()
-    const selectedCountries = event.target.value
+
     if (selectedCountries.length === 0) {
       queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
@@ -420,9 +420,9 @@ export const FilterProjectsProvider = ({ children }) => {
     setSelectedCountries(selectedCountries)
   }
 
-  const handleSelectedOrganizationsChange = (event) => {
+  const handleSelectedOrganizationsChange = (selectedOrganizations) => {
     const queryParams = getURLParams()
-    const selectedOrganizations = event.target.value
+
     if (selectedOrganizations.length === 0) {
       queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {

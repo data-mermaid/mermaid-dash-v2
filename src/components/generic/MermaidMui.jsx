@@ -67,5 +67,6 @@ export const MermaidListSubheader = styled(ListSubheader)`
     font-weight: 600;
     color: ${theme.color.primaryColor};
     font-size: ${theme.typography.defaultFontSize};
+    top: -8px;
   }
 `
