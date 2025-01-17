@@ -8,7 +8,7 @@ import {
   IconMapOutline,
   IconTable,
 } from '../../assets/dashboardOnlyIcons'
-import { IconClose, IconGlobe, IconUser } from '../../assets/icons'
+import { IconClose, IconGlobe, IconSharing, IconUser } from '../../assets/icons'
 import { Row } from '../generic/positioning'
 import theme from '../../styles/theme'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
@@ -62,6 +62,10 @@ export const BiggerIconUser = styled(IconUser)`
 `
 
 export const BiggerIconGlobe = styled(IconGlobe)`
+  ${biggerIconsWithMargin}
+`
+
+export const BiggerIconDataSharing = styled(IconSharing)`
   ${biggerIconsWithMargin}
 `
 
