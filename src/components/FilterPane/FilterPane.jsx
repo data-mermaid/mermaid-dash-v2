@@ -80,6 +80,8 @@ const FilterPane = ({ mermaidUserData }) => {
     setSelectedOrganizations,
     showYourData,
     userIsMemberOfProject,
+    showProjectsWithNoRecords,
+    setShowProjectsWithNoRecords,
   } = useContext(FilterProjectsContext)
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
@@ -176,6 +178,10 @@ const FilterPane = ({ mermaidUserData }) => {
     return displayedOrganizations.length
       ? autocompleteGroupNames.organizationsBasedOnCurrentFilters
       : autocompleteGroupNames.noOrganizationsMatchCurrentFilters
+  }
+
+  const handleShowProjectsWithNoRecords = () => {
+    setShowProjectsWithNoRecords(!showProjectsWithNoRecords)
   }
 
   const handleCheckProject = (projectId) => {
@@ -409,6 +415,21 @@ const FilterPane = ({ mermaidUserData }) => {
           ) : null}
           <StyledHeader>Methods / Data Sharing</StyledHeader>
           {methodsList}
+          <StyledHeader>No Data</StyledHeader>
+          <StyledCategoryContainer>
+            <StyledClickableArea onClick={handleShowProjectsWithNoRecords}>
+              <input
+                type="checkbox"
+                name="showNoData"
+                id="show-no-data"
+                onChange={handleShowProjectsWithNoRecords}
+                checked={showProjectsWithNoRecords}
+              />
+              <StyledLabel htmlFor="show-no-data" onClick={(e) => e.stopPropagation()}>
+                Show Projects With No Data
+              </StyledLabel>
+            </StyledClickableArea>
+          </StyledCategoryContainer>
         </ShowMoreFiltersContainer>
       ) : null}
       <StyledHeader>Projects</StyledHeader>

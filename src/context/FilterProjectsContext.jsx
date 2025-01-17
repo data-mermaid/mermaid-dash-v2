@@ -200,6 +200,14 @@ export const FilterProjectsProvider = ({ children }) => {
     return isWithinLatitude && isWithinLongitude
   }, [])
 
+  const noDataProjects = useMemo(
+    () =>
+      projectData.results
+        ?.filter(({ records }) => records.length === 0)
+        .map(({ project_id }) => project_id) || [],
+    [projectData.results],
+  )
+
   const applyFilterToProjects = useCallback(
     (selectedCountries, selectedOrganizations) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
@@ -277,6 +285,15 @@ export const FilterProjectsProvider = ({ children }) => {
             ...project,
             records: project.records.filter((record) => isRecordWithinMapBounds(record, mapBbox)),
           }
+        })
+        .filter((project) => {
+          if (showProjectsWithNoRecords) {
+            // If showProjectsWithNoRecords toggled on, show projects that is in the noDataProjects list or has records
+            return noDataProjects.includes(project.project_id) || project.records.length > 0
+          }
+
+          // Else only show projects that has records
+          return project.records.length > 0
         })
     },
     [

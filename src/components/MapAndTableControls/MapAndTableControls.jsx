@@ -17,6 +17,7 @@ import { tooltipText } from '../../constants/language'
 import { BiggerIconMapOutline, BiggerIconTable } from '../MetricsPane/SelectedSiteMetrics.styles'
 import theme from '../../styles/theme'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
+import ProjectTableDownload from '../ProjectTableDownload/ProjectTableDownload'
 
 const ControlContainer = styled.div`
   position: absolute;
@@ -47,7 +48,7 @@ const StyledDataViewButton = styled(StyledViewToggleSecondaryButton)`
     isActive ? theme.color.secondaryColor : theme.color.white};
 `
 
-const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
+const MapAndTableControls = ({ map = undefined, view, setView }) => {
   const { displayedProjects, isAnyActiveFilters } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
   const location = useLocation()
@@ -96,7 +97,7 @@ const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
               <BiggerIconTable />
             </StyledDataViewButton>
           </Tooltip>
-          {view === 'mapView' && (
+          {view === 'mapView' ? (
             <Tooltip
               text={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
               styleProps={{ tooltipMarginLeft: '1rem', tooltipTextWith: '20ch' }}
@@ -105,6 +106,8 @@ const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
                 <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
               </StyledViewToggleSecondaryButton>
             </Tooltip>
+          ) : (
+            <ProjectTableDownload />
           )}
         </StyledViewToggleContainer>
       )}
@@ -112,10 +115,10 @@ const ViewAndZoomControls = ({ map = undefined, view, setView }) => {
   )
 }
 
-ViewAndZoomControls.propTypes = {
+MapAndTableControls.propTypes = {
   map: PropTypes.object,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }
 
-export default ViewAndZoomControls
+export default MapAndTableControls

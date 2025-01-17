@@ -25,8 +25,7 @@ import {
 } from '../generic'
 
 import ContentPageLayout from './components/ContentPageLayout'
-import ViewAndZoomControls from '../ViewAndZoomControls/ViewAndZoomControls'
-import TableControls from '../TableControls/TableControls'
+import MapAndTableControls from '../MapAndTableControls/MapAndTableControls'
 
 const StyledTableContainer = styled.div`
   height: calc(100vh - 55px);
@@ -325,8 +324,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   return (
     <StyledTableContainer>
       <ContentPageLayout content={table} />
-      <ViewAndZoomControls view={view} setView={setView} />
-      <TableControls />
+      <MapAndTableControls view={view} setView={setView} />
     </StyledTableContainer>
   )
 }
