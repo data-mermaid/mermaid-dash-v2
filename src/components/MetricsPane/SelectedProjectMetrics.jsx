@@ -28,13 +28,13 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
 
   const [truncateNotes, setTruncateNotes] = useState(true)
   const {
-    project_name,
-    project_id,
-    project_admins,
-    project_notes,
-    data_policy_beltfish,
-    data_policy_benthiclit,
-    data_policy_bleachingqc,
+    project_name: projectName,
+    project_id: projectId,
+    project_admins: projectAdmins,
+    project_notes: projectNotes,
+    data_policy_beltfish: dataSharingBeltfish,
+    data_policy_benthiclit: dataSharingBenthiclit,
+    data_policy_bleachingqc: dataSharingBleachingqc,
   } = selectedProject
 
   const handleClearProject = () => {
@@ -48,69 +48,69 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       return
     }
 
-    setTruncateNotes(project_notes?.length > MAX_NOTES_LENGTH)
-  }, [selectedProject, project_notes])
+    setTruncateNotes(projectNotes?.length > MAX_NOTES_LENGTH)
+  }, [selectedProject, projectNotes])
 
   return (
     <>
       <ProjectCard>
         <HeaderIcon />
-        <ProjectTitle>{project_name}</ProjectTitle>
+        <ProjectTitle>{projectName}</ProjectTitle>
         <CloseButton type="button" onClick={handleClearProject}>
           <BiggerIconClose />
         </CloseButton>
       </ProjectCard>
 
-      {project_admins && (
+      {projectAdmins && (
         <ProjectCard>
           <AdminIcon />
           <ProjectCardContent>
             <ProjectCardHeader>
               <CardTitle>Admins</CardTitle>
               <ContactLink
-                href={`https://datamermaid.org/contact-project?project_id=${project_id}`}
+                href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
                 Contact
               </ContactLink>
             </ProjectCardHeader>
-            {project_admins?.map(({ name }) => name).join(', ')}
+            {projectAdmins?.map(({ name }) => name).join(', ')}
           </ProjectCardContent>
         </ProjectCard>
       )}
 
-      {project_notes && (
+      {projectNotes && (
         <ProjectCard>
           <ProjectNotesIcon />
           <ProjectCardContent>
             <CardTitle>Project Notes</CardTitle>
             {truncateNotes ? (
               <>
-                {project_notes.substring(0, MAX_NOTES_LENGTH)}...
+                {projectNotes.substring(0, MAX_NOTES_LENGTH)}...
                 <ButtonThatLooksLikeLinkUnderlined onClick={() => setTruncateNotes(false)}>
                   Read more
                 </ButtonThatLooksLikeLinkUnderlined>
               </>
             ) : (
-              project_notes
+              projectNotes
             )}
           </ProjectCardContent>
         </ProjectCard>
       )}
 
-      {(data_policy_beltfish || data_policy_benthiclit || data_policy_bleachingqc) && (
+      {(dataSharingBeltfish || dataSharingBenthiclit || dataSharingBleachingqc) && (
         <ProjectCard>
           <DataSharingIcon />
           <ProjectCardContent>
             <CardTitle>Data Sharing</CardTitle>
             <DataSharingGrid>
               <PolicyType>Fish Belt</PolicyType>
-              <PolicyValue>{data_policy_beltfish || ''}</PolicyValue>
+              <PolicyValue>{dataSharingBeltfish}</PolicyValue>
               <PolicyType>Benthic</PolicyType>
-              <PolicyValue>{data_policy_benthiclit || ''}</PolicyValue>
+              <PolicyValue>{dataSharingBenthiclit}</PolicyValue>
               <PolicyType>Bleaching</PolicyType>
-              <PolicyValue>{data_policy_bleachingqc || ''}</PolicyValue>
+              <PolicyValue>{dataSharingBleachingqc}</PolicyValue>
             </DataSharingGrid>
           </ProjectCardContent>
         </ProjectCard>

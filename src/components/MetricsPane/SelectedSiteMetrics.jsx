@@ -276,7 +276,7 @@ export const SelectedSiteMetrics = ({
                   <span>{sampleEventAdmins}</span>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
-              {organizations?.length ? (
+              {organizations?.length > 0 && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconGlobe />
                   <SelectedSiteContentContainer>
@@ -284,8 +284,7 @@ export const SelectedSiteMetrics = ({
                     <span>{sampleEventOrganizations}</span>
                   </SelectedSiteContentContainer>
                 </SelectedSiteMetricsCardContainer>
-              ) : null}
-
+              )}
               <SelectedSiteMetricsCardContainer>
                 <StyledSvgContainer>
                   <img src={coralReefSvg} alt="coral reef" />
@@ -308,7 +307,7 @@ export const SelectedSiteMetrics = ({
                   </StyledReefContainer>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
-              {dataPolicyBeltfish || dataPolicyBenthiclit || dataPolicyBleachingqc ? (
+              {(dataPolicyBeltfish || dataPolicyBenthiclit || dataPolicyBleachingqc) && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconDataSharing />
                   <SelectedSiteContentContainer>
@@ -329,8 +328,8 @@ export const SelectedSiteMetrics = ({
                     </StyledReefContainer>
                   </SelectedSiteContentContainer>
                 </SelectedSiteMetricsCardContainer>
-              ) : null}
-              {siteNotes ? (
+              )}
+              {siteNotes && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconText />
                   <SelectedSiteContentContainerWiderOnMobile>
@@ -341,7 +340,7 @@ export const SelectedSiteMetrics = ({
                     </span>
                   </SelectedSiteContentContainerWiderOnMobile>
                 </SelectedSiteMetricsCardContainer>
-              ) : null}
+              )}
             </>
           )}
         </TabContent>
