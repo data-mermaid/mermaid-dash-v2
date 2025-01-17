@@ -11,6 +11,7 @@ import { StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
   BiggerIconClose,
+  BiggerIconDataSharing,
   BiggerIconGlobe,
   BiggerIconPersonCircle,
   BiggerIconText,
@@ -58,7 +59,24 @@ export const SelectedSiteMetrics = ({
     updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
   const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
-  const { site_notes: siteNotes, project_id: projectId, site_id: siteId } = selectedSampleEvent
+  const {
+    sample_event_id: sampleEventId,
+    site_notes: siteNotes,
+    project_id: projectId,
+    project_name: projectName,
+    site_id: siteId,
+    site_name: siteName,
+    project_admins: projectAdmins,
+    tags: organizations,
+    sample_date: sampleDate,
+    management_name: managementName,
+    reef_zone: reefZone,
+    reef_type: reefType,
+    reef_exposure: reefExposure,
+    data_policy_beltfish: dataPolicyBeltfish,
+    data_policy_benthiclit: dataPolicyBenthiclit,
+    data_policy_bleachingqc: dataPolicyBleachingqc,
+  } = selectedSampleEvent
   const initialAreSurveyNotesTruncated = siteNotes.length > 250
   const [areSurveyNotesTruncated, setAreSurveyNotesTruncated] = useState(
     initialAreSurveyNotesTruncated,
@@ -70,11 +88,11 @@ export const SelectedSiteMetrics = ({
     </ButtonThatLooksLikeLink>
   ) : null
   const { isDesktopWidth } = useResponsive()
-  const sampleEventAdmins = selectedSampleEvent.project_admins
+  const sampleEventAdmins = projectAdmins
     .filter((admin) => admin.name !== ' ')
     .map((admin) => admin.name)
     .join(', ')
-  const sampleEventOrganizations = selectedSampleEvent.tags?.map((tag) => tag.name).join(', ')
+  const sampleEventOrganizations = organizations?.map((tag) => tag.name).join(', ')
   const project = displayedProjects?.find((project) => project.project_id === projectId)
   const projectRecordsForSite = project?.records?.filter((record) => record.site_id === siteId)
 
@@ -129,7 +147,7 @@ export const SelectedSiteMetrics = ({
         <MermaidFormControl>
           <MermaidSelect
             input={<MermaidOutlinedInput />}
-            value={selectedSampleEvent.sample_event_id}
+            value={sampleEventId}
             onChange={handleSurveyChange}
           >
             {similarSiteMenuItems}
@@ -163,7 +181,7 @@ export const SelectedSiteMetrics = ({
           ) : (
             <>
               <StyledHeader>Site</StyledHeader>
-              <span>{selectedSampleEvent.site_name}</span>
+              <span>{siteName}</span>
             </>
           )}
         </SelectedSiteContentContainerWiderOnMobile>
@@ -192,10 +210,8 @@ export const SelectedSiteMetrics = ({
           <SelectedSiteContentContainer>
             <StyledHeader>Project</StyledHeader>
             <span>
-              {selectedSampleEvent.project_name}{' '}
-              {userIsMemberOfProject(selectedSampleEvent.project_id, mermaidUserData) ? (
-                <IconPersonCircle />
-              ) : null}
+              {projectName}{' '}
+              {userIsMemberOfProject(projectId, mermaidUserData) ? <IconPersonCircle /> : null}
             </span>
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
@@ -207,7 +223,7 @@ export const SelectedSiteMetrics = ({
               <MermaidFormContainer>
                 <MermaidFormControl>
                   <MermaidSelect
-                    value={selectedSampleEvent.sample_event_id}
+                    value={sampleEventId}
                     onChange={handleSurveyChange}
                     input={<MermaidOutlinedInput />}
                   >
@@ -216,7 +232,7 @@ export const SelectedSiteMetrics = ({
                 </MermaidFormControl>
               </MermaidFormContainer>
             ) : (
-              <span>{getMermaidLocaleDateString(selectedSampleEvent.sample_date)}</span>
+              <span>{getMermaidLocaleDateString(sampleDate)}</span>
             )}
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
@@ -250,7 +266,7 @@ export const SelectedSiteMetrics = ({
                 <BiggerIconPersonCircle />
                 <SelectedSiteContentContainer>
                   <StyledHeader>Management Regime</StyledHeader>
-                  <span>{selectedSampleEvent.management_name}</span>
+                  <span>{managementName}</span>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
               <SelectedSiteMetricsCardContainer>
@@ -260,7 +276,7 @@ export const SelectedSiteMetrics = ({
                   <span>{sampleEventAdmins}</span>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
-              {selectedSampleEvent?.tags?.length ? (
+              {organizations?.length > 0 && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconGlobe />
                   <SelectedSiteContentContainer>
@@ -268,8 +284,7 @@ export const SelectedSiteMetrics = ({
                     <span>{sampleEventOrganizations}</span>
                   </SelectedSiteContentContainer>
                 </SelectedSiteMetricsCardContainer>
-              ) : null}
-
+              )}
               <SelectedSiteMetricsCardContainer>
                 <StyledSvgContainer>
                   <img src={coralReefSvg} alt="coral reef" />
@@ -279,20 +294,42 @@ export const SelectedSiteMetrics = ({
                   <StyledReefContainer>
                     <StyledReefRow>
                       <StyledReefItemBold>Reef Zone</StyledReefItemBold>
-                      <StyledReefItem>{selectedSampleEvent.reef_zone}</StyledReefItem>
+                      <StyledReefItem>{reefZone}</StyledReefItem>
                     </StyledReefRow>
                     <StyledReefRow>
                       <StyledReefItemBold>Reef Type</StyledReefItemBold>
-                      <StyledReefItem>{selectedSampleEvent.reef_type}</StyledReefItem>
+                      <StyledReefItem>{reefType}</StyledReefItem>
                     </StyledReefRow>
                     <StyledReefRow>
                       <StyledReefItemBold>Reef Exposure</StyledReefItemBold>
-                      <StyledReefItem>{selectedSampleEvent.reef_exposure}</StyledReefItem>
+                      <StyledReefItem>{reefExposure}</StyledReefItem>
                     </StyledReefRow>
                   </StyledReefContainer>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
-              {siteNotes ? (
+              {(dataPolicyBeltfish || dataPolicyBenthiclit || dataPolicyBleachingqc) && (
+                <SelectedSiteMetricsCardContainer>
+                  <BiggerIconDataSharing />
+                  <SelectedSiteContentContainer>
+                    <StyledHeader>Data Sharing</StyledHeader>
+                    <StyledReefContainer>
+                      <StyledReefRow>
+                        <StyledReefItemBold>Fish Belt</StyledReefItemBold>
+                        <StyledReefItem>{dataPolicyBeltfish}</StyledReefItem>
+                      </StyledReefRow>
+                      <StyledReefRow>
+                        <StyledReefItemBold>Benthic</StyledReefItemBold>
+                        <StyledReefItem>{dataPolicyBenthiclit}</StyledReefItem>
+                      </StyledReefRow>
+                      <StyledReefRow>
+                        <StyledReefItemBold>Bleaching</StyledReefItemBold>
+                        <StyledReefItem>{dataPolicyBleachingqc}</StyledReefItem>
+                      </StyledReefRow>
+                    </StyledReefContainer>
+                  </SelectedSiteContentContainer>
+                </SelectedSiteMetricsCardContainer>
+              )}
+              {siteNotes && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconText />
                   <SelectedSiteContentContainerWiderOnMobile>
@@ -303,7 +340,7 @@ export const SelectedSiteMetrics = ({
                     </span>
                   </SelectedSiteContentContainerWiderOnMobile>
                 </SelectedSiteMetricsCardContainer>
-              ) : null}
+              )}
             </>
           )}
         </TabContent>
