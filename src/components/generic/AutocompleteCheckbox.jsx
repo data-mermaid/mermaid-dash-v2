@@ -62,7 +62,6 @@ const AutocompleteCheckbox = ({
             keys: [(item) => item],
           })
 
-          console.log('filteredItems ', filteredItems)
           if (filteredItems.length) {
             acc[group] = filteredItems
           }
