@@ -14,6 +14,7 @@ import {
   BiggerIconDataSharing,
   BiggerIconGlobe,
   BiggerIconPersonCircle,
+  BiggerIconQuoteOpen,
   BiggerIconText,
   BiggerIconTextBoxMultiple,
   BiggerIconUser,
@@ -30,7 +31,13 @@ import {
   TabButtonContainer,
   TabContent,
 } from './SelectedSiteMetrics.styles'
-import { ButtonPrimary, ButtonSecondary, ButtonThatLooksLikeLink, CloseButton } from '../generic'
+import {
+  ButtonPrimary,
+  ButtonSecondary,
+  ButtonThatLooksLikeLink,
+  ButtonThatLooksLikeLinkUnderlined,
+  CloseButton,
+} from '../generic'
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -58,6 +65,7 @@ export const SelectedSiteMetrics = ({
     userIsMemberOfProject,
     updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
+  console.log('selectedSampleEvent ', selectedSampleEvent)
   const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
   const {
     sample_event_id: sampleEventId,
@@ -76,17 +84,35 @@ export const SelectedSiteMetrics = ({
     data_policy_beltfish: dataPolicyBeltfish,
     data_policy_benthiclit: dataPolicyBenthiclit,
     data_policy_bleachingqc: dataPolicyBleachingqc,
+    suggested_citation: suggestedCitation,
   } = selectedSampleEvent
-  const initialAreSurveyNotesTruncated = siteNotes.length > 250
-  const [areSurveyNotesTruncated, setAreSurveyNotesTruncated] = useState(
-    initialAreSurveyNotesTruncated,
+
+  const isInitialSiteNotesTruncated = siteNotes?.length > 250
+  const [isSiteNotesTruncated, setIsSiteNotesTruncated] = useState(isInitialSiteNotesTruncated)
+
+  const isInitialSuggestedCitationTruncated = suggestedCitation?.length > 250
+  const [isSuggestedCitationTruncated, setIsSuggestedCitationTruncated] = useState(
+    isInitialSuggestedCitationTruncated,
   )
-  const siteNotesTruncated = <>{siteNotes.slice(0, 249)}... </>
-  const toggleAreSurveyNotesTruncatedButton = initialAreSurveyNotesTruncated ? (
-    <ButtonThatLooksLikeLink onClick={() => setAreSurveyNotesTruncated(!areSurveyNotesTruncated)}>
-      {areSurveyNotesTruncated ? 'read more' : 'read less'}
-    </ButtonThatLooksLikeLink>
+
+  const truncatedSiteNotes = <>{siteNotes.slice(0, 249)}... </>
+  const toggleSiteNotesTruncatedButton = isInitialSiteNotesTruncated ? (
+    <ButtonThatLooksLikeLinkUnderlined
+      onClick={() => setIsSiteNotesTruncated(!isSiteNotesTruncated)}
+    >
+      {isSiteNotesTruncated ? 'read more' : 'read less'}
+    </ButtonThatLooksLikeLinkUnderlined>
   ) : null
+
+  const truncatedSuggestedCitation = <>{suggestedCitation.slice(0, 249)}... </>
+  const toggleSuggestedCitationTruncatedButton = isInitialSuggestedCitationTruncated && (
+    <ButtonThatLooksLikeLinkUnderlined
+      onClick={() => setIsSuggestedCitationTruncated(!isSuggestedCitationTruncated)}
+    >
+      {isSuggestedCitationTruncated ? 'read more' : 'read less'}
+    </ButtonThatLooksLikeLinkUnderlined>
+  )
+
   const { isDesktopWidth } = useResponsive()
   const sampleEventAdmins = projectAdmins
     .filter((admin) => admin.name !== ' ')
@@ -335,8 +361,22 @@ export const SelectedSiteMetrics = ({
                   <SelectedSiteContentContainerWiderOnMobile>
                     <StyledHeader>Notes</StyledHeader>
                     <span>
-                      {areSurveyNotesTruncated ? siteNotesTruncated : siteNotes}{' '}
-                      {toggleAreSurveyNotesTruncatedButton}
+                      {isSiteNotesTruncated ? truncatedSiteNotes : siteNotes}{' '}
+                      {toggleSiteNotesTruncatedButton}
+                    </span>
+                  </SelectedSiteContentContainerWiderOnMobile>
+                </SelectedSiteMetricsCardContainer>
+              )}
+              {suggestedCitation && (
+                <SelectedSiteMetricsCardContainer>
+                  <BiggerIconQuoteOpen />
+                  <SelectedSiteContentContainerWiderOnMobile>
+                    <StyledHeader>Suggested Citation</StyledHeader>
+                    <span>
+                      {isSuggestedCitationTruncated
+                        ? truncatedSuggestedCitation
+                        : suggestedCitation}{' '}
+                      {toggleSuggestedCitationTruncatedButton}
                     </span>
                   </SelectedSiteContentContainerWiderOnMobile>
                 </SelectedSiteMetricsCardContainer>

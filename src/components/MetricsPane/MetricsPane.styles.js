@@ -23,6 +23,7 @@ export const StyledMetricsWrapper = styled.div`
   background-color: ${(props) =>
     props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
   height: 100%;
+  overflow-y: scroll;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;

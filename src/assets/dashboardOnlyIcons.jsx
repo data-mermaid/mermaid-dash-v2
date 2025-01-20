@@ -13,6 +13,7 @@ import text from '@iconify-icons/mdi/text'
 import textBoxMultiple from '@iconify-icons/mdi/text-box-multiple'
 import userCircle from '@iconify-icons/mdi/user-circle'
 import minus from '@iconify-icons/mdi/minus'
+import quoteOpen from '@iconify-icons/mdi/format-quote-open'
 
 export const HamburgerMenu = (props) => <InlineIcon icon={hamburgerMenu} {...props} />
 export const LoginIcon = (props) => <InlineIcon icon={login} {...props} />
@@ -27,5 +28,6 @@ export const IconText = (props) => <InlineIcon icon={text} {...props} />
 export const IconTextBoxMultiple = (props) => <InlineIcon icon={textBoxMultiple} {...props} />
 export const IconUserCircle = (props) => <InlineIcon icon={userCircle} {...props} />
 export const IconMinus = (props) => <InlineIcon icon={minus} {...props} />
+export const IconQuoteOpen = (props) => <InlineIcon icon={quoteOpen} {...props} />
 export const ARROW_RIGHT = String.fromCharCode(10095)
 export const ARROW_LEFT = String.fromCharCode(10094)

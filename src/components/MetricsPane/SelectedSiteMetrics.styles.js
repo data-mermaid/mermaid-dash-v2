@@ -7,6 +7,7 @@ import {
   IconText,
   IconMapOutline,
   IconTable,
+  IconQuoteOpen,
 } from '../../assets/dashboardOnlyIcons'
 import { IconClose, IconGlobe, IconSharing, IconUser } from '../../assets/icons'
 import { Row } from '../generic/positioning'
@@ -70,6 +71,10 @@ export const BiggerIconDataSharing = styled(IconSharing)`
 `
 
 export const BiggerIconText = styled(IconText)`
+  ${biggerIconsWithMargin}
+`
+
+export const BiggerIconQuoteOpen = styled(IconQuoteOpen)`
   ${biggerIconsWithMargin}
 `
 
