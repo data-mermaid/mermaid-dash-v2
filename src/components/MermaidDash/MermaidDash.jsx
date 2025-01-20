@@ -39,6 +39,7 @@ import MaplibreMap from '../MaplibreMap'
 import { Tooltip } from '../generic/Tooltip'
 import { Modal } from '../generic'
 import LoadingIndicator from './components/LoadingIndicator'
+import useLocalStorage from '../../hooks/useLocalStorage'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -52,7 +53,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     getURLParams,
     setEnableFollowScreen,
   } = useContext(FilterProjectsContext)
-  const [showFilterPane, setShowFilterPane] = useState(true)
+  const [showFilterPane, setShowFilterPane] = useLocalStorage('showFilterPane', true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
   const [view, setView] = useState('mapView')
