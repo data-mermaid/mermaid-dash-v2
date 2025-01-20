@@ -31,21 +31,47 @@ const AutocompleteCheckbox = ({
   onChange,
   onDelete,
 }) => {
+  const options = [...displayOptions, ...remainingOptions]
+
   return (
     <Autocomplete
       multiple
-      options={[...displayOptions, ...remainingOptions]}
+      options={options}
       value={selectedValues}
       onChange={(e, newValue) => onChange(newValue)}
       onOpen={onOpen}
       groupBy={autocompleteGroupBy}
       disableCloseOnSelect
       getOptionLabel={(option) => option}
-      filterOptions={(options, { inputValue }) =>
-        matchSorter(options, inputValue, {
-          keys: [(item) => item],
-        })
-      }
+      filterOptions={(options, { inputValue }) => {
+        // Group options by category
+        const groupedOptions = options.reduce((acc, option) => {
+          const group = autocompleteGroupBy(option)
+          if (!acc[group]) {
+            acc[group] = []
+          }
+
+          acc[group].push(option)
+
+          return acc
+        }, {})
+
+        // Apply matchSorter filtering within each group
+        const filteredGroups = Object.entries(groupedOptions).reduce((acc, [group, items]) => {
+          const filteredItems = matchSorter(items, inputValue, {
+            keys: [(item) => item],
+          })
+
+          if (filteredItems.length) {
+            acc[group] = filteredItems
+          }
+
+          return acc
+        }, {})
+
+        // Flatten the grouped options while maintaining their order
+        return Object.values(filteredGroups).flat()
+      }}
       renderOption={(props, option, { selected }) => {
         const { key, ...optionProps } = props
 
