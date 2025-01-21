@@ -208,8 +208,16 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
+
+    const normalizeLongitudeWithinRange = (lon) => {
+      return (lon + 360) % 360
+    }
+
     const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.longitude, record.latitude]),
+      project.records.map((record) => {
+        const newLon = normalizeLongitudeWithinRange(record.longitude)
+        return [newLon, record.latitude]
+      }),
     )
 
     if (coordinates.length === 0) {
@@ -217,7 +225,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     }
 
     const bounds = bbox(points(coordinates))
-    map.fitBounds(bounds)
+    map.fitBounds(bounds, { maxZoom: 17, padding: 20 })
   }
 
   const handleFollowScreen = (e) => {

@@ -88,7 +88,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     }
 
     const bounds = bbox(points(coordinates))
-    map.fitBounds(bounds)
+    map.fitBounds(bounds, { maxZoom: 17, padding: 20 })
   }
 
   return (
