@@ -71,8 +71,16 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
+
+    const normalizeLongitudeWithinRange = (lon) => {
+      return (lon + 360) % 360
+    }
+
     const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.longitude, record.latitude]),
+      project.records.map((record) => {
+        const newLon = normalizeLongitudeWithinRange(record.longitude)
+        return [newLon, record.latitude]
+      }),
     )
 
     if (coordinates.length === 0) {
