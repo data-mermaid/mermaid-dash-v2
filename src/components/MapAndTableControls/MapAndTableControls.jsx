@@ -71,15 +71,25 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     if (!map || !displayedProjects || displayedProjects.length === 0) {
       return
     }
+
+    // Normalize longitude to stay within the range of 0 to 360 degrees
+    const normalizeLongitudeWithinRange = (lon) => {
+      return (lon + 360) % 360
+    }
+
+    // Prevent zooming to the whole world if site locations near international date line
     const coordinates = displayedProjects.flatMap((project) =>
-      project.records.map((record) => [record.longitude, record.latitude]),
+      project.records.map((record) => {
+        let newLon = normalizeLongitudeWithinRange(record.longitude)
+        return [newLon, record.latitude]
+      }),
     )
 
     if (coordinates.length === 0) {
       return
     }
 
-    const bounds = bbox(points(coordinates))
+    let bounds = bbox(points(coordinates))
     map.fitBounds(bounds)
   }
 
