@@ -78,7 +78,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
 
     const coordinates = displayedProjects.flatMap((project) =>
       project.records.map((record) => {
-        let newLon = normalizeLongitudeWithinRange(record.longitude)
+        const newLon = normalizeLongitudeWithinRange(record.longitude)
         return [newLon, record.latitude]
       }),
     )
@@ -87,7 +87,7 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
       return
     }
 
-    let bounds = bbox(points(coordinates))
+    const bounds = bbox(points(coordinates))
     map.fitBounds(bounds)
   }
 
