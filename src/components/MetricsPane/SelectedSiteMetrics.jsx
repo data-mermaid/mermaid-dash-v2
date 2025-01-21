@@ -65,7 +65,6 @@ export const SelectedSiteMetrics = ({
     userIsMemberOfProject,
     updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
-  console.log('selectedSampleEvent ', selectedSampleEvent)
   const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
   const {
     sample_event_id: sampleEventId,
