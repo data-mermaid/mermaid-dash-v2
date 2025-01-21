@@ -275,18 +275,6 @@ const MetricsPane = ({
           </MobileExpandMetricsPaneButton>
         ) : null}
         {isMobileWidth || showMetricsPane ? metricsContent : null}
-        {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
-          <FollowToggleContainer>
-            <Tooltip
-              text={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
-              styleProps={{ tooltipTextWith: '40ch' }}
-            >
-              <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
-                <img src={zoomToMap} alt="Update metrics based on map view" />
-              </FollowButton>
-            </Tooltip>
-          </FollowToggleContainer>
-        ) : null}
         {isMobileWidth ? (
           <LoadingIndicator
             currentProgress={projectData?.results?.length || 0}
@@ -297,6 +285,18 @@ const MetricsPane = ({
           />
         ) : null}
       </StyledMetricsWrapper>
+      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+        <FollowToggleContainer>
+          <Tooltip
+            text={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
+            styleProps={{ tooltipTextWith: '40ch' }}
+          >
+            <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
+              <img src={zoomToMap} alt="Update metrics based on map view" />
+            </FollowButton>
+          </Tooltip>
+        </FollowToggleContainer>
+      ) : null}
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton
           onClick={handleShowMetricsPane}
