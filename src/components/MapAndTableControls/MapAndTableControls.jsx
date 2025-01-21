@@ -72,12 +72,10 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
       return
     }
 
-    // Normalize longitude to stay within the range of 0 to 360 degrees
     const normalizeLongitudeWithinRange = (lon) => {
       return (lon + 360) % 360
     }
 
-    // Prevent zooming to the whole world if site locations near international date line
     const coordinates = displayedProjects.flatMap((project) =>
       project.records.map((record) => {
         let newLon = normalizeLongitudeWithinRange(record.longitude)
