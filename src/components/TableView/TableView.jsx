@@ -37,6 +37,9 @@ const StyledTableContainer = styled.div`
 `
 
 const StyledTr = styled(Tr)`
+  & > td:first-of-type {
+    overflow-wrap: break-word;
+  }
   ${({ $isSelected }) =>
     $isSelected
       ? css`
