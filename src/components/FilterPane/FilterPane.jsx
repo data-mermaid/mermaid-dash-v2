@@ -34,10 +34,12 @@ import {
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
   StyledCountryHeader,
+  StyledLoginToViewContainer,
 } from './FilterPane.styles'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
+import { ButtonThatLooksLikeLinkUnderlined } from '../generic'
 
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
@@ -46,7 +48,7 @@ const FilterPane = ({ mermaidUserData }) => {
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
-  const { isAuthenticated } = useAuth0()
+  const { isAuthenticated, loginWithRedirect } = useAuth0()
   const {
     checkedProjects,
     countriesSelectOnOpen,
@@ -117,6 +119,10 @@ const FilterPane = ({ mermaidUserData }) => {
     },
     [navigate, location.pathname],
   )
+
+  const handleLogin = () => {
+    loginWithRedirect({ appState: { returnTo: location.search } })
+  }
 
   const handleStartDateChange = (newStartDate) => {
     const isStartDateValid = newStartDate?.isValid()
@@ -390,27 +396,34 @@ const FilterPane = ({ mermaidUserData }) => {
               />
             </StyledDateInputContainer>
           </StyledDateRangeContainer>
+          <StyledHeader>Your Data</StyledHeader>
           {isAuthenticated ? (
-            <>
-              <StyledHeader>Your Data</StyledHeader>
-              <StyledCategoryContainer>
-                <StyledClickableArea
-                  onClick={() => handleYourDataFilter({ target: { checked: !showYourData } })}
-                >
-                  <input
-                    type="checkbox"
-                    name="yourData"
-                    id="your-data"
-                    onChange={handleYourDataFilter}
-                    checked={showYourData}
-                  />
-                  <StyledLabel htmlFor="your-data" onClick={(e) => e.stopPropagation()}>
-                    {filterPane.yourData}
-                  </StyledLabel>
-                </StyledClickableArea>
-              </StyledCategoryContainer>
-            </>
-          ) : null}
+            <StyledCategoryContainer>
+              <StyledClickableArea
+                onClick={() => handleYourDataFilter({ target: { checked: !showYourData } })}
+              >
+                <input
+                  type="checkbox"
+                  name="yourData"
+                  id="your-data"
+                  onChange={handleYourDataFilter}
+                  checked={showYourData}
+                />
+                <StyledLabel htmlFor="your-data" onClick={(e) => e.stopPropagation()}>
+                  {filterPane.yourData}
+                </StyledLabel>
+              </StyledClickableArea>
+            </StyledCategoryContainer>
+          ) : (
+            <StyledLoginToViewContainer>
+              <div>
+                <ButtonThatLooksLikeLinkUnderlined onClick={handleLogin}>
+                  Login
+                </ButtonThatLooksLikeLinkUnderlined>{' '}
+                to view your project only
+              </div>
+            </StyledLoginToViewContainer>
+          )}
           <StyledHeader>Methods / Data Sharing</StyledHeader>
           {methodsList}
           <StyledHeader>No Data</StyledHeader>

@@ -136,6 +136,16 @@ export const StyledCategoryContainer = styled.div`
   margin-right: 1rem;
 `
 
+export const StyledLoginToViewContainer = styled(StyledCategoryContainer)`
+  display: flex;
+  align-items: center;
+  height: 35.5px;
+  padding-left: 1rem;
+  ${hoverState(css`
+    background-color: ${theme.color.tableRowHover};
+  `)}
+`
+
 export const StyledEmptyListItem = styled.div`
   padding: 0.5rem 1rem;
 `
