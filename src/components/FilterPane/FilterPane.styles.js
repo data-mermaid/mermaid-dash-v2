@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import theme from '../../styles/theme'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import { css } from 'styled-components'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
 export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
@@ -170,4 +171,9 @@ export const ExpandableFilterRowContainer = styled.div`
 export const StyledLi = styled.li`
   display: flex;
   flex-direction: column;
+`
+
+export const SmallerIconUserCircle = styled(IconUserCircle)`
+  width: ${theme.typography.defaultIconSize};
+  height: ${theme.typography.defaultIconSize};
 `

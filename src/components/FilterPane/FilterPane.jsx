@@ -11,7 +11,7 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { filterPane, autocompleteGroupNames } from '../../constants/language'
 import { IconPlus } from '../../assets/icons'
-import { IconUserCircle, IconMinus } from '../../assets/dashboardOnlyIcons'
+import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
 import {
   ExpandableFilterRowContainer,
@@ -35,11 +35,13 @@ import {
   StyledDateInputContainer,
   StyledCountryHeader,
   StyledLoginToViewContainer,
+  SmallerIconUserCircle,
 } from './FilterPane.styles'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
-import { ButtonThatLooksLikeLinkUnderlined } from '../generic'
+import { ButtonThatLooksLikeLinkUnderlined, IconButton } from '../generic'
+import { MuiTooltip } from '../generic/MuiTooltip'
 
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
@@ -309,7 +311,11 @@ const FilterPane = ({ mermaidUserData }) => {
                   >
                     {project.project_name}{' '}
                     {userIsMemberOfProject(project.project_id, mermaidUserData) && (
-                      <IconUserCircle />
+                      <MuiTooltip title="You are part of this project" placement="top">
+                        <IconButton>
+                          <SmallerIconUserCircle />
+                        </IconButton>
+                      </MuiTooltip>
                     )}
                   </StyledLabel>
                 </StyledClickableArea>
