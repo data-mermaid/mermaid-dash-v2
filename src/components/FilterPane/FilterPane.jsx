@@ -10,7 +10,7 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import theme from '../../styles/theme'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { filterPane, autocompleteGroupNames } from '../../constants/language'
+import { filterPane, autocompleteGroupNames, tooltipText } from '../../constants/language'
 import { IconPlus } from '../../assets/icons'
 import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
@@ -313,7 +313,7 @@ const FilterPane = ({ mermaidUserData }) => {
                     {project.project_name}{' '}
                     {userIsMemberOfProject(project.project_id, mermaidUserData) && (
                       <MuiTooltip
-                        title="You are part of this project"
+                        title={tooltipText.yourProject}
                         placement="top"
                         bgColor={theme.color.primaryColor}
                         tooltipTextColor={theme.color.white}
