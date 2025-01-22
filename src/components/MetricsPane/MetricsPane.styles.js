@@ -241,8 +241,8 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
 
 export const FollowToggleContainer = styled.div`
   position: absolute;
-  top: 1.3rem;
-  left: -9rem;
+  top: 6.2rem;
+  right: 40rem;
   height: 4rem;
   z-index: 400;
   display: flex;
