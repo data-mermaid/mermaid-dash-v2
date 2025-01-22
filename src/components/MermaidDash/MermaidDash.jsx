@@ -36,7 +36,7 @@ import FilterPane from '../FilterPane/FilterPane'
 import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
-import { Tooltip } from '../generic/Tooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 import { Modal } from '../generic'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
@@ -277,12 +277,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          <Tooltip
-            text={showFilterPane ? tooltipText.hideFilters : tooltipText.showFilters}
-            styleProps={{ leftPlacement: true }}
-          >
+          <MuiTooltip title={showFilterPane ? tooltipText.hideFilters : tooltipText.showFilters}>
             <StyledChevronSpan>{showFilterPane ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
-          </Tooltip>
+          </MuiTooltip>
         </DesktopToggleFilterPaneButton>
       </StyledFilterWrapper>
     )

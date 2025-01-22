@@ -38,7 +38,7 @@ import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { ButtonSecondary } from '../generic'
-import { Tooltip } from '../generic/Tooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -287,14 +287,13 @@ const MetricsPane = ({
       </StyledMetricsWrapper>
       {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
         <FollowToggleContainer>
-          <Tooltip
-            text={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
-            styleProps={{ tooltipTextWith: '40ch' }}
+          <MuiTooltip
+            title={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
           >
             <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
               <img src={zoomToMap} alt="Update metrics based on map view" />
             </FollowButton>
-          </Tooltip>
+          </MuiTooltip>
         </FollowToggleContainer>
       ) : null}
       {isDesktopWidth ? (
@@ -302,12 +301,9 @@ const MetricsPane = ({
           onClick={handleShowMetricsPane}
           $showMetricsPane={showMetricsPane}
         >
-          <Tooltip
-            text={showMetricsPane ? tooltipText.hideMetrics : tooltipText.showMetrics}
-            styleProps={{ rightPlacement: true }}
-          >
+          <MuiTooltip title={showMetricsPane ? tooltipText.hideMetrics : tooltipText.showMetrics}>
             <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
-          </Tooltip>
+          </MuiTooltip>
         </DesktopToggleMetricsPaneButton>
       ) : null}
     </>

@@ -12,7 +12,7 @@ import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 
 import { ButtonSecondary } from '../generic'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { Tooltip } from '../generic/Tooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 import { tooltipText } from '../../constants/language'
 import { BiggerIconMapOutline, BiggerIconTable } from '../MetricsPane/SelectedSiteMetrics.styles'
 import theme from '../../styles/theme'
@@ -95,25 +95,24 @@ const MapAndTableControls = ({ map = undefined, view, setView }) => {
     <ControlContainer>
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
-          <Tooltip text={tooltipText.mapView}>
+          <MuiTooltip title={tooltipText.mapView}>
             <StyledDataViewButton isActive={view === 'mapView'} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
-          </Tooltip>
-          <Tooltip text={tooltipText.tableView}>
+          </MuiTooltip>
+          <MuiTooltip title={tooltipText.tableView}>
             <StyledDataViewButton isActive={view === 'tableView'} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
-          </Tooltip>
+          </MuiTooltip>
           {view === 'mapView' ? (
-            <Tooltip
-              text={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
-              styleProps={{ tooltipMarginLeft: '1rem', tooltipTextWith: '20ch' }}
+            <MuiTooltip
+              title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
             >
               <StyledViewToggleSecondaryButton onClick={handleZoomToFilteredData}>
                 <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
               </StyledViewToggleSecondaryButton>
-            </Tooltip>
+            </MuiTooltip>
           ) : (
             <ProjectTableDownload />
           )}
