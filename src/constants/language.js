@@ -49,6 +49,7 @@ export const tooltipText = {
   zoomToData: 'Zoom to filtered data',
   showAllData: 'Show all data',
   downloadData: 'Download data',
+  yourProject: 'You are part of this project',
 }
 
 export const toastMessageText = {
