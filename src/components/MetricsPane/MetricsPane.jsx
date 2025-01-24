@@ -34,13 +34,14 @@ import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
 import { AggregateHardCoralCover } from './charts/AggregateHardCoralCover'
+import { TimeSeriesBenthicCover } from './charts/TimeSeriesBenthicCover'
 import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
 import { TimeSeriesFishBiomass } from './charts/TimeSeriesFishBiomass'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
+import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
-import { TimeSeriesBenthicCover } from './charts/TimeSeriesBenthicCover'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -222,7 +223,7 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="habitat-complexity"
           aggregatePanelContent={<AggregateHabitatComplexity />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
         />
       </ChartsWrapper>
     </DisplayedProjectsMetricsWrapper>

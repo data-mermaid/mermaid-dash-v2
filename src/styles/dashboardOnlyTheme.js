@@ -35,6 +35,14 @@ const plotlyChart = {
       '#9ce5fa',
       '#4e4e4e',
     ],
+    habitatComplexityColorMap: {
+      1: '#eff7ff',
+      2: '#cbdaea',
+      3: '#a8bed5',
+      4: '#85a3c1',
+      5: '#6288ad',
+      6: '#3c6e9a',
+    },
   },
 
   layout: {
