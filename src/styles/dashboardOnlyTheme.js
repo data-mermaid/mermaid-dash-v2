@@ -22,6 +22,19 @@ const plotlyChart = {
       'Open Access': '#77b4c5',
       Restrictions: '#70aae6',
     },
+    benthicCoverColor: [
+      '#498fc9',
+      '#f2f3f3',
+      '#fbd7d5',
+      '#f5f6af',
+      '#870e00',
+      '#4d4d4d',
+      '#c1b180',
+      '#b2b000',
+      '#d9eea8',
+      '#9ce5fa',
+      '#4e4e4e',
+    ],
   },
 
   layout: {
@@ -36,7 +49,7 @@ const plotlyChart = {
       t: 50,
     },
 
-    showLegend: false,
+    showlegend: false,
     xaxis: {
       fixedrange: true,
       linecolor: 'black',

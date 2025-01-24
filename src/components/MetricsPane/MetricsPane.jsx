@@ -40,6 +40,7 @@ import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
+import { TimeSeriesBenthicCover } from './charts/TimeSeriesBenthicCover'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -205,7 +206,7 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="hard-coral-cover"
           aggregatePanelContent={<AggregateHardCoralCover />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesBenthicCover />}
         />
         <MetricsPaneChartTabs
           id="fish-biomass"
