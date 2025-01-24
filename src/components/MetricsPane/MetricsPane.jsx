@@ -42,6 +42,7 @@ import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
+import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -218,7 +219,7 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="Bleaching"
           aggregatePanelContent={<AggregateBleaching />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesBleaching />}
         />
         <MetricsPaneChartTabs
           id="habitat-complexity"

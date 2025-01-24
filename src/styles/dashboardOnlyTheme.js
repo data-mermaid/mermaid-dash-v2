@@ -43,6 +43,15 @@ const plotlyChart = {
       5: '#6288ad',
       6: '#3c6e9a',
     },
+    bleachingColor: {
+      Normal: '#3c6e9a',
+      Pale: '#6288ad',
+      '0-20%': '#85a3c1',
+      '20-50%': '#a8bed5',
+      '50-80%': '#cbdaea',
+      '80-100%': '#eff7ff',
+      Dead: '#b4b4b4',
+    },
   },
 
   layout: {
