@@ -35,6 +35,7 @@ import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
 import { AggregateHardCoralCover } from './charts/AggregateHardCoralCover'
 import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
+import { TimeSeriesFishBiomass } from './charts/TimeSeriesFishBiomass'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { ButtonSecondary } from '../generic'
@@ -209,7 +210,7 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="fish-biomass"
           aggregatePanelContent={<AggregateFishBiomass />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesFishBiomass />}
         />
 
         <MetricsPaneChartTabs

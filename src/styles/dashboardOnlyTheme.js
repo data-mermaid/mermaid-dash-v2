@@ -17,6 +17,13 @@ const plotlyChart = {
     },
   },
 
+  timeseriesCharts: {
+    managementRulesColorMap: {
+      'Open Access': '#77b4c5',
+      Restrictions: '#70aae6',
+    },
+  },
+
   layout: {
     bargap: 0.1,
     dragmode: false,
