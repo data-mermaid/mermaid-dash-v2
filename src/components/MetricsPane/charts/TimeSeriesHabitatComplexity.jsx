@@ -11,59 +11,71 @@ const chartTheme = dashboardOnlyTheme.plotlyChart
 export const TimeSeriesHabitatComplexity = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const habitatComplexityAvgScoreAndYear = filteredSurveys
-    .filter((item) => item.protocols?.habitatcomplexity?.score_avg_avg !== undefined)
-    .map((item) => ({
-      sampleDate: item.sample_date,
-      roundAvgHabitatComplexityScore: Math.round(item.protocols.habitatcomplexity.score_avg_avg),
+  const surveyedHabitatComplexityRecords = filteredSurveys
+    .filter(
+      (record) =>
+        record.protocols?.habitatcomplexity?.score_avg_avg !== undefined &&
+        record.protocols?.habitatcomplexity?.score_avg_avg !== null,
+    )
+    .map((record) => ({
+      sampleDate: record.sample_date,
+      roundComplexityScore: Math.round(record.protocols.habitatcomplexity.score_avg_avg),
     }))
 
-  const habitatComplexityGroupByYearScore = habitatComplexityAvgScoreAndYear.reduce(
-    (acc, { sampleDate, roundAvgHabitatComplexityScore }) => {
-      const year =
-        new Date(sampleDate).getFullYear() < 1900 ? 2024 : new Date(sampleDate).getFullYear()
-      const key = `${year}-${roundAvgHabitatComplexityScore}`
+  const groupedComplexityCountByYearScore = surveyedHabitatComplexityRecords.reduce(
+    (accumulator, record) => {
+      const { sampleDate, roundComplexityScore } = record
+      const year = new Date(sampleDate).getFullYear()
+      const key = `${year}-${roundComplexityScore}`
 
-      acc[key] = acc[key] || { year, roundAvgHabitatComplexityScore, count: 0 }
-      acc[key].count += 1
-      return acc
+      if (!accumulator[key]) {
+        accumulator[key] = { year, roundComplexityScore, count: 0 }
+      }
+
+      accumulator[key].count += 1
+      return accumulator
     },
     {},
   )
 
-  const habitatComplexityScoreCountGroupByYear = Object.values(
-    habitatComplexityGroupByYearScore,
-  ).reduce((acc, { year, roundAvgHabitatComplexityScore, count }) => {
-    acc[year] = acc[year] || { year, total: 0, complexityCounts: {} }
-    acc[year].total += count
-    acc[year].complexityCounts[roundAvgHabitatComplexityScore] = count
-    return acc
-  }, {})
+  const complexityScoreCountByYear = Object.values(groupedComplexityCountByYearScore).reduce(
+    (accumulator, { year, roundComplexityScore, count }) => {
+      if (!accumulator[year]) {
+        accumulator[year] = { year, total: 0, complexityScoreDistribution: {} }
+      }
 
-  const chartData = Object.values(habitatComplexityScoreCountGroupByYear).flatMap(
-    ({ year, total, complexityCounts }) =>
-      Object.entries(complexityCounts).map(([roundAvgHabitatComplexityScore, count]) => ({
+      accumulator[year].total += count
+      accumulator[year].complexityScoreDistribution[roundComplexityScore] = count
+      return accumulator
+    },
+    {},
+  )
+
+  const complexityScoreDistributions = Object.values(complexityScoreCountByYear).flatMap(
+    ({ year, total, complexityScoreDistribution }) =>
+      Object.entries(complexityScoreDistribution).map(([roundComplexityScore, count]) => ({
         year,
-        roundAvgHabitatComplexityScore,
+        roundComplexityScore,
         percentage: (count / total) * 100,
       })),
   )
 
-  const uniqueComplexities = [
+  const uniqueComplexityScores = [
     ...new Set(
-      chartData.map(({ roundAvgHabitatComplexityScore }) => roundAvgHabitatComplexityScore),
+      complexityScoreDistributions.map((distribution) => distribution.roundComplexityScore),
     ),
   ]
-  const plotlyDataConfiguration = uniqueComplexities.map((complexityScore) => ({
-    x: chartData
-      .filter((d) => d.roundAvgHabitatComplexityScore === complexityScore)
-      .map((d) => d.year),
-    y: chartData
-      .filter((d) => d.roundAvgHabitatComplexityScore === complexityScore)
-      .map((d) => d.percentage),
+
+  const plotlyDataConfiguration = uniqueComplexityScores.map((score) => ({
+    x: complexityScoreDistributions
+      .filter((distribution) => distribution.roundComplexityScore === score)
+      .map((distribution) => distribution.year),
+    y: complexityScoreDistributions
+      .filter((distribution) => distribution.roundComplexityScore === score)
+      .map((distribution) => distribution.percentage),
     type: 'bar',
-    name: `${complexityScore}`,
-    marker: { color: chartTheme.timeseriesCharts.habitatComplexityColorMap[complexityScore] },
+    name: score,
+    marker: { color: chartTheme.timeseriesCharts.habitatComplexityColorMap[score] },
   }))
 
   const plotlyLayoutConfiguration = {
@@ -87,7 +99,7 @@ export const TimeSeriesHabitatComplexity = () => {
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         <ChartSubtitle>
-          {habitatComplexityAvgScoreAndYear.length.toLocaleString()} Surveys
+          {surveyedHabitatComplexityRecords.length.toLocaleString()} Surveys
         </ChartSubtitle>
       </TitlesWrapper>
 

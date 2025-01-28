@@ -7,59 +7,70 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const bleachingColor = chartTheme.timeseriesCharts.bleachingColor
 
 export const TimeSeriesBleaching = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const bleachingColoniesGroupByYear = filteredSurveys.reduce((acc, event) => {
-    const { sample_date, protocols } = event
-    if (!protocols || !protocols.colonies_bleached) return acc
-
-    const year = new Date(sample_date).getFullYear()
-    const {
-      count_total_avg: countTotalAvg,
-      percent_100_avg: percent100,
-      percent_20_avg: percent20,
-      percent_50_avg: percent50,
-      percent_80_avg: percent80,
-      percent_dead_avg: percentDead,
-      percent_normal_avg: percentNormal,
-      percent_pale_avg: percentPale,
-      sample_unit_count: sampleUnitCount,
-    } = protocols.colonies_bleached
-
-    if (!countTotalAvg || !sampleUnitCount) return acc
-
-    const numColoniesTotal = countTotalAvg * sampleUnitCount
-
-    if (!acc[year]) {
-      acc[year] = {
-        year,
-        totalColoniesNormal: 0,
-        totalColoniesPale: 0,
-        totalColonies0to20: 0,
-        totalColonies20to50: 0,
-        totalColonies50to80: 0,
-        totalColonies80to100: 0,
-        totalColoniesDead: 0,
-        totalAllColonies: 0,
+  const groupedBleachingPercentageColonyCountByYear = filteredSurveys.reduce(
+    (accumulator, { sample_date, protocols }) => {
+      const coloniesBleached = protocols?.colonies_bleached
+      if (!coloniesBleached) {
+        return accumulator
       }
-    }
 
-    acc[year].totalColoniesNormal += (numColoniesTotal * (percentNormal || 0)) / 100
-    acc[year].totalColoniesPale += (numColoniesTotal * (percentPale || 0)) / 100
-    acc[year].totalColonies0to20 += (numColoniesTotal * (percent20 || 0)) / 100
-    acc[year].totalColonies20to50 += (numColoniesTotal * (percent50 || 0)) / 100
-    acc[year].totalColonies50to80 += (numColoniesTotal * (percent80 || 0)) / 100
-    acc[year].totalColonies80to100 += (numColoniesTotal * (percent100 || 0)) / 100
-    acc[year].totalColoniesDead += (numColoniesTotal * (percentDead || 0)) / 100
-    acc[year].totalAllColonies += numColoniesTotal
+      const year = new Date(sample_date).getFullYear()
+      const {
+        count_total_avg: countTotalAvg,
+        percent_100_avg: percent100,
+        percent_20_avg: percent20,
+        percent_50_avg: percent50,
+        percent_80_avg: percent80,
+        percent_dead_avg: percentDead,
+        percent_normal_avg: percentNormal,
+        percent_pale_avg: percentPale,
+        sample_unit_count: sampleUnitCount,
+      } = coloniesBleached
 
-    return acc
-  }, {})
+      if (!countTotalAvg || !sampleUnitCount) {
+        return accumulator
+      }
 
-  const bleachingColoniesWithPercentageGroupByYear = Object.values(
-    bleachingColoniesGroupByYear,
+      const numColoniesTotal = countTotalAvg * sampleUnitCount
+
+      if (!accumulator[year]) {
+        accumulator[year] = {
+          year,
+          totalColoniesNormal: 0,
+          totalColoniesPale: 0,
+          totalColonies0to20: 0,
+          totalColonies20to50: 0,
+          totalColonies50to80: 0,
+          totalColonies80to100: 0,
+          totalColoniesDead: 0,
+          totalAllColonies: 0,
+        }
+      }
+      const updateTotalColonies = (category, percentage) => {
+        accumulator[year][category] += (numColoniesTotal * (percentage || 0)) / 100
+      }
+
+      updateTotalColonies('totalColoniesNormal', percentNormal)
+      updateTotalColonies('totalColoniesPale', percentPale)
+      updateTotalColonies('totalColonies0to20', percent20)
+      updateTotalColonies('totalColonies20to50', percent50)
+      updateTotalColonies('totalColonies50to80', percent80)
+      updateTotalColonies('totalColonies80to100', percent100)
+      updateTotalColonies('totalColoniesDead', percentDead)
+      accumulator[year].totalAllColonies += numColoniesTotal
+
+      return accumulator
+    },
+    {},
+  )
+
+  const bleachingPercentageColonyDistributions = Object.values(
+    groupedBleachingPercentageColonyCountByYear,
   ).map((yearData) => ({
     ...yearData,
     percentColoniesNormal: (yearData.totalColoniesNormal / yearData.totalAllColonies) * 100,
@@ -71,58 +82,75 @@ export const TimeSeriesBleaching = () => {
     percentColoniesDead: (yearData.totalColoniesDead / yearData.totalAllColonies) * 100,
   }))
 
-  const sumOfTotalAllColonies = bleachingColoniesWithPercentageGroupByYear.reduce((acc, data) => {
-    acc += data.totalAllColonies
-    return acc
-  }, 0)
-  const years = bleachingColoniesWithPercentageGroupByYear.map((data) => data.year)
-  const bleachingColor = chartTheme.timeseriesCharts.bleachingColor
+  const years = bleachingPercentageColonyDistributions.map((distribution) => distribution.year)
+  const sumOfTotalAllColonies = bleachingPercentageColonyDistributions.reduce(
+    (sum, distribution) => {
+      sum += distribution.totalAllColonies
+      return sum
+    },
+    0,
+  )
+
   const plotlyDataConfiguration = [
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColoniesNormal),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColoniesNormal,
+      ),
       name: 'Normal',
       type: 'bar',
       marker: { color: bleachingColor.Normal },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColoniesPale),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColoniesPale,
+      ),
       name: 'Pale',
       type: 'bar',
       marker: { color: bleachingColor.Pale },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColonies0to20),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColonies0to20,
+      ),
       name: '0-20%',
       type: 'bar',
       marker: { color: bleachingColor['0-20%'] },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColonies20to50),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColonies20to50,
+      ),
       name: '20-50%',
       type: 'bar',
       marker: { color: bleachingColor['20-50%'] },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColonies50to80),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColonies50to80,
+      ),
       name: '50-80%',
       type: 'bar',
       marker: { color: bleachingColor['50-80%'] },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColonies80to100),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColonies80to100,
+      ),
       name: '80-100%',
       type: 'bar',
       marker: { color: bleachingColor['80-100%'] },
     },
     {
       x: years,
-      y: bleachingColoniesWithPercentageGroupByYear.map((data) => data.percentColoniesDead),
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColoniesDead,
+      ),
       name: 'Dead',
       type: 'bar',
       marker: { color: bleachingColor.Dead },

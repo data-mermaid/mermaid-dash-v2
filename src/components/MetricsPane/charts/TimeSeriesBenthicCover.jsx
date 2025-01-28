@@ -7,80 +7,78 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-// Data processing
-const categories = [
-  'Hard coral',
-  'Bare substrate',
-  'Crustose coralline algae',
-  'Rubble',
-  'Cyanobacteria',
-  'Seagrass',
-  'Sand',
-  'Macroalgae',
-  'Turf algae',
-  'Soft coral',
-  'Other invertebrates',
-]
+const categories = Object.keys(chartTheme.timeseriesCharts.benthicCoverColorMap)
 
 export const TimeSeriesBenthicCover = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const yearlyData = filteredSurveys.reduce((acc, event) => {
-    const year = new Date(event.sample_date).getFullYear()
-    const protocols = event.protocols || {}
-    const benthicCategories = {}
+  const groupedBenthicCategoryCountByYear = filteredSurveys.reduce(
+    (accumulator, { sample_date, protocols }) => {
+      const year = new Date(sample_date).getFullYear()
+      const recordProtocols = protocols || {}
+      const benthicCategories = {}
 
-    categories.forEach((category) => {
-      const values = Object.keys(protocols).map((protocol) => {
-        const categoryData = protocols[protocol]?.percent_cover_benthic_category_avg
-        return categoryData?.[category] ?? null
-      })
-
-      const validValues = values.filter((val) => val !== null)
-      benthicCategories[category] =
-        validValues.length > 0
-          ? validValues.reduce((sum, val) => sum + val, 0) / validValues.length
-          : null
-    })
-
-    if (!acc[year]) {
-      acc[year] = { year, ...Object.fromEntries(categories.map((cat) => [cat, 0])), count: 0 }
-    }
-
-    acc[year].count += 1
-    categories.forEach((category) => {
-      if (benthicCategories[category] !== null) {
-        acc[year][category] += benthicCategories[category]
-      }
-    })
-
-    return acc
-  }, {})
-
-  const processedData = Object.values(yearlyData).map((yearData) => {
-    let total = 0
-
-    categories.forEach((category) => {
-      yearData[category] /= yearData.count
-      total += yearData[category]
-    })
-
-    if (total > 0) {
       categories.forEach((category) => {
-        yearData[category] = (yearData[category] / total) * 100
+        const avgBenthicCoverValues = Object.keys(recordProtocols)
+          .map((protocol) => {
+            const categoryData = recordProtocols[protocol]?.percent_cover_benthic_category_avg
+            return categoryData?.[category] ?? null
+          })
+          .filter((val) => val !== null)
+
+        benthicCategories[category] =
+          avgBenthicCoverValues.length > 0
+            ? avgBenthicCoverValues.reduce((sum, val) => sum + val, 0) /
+              avgBenthicCoverValues.length
+            : null
       })
-    }
 
-    return yearData
-  })
+      if (!accumulator[year]) {
+        accumulator[year] = {
+          year,
+          ...Object.fromEntries(categories.map((category) => [category, 0])),
+          count: 0,
+        }
+      }
 
-  const plotlyDataConfiguration = categories.map((category, index) => ({
-    x: processedData.map((data) => data.year),
-    y: processedData.map((data) => data[category]),
+      accumulator[year].count += 1
+      categories.forEach((category) => {
+        if (benthicCategories[category] !== null) {
+          accumulator[year][category] += benthicCategories[category]
+        }
+      })
+
+      return accumulator
+    },
+    {},
+  )
+
+  const benthicPercentageCoverDistributions = Object.values(groupedBenthicCategoryCountByYear).map(
+    (yearData) => {
+      let total = 0
+
+      categories.forEach((category) => {
+        yearData[category] /= yearData.count
+        total += yearData[category]
+      })
+
+      if (total > 0) {
+        categories.forEach((category) => {
+          yearData[category] = (yearData[category] / total) * 100
+        })
+      }
+
+      return yearData
+    },
+  )
+
+  const plotlyDataConfiguration = categories.map((category) => ({
+    x: benthicPercentageCoverDistributions.map((distribution) => distribution.year),
+    y: benthicPercentageCoverDistributions.map((distribution) => distribution[category]),
     type: 'bar',
     name: category,
     marker: {
-      color: chartTheme.timeseriesCharts.benthicCoverColor[index],
+      color: chartTheme.timeseriesCharts.benthicCoverColorMap[category],
     },
   }))
 
@@ -99,6 +97,7 @@ export const TimeSeriesBenthicCover = () => {
       title: { ...chartTheme.layout.yaxis.title, text: 'Benthic % Cover' },
     },
   }
+
   return (
     <ChartWrapper>
       <TitlesWrapper>

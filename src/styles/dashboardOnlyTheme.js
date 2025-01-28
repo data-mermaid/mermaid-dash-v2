@@ -18,23 +18,23 @@ const plotlyChart = {
   },
 
   timeseriesCharts: {
-    managementRulesColorMap: {
+    managementRuleColorMap: {
       'Open Access': '#77b4c5',
       Restrictions: '#70aae6',
     },
-    benthicCoverColor: [
-      '#498fc9',
-      '#f2f3f3',
-      '#fbd7d5',
-      '#f5f6af',
-      '#870e00',
-      '#4d4d4d',
-      '#c1b180',
-      '#b2b000',
-      '#d9eea8',
-      '#9ce5fa',
-      '#4e4e4e',
-    ],
+    benthicCoverColorMap: {
+      'Hard coral': '#498fc9',
+      'Bare substrate': '#f2f3f3',
+      'Crustose coralline algae': '#fbd7d5',
+      Rubble: '#f5f6af',
+      Cyanobacteria: '#870e00',
+      Seagrass: '#4d4d4d',
+      Sand: '#c1b180',
+      Macroalgae: '#b2b000',
+      'Turf algae': '#d9eea8',
+      'Soft coral': '#9ce5fa',
+      'Other invertebrates': '#4e4e4e',
+    },
     habitatComplexityColorMap: {
       1: '#eff7ff',
       2: '#cbdaea',
