@@ -170,7 +170,6 @@ const MetricsPane = ({
     </>
   )
 
-  const comingSoonPlaceholder = <div style={{ height: '270px' }}>Coming soon</div>
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
