@@ -13,7 +13,7 @@ export const AggregateHabitatComplexity = () => {
 
   const habitatComplexityValues = filteredSurveys
     .map((record) => record.protocols.habitatcomplexity?.score_avg_avg)
-    .filter(Boolean)
+    .filter((record) => record !== undefined && record !== null)
 
   const plotlyDataConfiguration = [
     {

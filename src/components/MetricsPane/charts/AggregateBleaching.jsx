@@ -22,7 +22,11 @@ export const AggregateBleaching = () => {
     totalColoniesDead: 0,
   }
   const coloniesBleachedSummarizedBySeverity = filteredSurveys
-    .filter((record) => !!record.protocols?.colonies_bleached)
+    .filter(
+      (record) =>
+        record.protocols?.colonies_bleached !== undefined &&
+        record.protocols?.colonies_bleached !== null,
+    )
     .reduce((accumulator, record) => {
       const {
         count_total_avg,
