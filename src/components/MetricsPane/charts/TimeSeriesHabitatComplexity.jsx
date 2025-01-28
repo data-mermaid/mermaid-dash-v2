@@ -7,6 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartThemeLayout = chartTheme.layout
 
 export const TimeSeriesHabitatComplexity = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
@@ -66,32 +67,36 @@ export const TimeSeriesHabitatComplexity = () => {
     ),
   ]
 
-  const plotlyDataConfiguration = uniqueComplexityScores.map((score) => ({
-    x: complexityScoreDistributions
-      .filter((distribution) => distribution.roundComplexityScore === score)
-      .map((distribution) => distribution.year),
-    y: complexityScoreDistributions
-      .filter((distribution) => distribution.roundComplexityScore === score)
-      .map((distribution) => distribution.percentage),
-    type: 'bar',
-    name: score,
-    marker: { color: chartTheme.timeseriesCharts.habitatComplexityColorMap[score] },
-  }))
+  const plotlyDataConfiguration = uniqueComplexityScores
+    .sort((a, b) => Number(a) - Number(b))
+    .map((score) => ({
+      x: complexityScoreDistributions
+        .filter((distribution) => distribution.roundComplexityScore === score)
+        .map((distribution) => distribution.year),
+      y: complexityScoreDistributions
+        .filter((distribution) => distribution.roundComplexityScore === score)
+        .map((distribution) => distribution.percentage),
+      type: 'bar',
+      name: score,
+      marker: { color: chartTheme.timeseriesCharts.habitatComplexityColorMap[score] },
+    }))
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...chartThemeLayout,
     barmode: 'stack',
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...chartThemeLayout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...chartThemeLayout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: '% of Surveys' },
+      ...chartThemeLayout.yaxis,
+      title: { ...chartThemeLayout.yaxis.title, text: '% of Surveys' },
     },
+    showlegend: true,
+    legend: chartTheme.horizontalLegend,
   }
 
   return (

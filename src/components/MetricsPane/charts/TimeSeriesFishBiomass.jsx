@@ -7,6 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartThemeLayout = chartTheme.layout
 
 function calculateMedian(values) {
   if (!values.length) return null
@@ -23,8 +24,8 @@ export const TimeSeriesFishBiomass = () => {
   const surveyedFishBiomassRecords = filteredSurveys
     .filter(
       (record) =>
-        record.protocols.beltfish?.biomass_kgha_avg !== undefined &&
-        record.protocols.beltfish?.biomass_kgha_avg !== null,
+        record.protocols?.beltfish?.biomass_kgha_avg !== undefined &&
+        record.protocols?.beltfish?.biomass_kgha_avg !== null,
     )
     .map((record) => ({
       sampleDate: record.sample_date,
@@ -77,24 +78,20 @@ export const TimeSeriesFishBiomass = () => {
   }))
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...chartThemeLayout,
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...chartThemeLayout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...chartThemeLayout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: '(kg/ha)' },
+      ...chartThemeLayout.yaxis,
+      title: { ...chartThemeLayout.yaxis.title, text: '(kg/ha)' },
     },
-    legend: {
-      orientation: 'h',
-      xanchor: 'center',
-      x: 0.5,
-      y: -0.2,
-    },
+    showlegend: true,
+    legend: chartTheme.horizontalLegend,
   }
 
   return (

@@ -7,6 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartThemeLayout = chartTheme.layout
 const categories = Object.keys(chartTheme.timeseriesCharts.benthicCoverColorMap)
 
 export const TimeSeriesBenthicCover = () => {
@@ -71,38 +72,45 @@ export const TimeSeriesBenthicCover = () => {
       return yearData
     },
   )
+  const totalSurveys = benthicPercentageCoverDistributions
+    .filter((record) => record['Hard coral'] > 0)
+    .reduce((sum, { count }) => sum + count, 0)
 
-  const plotlyDataConfiguration = categories.map((category) => ({
-    x: benthicPercentageCoverDistributions.map((distribution) => distribution.year),
-    y: benthicPercentageCoverDistributions.map((distribution) => distribution[category]),
-    type: 'bar',
-    name: category,
-    marker: {
-      color: chartTheme.timeseriesCharts.benthicCoverColorMap[category],
-    },
-  }))
+  const plotlyDataConfiguration = categories
+    .map((category) => ({
+      x: benthicPercentageCoverDistributions.map((distribution) => distribution.year),
+      y: benthicPercentageCoverDistributions.map((distribution) => distribution[category]),
+      type: 'bar',
+      name: category,
+      marker: {
+        color: chartTheme.timeseriesCharts.benthicCoverColorMap[category],
+      },
+    }))
+    .filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...chartThemeLayout,
     barmode: 'stack',
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...chartThemeLayout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...chartThemeLayout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: 'Benthic % Cover' },
+      ...chartThemeLayout.yaxis,
+      title: { ...chartThemeLayout.yaxis.title, text: 'Benthic % Cover' },
     },
+    showlegend: true,
+    legend: chartTheme.horizontalLegend,
   }
 
   return (
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
-        <ChartSubtitle>{filteredSurveys.length.toLocaleString()} Surveys</ChartSubtitle>
+        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

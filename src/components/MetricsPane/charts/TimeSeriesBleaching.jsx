@@ -8,6 +8,7 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const bleachingColor = chartTheme.timeseriesCharts.bleachingColor
+const chartThemeLayout = chartTheme.layout
 
 export const TimeSeriesBleaching = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
@@ -83,11 +84,8 @@ export const TimeSeriesBleaching = () => {
   }))
 
   const years = bleachingPercentageColonyDistributions.map((distribution) => distribution.year)
-  const sumOfTotalAllColonies = bleachingPercentageColonyDistributions.reduce(
-    (sum, distribution) => {
-      sum += distribution.totalAllColonies
-      return sum
-    },
+  const totalSurveys = bleachingPercentageColonyDistributions.reduce(
+    (sum, { totalAllColonies }) => sum + totalAllColonies,
     0,
   )
 
@@ -155,29 +153,31 @@ export const TimeSeriesBleaching = () => {
       type: 'bar',
       marker: { color: bleachingColor.Dead },
     },
-  ]
+  ].filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...chartThemeLayout,
     barmode: 'stack',
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...chartThemeLayout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...chartThemeLayout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: '% of Colonies' },
+      ...chartThemeLayout.yaxis,
+      title: { ...chartThemeLayout.yaxis.title, text: '% of Colonies' },
     },
+    showlegend: true,
+    legend: chartTheme.horizontalLegend,
   }
 
   return (
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
-        <ChartSubtitle>{Math.round(sumOfTotalAllColonies).toLocaleString()} Colonies</ChartSubtitle>
+        <ChartSubtitle>{Math.round(totalSurveys).toLocaleString()} Colonies</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

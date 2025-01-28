@@ -36,12 +36,12 @@ const plotlyChart = {
       'Other invertebrates': '#4e4e4e',
     },
     habitatComplexityColorMap: {
-      1: '#eff7ff',
-      2: '#cbdaea',
-      3: '#a8bed5',
-      4: '#85a3c1',
-      5: '#6288ad',
-      6: '#3c6e9a',
+      0: '#eff7ff',
+      1: '#cbdaea',
+      2: '#a8bed5',
+      3: '#85a3c1',
+      4: '#6288ad',
+      5: '#3c6e9a',
     },
     bleachingColor: {
       Normal: '#3c6e9a',
@@ -57,7 +57,7 @@ const plotlyChart = {
   layout: {
     bargap: 0.1,
     dragmode: false,
-    height: 270,
+    height: 370,
     autosize: true,
     margin: {
       l: 50,
@@ -65,8 +65,6 @@ const plotlyChart = {
       b: 40,
       t: 50,
     },
-
-    showlegend: false,
     xaxis: {
       fixedrange: true,
       linecolor: 'black',
@@ -96,6 +94,16 @@ const plotlyChart = {
     ],
     displaylogo: false,
     responsive: true,
+  },
+
+  horizontalLegend: {
+    orientation: 'h',
+    xanchor: 'center',
+    x: 0.5,
+    y: -0.2,
+    font: {
+      size: 9,
+    },
   },
 }
 const dashboardOnlyTheme = { color, plotlyChart }
