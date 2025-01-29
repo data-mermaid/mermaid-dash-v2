@@ -18,6 +18,7 @@ import {
   BiggerIconText,
   BiggerIconTextBoxMultiple,
   BiggerIconUser,
+  SelectedSiteChartWrapper,
   SelectedSiteContentContainer,
   SelectedSiteContentContainerWiderOnMobile,
   SelectedSiteMetricsCardContainer,
@@ -47,6 +48,8 @@ import {
 
 import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+import { ChartWrapper } from './charts/Charts.styles'
+import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -83,6 +86,7 @@ export const SelectedSiteMetrics = ({
     data_policy_benthiclit: dataPolicyBenthiclit,
     data_policy_bleachingqc: dataPolicyBleachingqc,
     suggested_citation: suggestedCitation,
+    protocols,
   } = selectedSampleEvent
 
   const isInitialSiteNotesTruncated = siteNotes?.length > 250
@@ -283,7 +287,13 @@ export const SelectedSiteMetrics = ({
         </TabButtonContainer>
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
-            <span>Placeholder: show summary metrics here</span>
+            <ChartWrapper>
+              {protocols?.beltfish && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
+                </SelectedSiteChartWrapper>
+              )}
+            </ChartWrapper>
           ) : (
             <>
               <SelectedSiteMetricsCardContainer>

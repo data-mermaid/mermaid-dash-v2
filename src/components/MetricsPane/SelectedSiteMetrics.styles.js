@@ -150,3 +150,11 @@ export const TabContent = styled.div`
   gap: 0.5rem;
   height: 100%;
 `
+
+export const SelectedSiteChartWrapper = styled.div`
+  width: 100%;
+  background-color: ${theme.color.white};
+  padding: ${theme.spacing.small};
+  border: ${theme.spacing.borderSmall} solid ${theme.color.border};
+  box-sizing: border-box;
+`

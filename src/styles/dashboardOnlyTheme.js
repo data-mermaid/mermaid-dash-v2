@@ -17,6 +17,19 @@ const plotlyChart = {
     },
   },
 
+  sampleEventCharts: {
+    trophicColorMap: {
+      'herbivore-detritivore': '#d9ed8b',
+      'herbivore-macroalgae': '#4d9221 ',
+      'invertivore-mobile': '#fcae61',
+      'invertivore-sessible': '#fdd92f',
+      omnivore: '#80cdc1',
+      other: '#b4b4b4',
+      piscivore: '#377eb8',
+      planktivore: '#bebada',
+    },
+  },
+
   layout: {
     bargap: 0.1,
     dragmode: false,
