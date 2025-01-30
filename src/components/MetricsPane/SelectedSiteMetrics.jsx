@@ -51,6 +51,7 @@ import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLoca
 import { ChartWrapper } from './charts/Charts.styles'
 import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
+import { SampleEventBenthicPIT } from './charts/SampleEventBenthicPIT'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -297,6 +298,11 @@ export const SelectedSiteMetrics = ({
               {protocols?.quadrat_benthic_percent && (
                 <SelectedSiteChartWrapper>
                   <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthicpit && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPIT benthicPITData={protocols?.benthicpit} />
                 </SelectedSiteChartWrapper>
               )}
             </ChartWrapper>

@@ -29,11 +29,18 @@ const plotlyChart = {
         colors: ['#498fc9', '#b4b4b4', '#9ce5fa', '#b6b400'],
       },
     },
-    bleachBenthicColorMap: {
-      percent_hard_avg_avg: '#498fc9',
-      other: '#b4b4b4',
-      percent_soft_avg_avg: '#9ce5fa',
-      percent_algae_avg_avg: '#b6b400',
+    benthic: {
+      'Hard coral': '#498fc9',
+      'Bare substrate': '#f2f3f3',
+      'Crustose coralline algae': '#fbd7d5',
+      Rubble: '#f5f6af',
+      Cyanobacteria: '#870e00',
+      Seagrass: '#4d4d4d',
+      Sand: '#c1b180',
+      Macroalgae: '#b2b000',
+      'Turf algae': '#d9eea8',
+      'Soft coral': '#9ce5fa',
+      'Other invertebrates': '#4e4e4e',
     },
   },
 
