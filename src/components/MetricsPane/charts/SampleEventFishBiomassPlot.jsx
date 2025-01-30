@@ -5,24 +5,36 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const categories = Object.keys(chartTheme.sampleEventCharts.trophicColorMap)
+const fishTropicGroupCategory = {
+  omnivore: 'Omnivore',
+  piscivore: 'Piscivore',
+  planktivore: 'Planktivore',
+  'invertivore-mobile': 'Invertivore mobile',
+  'invertivore-sessible': 'Invertivore sessible',
+  'herbivore-macroalgae': 'Herbivore macroalgae',
+  'herbivore-detritivore': 'Herbivore detritivore',
+}
 
 export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
-  const fishbeltSampleUnitCount = fishbeltData?.sample_unit_count
+  const fishbeltSampleUnitCount = fishbeltData?.sample_unit_count ?? 0
   const fishBiomassTropicGroupData = fishbeltData?.biomass_kgha_trophic_group_avg
 
-  const trophicValues = categories.map((category) => {
+  const fishTropicGroupValues = Object.keys(fishTropicGroupCategory).map((category) => {
     return fishBiomassTropicGroupData?.[category] ?? 0
   })
+  const fishTropicGroupLabels = Object.values(fishTropicGroupCategory).map(
+    (category) => `${category}`,
+  )
+  const formattedFishTropicGroupLabels = fishTropicGroupLabels.map((label) =>
+    label.replace(' ', '<br>'),
+  )
 
   const plotlyDataConfiguration = [
     {
-      x: categories,
-      y: trophicValues,
+      x: fishTropicGroupLabels,
+      y: fishTropicGroupValues,
       type: 'bar',
-      marker: {
-        color: categories.map((label) => chartTheme.sampleEventCharts.trophicColorMap[label]),
-      },
+      marker: chartTheme.sampleEventCharts.fishTropicGroupCover.marker,
       xbins: {
         size: 100,
       },
@@ -31,11 +43,14 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { ...chartTheme.layout.margin, b: 100 },
+    margin: { ...chartTheme.layout.margin, b: 80 },
     xaxis: {
       ...chartTheme.layout.xaxis,
       tickangle: -45,
       tickfont: { size: 9 },
+      tickmode: 'array',
+      tickvals: fishTropicGroupLabels,
+      ticktext: formattedFishTropicGroupLabels,
       title: {
         ...chartTheme.layout.xaxis.title,
         text: 'Tropic Group',
@@ -46,6 +61,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       title: { ...chartTheme.layout.yaxis.title, text: 'Kg/Ha' },
     },
   }
+
   return (
     <ChartWrapper>
       <TitlesWrapper>

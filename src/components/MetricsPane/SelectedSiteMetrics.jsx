@@ -50,6 +50,7 @@ import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSim
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
 import { ChartWrapper } from './charts/Charts.styles'
 import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
+import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -291,6 +292,11 @@ export const SelectedSiteMetrics = ({
               {protocols?.beltfish && (
                 <SelectedSiteChartWrapper>
                   <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.quadrat_benthic_percent && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
                 </SelectedSiteChartWrapper>
               )}
             </ChartWrapper>

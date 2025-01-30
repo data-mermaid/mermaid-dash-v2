@@ -18,15 +18,22 @@ const plotlyChart = {
   },
 
   sampleEventCharts: {
-    trophicColorMap: {
-      'herbivore-detritivore': '#d9ed8b',
-      'herbivore-macroalgae': '#4d9221 ',
-      'invertivore-mobile': '#fcae61',
-      'invertivore-sessible': '#fdd92f',
-      omnivore: '#80cdc1',
+    fishTropicGroupCover: {
+      marker: {
+        color: ['#80cdc1', '#377eb8', '#bebada', '#fcae61', '#fdd92f', '#4d9221', '#d9ed8b'],
+        line: { color: 'black', width: 1 },
+      },
+    },
+    bleaching: {
+      marker: {
+        colors: ['#498fc9', '#b4b4b4', '#9ce5fa', '#b6b400'],
+      },
+    },
+    bleachBenthicColorMap: {
+      percent_hard_avg_avg: '#498fc9',
       other: '#b4b4b4',
-      piscivore: '#377eb8',
-      planktivore: '#bebada',
+      percent_soft_avg_avg: '#9ce5fa',
+      percent_algae_avg_avg: '#b6b400',
     },
   },
 
