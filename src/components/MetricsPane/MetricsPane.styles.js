@@ -12,8 +12,9 @@ export const StyledMetricsWrapper = styled.div`
   ${({ $showMetricsPane }) =>
     $showMetricsPane
       ? css`
-          min-width: 40rem;
-          max-width: 40rem;
+          min-width: 41rem;
+          width: 50vw;
+          max-width: 54rem;
         `
       : css`
           max-width: 40rem;
@@ -41,7 +42,6 @@ export const StyledMetricsWrapper = styled.div`
   `)}
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
-  overflow-y: scroll;
   height: 100%;
 `
 export const ChartsWrapper = styled.div`
