@@ -12,28 +12,42 @@ export const AggregateHardCoralCover = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
 
   const hardCoralAveragesPerSurvey = filteredSurveys
-    .map((record) => {
-      const { protocols } = record
+    .map(({ protocols }) => {
+      const getHardCoralCover = (data, protocol) =>
+        data?.[protocol]?.percent_cover_benthic_category_avg?.['Hard coral']
 
-      const benthicPitAverage =
-        protocols.benthicpit?.percent_cover_benthic_category_avg?.['Hard coral'] ?? 0
-      const benthicLitAverage =
-        protocols.benthiclit?.percent_cover_benthic_category_avg?.['Hard coral'] ?? 0
-      const benthicPqtAverage =
-        protocols.benthicpqt?.percent_cover_benthic_category_avg?.['Hard coral'] ?? 0
-      const quadratBenthicAverage = protocols.quadrat_benthic_percent?.percent_hard_avg_avg ?? 0
+      const benthicPitCover = getHardCoralCover(protocols, 'benthicpit')
+      const benthicLitCover = getHardCoralCover(protocols, 'benthiclit')
+      const benthicPqtCover = getHardCoralCover(protocols, 'benthicpqt')
+      const quadratBenthicCover = protocols?.quadrat_benthic_percent?.percent_hard_avg_avg
 
-      const numerator =
-        benthicLitAverage + benthicPitAverage + benthicPqtAverage + quadratBenthicAverage
-      const denominator =
-        (benthicPitAverage ? 1 : 0) +
-        (benthicLitAverage ? 1 : 0) +
-        (benthicPqtAverage ? 1 : 0) +
-        (quadratBenthicAverage ? 1 : 0)
+      if (
+        benthicPitCover === undefined &&
+        benthicLitCover === undefined &&
+        benthicPqtCover === undefined &&
+        quadratBenthicCover === undefined
+      ) {
+        return undefined
+      }
 
-      return !denominator ? undefined : numerator / denominator
+      const benthicCovers = [
+        benthicPitCover ?? 0,
+        benthicLitCover ?? 0,
+        benthicPqtCover ?? 0,
+        quadratBenthicCover ?? 0,
+      ]
+
+      const numerator = benthicCovers.reduce((sum, value) => sum + value, 0)
+      const denominator = [
+        benthicPitCover,
+        benthicLitCover,
+        benthicPqtCover,
+        quadratBenthicCover,
+      ].filter((value) => value !== undefined).length
+
+      return numerator / denominator
     })
-    .filter(Boolean)
+    .filter((record) => record !== undefined)
 
   const markerColors = hardCoralAveragesPerSurvey.map((_, index) => {
     const colors = chartTheme.aggregateCharts.hardCoralCover.marker

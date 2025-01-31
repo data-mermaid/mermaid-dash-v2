@@ -53,10 +53,47 @@ const plotlyChart = {
     },
   },
 
+  timeseriesCharts: {
+    managementRuleColorMap: {
+      'Open Access': '#77b4c5',
+      Restrictions: '#70aae6',
+    },
+    benthicCoverColorMap: {
+      'Hard coral': '#498fc9',
+      'Bare substrate': '#f2f3f3',
+      'Crustose coralline algae': '#fbd7d5',
+      Rubble: '#f5f6af',
+      Cyanobacteria: '#870e00',
+      Seagrass: '#4d4d4d',
+      Sand: '#c1b180',
+      Macroalgae: '#b2b000',
+      'Turf algae': '#d9eea8',
+      'Soft coral': '#9ce5fa',
+      'Other invertebrates': '#4e4e4e',
+    },
+    habitatComplexityColorMap: {
+      0: '#eff7ff',
+      1: '#cbdaea',
+      2: '#a8bed5',
+      3: '#85a3c1',
+      4: '#6288ad',
+      5: '#3c6e9a',
+    },
+    bleachingColor: {
+      Normal: '#3c6e9a',
+      Pale: '#6288ad',
+      '0-20%': '#85a3c1',
+      '20-50%': '#a8bed5',
+      '50-80%': '#cbdaea',
+      '80-100%': '#eff7ff',
+      Dead: '#b4b4b4',
+    },
+  },
+
   layout: {
     bargap: 0.1,
     dragmode: false,
-    height: 270,
+    height: 370,
     autosize: true,
     margin: {
       l: 50,
@@ -64,8 +101,6 @@ const plotlyChart = {
       b: 40,
       t: 50,
     },
-
-    showLegend: false,
     xaxis: {
       fixedrange: true,
       linecolor: 'black',
@@ -95,6 +130,16 @@ const plotlyChart = {
     ],
     displaylogo: false,
     responsive: true,
+  },
+
+  horizontalLegend: {
+    orientation: 'h',
+    xanchor: 'center',
+    x: 0.5,
+    y: -0.2,
+    font: {
+      size: 9,
+    },
   },
 }
 const dashboardOnlyTheme = { color, plotlyChart }
