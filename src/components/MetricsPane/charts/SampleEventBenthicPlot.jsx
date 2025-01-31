@@ -7,18 +7,10 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const benthicCategories = Object.keys(chartTheme.sampleEventCharts.benthic)
 
-export const SampleEventBenthicPlot = ({ sampleEventProtocols }) => {
-  const sampleUnitCount = Object.values(sampleEventProtocols).reduce((acc, protocol) => {
-    const count = protocol?.percent_cover_benthic_category_avg ? protocol.sample_unit_count : 0
-    return acc + count
-  }, 0)
-
+export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
+  const totalSurveys = benthicData?.sample_unit_count ?? 0
   const benthicPercentageCover = benthicCategories.map((category) => {
-    const categoryValue = Object.values(sampleEventProtocols).reduce((acc, protocol) => {
-      const protocolValue = protocol?.percent_cover_benthic_category_avg?.[category] ?? 0
-      return acc + protocolValue
-    }, 0)
-
+    const categoryValue = benthicData?.percent_cover_benthic_category_avg?.[category] ?? 0
     return {
       name: category,
       value: categoryValue,
@@ -65,8 +57,8 @@ export const SampleEventBenthicPlot = ({ sampleEventProtocols }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Benthic % Cover</MetricCardH3>
-        <ChartSubtitle>{sampleUnitCount.toLocaleString()} Surveys</ChartSubtitle>
+        <MetricCardH3>Benthic % Cover ({benthicType})</MetricCardH3>
+        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

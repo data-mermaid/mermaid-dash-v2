@@ -301,9 +301,19 @@ export const SelectedSiteMetrics = ({
                   <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
                 </SelectedSiteChartWrapper>
               )}
-              {(protocols?.benthicpit || protocols?.benthiclit || protocols?.benthicpqt) && (
+              {protocols?.benthicpit && (
                 <SelectedSiteChartWrapper>
-                  <SampleEventBenthicPlot sampleEventProtocols={selectedSampleEvent.protocols} />
+                  <SampleEventBenthicPlot benthicType="pit" benthicData={protocols?.benthicpit} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthiclit && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPlot benthicType="lit" benthicData={protocols?.benthiclit} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthicpqt && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPlot benthicType="pqt" benthicData={protocols?.benthicpqt} />
                 </SelectedSiteChartWrapper>
               )}
               {protocols?.colonies_bleached && (
