@@ -24,38 +24,10 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
   const plotlyDataConfiguration = [
     {
       x: [1],
-      y: [percentNormal / 100],
+      y: [percentDead / 100],
       type: 'bar',
-      name: `Normal (${percentNormal}%)`,
-      marker: { color: bleachingSeverityCategories.percent_normal_avg },
-    },
-    {
-      x: [1],
-      y: [percentPale / 100],
-      type: 'bar',
-      name: `Pale (${percentPale}%)`,
-      marker: { color: bleachingSeverityCategories.percent_pale_avg },
-    },
-    {
-      y: [percent20 / 100],
-      x: [1],
-      type: 'bar',
-      name: `0-20% bleached (${percent20}%)`,
-      marker: { color: bleachingSeverityCategories.percent_20_avg },
-    },
-    {
-      x: [1],
-      y: [percent50 / 100],
-      type: 'bar',
-      name: `20-50% bleached (${percent50}%)`,
-      marker: { color: bleachingSeverityCategories.percent_50_avg },
-    },
-    {
-      x: [1],
-      y: [percent80 / 100],
-      type: 'bar',
-      name: `50-80% bleached (${percent80}%)`,
-      marker: { color: bleachingSeverityCategories.percent_80_avg },
+      name: `Recently dead (${percentDead}%)`,
+      marker: { color: bleachingSeverityCategories.percent_dead_avg },
     },
     {
       x: [1],
@@ -66,10 +38,38 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     },
     {
       x: [1],
-      y: [percentDead / 100],
+      y: [percent80 / 100],
       type: 'bar',
-      name: `Recently dead (${percentDead}%)`,
-      marker: { color: bleachingSeverityCategories.percent_dead_avg },
+      name: `50-80% bleached (${percent80}%)`,
+      marker: { color: bleachingSeverityCategories.percent_80_avg },
+    },
+    {
+      x: [1],
+      y: [percent50 / 100],
+      type: 'bar',
+      name: `20-50% bleached (${percent50}%)`,
+      marker: { color: bleachingSeverityCategories.percent_50_avg },
+    },
+    {
+      y: [percent20 / 100],
+      x: [1],
+      type: 'bar',
+      name: `0-20% bleached (${percent20}%)`,
+      marker: { color: bleachingSeverityCategories.percent_20_avg },
+    },
+    {
+      x: [1],
+      y: [percentPale / 100],
+      type: 'bar',
+      name: `Pale (${percentPale}%)`,
+      marker: { color: bleachingSeverityCategories.percent_pale_avg },
+    },
+    {
+      x: [1],
+      y: [percentNormal / 100],
+      type: 'bar',
+      name: `Normal (${percentNormal}%)`,
+      marker: { color: bleachingSeverityCategories.percent_normal_avg },
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 

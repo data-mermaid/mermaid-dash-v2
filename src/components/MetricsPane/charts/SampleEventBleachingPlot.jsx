@@ -6,10 +6,10 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const bleachingCategory = {
-  percent_hard_avg_avg: 'Avg Hard Coral Cover',
-  other: 'Other Cover',
-  percent_soft_avg_avg: 'Avg Soft Coral Cover',
   percent_algae_avg_avg: 'Avg Macroalgae Cover',
+  percent_soft_avg_avg: 'Avg Soft Coral Cover',
+  other: 'Other Cover',
+  percent_hard_avg_avg: 'Avg Hard Coral Cover',
 }
 
 export const SampleEventBleachingPlot = ({ bleachingData }) => {
