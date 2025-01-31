@@ -34,11 +34,15 @@ import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
 import { AggregateHardCoralCover } from './charts/AggregateHardCoralCover'
+import { TimeSeriesBenthicCover } from './charts/TimeSeriesBenthicCover'
 import { AggregateFishBiomass } from './charts/AggregateFishBiomas'
+import { TimeSeriesFishBiomass } from './charts/TimeSeriesFishBiomass'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
+import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
+import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -166,7 +170,6 @@ const MetricsPane = ({
     </>
   )
 
-  const comingSoonPlaceholder = <div style={{ height: '270px' }}>Coming soon</div>
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
@@ -204,23 +207,23 @@ const MetricsPane = ({
         <MetricsPaneChartTabs
           id="hard-coral-cover"
           aggregatePanelContent={<AggregateHardCoralCover />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesBenthicCover />}
         />
         <MetricsPaneChartTabs
           id="fish-biomass"
           aggregatePanelContent={<AggregateFishBiomass />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesFishBiomass />}
         />
 
         <MetricsPaneChartTabs
           id="Bleaching"
           aggregatePanelContent={<AggregateBleaching />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesBleaching />}
         />
         <MetricsPaneChartTabs
           id="habitat-complexity"
           aggregatePanelContent={<AggregateHabitatComplexity />}
-          timeSeriesPanelContent={comingSoonPlaceholder}
+          timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
         />
       </ChartsWrapper>
     </DisplayedProjectsMetricsWrapper>

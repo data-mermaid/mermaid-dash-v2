@@ -13,7 +13,7 @@ export const AggregateFishBiomass = () => {
 
   const surveyFishbeltBiomassValues = filteredSurveys
     .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)
-    .filter(Boolean)
+    .filter((record) => record !== undefined && record !== null)
 
   const plotlyDataConfiguration = [
     {
