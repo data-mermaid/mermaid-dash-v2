@@ -52,6 +52,7 @@ import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
 import { SampleEventBleachingSeverityPlot } from './charts/SampleEventBleachingSeverityPlot'
+import { SampleEventHabitatComplexityPlot } from './charts/SampleEventHabitatComplexityPlot'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -307,7 +308,16 @@ export const SelectedSiteMetrics = ({
               )}
               {protocols?.colonies_bleached && (
                 <SelectedSiteChartWrapper>
-                  <SampleEventBleachingSeverityPlot coloniesBleachedData={protocols?.colonies_bleached} />
+                  <SampleEventBleachingSeverityPlot
+                    coloniesBleachedData={protocols?.colonies_bleached}
+                  />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.habitatcomplexity && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventHabitatComplexityPlot
+                    habitatComplexityData={protocols?.habitatcomplexity}
+                  />
                 </SelectedSiteChartWrapper>
               )}
             </ChartsWrapper>
