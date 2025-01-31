@@ -12,9 +12,8 @@ export const StyledMetricsWrapper = styled.div`
   ${({ $showMetricsPane }) =>
     $showMetricsPane
       ? css`
-          min-width: 41rem;
-          width: 50vw;
-          max-width: 54rem;
+          min-width: 42rem;
+          max-width: 42rem;
         `
       : css`
           max-width: 40rem;
@@ -97,7 +96,7 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
-  right: ${({ $showMetricsPane }) => ($showMetricsPane ? '41rem' : 0)};
+  right: ${({ $showMetricsPane }) => ($showMetricsPane ? '42rem' : 0)};
   height: 4rem;
   z-index: 10;
   width: 4rem;
@@ -242,7 +241,7 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
 export const FollowToggleContainer = styled.div`
   position: absolute;
   top: 6.2rem;
-  right: 46rem;
+  right: 47rem;
   height: 4rem;
   z-index: 400;
   display: flex;
