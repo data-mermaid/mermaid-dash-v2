@@ -21,16 +21,6 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
 
   const totalSurveys = countTotalAvg > 0 ? countTotalAvg * sampleUnitCount : 0
 
-  const bleachingCategories = [
-    { key: 'percent_normal_avg', label: 'Normal', color: '#3c6e9a' },
-    { key: 'percent_pale_avg', label: 'Pale', color: '#6288ad' },
-    { key: 'percent_20_avg', label: '0-20% bleached', color: '#85a3c1' },
-    { key: 'percent_50_avg', label: '20-50% bleached', color: '#a8bed5' },
-    { key: 'percent_80_avg', label: '50-80% bleached', color: '#cbdaea' },
-    { key: 'percent_100_avg', label: '80-100% bleached', color: '#eff7ff' },
-    { key: 'percent_dead_avg', label: 'Recently dead', color: '#b4b4b4' },
-  ]
-
   const plotlyDataConfiguration = [
     {
       x: [1],

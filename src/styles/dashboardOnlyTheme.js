@@ -26,7 +26,7 @@ const plotlyChart = {
     },
     bleaching: {
       marker: {
-        colors: ['#498fc9', '#b4b4b4', '#9ce5fa', '#b6b400'],
+        color: ['#b6b400', '#9ce5fa', '#b4b4b4', '#498fc9'],
       },
     },
     benthic: {

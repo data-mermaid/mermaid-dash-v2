@@ -23,39 +23,46 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
   const bleachingSampleUnitCount = quadrat_count_avg > 0 ? quadrat_count_avg * sample_unit_count : 0
   const otherBleachingPercentage =
     quadrat_count_avg > 0
-      ? 100 - percent_hard_avg_avg + percent_soft_avg_avg + percent_algae_avg_avg
+      ? 100 - percent_hard_avg_avg - percent_soft_avg_avg - percent_algae_avg_avg
       : undefined
 
   const bleachingPercentageValues = [
-    percent_hard_avg_avg ?? 0,
-    otherBleachingPercentage ?? 0,
-    percent_soft_avg_avg ?? 0,
     percent_algae_avg_avg ?? 0,
+    percent_soft_avg_avg ?? 0,
+    otherBleachingPercentage ?? 0,
+    percent_hard_avg_avg ?? 0,
   ]
 
-  const bleachingPercentageLabels = Object.keys(bleachingCategory).map(
-    (category, index) => `${bleachingCategory[category]} (${bleachingPercentageValues[index]}%)`,
-  )
-
-  const plotlyDataConfiguration = [
-    {
-      labels: bleachingPercentageLabels,
-      values: bleachingPercentageValues,
-      type: 'pie',
-      textinfo: 'none',
-      hoverinfo: 'label+percent',
-      marker: chartTheme.sampleEventCharts.bleaching.marker,
+  const plotlyDataConfiguration = Object.keys(bleachingCategory).map((category, index) => ({
+    x: [1],
+    y: [bleachingPercentageValues[index] / 100],
+    type: 'bar',
+    name: `${bleachingCategory[category]} (${bleachingPercentageValues[index]}%)`,
+    marker: {
+      color: chartTheme.sampleEventCharts.bleaching.marker.color[index],
     },
-  ]
+  }))
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { t: 20, r: 0, b: 0, l: 20 },
+    margin: { t: 50, r: 0, b: 40, l: 40 },
+    barmode: 'stack',
+    bargap: 0,
+    xaxis: {
+      ...chartTheme.layout.xaxis,
+      title: '',
+      showticklabels: false,
+    },
+    yaxis: {
+      ...chartTheme.layout.yaxis,
+      title: '',
+      range: [0, 1],
+      tickvals: Array.from({ length: 11 }, (_, i) => i / 10),
+      tickformat: '.0%',
+    },
     showlegend: true,
     legend: {
-      orientation: 'v',
-      y: 0.5,
-      font: { size: 9 },
+      font: { size: 10 },
     },
   }
 
