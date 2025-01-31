@@ -42,6 +42,15 @@ const plotlyChart = {
       'Soft coral': '#9ce5fa',
       'Other invertebrates': '#4e4e4e',
     },
+    bleachingSeverity: {
+      percent_normal_avg: '#3c6e9a',
+      percent_pale_avg: '#6288ad',
+      percent_20_avg: '#85a3c1',
+      percent_50_avg: '#a8bed5',
+      percent_80_avg: '#cbdaea',
+      percent_100_avg: '#eff7ff',
+      percent_dead_avg: '#b4b4b4',
+    },
   },
 
   layout: {
