@@ -100,7 +100,9 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       {
         x: habitatComplexityScore,
         y: 0.9,
-        text: `${habitatComplexityScore} <br> Average Habitat <br> Complexity`,
+        text: habitatComplexityScore
+          ? `${habitatComplexityScore} <br> Average Habitat <br> Complexity`
+          : `No Scores <br> Available`,
         showarrow: false,
         xref: 'x',
         yref: 'y',
