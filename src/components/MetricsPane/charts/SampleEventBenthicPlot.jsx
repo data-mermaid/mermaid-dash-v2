@@ -5,21 +5,36 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const benthicCategories = Object.keys(chartTheme.sampleEventCharts.benthic)
 
-export const SampleEventBenthicPIT = ({ benthicPITData }) => {
-  const benthicPercentageCoverData = benthicPITData?.percent_cover_benthic_category_avg || {}
-  const benthicSampleUnitCount = benthicPITData?.sample_unit_count ?? 0
+export const SampleEventBenthicPlot = ({ sampleEventProtocols }) => {
+  const sampleUnitCount = Object.values(sampleEventProtocols).reduce((acc, protocol) => {
+    const count = protocol?.percent_cover_benthic_category_avg ? protocol.sample_unit_count : 0
+    return acc + count
+  }, 0)
 
-  const plotlyDataConfiguration = Object.entries(benthicPercentageCoverData)
-    .sort((a, b) => a[1] - b[1])
-    .map(([key, value]) => {
+  const benthicPercentageCover = benthicCategories.map((category) => {
+    const categoryValue = Object.values(sampleEventProtocols).reduce((acc, protocol) => {
+      const protocolValue = protocol?.percent_cover_benthic_category_avg?.[category] ?? 0
+      return acc + protocolValue
+    }, 0)
+
+    return {
+      name: category,
+      value: categoryValue,
+    }
+  })
+
+  const plotlyDataConfiguration = benthicPercentageCover
+    .filter(({ value }) => value > 0)
+    .map(({ name, value }) => {
       return {
         x: [1],
         y: [value / 100],
         type: 'bar',
-        name: `${key} (${value}%)`,
+        name: `${name} (${value}%)`,
         marker: {
-          color: chartTheme.sampleEventCharts.benthic[key],
+          color: chartTheme.sampleEventCharts.benthic[name],
         },
       }
     })
@@ -38,13 +53,11 @@ export const SampleEventBenthicPIT = ({ benthicPITData }) => {
       ...chartTheme.layout.yaxis,
       title: '',
       range: [0, 1],
-      tickvals: Array.from({ length: 11 }, (_, i) => i / 10), // [0, 10, 20, ..., 100]
+      tickvals: Array.from({ length: 11 }, (_, i) => i / 10),
       tickformat: '.0%',
     },
     showlegend: true,
     legend: {
-      orientation: 'v',
-      y: 0.5,
       font: { size: 10 },
     },
   }
@@ -53,7 +66,7 @@ export const SampleEventBenthicPIT = ({ benthicPITData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
-        <ChartSubtitle>{benthicSampleUnitCount.toLocaleString()} Surveys</ChartSubtitle>
+        <ChartSubtitle>{sampleUnitCount.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

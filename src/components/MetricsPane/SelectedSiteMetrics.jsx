@@ -7,7 +7,7 @@ import useResponsive from '../../hooks/useResponsive'
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
-import { StyledHeader } from './MetricsPane.styles'
+import { ChartsWrapper, StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
   BiggerIconClose,
@@ -48,10 +48,9 @@ import {
 
 import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
-import { ChartWrapper } from './charts/Charts.styles'
 import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
-import { SampleEventBenthicPIT } from './charts/SampleEventBenthicPIT'
+import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -289,7 +288,7 @@ export const SelectedSiteMetrics = ({
         </TabButtonContainer>
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
-            <ChartWrapper>
+            <ChartsWrapper>
               {protocols?.beltfish && (
                 <SelectedSiteChartWrapper>
                   <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
@@ -300,12 +299,12 @@ export const SelectedSiteMetrics = ({
                   <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
                 </SelectedSiteChartWrapper>
               )}
-              {protocols?.benthicpit && (
+              {(protocols?.benthicpit || protocols?.benthiclit || protocols?.benthicpqt) && (
                 <SelectedSiteChartWrapper>
-                  <SampleEventBenthicPIT benthicPITData={protocols?.benthicpit} />
+                  <SampleEventBenthicPlot sampleEventProtocols={selectedSampleEvent.protocols} />
                 </SelectedSiteChartWrapper>
               )}
-            </ChartWrapper>
+            </ChartsWrapper>
           ) : (
             <>
               <SelectedSiteMetricsCardContainer>
