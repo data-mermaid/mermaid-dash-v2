@@ -290,7 +290,7 @@ export const SelectedSiteMetrics = ({
         </TabButtonContainer>
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
-            <ChartsWrapper>
+            <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
               {protocols?.beltfish && (
                 <SelectedSiteChartWrapper>
                   <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />

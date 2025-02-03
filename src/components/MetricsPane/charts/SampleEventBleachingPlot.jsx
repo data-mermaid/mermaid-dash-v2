@@ -20,7 +20,9 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
   const totalSurveys = quadrat_count_avg > 0 ? quadrat_count_avg * sample_unit_count : 0
   const otherBleachingPercentage =
     quadrat_count_avg > 0
-      ? 100 - percent_hard_avg_avg - percent_soft_avg_avg - percent_algae_avg_avg
+      ? parseFloat(
+          (100 - percent_hard_avg_avg - percent_soft_avg_avg - percent_algae_avg_avg).toFixed(1),
+        )
       : undefined
 
   const bleachingPercentageValues = [
