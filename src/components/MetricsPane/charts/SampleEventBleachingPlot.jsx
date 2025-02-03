@@ -5,12 +5,9 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const bleachingCategory = {
-  percent_algae_avg_avg: 'Avg Macroalgae Cover',
-  percent_soft_avg_avg: 'Avg Soft Coral Cover',
-  other: 'Other Cover',
-  percent_hard_avg_avg: 'Avg Hard Coral Cover',
-}
+const bleachingBenthicCategories = Object.entries(
+  chartTheme.chartCategoryType.bleachingBenthicColorMap,
+)
 
 export const SampleEventBleachingPlot = ({ bleachingData }) => {
   const {
@@ -20,7 +17,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     quadrat_count_avg,
     sample_unit_count,
   } = bleachingData
-  const bleachingSampleUnitCount = quadrat_count_avg > 0 ? quadrat_count_avg * sample_unit_count : 0
+  const totalSurveys = quadrat_count_avg > 0 ? quadrat_count_avg * sample_unit_count : 0
   const otherBleachingPercentage =
     quadrat_count_avg > 0
       ? 100 - percent_hard_avg_avg - percent_soft_avg_avg - percent_algae_avg_avg
@@ -33,13 +30,13 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     percent_hard_avg_avg ?? 0,
   ]
 
-  const plotlyDataConfiguration = Object.keys(bleachingCategory).map((category, index) => ({
+  const plotlyDataConfiguration = bleachingBenthicCategories.map(([category, color], index) => ({
     x: [1],
     y: [bleachingPercentageValues[index] / 100],
     type: 'bar',
-    name: `${bleachingCategory[category]} (${bleachingPercentageValues[index]}%)`,
+    name: `${category} (${bleachingPercentageValues[index]}%)`,
     marker: {
-      color: chartTheme.sampleEventCharts.bleaching.marker.color[index],
+      color: color,
     },
   }))
 
@@ -70,7 +67,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching - % Benthic Cover</MetricCardH3>
-        <ChartSubtitle>{bleachingSampleUnitCount.toLocaleString()} Surveys</ChartSubtitle>
+        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

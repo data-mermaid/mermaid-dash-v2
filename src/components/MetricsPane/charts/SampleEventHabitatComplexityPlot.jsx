@@ -10,8 +10,8 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
-  const habitatComplexityScore = habitatComplexityData?.score_avg_avg
   const totalSurveys = habitatComplexityData?.sample_unit_count ?? 0
+  const habitatComplexityScore = habitatComplexityData?.score_avg_avg
 
   const plotlyDataConfiguration = [
     { x: [0, 5], y: [0, 0], type: 'scatter', mode: 'lines', line: { color: 'black', width: 4 } },

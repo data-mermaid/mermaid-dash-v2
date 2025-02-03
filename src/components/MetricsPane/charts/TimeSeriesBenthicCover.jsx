@@ -8,7 +8,7 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
-const categories = Object.keys(chartTheme.timeseriesCharts.benthicCoverColorMap)
+const categories = Object.keys(chartTheme.chartCategoryType.benthicCoverColorMap)
 
 export const TimeSeriesBenthicCover = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
@@ -83,7 +83,7 @@ export const TimeSeriesBenthicCover = () => {
       type: 'bar',
       name: category,
       marker: {
-        color: chartTheme.timeseriesCharts.benthicCoverColorMap[category],
+        color: chartTheme.chartCategoryType.benthicCoverColorMap[category],
       },
     }))
     .filter((trace) => trace.y.some((value) => value > 0))

@@ -5,26 +5,28 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const fishTropicGroupCategory = {
-  omnivore: 'Omnivore',
-  piscivore: 'Piscivore',
-  planktivore: 'Planktivore',
-  'invertivore-mobile': 'Invertivore mobile',
-  'invertivore-sessible': 'Invertivore sessible',
-  'herbivore-macroalgae': 'Herbivore macroalgae',
-  'herbivore-detritivore': 'Herbivore detritivore',
+const fishTropicGroupKey = {
+  Omnivore: 'omnivore',
+  Piscivore: 'piscivore',
+  Planktivore: 'planktivore',
+  'Invertivore mobile': 'invertivore-mobile',
+  'Invertivore sessile': 'invertivore-sessile',
+  'Herbivore macroalgae': 'herbivore-macroalgae',
+  'Herbivore detritivore': 'herbivore-detritivore',
 }
+const fishTropicGroupCategories = Object.keys(chartTheme.chartCategoryType.fishTropicGroupColorMap)
+const fishTropicGroupColors = Object.values(chartTheme.chartCategoryType.fishTropicGroupColorMap)
 
 export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
-  const fishbeltSampleUnitCount = fishbeltData?.sample_unit_count ?? 0
+  const totalSurveys = fishbeltData?.sample_unit_count ?? 0
   const fishBiomassTropicGroupData = fishbeltData?.biomass_kgha_trophic_group_avg
 
-  const fishTropicGroupValues = Object.keys(fishTropicGroupCategory).map((category) => {
-    return fishBiomassTropicGroupData?.[category] ?? 0
+  const fishTropicGroupValues = fishTropicGroupCategories.map((category) => {
+    const categoryKey = fishTropicGroupKey[category]
+    return fishBiomassTropicGroupData?.[categoryKey] ?? 0
   })
-  const fishTropicGroupLabels = Object.values(fishTropicGroupCategory).map(
-    (category) => `${category}`,
-  )
+
+  const fishTropicGroupLabels = fishTropicGroupCategories.map((category) => category)
   const formattedFishTropicGroupLabels = fishTropicGroupLabels.map((label) =>
     label.replace(' ', '<br>'),
   )
@@ -34,7 +36,10 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       x: fishTropicGroupLabels,
       y: fishTropicGroupValues,
       type: 'bar',
-      marker: chartTheme.sampleEventCharts.fishTropicGroupCover.marker,
+      marker: {
+        color: fishTropicGroupColors,
+        line: { color: 'black', width: 1 },
+      },
       xbins: {
         size: 100,
       },
@@ -66,7 +71,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Fish Biomass</MetricCardH3>
-        <ChartSubtitle>{fishbeltSampleUnitCount.toLocaleString()} Surveys</ChartSubtitle>
+        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
       </TitlesWrapper>
 
       <Plot

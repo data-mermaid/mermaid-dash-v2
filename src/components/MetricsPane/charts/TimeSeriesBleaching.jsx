@@ -7,7 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const bleachingColor = chartTheme.timeseriesCharts.bleachingColor
+const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
 const chartThemeLayout = chartTheme.layout
 
 export const TimeSeriesBleaching = () => {

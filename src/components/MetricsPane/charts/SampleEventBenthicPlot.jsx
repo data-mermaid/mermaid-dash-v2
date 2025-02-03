@@ -5,28 +5,29 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const benthicCategories = Object.keys(chartTheme.sampleEventCharts.benthic)
+const benthicCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const totalSurveys = benthicData?.sample_unit_count ?? 0
-  const benthicPercentageCover = benthicCategories.map((category) => {
+  const benthicPercentageCover = benthicCategories.reverse().map(([category, color]) => {
     const categoryValue = benthicData?.percent_cover_benthic_category_avg?.[category] ?? 0
     return {
       name: category,
       value: categoryValue,
+      color: color,
     }
   })
 
   const plotlyDataConfiguration = benthicPercentageCover
     .filter(({ value }) => value > 0)
-    .map(({ name, value }) => {
+    .map(({ name, value, color }) => {
       return {
         x: [1],
         y: [value / 100],
         type: 'bar',
         name: `${name} (${value}%)`,
         marker: {
-          color: chartTheme.sampleEventCharts.benthic[name],
+          color: color,
         },
       }
     })
