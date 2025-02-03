@@ -78,7 +78,7 @@ export const TimeSeriesHabitatComplexity = () => {
         .map((distribution) => distribution.percentage),
       type: 'bar',
       name: score,
-      marker: { color: chartTheme.timeseriesCharts.habitatComplexityColorMap[score] },
+      marker: { color: chartTheme.chartCategoryType.habitatComplexityColorMap[score] },
     }))
 
   const plotlyLayoutConfiguration = {

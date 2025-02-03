@@ -7,7 +7,7 @@ import useResponsive from '../../hooks/useResponsive'
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
-import { StyledHeader } from './MetricsPane.styles'
+import { ChartsWrapper, StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
   BiggerIconClose,
@@ -18,6 +18,7 @@ import {
   BiggerIconText,
   BiggerIconTextBoxMultiple,
   BiggerIconUser,
+  SelectedSiteChartWrapper,
   SelectedSiteContentContainer,
   SelectedSiteContentContainerWiderOnMobile,
   SelectedSiteMetricsCardContainer,
@@ -47,6 +48,11 @@ import {
 
 import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
+import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
+import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
+import { SampleEventBleachingSeverityPlot } from './charts/SampleEventBleachingSeverityPlot'
+import { SampleEventHabitatComplexityPlot } from './charts/SampleEventHabitatComplexityPlot'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -83,6 +89,7 @@ export const SelectedSiteMetrics = ({
     data_policy_benthiclit: dataPolicyBenthiclit,
     data_policy_bleachingqc: dataPolicyBleachingqc,
     suggested_citation: suggestedCitation,
+    protocols,
   } = selectedSampleEvent
 
   const isInitialSiteNotesTruncated = siteNotes?.length > 250
@@ -283,7 +290,47 @@ export const SelectedSiteMetrics = ({
         </TabButtonContainer>
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
-            <span>Placeholder: show summary metrics here</span>
+            <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
+              {protocols?.beltfish && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.quadrat_benthic_percent && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthicpit && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPlot benthicType="pit" benthicData={protocols?.benthicpit} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthiclit && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPlot benthicType="lit" benthicData={protocols?.benthiclit} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.benthicpqt && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBenthicPlot benthicType="pqt" benthicData={protocols?.benthicpqt} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.colonies_bleached && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBleachingSeverityPlot
+                    coloniesBleachedData={protocols?.colonies_bleached}
+                  />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.habitatcomplexity && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventHabitatComplexityPlot
+                    habitatComplexityData={protocols?.habitatcomplexity}
+                  />
+                </SelectedSiteChartWrapper>
+              )}
+            </ChartsWrapper>
           ) : (
             <>
               <SelectedSiteMetricsCardContainer>

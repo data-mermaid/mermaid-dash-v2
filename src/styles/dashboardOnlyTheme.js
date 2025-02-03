@@ -17,7 +17,7 @@ const plotlyChart = {
     },
   },
 
-  timeseriesCharts: {
+  chartCategoryType: {
     managementRuleColorMap: {
       'Open Access': '#77b4c5',
       Restrictions: '#70aae6',
@@ -43,7 +43,7 @@ const plotlyChart = {
       4: '#6288ad',
       5: '#3c6e9a',
     },
-    bleachingColor: {
+    bleachingColorMap: {
       Normal: '#3c6e9a',
       Pale: '#6288ad',
       '0-20%': '#85a3c1',
@@ -51,6 +51,21 @@ const plotlyChart = {
       '50-80%': '#cbdaea',
       '80-100%': '#eff7ff',
       Dead: '#b4b4b4',
+    },
+    fishTropicGroupColorMap: {
+      Omnivore: '#80cdc1',
+      Piscivore: '#377eb8',
+      Planktivore: '#bebada',
+      'Invertivore mobile': '#fcae61',
+      'Invertivore sessile': '#fdd92f',
+      'Herbivore macroalgae': '#4d9221',
+      'Herbivore detritivore': '#d9ed8b',
+    },
+    bleachingBenthicColorMap: {
+      'Avg Macroalgae Cover': '#b6b400',
+      'Avg Soft Coral Cover': '#9ce5fa',
+      'Other Cover': '#b4b4b4',
+      'Avg Hard Coral Cover': '#498fc9',
     },
   },
 

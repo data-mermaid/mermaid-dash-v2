@@ -74,7 +74,7 @@ export const TimeSeriesFishBiomass = () => {
       .map((distribution) => distribution.medianFishBiomass),
     type: 'bar',
     name: rule,
-    marker: { color: chartTheme.timeseriesCharts.managementRuleColorMap[rule] },
+    marker: { color: chartTheme.chartCategoryType.managementRuleColorMap[rule] },
   }))
 
   const plotlyLayoutConfiguration = {
