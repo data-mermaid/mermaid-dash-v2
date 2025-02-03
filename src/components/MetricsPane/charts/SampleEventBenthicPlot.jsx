@@ -7,7 +7,19 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const benthicCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
 
+import PropTypes from 'prop-types'
+
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
+  // ... component implementation
+}
+
+SampleEventBenthicPlot.propTypes = {
+  benthicType: PropTypes.string.isRequired,
+  benthicData: PropTypes.shape({
+    sample_unit_count: PropTypes.number,
+    percent_cover_benthic_category_avg: PropTypes.objectOf(PropTypes.number)
+  }).isRequired
+}
   const totalSurveys = benthicData?.sample_unit_count ?? 0
   const benthicPercentageCover = benthicCategories.reverse().map(([category, color]) => {
     const categoryValue = benthicData?.percent_cover_benthic_category_avg?.[category] ?? 0
