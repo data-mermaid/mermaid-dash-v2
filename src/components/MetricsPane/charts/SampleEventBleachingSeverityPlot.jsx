@@ -7,7 +7,6 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
 export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
-  const totalSurveys = countTotalAvg > 0 ? countTotalAvg * sampleUnitCount : 0
   const {
     count_total_avg: countTotalAvg,
     percent_100_avg: percent100,
@@ -19,38 +18,39 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     percent_pale_avg: percentPale,
     sample_unit_count: sampleUnitCount,
   } = coloniesBleachedData
+  const totalSurveys = countTotalAvg > 0 ? countTotalAvg * sampleUnitCount : 0
 
   const plotlyDataConfiguration = [
     {
       x: [1],
-      y: [percentDead / 100],
+      y: [[isNaN(percentDead) ? 0 : percentDead / 100]],
       type: 'bar',
       name: `Recently dead (${percentDead}%)`,
       marker: { color: bleachingColor['Dead'] },
     },
     {
       x: [1],
-      y: [percent100 / 100],
+      y: [[isNaN(percent100) ? 0 : percent100 / 100]],
       type: 'bar',
       name: `80-100% bleached (${percent100}%)`,
       marker: { color: bleachingColor['80-100%'] },
     },
     {
       x: [1],
-      y: [percent80 / 100],
+      y: [[isNaN(percent80) ? 0 : percent80 / 100]],
       type: 'bar',
       name: `50-80% bleached (${percent80}%)`,
       marker: { color: bleachingColor['50-80%'] },
     },
     {
       x: [1],
-      y: [percent50 / 100],
+      y: [[isNaN(percent50) ? 0 : percent50 / 100]],
       type: 'bar',
       name: `20-50% bleached (${percent50}%)`,
       marker: { color: bleachingColor['20-50%'] },
     },
     {
-      y: [percent20 / 100],
+      y: [[isNaN(percent20) ? 0 : percent20 / 100]],
       x: [1],
       type: 'bar',
       name: `0-20% bleached (${percent20}%)`,
@@ -58,14 +58,14 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     },
     {
       x: [1],
-      y: [percentPale / 100],
+      y: [[isNaN(percentPale) ? 0 : percentPale / 100]],
       type: 'bar',
       name: `Pale (${percentPale}%)`,
       marker: { color: bleachingColor['Pale'] },
     },
     {
       x: [1],
-      y: [percentNormal / 100],
+      y: [[isNaN(percentNormal) ? 0 : percentNormal / 100]],
       type: 'bar',
       name: `Normal (${percentNormal}%)`,
       marker: { color: bleachingColor['Normal'] },
