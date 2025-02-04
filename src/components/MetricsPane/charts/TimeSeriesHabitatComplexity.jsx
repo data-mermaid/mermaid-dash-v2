@@ -79,6 +79,7 @@ export const TimeSeriesHabitatComplexity = () => {
       type: 'bar',
       name: score,
       marker: { color: chartTheme.chartCategoryType.habitatComplexityColorMap[score] },
+      hovertemplate: '%{x}, %{y:.2f}',
     }))
 
   const plotlyLayoutConfiguration = {
