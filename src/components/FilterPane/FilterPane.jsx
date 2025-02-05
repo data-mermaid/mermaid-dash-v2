@@ -10,7 +10,12 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import theme from '../../styles/theme'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import { filterPane, autocompleteGroupNames, tooltipText } from '../../constants/language'
+import {
+  filterPane,
+  autocompleteGroupNames,
+  tooltipText,
+  noDataText,
+} from '../../constants/language'
 import { IconPlus } from '../../assets/icons'
 import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
@@ -329,7 +334,7 @@ const FilterPane = ({ mermaidUserData }) => {
             )
           })
         ) : (
-          <StyledEmptyListItem>No projects match current filters</StyledEmptyListItem>
+          <StyledEmptyListItem>{noDataText.noProjectsOnCurrentFilters}</StyledEmptyListItem>
         )}
       </StyledUnorderedList>
     </StyledProjectListContainer>
@@ -438,7 +443,7 @@ const FilterPane = ({ mermaidUserData }) => {
           )}
           <StyledHeader>Methods / Data Sharing</StyledHeader>
           {methodsList}
-          <StyledHeader>No Data</StyledHeader>
+          <StyledHeader>{noDataText.noMethodData}</StyledHeader>
           <StyledCategoryContainer>
             <StyledClickableArea onClick={handleShowProjectsWithNoRecords}>
               <input

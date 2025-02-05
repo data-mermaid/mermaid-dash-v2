@@ -8,6 +8,7 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import theme from '../../styles/theme'
 import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
+import { noDataText } from '../../constants/language'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
 import {
@@ -320,7 +321,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   ) : (
     <>
       <EmptySpace />
-      <div>No project data</div>
+      <div>{noDataText.noTableData}</div>
     </>
   )
 

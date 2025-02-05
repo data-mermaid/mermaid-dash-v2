@@ -64,6 +64,14 @@ export const autocompleteGroupNames = {
   noOrganizationsMatchCurrentFilters: 'No organizations match current filters',
 }
 
+export const noDataText = {
+  noMethodData: 'No data',
+  noYearRange: 'No data to obtain year range',
+  noTableData: 'No project data',
+  noProjectsOnCurrentFilters: 'No projects match current filters',
+  noChartsOnCurrentFilters: ['No data to show visualizations.', 'Try refining your filters.'],
+}
+
 export default {
   shareView,
   table,

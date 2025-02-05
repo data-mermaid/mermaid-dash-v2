@@ -27,7 +27,7 @@ import {
 import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/dashboardOnlyIcons'
-import { tooltipText } from '../../constants/language'
+import { noDataText, tooltipText } from '../../constants/language'
 
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
@@ -100,7 +100,7 @@ const MetricsPane = ({
     const sortedYears = Array.from(years).sort()
     const yearRange =
       sortedYears.length === 0 ? (
-        <InlineOnDesktopMetricWrapper>No data to obtain year range</InlineOnDesktopMetricWrapper>
+        <InlineOnDesktopMetricWrapper>{noDataText.noYearRange}</InlineOnDesktopMetricWrapper>
       ) : sortedYears.length === 1 ? (
         <InlineOnDesktopMetricWrapper>
           <MetricCardH3>Year</MetricCardH3> <span>{sortedYears[0]}</span>
@@ -170,6 +170,13 @@ const MetricsPane = ({
     </>
   )
 
+  const noChartsToDisplay = (
+    <>
+      <div>{noDataText.noChartsOnCurrentFilters[0]}</div>
+      <div>{noDataText.noChartsOnCurrentFilters[1]}</div>
+    </>
+  )
+
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
@@ -204,27 +211,33 @@ const MetricsPane = ({
         {isDesktopWidth ? <MetricsCard>{calculateMetrics.yearRange}</MetricsCard> : null}
       </SummarizedMetrics>
       <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
-        <MetricsPaneChartTabs
-          id="hard-coral-cover"
-          aggregatePanelContent={<AggregateHardCoralCover />}
-          timeSeriesPanelContent={<TimeSeriesBenthicCover />}
-        />
-        <MetricsPaneChartTabs
-          id="fish-biomass"
-          aggregatePanelContent={<AggregateFishBiomass />}
-          timeSeriesPanelContent={<TimeSeriesFishBiomass />}
-        />
+        {numSurveys === 0 ? (
+          noChartsToDisplay
+        ) : (
+          <>
+            <MetricsPaneChartTabs
+              id="hard-coral-cover"
+              aggregatePanelContent={<AggregateHardCoralCover />}
+              timeSeriesPanelContent={<TimeSeriesBenthicCover />}
+            />
+            <MetricsPaneChartTabs
+              id="fish-biomass"
+              aggregatePanelContent={<AggregateFishBiomass />}
+              timeSeriesPanelContent={<TimeSeriesFishBiomass />}
+            />
 
-        <MetricsPaneChartTabs
-          id="Bleaching"
-          aggregatePanelContent={<AggregateBleaching />}
-          timeSeriesPanelContent={<TimeSeriesBleaching />}
-        />
-        <MetricsPaneChartTabs
-          id="habitat-complexity"
-          aggregatePanelContent={<AggregateHabitatComplexity />}
-          timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
-        />
+            <MetricsPaneChartTabs
+              id="Bleaching"
+              aggregatePanelContent={<AggregateBleaching />}
+              timeSeriesPanelContent={<TimeSeriesBleaching />}
+            />
+            <MetricsPaneChartTabs
+              id="habitat-complexity"
+              aggregatePanelContent={<AggregateHabitatComplexity />}
+              timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
+            />
+          </>
+        )}
       </ChartsWrapper>
     </DisplayedProjectsMetricsWrapper>
   )
