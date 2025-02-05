@@ -18,6 +18,12 @@ export const TimeSeriesBenthicCover = () => {
       const year = new Date(sample_date).getFullYear()
       const recordProtocols = protocols || {}
       const benthicCategories = {}
+      const surveyedBenthicCount =
+        recordProtocols?.benthicpit?.percent_cover_benthic_category_avg ||
+        recordProtocols?.benthiclit?.percent_cover_benthic_category_avg ||
+        recordProtocols?.benthicpqt?.percent_cover_benthic_category_avg
+          ? 1
+          : 0
 
       categories.forEach((category) => {
         const avgBenthicCoverValues = Object.keys(recordProtocols)
@@ -42,7 +48,7 @@ export const TimeSeriesBenthicCover = () => {
         }
       }
 
-      accumulator[year].count += 1
+      accumulator[year].count += surveyedBenthicCount
       categories.forEach((category) => {
         if (benthicCategories[category] !== null) {
           accumulator[year][category] += benthicCategories[category]
@@ -85,6 +91,7 @@ export const TimeSeriesBenthicCover = () => {
       marker: {
         color: chartTheme.chartCategoryType.benthicCoverColorMap[category],
       },
+      hovertemplate: '%{x}, %{y:.2f}',
     }))
     .filter((trace) => trace.y.some((value) => value > 0))
 

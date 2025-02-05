@@ -13,13 +13,9 @@ const chartThemeLayout = chartTheme.layout
 export const TimeSeriesBleaching = () => {
   const { filteredSurveys } = useContext(FilterProjectsContext)
 
-  const groupedBleachingPercentageColonyCountByYear = filteredSurveys.reduce(
-    (accumulator, { sample_date, protocols }) => {
-      const coloniesBleached = protocols?.colonies_bleached
-      if (!coloniesBleached) {
-        return accumulator
-      }
-
+  const groupedBleachingPercentageColonyCountByYear = filteredSurveys
+    .filter((record) => !!record.protocols?.colonies_bleached)
+    .reduce((accumulator, { sample_date, protocols }) => {
       const year = new Date(sample_date).getFullYear()
       const {
         count_total_avg: countTotalAvg,
@@ -31,9 +27,9 @@ export const TimeSeriesBleaching = () => {
         percent_normal_avg: percentNormal,
         percent_pale_avg: percentPale,
         sample_unit_count: sampleUnitCount,
-      } = coloniesBleached
+      } = protocols.colonies_bleached
 
-      if (!countTotalAvg || !sampleUnitCount) {
+      if (!countTotalAvg) {
         return accumulator
       }
 
@@ -66,9 +62,7 @@ export const TimeSeriesBleaching = () => {
       accumulator[year].totalAllColonies += numColoniesTotal
 
       return accumulator
-    },
-    {},
-  )
+    }, {})
 
   const bleachingPercentageColonyDistributions = Object.values(
     groupedBleachingPercentageColonyCountByYear,
@@ -93,38 +87,23 @@ export const TimeSeriesBleaching = () => {
     {
       x: years,
       y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColoniesNormal,
+        (distribution) => distribution.percentColoniesDead,
       ),
-      name: 'Normal',
+      name: 'Dead',
       type: 'bar',
-      marker: { color: bleachingColor.Normal },
+      marker: { color: bleachingColor.Dead },
+      hovertemplate: '%{x}, %{y:.2f}',
     },
+
     {
       x: years,
       y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColoniesPale,
+        (distribution) => distribution.percentColonies80to100,
       ),
-      name: 'Pale',
+      name: '80-100%',
       type: 'bar',
-      marker: { color: bleachingColor.Pale },
-    },
-    {
-      x: years,
-      y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColonies0to20,
-      ),
-      name: '0-20%',
-      type: 'bar',
-      marker: { color: bleachingColor['0-20%'] },
-    },
-    {
-      x: years,
-      y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColonies20to50,
-      ),
-      name: '20-50%',
-      type: 'bar',
-      marker: { color: bleachingColor['20-50%'] },
+      marker: { color: bleachingColor['80-100%'] },
+      hovertemplate: '%{x}, %{y:.2f}',
     },
     {
       x: years,
@@ -134,24 +113,47 @@ export const TimeSeriesBleaching = () => {
       name: '50-80%',
       type: 'bar',
       marker: { color: bleachingColor['50-80%'] },
+      hovertemplate: '%{x}, %{y:.2f}',
     },
     {
       x: years,
       y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColonies80to100,
+        (distribution) => distribution.percentColonies20to50,
       ),
-      name: '80-100%',
+      name: '20-50%',
       type: 'bar',
-      marker: { color: bleachingColor['80-100%'] },
+      marker: { color: bleachingColor['20-50%'] },
+      hovertemplate: '%{x}, %{y:.2f}',
     },
     {
       x: years,
       y: bleachingPercentageColonyDistributions.map(
-        (distribution) => distribution.percentColoniesDead,
+        (distribution) => distribution.percentColonies0to20,
       ),
-      name: 'Dead',
+      name: '0-20%',
       type: 'bar',
-      marker: { color: bleachingColor.Dead },
+      marker: { color: bleachingColor['0-20%'] },
+      hovertemplate: '%{x}, %{y:.2f}',
+    },
+    {
+      x: years,
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColoniesPale,
+      ),
+      name: 'Pale',
+      type: 'bar',
+      marker: { color: bleachingColor.Pale },
+      hovertemplate: '%{x}, %{y:.2f}',
+    },
+    {
+      x: years,
+      y: bleachingPercentageColonyDistributions.map(
+        (distribution) => distribution.percentColoniesNormal,
+      ),
+      name: 'Normal',
+      type: 'bar',
+      marker: { color: bleachingColor.Normal },
+      hovertemplate: '%{x}, %{y:.2f}',
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
