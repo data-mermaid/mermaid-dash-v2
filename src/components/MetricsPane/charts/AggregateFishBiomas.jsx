@@ -15,16 +15,17 @@ export const AggregateFishBiomass = () => {
     .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)
     .filter((record) => record !== undefined && record !== null)
 
+  const maxXValue = Math.max(...surveyFishbeltBiomassValues)
+  const hasValuesAbove5000 = maxXValue > 5000
+
   const plotlyDataConfiguration = [
     {
-      x: surveyFishbeltBiomassValues,
+      x: surveyFishbeltBiomassValues.map((value) => (value > 5000 ? 5000 : value)),
       type: 'histogram',
       marker: {
         color: chartTheme.aggregateCharts.default.marker.color,
       },
-      xbins: {
-        size: 100,
-      },
+      xbins: { start: 0, size: 100 },
     },
   ]
 
@@ -36,12 +37,16 @@ export const AggregateFishBiomass = () => {
         ...chartTheme.layout.xaxis.title,
         text: 'Fish biomass (kg/ha)',
       },
+      tickmode: hasValuesAbove5000 ? 'array' : 'auto',
+      tickvals: hasValuesAbove5000 ? [0, 1000, 2000, 3000, 4000, 5000] : [],
+      ticktext: hasValuesAbove5000 ? ['0', '1000', '2000', '3000', '4000', '5000+'] : [],
     },
     yaxis: {
       ...chartTheme.layout.yaxis,
       title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
     },
   }
+
   return (
     <ChartWrapper>
       <TitlesWrapper>
