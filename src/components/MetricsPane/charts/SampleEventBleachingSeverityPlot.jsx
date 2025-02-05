@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
@@ -18,7 +19,17 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     percent_pale_avg: percentPale,
     sample_unit_count: sampleUnitCount,
   } = coloniesBleachedData
-  const totalSurveys = countTotalAvg > 0 ? countTotalAvg * sampleUnitCount : 0
+  const isBleachingSeverityDataAvailable =
+    !!percent100 &&
+    !!percent20 &&
+    !!percent50 &&
+    !!percent80 &&
+    !!percentDead &&
+    !!percentNormal &&
+    !!percentPale &&
+    !!countTotalAvg
+
+  const totalSurveys = isBleachingSeverityDataAvailable ? countTotalAvg * sampleUnitCount : 0
 
   const plotlyDataConfiguration = [
     {
@@ -99,15 +110,20 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching - Severity</MetricCardH3>
-        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        {isBleachingSeverityDataAvailable && (
+          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {isBleachingSeverityDataAvailable ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }

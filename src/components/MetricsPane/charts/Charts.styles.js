@@ -12,8 +12,19 @@ export const TitlesWrapper = styled.div`
   top: 0;
   left: 0;
   z-index: 1;
+  width: 100%;
+  padding-bottom: 2px;
+  border-bottom: 1px solid ${theme.color.border};
 `
 export const ChartWrapper = styled.div`
   position: relative;
   height: ${dashboardOnlyTheme.plotlyChart.layout.height}px;
+`
+
+export const PrivateChartWrapper = styled.div`
+  position: relative;
+  padding-top: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `

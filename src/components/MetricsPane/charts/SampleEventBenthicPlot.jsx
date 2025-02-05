@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const benthicCategories = Object.entries(
@@ -11,8 +12,10 @@ const benthicCategories = Object.entries(
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const totalSurveys = benthicData?.sample_unit_count ?? 0
+  const benthicPercentageData = benthicData?.percent_cover_benthic_category_avg
+
   const benthicPercentageCover = benthicCategories.map(([category, color]) => {
-    const categoryValue = benthicData?.percent_cover_benthic_category_avg?.[category] ?? 0
+    const categoryValue = benthicPercentageData?.[category] ?? 0
     return {
       name: category,
       value: categoryValue,
@@ -61,15 +64,20 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover ({benthicType})</MetricCardH3>
-        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        {benthicPercentageData && (
+          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {benthicPercentageData ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }

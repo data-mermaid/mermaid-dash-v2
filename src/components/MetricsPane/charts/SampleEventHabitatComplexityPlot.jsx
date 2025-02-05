@@ -6,6 +6,7 @@ import lowHabIcon from '../../../assets/low-hb-icon.png'
 import mediumHabIcon from '../../../assets/medium-hb-icon.png'
 import highHabIcon from '../../../assets/high-hb-icon.png'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
@@ -122,15 +123,20 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity</MetricCardH3>
-        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        {habitatComplexityScore && (
+          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {habitatComplexityScore ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }
