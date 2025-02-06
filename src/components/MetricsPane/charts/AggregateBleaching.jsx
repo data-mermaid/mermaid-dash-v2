@@ -5,11 +5,16 @@ import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateBleaching = () => {
-  const { filteredSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const privateBleachingToggleOn =
+    !methodDataSharingFilters.includes('cb_3') &&
+    methodDataSharingFilters.includes('cb_2') &&
+    methodDataSharingFilters.includes('cb_1')
 
   const initialColoniesBleachedSummarizedBySeverity = {
     numColoniesTotal: 0,
@@ -126,15 +131,21 @@ export const AggregateBleaching = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
-        <ChartSubtitle>{Math.round(numColoniesTotal).toLocaleString()} Colonies</ChartSubtitle>
+        {!privateBleachingToggleOn && (
+          <ChartSubtitle>{Math.round(numColoniesTotal).toLocaleString()} Colonies</ChartSubtitle>
+        )}
       </TitlesWrapper>
 
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {!privateBleachingToggleOn ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }
