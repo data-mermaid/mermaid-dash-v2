@@ -1,0 +1,42 @@
+import { useEffect } from 'react'
+import { Modal } from '../../generic'
+
+const DownloadModal = ({ modalOpen, handleClose }) => {
+  const _closeDisclaimerWithEscKey = useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        handleClose()
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [handleClose])
+
+  const content = (
+    <ModalBody>
+      <p>{selected}</p>
+    </ModalBody>
+  )
+
+  const footerContent = (
+    <RightFooter>
+      <ButtonSecondary onClick={handleCloseDisclaimer}>Close</ButtonSecondary>
+    </RightFooter>
+  )
+
+  return (
+    <Modal
+      title={dataDisclaimer.title}
+      mainContent={content}
+      isOpen={modalOpen}
+      onDismiss={handleClose}
+      footerContent={footerContent}
+    />
+  )
+}
+
+export default DownloadModal
