@@ -25,19 +25,29 @@ import {
   StyledChevronSpan,
   StyledMobileZoomToDataButton,
   StyledMobileFollowMapButton,
+  FilterDownloadWrapper,
+  FilterDownloadButton,
+  DownloadMenu,
+  GFCRDataDownloadButton,
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
-import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/dashboardOnlyIcons'
+import {
+  ARROW_LEFT,
+  ARROW_RIGHT,
+  IconCaretUp,
+  IconTrayDownload,
+} from '../../assets/dashboardOnlyIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
 
+import { MuiTooltip } from '../generic/MuiTooltip'
+import { ButtonPrimary, Modal } from '../generic'
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
 import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
-import { MuiTooltip } from '../generic/MuiTooltip'
-import { Modal } from '../generic'
+import HideShow from '../Header/components/HideShow'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 
@@ -247,6 +257,16 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     toast.info(followScreenToastMessage)
   }
 
+  const renderOverflowDownloadMenu = () => {
+    return (
+      <DownloadMenu>
+        <ButtonPrimary>
+          <IconTrayDownload /> Download GFCR Data
+        </ButtonPrimary>
+      </DownloadMenu>
+    )
+  }
+
   const renderFilter = () => {
     const modalContent = <FilterPane mermaidUserData={mermaidUserData} />
 
@@ -281,6 +301,21 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             <StyledChevronSpan>{showFilterPane ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
+        {showFilterPane ? (
+          <FilterDownloadWrapper>
+            <FilterDownloadButton>
+              <IconTrayDownload /> Download
+            </FilterDownloadButton>
+            <HideShow
+              button={
+                <GFCRDataDownloadButton>
+                  <IconCaretUp />
+                </GFCRDataDownloadButton>
+              }
+              contents={renderOverflowDownloadMenu()}
+            />
+          </FilterDownloadWrapper>
+        ) : null}
       </StyledFilterWrapper>
     )
   }

@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { IconFilter } from '../../assets/icons'
-import { ButtonSecondary } from '../generic'
+import { ButtonPrimary, ButtonSecondary } from '../generic'
 
 export const StyledDashboardContainer = styled.div`
   display: flex;
@@ -147,4 +147,36 @@ export const MobileFooterContainer = styled.div`
 
 export const StyledChevronSpan = styled.span`
   padding-right: 0.8rem;
+`
+
+export const FilterDownloadWrapper = styled.div`
+  display: flex;
+  gap: 1px;
+  background: white;
+  margin: 10px;
+  height: 40px;
+  z-index: 2;
+  border: 1px solid ${theme.color.grey0};
+  box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.15);
+`
+
+export const FilterDownloadButton = styled(ButtonPrimary)`
+  width: 90%;
+  height: 100%;
+  flex-grow: 1;
+`
+
+export const GFCRDataDownloadButton = styled(ButtonPrimary)`
+  height: 100%;
+`
+
+export const DownloadMenu = styled.div`
+  position: absolute;
+  display: flex;
+  color: ${theme.color.white};
+  flex-direction: column;
+  align-items: flex-end;
+  bottom: 38px;
+  width: 220px;
+  left: -183px;
 `
