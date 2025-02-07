@@ -5,13 +5,20 @@ import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
 const categories = Object.keys(chartTheme.chartCategoryType.benthicCoverColorMap)
 
 export const TimeSeriesBenthicCover = () => {
-  const { filteredSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
+  const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
+
+  const privateBenthicToggleOn =
+    privateBenthicFilters.some((filter) => !methodDataSharingFilters.includes(filter)) &&
+    otherBenthicFilters.every((filter) => methodDataSharingFilters.includes(filter))
 
   const groupedBenthicCategoryCountByYear = filteredSurveys.reduce(
     (accumulator, { sample_date, protocols }) => {
@@ -110,15 +117,21 @@ export const TimeSeriesBenthicCover = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
-        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        {!privateBenthicToggleOn && (
+          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        )}
       </TitlesWrapper>
 
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {!privateBenthicToggleOn ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }

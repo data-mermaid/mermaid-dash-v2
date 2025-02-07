@@ -5,6 +5,7 @@ import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
@@ -18,8 +19,12 @@ function calculateMedian(values) {
 }
 
 export const TimeSeriesFishBiomass = () => {
-  const { filteredSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
   const medianFishBiomassDistributions = []
+  const privateFishBeltToggleOn =
+    !methodDataSharingFilters.includes('bf_3') &&
+    methodDataSharingFilters.includes('bf_2') &&
+    methodDataSharingFilters.includes('bf_1')
 
   const surveyedFishBiomassRecords = filteredSurveys
     .filter(
@@ -98,15 +103,23 @@ export const TimeSeriesFishBiomass = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
-        <ChartSubtitle>{surveyedFishBiomassRecords.length.toLocaleString()} Surveys</ChartSubtitle>
+        {!privateFishBeltToggleOn && (
+          <ChartSubtitle>
+            {surveyedFishBiomassRecords.length.toLocaleString()} Surveys
+          </ChartSubtitle>
+        )}
       </TitlesWrapper>
 
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {!privateFishBeltToggleOn ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }
