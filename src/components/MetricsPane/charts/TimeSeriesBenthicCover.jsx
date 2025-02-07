@@ -6,6 +6,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
@@ -17,8 +18,8 @@ export const TimeSeriesBenthicCover = () => {
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
 
   const privateBenthicToggleOn =
-    privateBenthicFilters.some((filter) => !methodDataSharingFilters.includes(filter)) &&
-    otherBenthicFilters.every((filter) => methodDataSharingFilters.includes(filter))
+    privateBenthicFilters.some((filterLabel) => !methodDataSharingFilters.includes(filterLabel)) &&
+    otherBenthicFilters.every((filterLabel) => methodDataSharingFilters.includes(filterLabel))
 
   const groupedBenthicCategoryCountByYear = filteredSurveys.reduce(
     (accumulator, { sample_date, protocols }) => {
@@ -121,8 +122,9 @@ export const TimeSeriesBenthicCover = () => {
           <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
         )}
       </TitlesWrapper>
-
-      {!privateBenthicToggleOn ? (
+      {privateBenthicToggleOn ? (
+        <PrivateChartView />
+      ) : totalSurveys > 0 ? (
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
@@ -130,7 +132,7 @@ export const TimeSeriesBenthicCover = () => {
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
-        <PrivateChartView />
+        <NoDataChartView />
       )}
     </ChartWrapper>
   )

@@ -172,7 +172,7 @@ const MetricsPane = ({
   )
 
   const fishBeltFilterToggleOn = !methodDataSharingFilters.includes('bf_all')
-  const benthicsFilterToggleOn = ['bl_all', 'bp_all', 'qbp_all'].every(
+  const benthicsFilterToggleOn = ['bl_all', 'bp_all', 'qbp_all'].some(
     (filterLabel) => !methodDataSharingFilters.includes(filterLabel),
   )
   const bleachingFilterToggleOn = !methodDataSharingFilters.includes('cb_all')

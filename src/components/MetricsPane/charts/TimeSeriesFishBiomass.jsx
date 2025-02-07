@@ -6,6 +6,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
@@ -109,8 +110,9 @@ export const TimeSeriesFishBiomass = () => {
           </ChartSubtitle>
         )}
       </TitlesWrapper>
-
-      {!privateFishBeltToggleOn ? (
+      {privateFishBeltToggleOn ? (
+        <PrivateChartView />
+      ) : surveyedFishBiomassRecords.length > 0 ? (
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
@@ -118,7 +120,7 @@ export const TimeSeriesFishBiomass = () => {
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
-        <PrivateChartView />
+        <NoDataChartView />
       )}
     </ChartWrapper>
   )

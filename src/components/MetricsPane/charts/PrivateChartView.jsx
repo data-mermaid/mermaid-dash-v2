@@ -1,6 +1,6 @@
 import { useAuth0 } from '@auth0/auth0-react'
 import { ButtonSecondary } from '../../generic'
-import { PrivateChartWrapper } from './Charts.styles'
+import { NoChartWrapper } from './Charts.styles'
 
 export const PrivateChartView = () => {
   const { isAuthenticated, loginWithRedirect } = useAuth0()
@@ -10,11 +10,11 @@ export const PrivateChartView = () => {
   }
 
   return (
-    <PrivateChartWrapper>
+    <NoChartWrapper>
       <strong>This method has been set to private</strong>
       {!isAuthenticated && (
         <ButtonSecondary onClick={handleLogin}>Log in to view data</ButtonSecondary>
       )}
-    </PrivateChartWrapper>
+    </NoChartWrapper>
   )
 }

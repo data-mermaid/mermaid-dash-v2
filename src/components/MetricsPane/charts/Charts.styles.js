@@ -21,7 +21,7 @@ export const ChartWrapper = styled.div`
   height: ${dashboardOnlyTheme.plotlyChart.layout.height}px;
 `
 
-export const PrivateChartWrapper = styled.div`
+export const NoChartWrapper = styled.div`
   position: relative;
   padding-top: 150px;
   display: flex;

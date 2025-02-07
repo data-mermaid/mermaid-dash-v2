@@ -6,6 +6,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
@@ -99,15 +100,16 @@ export const AggregateHardCoralCover = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Hard Coral Cover </MetricCardH3>
+        <MetricCardH3>Hard Coral Cover</MetricCardH3>
         {!privateBenthicToggleOn && (
           <ChartSubtitle>
             {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
           </ChartSubtitle>
         )}
       </TitlesWrapper>
-
-      {!privateBenthicToggleOn ? (
+      {privateBenthicToggleOn ? (
+        <PrivateChartView />
+      ) : hardCoralAveragesPerSurvey.length > 0 ? (
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
@@ -115,7 +117,7 @@ export const AggregateHardCoralCover = () => {
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
-        <PrivateChartView />
+        <NoDataChartView />
       )}
     </ChartWrapper>
   )

@@ -6,6 +6,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
@@ -56,8 +57,9 @@ export const AggregateHabitatComplexity = () => {
           <ChartSubtitle>{habitatComplexityValues.length.toLocaleString()} Surveys</ChartSubtitle>
         )}
       </TitlesWrapper>
-
-      {!privateHabitatComplexityToggleOn ? (
+      {privateHabitatComplexityToggleOn ? (
+        <PrivateChartView />
+      ) : habitatComplexityValues.length > 0 ? (
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
@@ -65,7 +67,7 @@ export const AggregateHabitatComplexity = () => {
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
-        <PrivateChartView />
+        <NoDataChartView />
       )}
     </ChartWrapper>
   )

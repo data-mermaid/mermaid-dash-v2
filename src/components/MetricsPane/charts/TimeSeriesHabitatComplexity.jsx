@@ -6,6 +6,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
@@ -114,8 +115,9 @@ export const TimeSeriesHabitatComplexity = () => {
           </ChartSubtitle>
         )}
       </TitlesWrapper>
-
-      {!privateHabitatComplexityToggleOn ? (
+      {privateHabitatComplexityToggleOn ? (
+        <PrivateChartView />
+      ) : surveyedHabitatComplexityRecords.length > 0 ? (
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
@@ -123,7 +125,7 @@ export const TimeSeriesHabitatComplexity = () => {
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
-        <PrivateChartView />
+        <NoDataChartView />
       )}
     </ChartWrapper>
   )
