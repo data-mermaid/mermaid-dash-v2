@@ -50,6 +50,7 @@ import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
+import DownloadModal from './components/DownloadModal'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -62,10 +63,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
+    getActiveProjectCount,
   } = useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useLocalStorage('showFilterPane', true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
+  const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -212,6 +215,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setShowFilterModal(!showFilterModal)
   }
 
+  const handleShowDownloadModal = () => {
+    setShowDownloadModal(!showDownloadModal)
+  }
+
   const handleZoomToFilteredData = () => {
     const map = mapRef.current.getMap()
 
@@ -303,7 +310,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         </DesktopToggleFilterPaneButton>
         {showFilterPane ? (
           <FilterDownloadWrapper>
-            <FilterDownloadButton>
+            <FilterDownloadButton onClick={handleShowDownloadModal}>
               <IconTrayDownload /> Download
             </FilterDownloadButton>
             <HideShow
@@ -316,6 +323,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             />
           </FilterDownloadWrapper>
         ) : null}
+        <DownloadModal
+          modalOpen={showDownloadModal}
+          handleClose={() => setShowDownloadModal(false)}
+          activeProjectCount={getActiveProjectCount()}
+        />
       </StyledFilterWrapper>
     )
   }

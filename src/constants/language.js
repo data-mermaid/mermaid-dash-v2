@@ -22,6 +22,7 @@ export const dataDisclaimer = {
 
 export const downloadModal = {
   noDataTitle: 'No data to download',
+  noDataContent: 'Selected projects contain no data to download.',
   loginTitle: 'Log in to download data',
   title: 'Download data',
 }
