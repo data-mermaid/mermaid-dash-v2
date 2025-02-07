@@ -22,6 +22,14 @@ This SPA is the second version of the Mermaid Dashboard.
 
 # Mobile Testing
 
+## Approach 1
+
+1. Run the dev server with the `--host` flag. `Yarn dev --host`.
+2. Open the site on your mobile device using the network address for the app printed in the dev server console. Make sure you are using https.
+3. Proceed past the warning about untrusted certificates to view the app
+
+## Approach 2
+
 1. Download Termius on your mobile (scroll down for download link for iOS) https://termius.com/download/android
 2. Open Termius on your phone. You don't need to create an account for the app to work
 3. Create a new host
