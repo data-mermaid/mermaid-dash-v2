@@ -74,6 +74,7 @@ const MetricsPane = ({
     updateURLParams,
     selectedProject,
     setSelectedProject,
+    methodDataSharingFilters,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -170,6 +171,13 @@ const MetricsPane = ({
     </>
   )
 
+  const fishBeltFilterToggleOn = !methodDataSharingFilters.includes('bf_all')
+  const benthicsFilterToggleOn = ['bl_all', 'bp_all', 'qbp_all'].every(
+    (filterLabel) => !methodDataSharingFilters.includes(filterLabel),
+  )
+  const bleachingFilterToggleOn = !methodDataSharingFilters.includes('cb_all')
+  const habitatComplexityFilterToggleOn = !methodDataSharingFilters.includes('hc_all')
+
   const noChartsToDisplay = (
     <>
       <div>{noDataText.noChartsOnCurrentFilters[0]}</div>
@@ -215,27 +223,34 @@ const MetricsPane = ({
           noChartsToDisplay
         ) : (
           <>
-            <MetricsPaneChartTabs
-              id="hard-coral-cover"
-              aggregatePanelContent={<AggregateHardCoralCover />}
-              timeSeriesPanelContent={<TimeSeriesBenthicCover />}
-            />
-            <MetricsPaneChartTabs
-              id="fish-biomass"
-              aggregatePanelContent={<AggregateFishBiomass />}
-              timeSeriesPanelContent={<TimeSeriesFishBiomass />}
-            />
-
-            <MetricsPaneChartTabs
-              id="Bleaching"
-              aggregatePanelContent={<AggregateBleaching />}
-              timeSeriesPanelContent={<TimeSeriesBleaching />}
-            />
-            <MetricsPaneChartTabs
-              id="habitat-complexity"
-              aggregatePanelContent={<AggregateHabitatComplexity />}
-              timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
-            />
+            {benthicsFilterToggleOn && (
+              <MetricsPaneChartTabs
+                id="hard-coral-cover"
+                aggregatePanelContent={<AggregateHardCoralCover />}
+                timeSeriesPanelContent={<TimeSeriesBenthicCover />}
+              />
+            )}
+            {fishBeltFilterToggleOn && (
+              <MetricsPaneChartTabs
+                id="fish-biomass"
+                aggregatePanelContent={<AggregateFishBiomass />}
+                timeSeriesPanelContent={<TimeSeriesFishBiomass />}
+              />
+            )}
+            {bleachingFilterToggleOn && (
+              <MetricsPaneChartTabs
+                id="Bleaching"
+                aggregatePanelContent={<AggregateBleaching />}
+                timeSeriesPanelContent={<TimeSeriesBleaching />}
+              />
+            )}
+            {habitatComplexityFilterToggleOn && (
+              <MetricsPaneChartTabs
+                id="habitat-complexity"
+                aggregatePanelContent={<AggregateHabitatComplexity />}
+                timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
+              />
+            )}
           </>
         )}
       </ChartsWrapper>
