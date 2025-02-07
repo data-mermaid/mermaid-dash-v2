@@ -32,6 +32,7 @@ import {
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
+import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import {
   ARROW_LEFT,
   ARROW_RIGHT,
@@ -73,7 +74,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const location = useLocation()
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
 
   const mapRef = useRef()
@@ -264,6 +265,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     toast.info(followScreenToastMessage)
   }
 
+  const handleLogin = () => {
+    loginWithRedirect({ appState: { returnTo: location.search } })
+  }
+
   const renderOverflowDownloadMenu = () => {
     return (
       <DownloadMenu>
@@ -310,17 +315,30 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         </DesktopToggleFilterPaneButton>
         {showFilterPane ? (
           <FilterDownloadWrapper>
-            <FilterDownloadButton onClick={handleShowDownloadModal}>
-              <IconTrayDownload /> Download
+            <FilterDownloadButton
+              $isAuthenticated={isAuthenticated}
+              onClick={isAuthenticated ? handleShowDownloadModal : handleLogin}
+            >
+              {isAuthenticated ? (
+                <>
+                  <IconTrayDownload /> <span>Download</span>
+                </>
+              ) : (
+                <>
+                  <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
+                </>
+              )}
             </FilterDownloadButton>
-            <HideShow
-              button={
-                <GFCRDataDownloadButton>
-                  <IconCaretUp />
-                </GFCRDataDownloadButton>
-              }
-              contents={renderOverflowDownloadMenu()}
-            />
+            {isAuthenticated && (
+              <HideShow
+                button={
+                  <GFCRDataDownloadButton>
+                    <IconCaretUp />
+                  </GFCRDataDownloadButton>
+                }
+                contents={renderOverflowDownloadMenu()}
+              />
+            )}
           </FilterDownloadWrapper>
         ) : null}
         <DownloadModal
