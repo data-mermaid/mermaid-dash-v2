@@ -20,6 +20,13 @@ export const dataDisclaimer = {
     'Do not assume data are representative. Some projects have survey sites in geographies to address specific questions (e.g., land-based impacts of reefs, recovery rates from cyclone impacts). Summary data may not reflect overall national statistics.',
 }
 
+export const downloadModal = {
+  noDataTitle: 'No data to download',
+  noDataContent: 'Selected projects contain no data to download.',
+  loginTitle: 'Log in to download data',
+  title: 'Download data',
+}
+
 export const pages = {
   submittedTable: {
     filterSearchHelperText: {

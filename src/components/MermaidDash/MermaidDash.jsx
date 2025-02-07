@@ -32,6 +32,7 @@ import {
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
+import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import {
   ARROW_LEFT,
   ARROW_RIGHT,
@@ -50,6 +51,7 @@ import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
+import DownloadModal from './components/DownloadModal'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -62,15 +64,17 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
+    getActiveProjectCount,
   } = useContext(FilterProjectsContext)
   const [showFilterPane, setShowFilterPane] = useLocalStorage('showFilterPane', true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
+  const [showDownloadModal, setShowDownloadModal] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
-  const { isLoading, isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
 
   const mapRef = useRef()
@@ -212,6 +216,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setShowFilterModal(!showFilterModal)
   }
 
+  const handleShowDownloadModal = () => {
+    setShowDownloadModal(!showDownloadModal)
+  }
+
   const handleZoomToFilteredData = () => {
     const map = mapRef.current.getMap()
 
@@ -255,6 +263,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
     updateURLParams(queryParams)
     toast.info(followScreenToastMessage)
+  }
+
+  const handleLogin = () => {
+    loginWithRedirect({ appState: { returnTo: location.search } })
   }
 
   const renderOverflowDownloadMenu = () => {
@@ -303,19 +315,37 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         </DesktopToggleFilterPaneButton>
         {showFilterPane ? (
           <FilterDownloadWrapper>
-            <FilterDownloadButton>
-              <IconTrayDownload /> Download
+            <FilterDownloadButton
+              $isAuthenticated={isAuthenticated}
+              onClick={isAuthenticated ? handleShowDownloadModal : handleLogin}
+            >
+              {isAuthenticated ? (
+                <>
+                  <IconTrayDownload /> <span>Download</span>
+                </>
+              ) : (
+                <>
+                  <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
+                </>
+              )}
             </FilterDownloadButton>
-            <HideShow
-              button={
-                <GFCRDataDownloadButton>
-                  <IconCaretUp />
-                </GFCRDataDownloadButton>
-              }
-              contents={renderOverflowDownloadMenu()}
-            />
+            {isAuthenticated && (
+              <HideShow
+                button={
+                  <GFCRDataDownloadButton>
+                    <IconCaretUp />
+                  </GFCRDataDownloadButton>
+                }
+                contents={renderOverflowDownloadMenu()}
+              />
+            )}
           </FilterDownloadWrapper>
         ) : null}
+        <DownloadModal
+          modalOpen={showDownloadModal}
+          handleClose={() => setShowDownloadModal(false)}
+          activeProjectCount={getActiveProjectCount()}
+        />
       </StyledFilterWrapper>
     )
   }

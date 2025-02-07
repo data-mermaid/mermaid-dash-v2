@@ -161,7 +161,7 @@ export const FilterDownloadWrapper = styled.div`
 `
 
 export const FilterDownloadButton = styled(ButtonPrimary)`
-  width: 90%;
+  width: ${(props) => (props.$isAuthenticated ? '90%' : '100%')};
   height: 100%;
   flex-grow: 1;
 `
