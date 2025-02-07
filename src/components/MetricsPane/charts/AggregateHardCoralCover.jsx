@@ -5,11 +5,19 @@ import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateHardCoralCover = () => {
-  const { filteredSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
+  const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
+
+  const privateBenthicToggleOn =
+    privateBenthicFilters.some((filter) => !methodDataSharingFilters.includes(filter)) &&
+    otherBenthicFilters.every((filter) => methodDataSharingFilters.includes(filter))
 
   const hardCoralAveragesPerSurvey = filteredSurveys
     .map(({ protocols }) => {
@@ -92,16 +100,25 @@ export const AggregateHardCoralCover = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Hard Coral Cover </MetricCardH3>
-        <ChartSubtitle>{hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys</ChartSubtitle>
+        <MetricCardH3>Hard Coral Cover</MetricCardH3>
+        {!privateBenthicToggleOn && (
+          <ChartSubtitle>
+            {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
+          </ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {privateBenthicToggleOn ? (
+        <PrivateChartView />
+      ) : hardCoralAveragesPerSurvey.length > 0 ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <NoDataChartView />
+      )}
     </ChartWrapper>
   )
 }

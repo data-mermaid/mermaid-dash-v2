@@ -3,6 +3,7 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const fishTropicGroupKey = {
@@ -71,15 +72,20 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Fish Biomass</MetricCardH3>
-        <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        {fishBiomassTropicGroupData && (
+          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {fishBiomassTropicGroupData ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <PrivateChartView />
+      )}
     </ChartWrapper>
   )
 }

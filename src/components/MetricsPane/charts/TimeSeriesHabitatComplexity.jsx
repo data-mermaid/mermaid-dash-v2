@@ -5,12 +5,18 @@ import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import { PrivateChartView } from './PrivateChartView'
+import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
 
 export const TimeSeriesHabitatComplexity = () => {
-  const { filteredSurveys } = useContext(FilterProjectsContext)
+  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const privateHabitatComplexityToggleOn =
+    !methodDataSharingFilters.includes('hc_3') &&
+    methodDataSharingFilters.includes('hc_2') &&
+    methodDataSharingFilters.includes('hc_1')
 
   const surveyedHabitatComplexityRecords = filteredSurveys
     .filter(
@@ -104,17 +110,24 @@ export const TimeSeriesHabitatComplexity = () => {
     <ChartWrapper>
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity</MetricCardH3>
-        <ChartSubtitle>
-          {surveyedHabitatComplexityRecords.length.toLocaleString()} Surveys
-        </ChartSubtitle>
+        {!privateHabitatComplexityToggleOn && (
+          <ChartSubtitle>
+            {surveyedHabitatComplexityRecords.length.toLocaleString()} Surveys
+          </ChartSubtitle>
+        )}
       </TitlesWrapper>
-
-      <Plot
-        data={plotlyDataConfiguration}
-        layout={plotlyLayoutConfiguration}
-        config={chartTheme.config}
-        style={{ width: '100%', height: '100%' }}
-      />
+      {privateHabitatComplexityToggleOn ? (
+        <PrivateChartView />
+      ) : surveyedHabitatComplexityRecords.length > 0 ? (
+        <Plot
+          data={plotlyDataConfiguration}
+          layout={plotlyLayoutConfiguration}
+          config={chartTheme.config}
+          style={{ width: '100%', height: '100%' }}
+        />
+      ) : (
+        <NoDataChartView />
+      )}
     </ChartWrapper>
   )
 }
