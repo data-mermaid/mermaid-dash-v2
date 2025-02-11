@@ -570,6 +570,7 @@ export const FilterProjectsProvider = ({ children }) => {
   return (
     <FilterProjectsContext.Provider
       value={{
+        allProjectsFinishedFiltering,
         checkedProjects,
         clearAllFilters,
         countriesSelectOnOpen,

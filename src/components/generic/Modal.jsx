@@ -57,6 +57,7 @@ const ModalContent = styled.div`
     `}
   padding: ${theme.spacing.medium};
   padding-bottom: 3rem;
+  padding-top: 0;
   flex-grow: 1;
 `
 const ModalFooter = styled.div`
@@ -110,6 +111,7 @@ const LeftFooter = styled.div`
 `
 const RightFooter = styled.div`
   justify-self: end;
+  display: flex;
 `
 
 const Modal = ({

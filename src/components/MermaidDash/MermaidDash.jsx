@@ -64,8 +64,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
-    getActiveProjectCount,
+    allProjectsFinishedFiltering,
   } = useContext(FilterProjectsContext)
+
   const [showFilterPane, setShowFilterPane] = useLocalStorage('showFilterPane', true)
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
@@ -316,6 +317,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         {showFilterPane ? (
           <FilterDownloadWrapper>
             <FilterDownloadButton
+              disabled={!allProjectsFinishedFiltering}
               $isAuthenticated={isAuthenticated}
               onClick={isAuthenticated ? handleShowDownloadModal : handleLogin}
             >
@@ -332,7 +334,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             {isAuthenticated && (
               <HideShow
                 button={
-                  <GFCRDataDownloadButton>
+                  <GFCRDataDownloadButton disabled={!allProjectsFinishedFiltering}>
                     <IconCaretUp />
                   </GFCRDataDownloadButton>
                 }
@@ -344,7 +346,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <DownloadModal
           modalOpen={showDownloadModal}
           handleClose={() => setShowDownloadModal(false)}
-          activeProjectCount={getActiveProjectCount()}
         />
       </StyledFilterWrapper>
     )

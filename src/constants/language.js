@@ -23,8 +23,10 @@ export const dataDisclaimer = {
 export const downloadModal = {
   noDataTitle: 'No data to download',
   noDataContent: 'Selected projects contain no data to download.',
-  loginTitle: 'Log in to download data',
-  title: 'Download data',
+  downloadTitle: 'Download data',
+  successTitle: 'Download Request Sent',
+  failureTitle: 'Download Failed',
+  failureContent: 'Fail to sent email! Please contact MERMAID team.',
 }
 
 export const pages = {

@@ -68,6 +68,7 @@ export const Tr = styled.tr`
 export const Td = styled.td(
   (props) => css`
     text-align: ${props.align || 'left'};
+    text-transform: capitalize;
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
     border-color: ${theme.color.grey0};
@@ -109,6 +110,11 @@ export const StickyTableOverflowWrapper = styled(TableOverflowWrapper)`
   overflow: visible;
 `
 
+export const ModalTableOverflowWrapper = styled(TableOverflowWrapper)`
+  overflow: auto;
+  height: 500px;
+`
+
 const stickyStyles = css`
   position: sticky;
   white-space: nowrap;
@@ -132,6 +138,13 @@ const stickyStyles = css`
 export const GenericStickyTable = styled(Table)`
   tr th {
     ${stickyStyles}
+  }
+`
+
+export const ModalStickyTable = styled(Table)`
+  tr th {
+    ${stickyStyles}
+    top: 0rem;
   }
 `
 
