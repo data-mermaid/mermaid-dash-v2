@@ -15,6 +15,7 @@ import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../gene
 import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 import DownloadTableView from './DownloadTable'
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
+import { pluralize } from '../../../helperFunctions/pluralize'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -208,7 +209,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
             {collectionMethods.map(([key, method]) => {
               return (
                 <MermaidMenuItem key={key} value={key}>
-                  {method.description} ({surveyedMethodCount[key] || 0} Surveys)
+                  {method.description}{' '}
+                  {`(${pluralize(surveyedMethodCount[key] || 0, 'Survey', 'Surveys')})`}
                 </MermaidMenuItem>
               )
             })}
