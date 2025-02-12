@@ -19,9 +19,11 @@ import {
 } from '../../generic'
 import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../generic/MermaidMui'
 import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
-import DownloadTableView from './DownloadTable'
+
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
 import { pluralize } from '../../../helperFunctions/pluralize'
+
+import DownloadTableView from './DownloadTable'
 import DataSharingInfoModal from './DataSharingInfoModal'
 
 const ModalBody = styled.div`
@@ -31,10 +33,34 @@ const ModalBody = styled.div`
   color: ${theme.color.black};
 `
 
+const StyledDownloadContentWrapper = styled.div`
+  display: flex;
+  align-items: end;
+  background: #f8f8fa;
+  padding-top: 0;
+  padding-bottom: 30px;
+  gap: 5px;
+`
+
+const StyledDataSharingWrapper = styled.div`
+  flex-grow: 1;
+`
+
+const StyledDataSharingTabs = styled.div`
+  display: flex;
+  align-items: center;
+`
+
 const StyledDataSharingButton = styled(ButtonSecondary)`
+  width: ${({ customWidth = 'auto' }) => customWidth};
   background-color: ${({ isActive }) => (isActive ? theme.color.primaryColor : theme.color.white)};
   color: ${({ isActive }) => (isActive ? theme.color.white : theme.color.black)};
 `
+
+const WiderFormControl = styled(FormControl)`
+  width: 30rem;
+`
+
 const getSurveyedMethod = (countObj) => {
   const customSortOrder = [
     'colonies_bleached',
@@ -197,17 +223,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
 
   const downloadContent = (
     <>
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'end',
-          background: '#f8f8fa',
-          paddingTop: 0,
-          paddingBottom: '30px',
-          gap: '5px',
-        }}
-      >
-        <FormControl style={{ width: '30rem' }}>
+      <StyledDownloadContentWrapper>
+        <WiderFormControl>
           <StyledHeader>Method</StyledHeader>
           <MermaidSelect
             input={<MermaidOutlinedInput />}
@@ -223,10 +240,10 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
               )
             })}
           </MermaidSelect>
-        </FormControl>
-        <div style={{ flexGrow: 1 }}>
+        </WiderFormControl>
+        <StyledDataSharingWrapper>
           <StyledHeader>Project Data Sharing</StyledHeader>
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+          <StyledDataSharingTabs>
             <StyledDataSharingButton
               value={'private'}
               isActive={selectedDataSharing === 'private'}
@@ -235,8 +252,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
               Private
             </StyledDataSharingButton>
             <StyledDataSharingButton
-              style={{ width: '150px' }}
               value={'public summary'}
+              customWidth={'150px'}
               isActive={selectedDataSharing === 'public summary'}
               onClick={handleDataSharingChange}
             >
@@ -249,12 +266,12 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
             >
               Public
             </StyledDataSharingButton>
-          </div>
-        </div>
+          </StyledDataSharingTabs>
+        </StyledDataSharingWrapper>
         <ButtonThatLooksLikeLinkUnderlined onClick={() => setDataSharingModalOpen(true)}>
           Find out how your data are shared
         </ButtonThatLooksLikeLinkUnderlined>
-      </div>
+      </StyledDownloadContentWrapper>
       <DownloadTableView tableData={tableData} />
       <DataSharingInfoModal
         isOpen={dataSharingModalOpen}
