@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { useSortBy, useTable } from 'react-table'
+import PropTypes from 'prop-types'
 
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
@@ -158,10 +159,10 @@ const DownloadTableView = ({ tableData }) => {
                     const cellProps = cell.getCellProps()
                     const { key: cellKey, ...restCellProps } = cellProps
 
-                    let cellContent = cell.render('Cell')
+                    let view = cell.render('Cell')
 
                     if (['metaData', 'surveyData', 'observationData'].includes(cell.column.id)) {
-                      cellContent = cell.value ? (
+                      view = cell.value ? (
                         <IconCheck style={{ color: 'green' }} />
                       ) : (
                         <IconClose style={{ color: 'red' }} />
@@ -175,7 +176,7 @@ const DownloadTableView = ({ tableData }) => {
                         align={cell.column.align}
                         textTransform={'capitalize'}
                       >
-                        {cellContent}
+                        {view}
                         {cell.column.Header === 'Project Name' &&
                           (isMemberOfProject ? (
                             <IconUserCircle style={{ marginLeft: '5px' }} />
@@ -199,6 +200,10 @@ const DownloadTableView = ({ tableData }) => {
       </ModalTableOverflowWrapper>
     </>
   )
+}
+
+DownloadTableView.propTypes = {
+  tableData: PropTypes.array.isRequired,
 }
 
 export default DownloadTableView

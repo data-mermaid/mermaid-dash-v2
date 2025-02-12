@@ -1,4 +1,5 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { useAuth0 } from '@auth0/auth0-react'
 import { FormControl } from '@mui/material'
@@ -71,7 +72,9 @@ const getSurveyedMethod = (countObj) => {
     'quadrat_benthic_percent',
   ]
 
-  if (countObj.beltfish > 0) return 'beltfish'
+  if (countObj.beltfish > 0) {
+    return 'beltfish'
+  }
 
   return (
     Object.entries(countObj)
@@ -141,7 +144,9 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   }, [handleClose])
 
   const _getSiteRecords = useEffect(() => {
-    if (!selectedMethod) return
+    if (!selectedMethod) {
+      return
+    }
 
     const formattedTableData = displayedProjects
       .filter(({ project_id }) => checkedProjects.includes(project_id))
@@ -163,7 +168,14 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
       })
 
     setTableData(formattedTableData)
-  }, [displayedProjects, selectedMethod, selectedDataSharing, checkedProjects])
+  }, [
+    displayedProjects,
+    selectedMethod,
+    selectedDataSharing,
+    checkedProjects,
+    mermaidUserData,
+    userIsMemberOfProject,
+  ])
 
   const title = useMemo(() => {
     const titles = {
@@ -305,7 +317,9 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
     </RightFooter>
   )
 
-  if (!modalMode) return null
+  if (!modalMode) {
+    return null
+  }
 
   return (
     <Modal
@@ -319,6 +333,11 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
       modalCustomHeight={modalMode === 'download' ? '700px' : '200px'}
     />
   )
+}
+
+DownloadModal.propTypes = {
+  modalOpen: PropTypes.bool.isRequired,
+  handleClose: PropTypes.func.isRequired,
 }
 
 export default DownloadModal
