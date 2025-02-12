@@ -1,4 +1,4 @@
-import { COLLECTION_METHODS } from '../constants/constants'
+import { DOWNLOAD_METHODS } from '../constants/constants'
 
 export const formatDownloadProjectDataHelper = (
   project,
@@ -6,7 +6,7 @@ export const formatDownloadProjectDataHelper = (
   selectedMethod,
   selectedDataSharing,
 ) => {
-  const methodDataSharing = COLLECTION_METHODS[selectedMethod].policyName
+  const methodDataSharing = DOWNLOAD_METHODS[selectedMethod]?.policy
   const dataSharingPolicy = project[methodDataSharing]
   const surveyCount = project.records.length
 

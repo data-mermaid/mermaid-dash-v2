@@ -7,7 +7,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 
 import theme from '../../../styles/theme'
 
-import { COLLECTION_METHODS } from '../../../constants/constants'
+import { DOWNLOAD_METHODS } from '../../../constants/constants'
 import { downloadModal } from '../../../constants/language'
 
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary } from '../../generic'
@@ -27,6 +27,26 @@ const StyledDataSharingButton = styled(ButtonSecondary)`
   background-color: ${({ isActive }) => (isActive ? theme.color.primaryColor : theme.color.white)};
   color: ${({ isActive }) => (isActive ? theme.color.white : theme.color.black)};
 `
+const getSurveyedMethod = (countObj) => {
+  const customSortOrder = [
+    'colonies_bleached',
+    'benthicpit',
+    'benthiclit',
+    'benthicpqt',
+    'habitatcomplexity',
+    'quadrat_benthic_percent',
+  ]
+
+  if (countObj.beltfish > 0) return 'beltfish'
+
+  return (
+    Object.entries(countObj)
+      .filter(([, value]) => value > 0)
+      .sort((a, b) => customSortOrder.indexOf(a[0]) - customSortOrder.indexOf(b[0]))
+      .map(([key]) => key)[0] || 'beltfish'
+  )
+}
+
 const DownloadModal = ({ modalOpen, handleClose }) => {
   const {
     displayedProjects,
@@ -37,20 +57,35 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
     checkedProjects,
   } = useContext(FilterProjectsContext)
 
+  const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
+    const protocols = record.protocols || {}
+
+    Object.keys(protocols).map((protocol) => {
+      if (acc[protocol]) {
+        acc[protocol] += 1
+      } else {
+        acc[protocol] = 1
+      }
+    })
+
+    return acc
+  }, {})
+
   const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [tableData, setTableData] = useState([])
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
-  const [selectedMethod, setSelectedMethod] = useState('beltfish')
+  const [selectedMethod, setSelectedMethod] = useState('')
   const [modalMode, setModalMode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
 
-  const collectionMethods = Object.entries(COLLECTION_METHODS)
+  const collectionMethods = Object.entries(DOWNLOAD_METHODS)
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (modalOpen) {
       setErrorMessage('')
       setModalMode(activeProjectCount === 0 ? 'no data' : 'download')
+      setSelectedMethod(getSurveyedMethod(surveyedMethodCount))
     } else {
       setModalMode('')
     }
@@ -71,19 +106,13 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   }, [handleClose])
 
   const _getSiteRecords = useEffect(() => {
+    if (!selectedMethod) return
+
     const formattedTableData = displayedProjects
-      .filter((project) => checkedProjects.includes(project.project_id))
+      .filter(({ project_id }) => checkedProjects.includes(project_id))
       .map((project, i) => {
         const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-        const {
-          projectId,
-          projectName,
-          surveyCount,
-          dataSharingPolicy,
-          metaData,
-          surveyData,
-          observationData,
-        } = formatDownloadProjectDataHelper(
+        const formattedData = formatDownloadProjectDataHelper(
           project,
           isMemberOfProject,
           selectedMethod,
@@ -92,13 +121,7 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
 
         return {
           id: i,
-          projectId,
-          projectName,
-          surveyCount,
-          dataSharingPolicy,
-          metaData,
-          surveyData,
-          observationData,
+          ...formattedData,
           isMemberOfProject,
           rawProjectData: project,
         }
@@ -108,40 +131,20 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   }, [displayedProjects, selectedMethod, selectedDataSharing, checkedProjects])
 
   const title = useMemo(() => {
-    if (modalMode === 'no data') {
-      return downloadModal.noDataTitle
+    const titles = {
+      'no data': downloadModal.noDataTitle,
+      success: downloadModal.successTitle,
+      failure: downloadModal.failureTitle,
     }
 
-    if (modalMode === 'success') {
-      return downloadModal.successTitle
-    }
-
-    if (modalMode === 'failure') {
-      return downloadModal.failureTitle
-    }
-
-    return downloadModal.downloadTitle
+    return titles[modalMode] || downloadModal.downloadTitle
   }, [modalMode])
-
-  const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
-    const protocols = record.protocols || {}
-
-    Object.keys(protocols).map((protocol) => {
-      if (acc[protocol]) {
-        acc[protocol] += 1
-      } else {
-        acc[protocol] = 1
-      }
-    })
-
-    return acc
-  }, {})
 
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
-      const selectedMethodProtocol = COLLECTION_METHODS[selectedMethod]?.protocol
+      const selectedMethodProtocol = DOWNLOAD_METHODS[selectedMethod]?.protocol
       const projectsToEmail = tableData
         .filter(
           ({ metaData, surveyData, observationData }) => metaData || surveyData || observationData,
@@ -202,11 +205,13 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
             value={selectedMethod}
             onChange={handleSelectedMethodChange}
           >
-            {collectionMethods.map(([key, method]) => (
-              <MermaidMenuItem key={key} value={key}>
-                {method.description} ({surveyedMethodCount[key] || 0} Surveys)
-              </MermaidMenuItem>
-            ))}
+            {collectionMethods.map(([key, method]) => {
+              return (
+                <MermaidMenuItem key={key} value={key}>
+                  {method.description} ({surveyedMethodCount[key] || 0} Surveys)
+                </MermaidMenuItem>
+              )
+            })}
           </MermaidSelect>
         </FormControl>
         <div style={{ flexGrow: 1 }}>
