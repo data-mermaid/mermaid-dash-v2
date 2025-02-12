@@ -243,7 +243,7 @@ export const FollowToggleContainer = styled.div`
   top: 6.2rem;
   right: 47rem;
   height: 4rem;
-  z-index: 400;
+  z-index: 100;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;

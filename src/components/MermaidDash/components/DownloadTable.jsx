@@ -169,7 +169,12 @@ const DownloadTableView = ({ tableData }) => {
                     }
 
                     return (
-                      <Td key={cellKey} {...restCellProps} align={cell.column.align}>
+                      <Td
+                        key={cellKey}
+                        {...restCellProps}
+                        align={cell.column.align}
+                        textTransform={'capitalize'}
+                      >
                         {cellContent}
                         {cell.column.Header === 'Project Name' &&
                           (isMemberOfProject ? (

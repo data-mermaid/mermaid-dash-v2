@@ -68,7 +68,7 @@ export const Tr = styled.tr`
 export const Td = styled.td(
   (props) => css`
     text-align: ${props.align || 'left'};
-    text-transform: capitalize;
+    text-transform: ${props.textTransform || 'none'};
     padding: ${theme.spacing.medium};
     border-width: ${theme.spacing.borderSmall};
     border-color: ${theme.color.grey0};

@@ -10,12 +10,19 @@ import theme from '../../../styles/theme'
 import { DOWNLOAD_METHODS } from '../../../constants/constants'
 import { downloadModal } from '../../../constants/language'
 
-import { Modal, RightFooter, ButtonSecondary, ButtonPrimary } from '../../generic'
+import {
+  Modal,
+  RightFooter,
+  ButtonSecondary,
+  ButtonPrimary,
+  ButtonThatLooksLikeLinkUnderlined,
+} from '../../generic'
 import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../generic/MermaidMui'
 import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 import DownloadTableView from './DownloadTable'
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
 import { pluralize } from '../../../helperFunctions/pluralize'
+import DataSharingInfoModal from './DataSharingInfoModal'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -79,6 +86,7 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   const [selectedMethod, setSelectedMethod] = useState('')
   const [modalMode, setModalMode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+  const [dataSharingModalOpen, setDataSharingModalOpen] = useState(false)
 
   const collectionMethods = Object.entries(DOWNLOAD_METHODS)
 
@@ -243,9 +251,15 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
             </StyledDataSharingButton>
           </div>
         </div>
-        <span>Find out how your data are shared</span>
+        <ButtonThatLooksLikeLinkUnderlined onClick={() => setDataSharingModalOpen(true)}>
+          Find out how your data are shared
+        </ButtonThatLooksLikeLinkUnderlined>
       </div>
       <DownloadTableView tableData={tableData} />
+      <DataSharingInfoModal
+        isOpen={dataSharingModalOpen}
+        onDismiss={() => setDataSharingModalOpen(false)}
+      />
     </>
   )
 
