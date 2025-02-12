@@ -112,7 +112,7 @@ export const StickyTableOverflowWrapper = styled(TableOverflowWrapper)`
 
 export const ModalTableOverflowWrapper = styled(TableOverflowWrapper)`
   overflow: auto;
-  height: 500px;
+  height: 550px;
 `
 
 const stickyStyles = css`
@@ -142,9 +142,10 @@ export const GenericStickyTable = styled(Table)`
 `
 
 export const ModalStickyTable = styled(Table)`
+  table-layout: fixed;
   tr th {
     ${stickyStyles}
-    top: 0rem;
+    top: -1px;
   }
 `
 

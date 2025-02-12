@@ -30,14 +30,11 @@ import DataSharingInfoModal from './DataSharingInfoModal'
 const ModalBody = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
-  z-index: 2;
-  color: ${theme.color.black};
 `
 
 const StyledDownloadContentWrapper = styled.div`
   display: flex;
   align-items: end;
-  background: #f8f8fa;
   padding-top: 0;
   padding-bottom: 30px;
   gap: 5px;
@@ -52,7 +49,8 @@ const StyledDataSharingTabs = styled.div`
   align-items: center;
 `
 
-const StyledDataSharingButton = styled(ButtonSecondary)`
+const StyledDataSharingButton = styled(ButtonPrimary)`
+  border: 1px solid ${theme.color.secondaryBorder};
   width: ${({ customWidth = 'auto' }) => customWidth};
   background-color: ${({ isActive }) => (isActive ? theme.color.primaryColor : theme.color.white)};
   color: ${({ isActive }) => (isActive ? theme.color.white : theme.color.black)};
@@ -329,8 +327,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
       onDismiss={handleClose}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
-      modalCustomWidth={modalMode === 'download' ? '1200px' : '600px'}
-      modalCustomHeight={modalMode === 'download' ? '700px' : '200px'}
+      modalCustomWidth={modalMode === 'download' ? '1150px' : '600px'}
+      modalCustomHeight={modalMode === 'download' ? '750px' : '200px'}
     />
   )
 }

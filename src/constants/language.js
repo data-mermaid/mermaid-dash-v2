@@ -59,6 +59,7 @@ export const tooltipText = {
   showAllData: 'Show all data',
   downloadData: 'Download data',
   yourProject: 'You are part of this project',
+  contactAdmins: 'Contact admins',
 }
 
 export const toastMessageText = {

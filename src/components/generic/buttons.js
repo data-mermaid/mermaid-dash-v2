@@ -51,6 +51,7 @@ export const ButtonPrimary = styled(Button)`
   color: ${theme.color.primaryText};
   ${hoverState(css`
     background-color: ${theme.color.primaryHover};
+    color: ${theme.color.primaryText};
   `)}
   &:disabled {
     background-color: ${theme.color.primaryDisabledColor};

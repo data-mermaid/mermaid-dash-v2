@@ -23,7 +23,7 @@ const StyledDialog = styled.div`
   margin: 0;
   min-width: 30rem;
   width: ${(props) => props.$modalCustomWidth};
-  max-width: 96rem;
+  max-width: 114rem;
   background: ${theme.color.tableRowEven};
   ${(props) => props.$modalCustomHeight !== '' && `height: ${props.$modalCustomHeight};`}
   display: flex;
