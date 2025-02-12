@@ -24,7 +24,7 @@ import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
 import { pluralize } from '../../../helperFunctions/pluralize'
 
-import DownloadTableView from './DownloadTable'
+import DownloadTableView from './DownloadTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
 
 const ModalBody = styled.div`
