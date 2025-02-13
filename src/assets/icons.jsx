@@ -54,6 +54,7 @@ import sync from '@iconify-icons/mdi/sync'
 import upload from '@iconify-icons/mdi/upload'
 import user from '@iconify-icons/mdi/user'
 import usersAndTransects from '@iconify-icons/mdi/account-box-multiple-outline'
+import email from '@iconify-icons/mdi/email-outline'
 import theme from '../styles/theme'
 
 const WarningIcon = styled(InlineIcon)`
@@ -120,3 +121,4 @@ export const IconExcel = (props) => <InlineIcon icon={excel} {...props} />
 export const IconManagementRegimesOverview = (props) => (
   <InlineIcon icon={multiFileTable} {...props} />
 )
+export const IconContact = (props) => <InlineIcon icon={email} {...props} />

@@ -37,6 +37,39 @@ export const COLLECTION_METHODS = {
   },
 }
 
+export const DOWNLOAD_METHODS = {
+  beltfish: {
+    description: 'Fish Belt',
+    protocol: 'fishbelt',
+    policy: 'data_policy_beltfish',
+  },
+  colonies_bleached: {
+    description: 'Bleaching',
+    protocol: 'bleachingqc',
+    policy: 'data_policy_bleachingqc',
+  },
+  benthicpit: {
+    description: 'Benthic PIT',
+    protocol: 'benthicpit',
+    policy: 'data_policy_benthicpit',
+  },
+  benthiclit: {
+    description: 'Benthic LIT',
+    protocol: 'benthiclit',
+    policy: 'data_policy_benthiclit',
+  },
+  benthicpqt: {
+    description: 'Benthic Photo Quadrat',
+    protocol: 'benthicpqt',
+    policy: 'data_policy_benthicpqt',
+  },
+  habitatcomplexity: {
+    description: 'Habitat Complexity',
+    protocol: 'habitatcomplexity',
+    policy: 'data_policy_habitatcomplexity',
+  },
+}
+
 export const POLICY_MAPPINGS = {
   bf_1: { policy: 'data_policy_beltfish', name: 'beltfish', value: 'public' },
   bf_2: {

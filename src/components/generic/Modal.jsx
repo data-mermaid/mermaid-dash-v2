@@ -23,7 +23,7 @@ const StyledDialog = styled.div`
   margin: 0;
   min-width: 30rem;
   width: ${(props) => props.$modalCustomWidth};
-  max-width: 96rem;
+  max-width: 114rem;
   background: ${theme.color.tableRowEven};
   ${(props) => props.$modalCustomHeight !== '' && `height: ${props.$modalCustomHeight};`}
   display: flex;
@@ -57,6 +57,7 @@ const ModalContent = styled.div`
     `}
   padding: ${theme.spacing.medium};
   padding-bottom: 3rem;
+  padding-top: 0;
   flex-grow: 1;
 `
 const ModalFooter = styled.div`
@@ -110,6 +111,7 @@ const LeftFooter = styled.div`
 `
 const RightFooter = styled.div`
   justify-self: end;
+  display: flex;
 `
 
 const Modal = ({
