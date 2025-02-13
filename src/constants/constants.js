@@ -8,6 +8,7 @@ export const URL_PARAMS = {
   PROJECTS: 'projects',
   METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
+  SHOW_NO_DATA_PROJECTS: 'show_no_data_projects',
 }
 
 export const COLLECTION_METHODS = {

@@ -109,6 +109,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
+    const setShowProjectsWithNoData = () => {
+      if (queryParams.has(URL_PARAMS.SHOW_NO_DATA_PROJECTS)) {
+        setShowProjectsWithNoRecords(true)
+      }
+    }
+
     setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
     setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter)
@@ -116,6 +122,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleMethodDataSharingFilter()
     setProjectNameValue()
     setFollowScreen()
+    setShowProjectsWithNoData()
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
