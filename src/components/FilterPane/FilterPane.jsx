@@ -193,7 +193,17 @@ const FilterPane = ({ mermaidUserData }) => {
   }
 
   const handleShowProjectsWithNoRecords = () => {
-    setShowProjectsWithNoRecords(!showProjectsWithNoRecords)
+    setShowProjectsWithNoRecords((prevState) => {
+      const newState = !prevState
+      const queryParams = getURLParams()
+
+      newState
+        ? queryParams.set(URL_PARAMS.SHOW_NO_DATA_PROJECTS, 'true')
+        : queryParams.delete(URL_PARAMS.SHOW_NO_DATA_PROJECTS)
+
+      updateURLParams(queryParams)
+      return newState
+    })
   }
 
   const handleCheckProject = (projectId) => {
@@ -445,7 +455,7 @@ const FilterPane = ({ mermaidUserData }) => {
           {methodsList}
           <StyledHeader>{noDataText.noMethodData}</StyledHeader>
           <StyledCategoryContainer>
-            <StyledClickableArea onClick={handleShowProjectsWithNoRecords}>
+            <StyledClickableArea>
               <input
                 type="checkbox"
                 name="showNoData"
