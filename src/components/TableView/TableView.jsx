@@ -63,6 +63,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
   const queryParamsProjectId = queryParams.get('project_id')
+  const initialPageIndex = Number(queryParams.get('page_index')) || 0
 
   const _onUnmount = useEffect(() => {
     return () => {
@@ -182,6 +183,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       data: tableCellData,
       initialState: {
         pageSize: PAGE_SIZE_DEFAULT,
+        pageIndex: initialPageIndex,
       },
       autoResetSortBy: false,
     },
@@ -206,7 +208,30 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       queryParams.delete('project_id')
       setSelectedProject(null)
     }
+    queryParams.set('page_index', pageIndex)
     updateURLParams(queryParams)
+  }
+
+  const handleGoToPage = (page) => {
+    queryParams.set('page_index', page)
+    updateURLParams(queryParams)
+    gotoPage(page)
+  }
+
+  const handleNextPage = () => {
+    if (canNextPage) {
+      queryParams.set('page_index', pageIndex + 1)
+      updateURLParams(queryParams)
+      nextPage()
+    }
+  }
+
+  const handlePreviousPage = () => {
+    if (canPreviousPage) {
+      queryParams.set('page_index', pageIndex - 1)
+      updateURLParams(queryParams)
+      previousPage()
+    }
   }
 
   const _displaySelectedProjectInMetricsPane = useEffect(() => {
@@ -217,6 +242,13 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       setSelectedProject(selectedProject)
     }
   }, [displayedProjects, queryParamsProjectId, setSelectedProject])
+
+  const _updatePageIndex = useEffect(() => {
+    const newPageIndex = Number(queryParams.get('page_index'))
+    if (!isNaN(newPageIndex) && newPageIndex !== pageIndex) {
+      gotoPage(newPageIndex)
+    }
+  }, [queryParams, gotoPage, pageIndex])
 
   const table = tableData.length ? (
     <>
@@ -308,11 +340,11 @@ const TableView = ({ view, setView, mermaidUserData }) => {
           unfilteredRowLength={tableData.length}
         />
         <PageSelector
-          onPreviousClick={previousPage}
+          onPreviousClick={handlePreviousPage}
           previousDisabled={!canPreviousPage}
-          onNextClick={nextPage}
+          onNextClick={handleNextPage}
           nextDisabled={!canNextPage}
-          onGoToPage={gotoPage}
+          onGoToPage={handleGoToPage}
           currentPageIndex={pageIndex}
           pageCount={pageOptions.length}
         />
