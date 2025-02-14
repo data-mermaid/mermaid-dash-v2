@@ -52,6 +52,7 @@ import HideShow from '../Header/components/HideShow'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
+import DownloadGFCRModal from './components/DownloadGFCRModal'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -71,6 +72,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [showFilterModal, setShowFilterModal] = useState(false)
   const [showMetricsPane, setShowMetricsPane] = useState(true)
   const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [showDownloadGFCRModal, setShowDownloadGFCRModal] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -201,7 +203,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }
 
   const handleShowDownloadModal = () => {
-    setShowDownloadModal(!showDownloadModal)
+    setShowDownloadModal(true)
+  }
+
+  const handleShowDownloadGFCRModal = () => {
+    setShowDownloadGFCRModal(true)
   }
 
   const handleZoomToFilteredData = () => {
@@ -256,7 +262,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const renderOverflowDownloadMenu = () => {
     return (
       <DownloadMenu>
-        <ButtonPrimary>
+        <ButtonPrimary onClick={handleShowDownloadGFCRModal}>
           <IconTrayDownload /> Download GFCR Data
         </ButtonPrimary>
       </DownloadMenu>
@@ -329,6 +335,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <DownloadModal
           modalOpen={showDownloadModal}
           handleClose={() => setShowDownloadModal(false)}
+        />
+        <DownloadGFCRModal
+          modalOpen={showDownloadGFCRModal}
+          handleClose={() => setShowDownloadGFCRModal(false)}
         />
       </StyledFilterWrapper>
     )

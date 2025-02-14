@@ -24,6 +24,7 @@ export const downloadModal = {
   noDataTitle: 'No data to download',
   noDataContent: 'Selected projects contain no data to download.',
   downloadTitle: 'Download data',
+  downloadGFCRTitle: 'Download GFCR data',
   successTitle: 'Download Request Sent',
   failureTitle: 'Download Failed',
   failureContent: 'Fail to sent email! Please contact MERMAID team.',
