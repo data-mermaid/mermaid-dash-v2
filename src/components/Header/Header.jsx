@@ -144,7 +144,7 @@ const Header = () => {
             <HeaderButtonThatLooksLikeLink onClick={handleLogin}>
               <UserLoginContainer>
                 <LoginIcon />
-                <HeaderLoginText>Login</HeaderLoginText>
+                <HeaderLoginText>Log in</HeaderLoginText>
               </UserLoginContainer>
             </HeaderButtonThatLooksLikeLink>
           )}
