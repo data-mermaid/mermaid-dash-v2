@@ -149,37 +149,20 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }, [getAccessTokenSilently, setMermaidUserData])
 
   const _fetchDataFromApi = useEffect(() => {
-    const handleFetchData = async () => {
+    const handleFetchDataFromApi = async () => {
+      if (isLoading) return
+
       try {
         const token = isAuthenticated ? await getAccessTokenSilently() : ''
-        fetchData(token)
-        if (isAuthenticated) {
-          fetchUserProfile()
-          const profileEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/me/`
-          const response = await fetch(
-            profileEndpoint,
-            await getAuthorizationHeaders(getAccessTokenSilently),
-          )
-          const parsedResponse = await response.json()
-          setMermaidUserData(parsedResponse)
-        }
-      } catch (e) {
-        console.error('Error fetching data:', e)
+        await fetchData(token)
+        await fetchUserProfile()
+      } catch (error) {
+        console.error('Error fetching data:', error)
       }
     }
 
-    if (isLoading) {
-      return
-    }
-    handleFetchData()
-  }, [
-    isLoading,
-    isAuthenticated,
-    getAccessTokenSilently,
-    fetchUserProfile,
-    fetchData,
-    setMermaidUserData,
-  ])
+    handleFetchDataFromApi()
+  }, [isLoading, isAuthenticated, getAccessTokenSilently, fetchData, fetchUserProfile])
 
   const updateURLParams = useCallback(
     (queryParams) => {
