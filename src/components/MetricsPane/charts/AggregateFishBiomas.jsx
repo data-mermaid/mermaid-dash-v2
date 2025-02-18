@@ -26,14 +26,28 @@ export const AggregateFishBiomass = () => {
 
   const plotlyDataConfiguration = [
     {
-      x: surveyFishbeltBiomassValues.map((value) => (value > 5000 ? 5000 : value)),
+      x: surveyFishbeltBiomassValues.filter((value) => value <= 5000),
       type: 'histogram',
+      name: '',
       marker: {
         color: chartTheme.aggregateCharts.default.marker.color,
       },
-      xbins: { start: 0, size: 100 },
+      xbins: { start: 0, end: 5000, size: 100 },
+      hovertemplate: '%{x} kg/ha<br>%{y} surveys',
+      showlegend: false,
     },
-  ]
+    {
+      x: surveyFishbeltBiomassValues.filter((value) => value > 5000).map(() => 5000),
+      type: 'histogram',
+      name: '',
+      marker: {
+        color: chartTheme.aggregateCharts.default.marker.color,
+      },
+      xbins: { start: 5000, end: 5100, size: 100 },
+      hovertemplate: '5000+ kg/ha<br>%{y} surveys',
+      showlegend: false,
+    },
+  ].filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,

@@ -80,6 +80,7 @@ export const AggregateHardCoralCover = () => {
     .map((bin, index) => ({
       x: hardCoralAveragesPerSurvey.filter((val) => val >= bin && val < bin + binSize),
       type: 'histogram',
+      name: '',
       marker: {
         color: binColors[index],
       },
