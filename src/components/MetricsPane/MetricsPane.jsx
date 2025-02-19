@@ -311,28 +311,30 @@ const MetricsPane = ({
             isRelativelyPositioned={true}
           />
         ) : null}
-      </StyledMetricsWrapper>
-      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
-        <FollowToggleContainer>
-          <MuiTooltip
-            title={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
+        {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+          <FollowToggleContainer>
+            <MuiTooltip
+              title={
+                enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
+              }
+            >
+              <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
+                <img src={zoomToMap} alt="Update metrics based on map view" />
+              </FollowButton>
+            </MuiTooltip>
+          </FollowToggleContainer>
+        ) : null}
+        {isDesktopWidth ? (
+          <DesktopToggleMetricsPaneButton
+            onClick={handleShowMetricsPane}
+            $showMetricsPane={showMetricsPane}
           >
-            <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
-              <img src={zoomToMap} alt="Update metrics based on map view" />
-            </FollowButton>
-          </MuiTooltip>
-        </FollowToggleContainer>
-      ) : null}
-      {isDesktopWidth ? (
-        <DesktopToggleMetricsPaneButton
-          onClick={handleShowMetricsPane}
-          $showMetricsPane={showMetricsPane}
-        >
-          <MuiTooltip title={showMetricsPane ? tooltipText.hideMetrics : tooltipText.showMetrics}>
-            <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
-          </MuiTooltip>
-        </DesktopToggleMetricsPaneButton>
-      ) : null}
+            <MuiTooltip title={showMetricsPane ? tooltipText.hideMetrics : tooltipText.showMetrics}>
+              <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
+            </MuiTooltip>
+          </DesktopToggleMetricsPaneButton>
+        ) : null}
+      </StyledMetricsWrapper>
     </>
   )
 }
