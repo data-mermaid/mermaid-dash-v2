@@ -41,7 +41,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { l: 30, r: 30, b: 80, t: 0 },
+    margin: { ...chartTheme.layout.margin, t: 0, b: 40 },
     xaxis: {
       title: '',
       range: [-0.5, 5.5],

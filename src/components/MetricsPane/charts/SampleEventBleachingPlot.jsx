@@ -49,7 +49,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { t: 50, r: 0, b: 40, l: 40 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {
