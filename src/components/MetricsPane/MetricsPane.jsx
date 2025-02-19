@@ -131,10 +131,6 @@ const MetricsPane = ({
   }, [calculateMetrics])
 
   const _getSelectedSampleEvent = useEffect(() => {
-    if (!selectedMarkerId || !displayedProjects.length) {
-      return
-    }
-
     const foundSelectedSampleEvent = displayedProjects
       .map((project) =>
         project.records.find((record) => record.sample_event_id === selectedMarkerId),
