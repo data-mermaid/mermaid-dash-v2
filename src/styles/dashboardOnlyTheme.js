@@ -62,10 +62,10 @@ const plotlyChart = {
       'Herbivore detritivore': '#d9ed8b',
     },
     bleachingBenthicColorMap: {
-      'Avg Macroalgae Cover': '#b6b400',
-      'Avg Soft Coral Cover': '#9ce5fa',
-      'Other Cover': '#b4b4b4',
       'Avg Hard Coral Cover': '#498fc9',
+      'Other Cover': '#b4b4b4',
+      'Avg Soft Coral Cover': '#9ce5fa',
+      'Avg Macroalgae Cover': '#b6b400',
     },
   },
 
