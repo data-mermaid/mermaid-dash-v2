@@ -19,15 +19,17 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     percent_pale_avg: percentPale,
     sample_unit_count: sampleUnitCount,
   } = coloniesBleachedData
-  const isBleachingSeverityDataAvailable =
-    !!percent100 &&
-    !!percent20 &&
-    !!percent50 &&
-    !!percent80 &&
-    !!percentDead &&
-    !!percentNormal &&
-    !!percentPale &&
-    !!countTotalAvg
+
+  const isBleachingSeverityDataAvailable = [
+    percent100,
+    percent20,
+    percent50,
+    percent80,
+    percentDead,
+    percentNormal,
+    percentPale,
+    countTotalAvg,
+  ].every((value) => value !== null && value !== undefined)
 
   const totalSurveys = isBleachingSeverityDataAvailable ? countTotalAvg * sampleUnitCount : 0
 
