@@ -54,11 +54,3 @@ export const formatDownloadProjectDataHelper = (
     dataSharingPolicy,
   }
 }
-
-export const formatDownloadGFCRProjectDataHelper = (project) => {
-  return {
-    projectId: project.project_id,
-    projectName: project.project_name,
-    projectIncludeGFCR: project.project_include_gfcr || true,
-  }
-}

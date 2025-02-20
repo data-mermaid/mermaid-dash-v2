@@ -4,20 +4,23 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
+import theme from '../../../styles/theme'
 
-import { downloadModal } from '../../../constants/language'
-
-import { Modal, RightFooter, ButtonSecondary, ButtonPrimary } from '../../generic'
-
-import { formatDownloadGFCRProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
-import { pluralize } from '../../../helperFunctions/pluralize'
-
-import DownloadGFCRTableView from './DownloadGFCRTableView'
+import { downloadModal, tooltipText } from '../../../constants/language'
+import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
+import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
+import { MuiTooltip } from '../../generic/MuiTooltip'
+import { pluralize } from '../../../helperFunctions/pluralize'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
   padding-right: 2rem;
+`
+
+const StyledOverflowList = styled.ul`
+  height: 244px;
+  overflow-y: auto;
 `
 
 const StyledWarningText = styled.div`
@@ -25,7 +28,6 @@ const StyledWarningText = styled.div`
   display: flex;
   background: lightgrey;
   align-items: center;
-  margin-top: 20px;
   padding-left: 20px;
   gap: 5px;
 `
@@ -41,14 +43,29 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
 
   const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [tableData, setTableData] = useState([])
   const [modalMode, setModalMode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
+
+  const { projectsWithGFCRData, projectsWithoutGFCRDataCount } = useMemo(() => {
+    return displayedProjects
+      .filter(({ project_id }) => checkedProjects.includes(project_id))
+      .reduce(
+        (acc, project) => {
+          if (project.project_includes_gfcr) {
+            acc.projectsWithGFCRData.push(project)
+          } else {
+            acc.projectsWithoutGFCRDataCount++
+          }
+          return acc
+        },
+        { projectsWithGFCRData: [], projectsWithoutGFCRDataCount: 0 },
+      )
+  }, [displayedProjects, checkedProjects])
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (modalOpen) {
       setErrorMessage('')
-      setModalMode(activeProjectCount === 0 ? 'no data' : 'download')
+      setModalMode(projectsWithGFCRData?.length === 0 ? 'no data' : 'download')
     } else {
       setModalMode('')
     }
@@ -68,26 +85,9 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
     }
   }, [handleClose])
 
-  const _getSiteRecords = useEffect(() => {
-    const formattedTableData = displayedProjects
-      .filter(({ project_id }) => checkedProjects.includes(project_id))
-      .map((project, i) => {
-        const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-        const formattedData = formatDownloadGFCRProjectDataHelper(project)
-        return {
-          id: i,
-          ...formattedData,
-          isMemberOfProject,
-          rawProjectData: project,
-        }
-      })
-
-    setTableData(formattedTableData)
-  }, [displayedProjects, checkedProjects, mermaidUserData, userIsMemberOfProject])
-
   const title = useMemo(() => {
     const titles = {
-      'no data': downloadModal.noDataTitle,
+      'no data': downloadModal.noGFCRDataTitle,
       success: downloadModal.successTitle,
       failure: downloadModal.failureTitle,
     }
@@ -99,7 +99,7 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
-      const projectsToEmail = tableData.map(({ projectId }) => projectId)
+      const projectsToEmail = projectsWithGFCRData.map(({ project_id }) => project_id)
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
@@ -129,16 +129,39 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
     }
   }
 
-  const hasNonGFCRProject = tableData.some((project) => !project.projectIncludeGFCR)
+  const projectListWithGFCRData = projectsWithGFCRData.map((project) => {
+    return (
+      <li key={project.project_id}>
+        {project.project_name}{' '}
+        {userIsMemberOfProject(project.project_id, mermaidUserData) && (
+          <MuiTooltip
+            title={tooltipText.yourProject}
+            placement="top"
+            bgColor={theme.color.primaryColor}
+            tooltipTextColor={theme.color.white}
+          >
+            <IconButton>
+              <IconUserCircle />
+            </IconButton>
+          </MuiTooltip>
+        )}
+      </li>
+    )
+  })
+
   const downloadContent = (
     <>
-      <DownloadGFCRTableView tableData={tableData} />
-      {hasNonGFCRProject && (
+      <StyledOverflowList>{projectListWithGFCRData}</StyledOverflowList>
+      {projectsWithoutGFCRDataCount > 0 && (
         <StyledWarningText>
           <IconInfo />{' '}
           <span>
-            {pluralize(2, 'other filtered project does', 'other filtered projects do')} not have
-            GFCR indicators
+            {pluralize(
+              projectsWithoutGFCRDataCount,
+              'other filtered project does',
+              'other filtered projects do',
+            )}{' '}
+            not have GFCR indicators
           </span>
         </StyledWarningText>
       )}
@@ -154,7 +177,7 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
 
   const content = (
     <ModalBody>
-      {modalMode === 'no data' && <p>{downloadModal.noDataContent}</p>}
+      {modalMode === 'no data' && <p>{downloadModal.noGFCRDataContent}</p>}
       {modalMode === 'download' && downloadContent}
       {modalMode === 'success' && successContent}
       {modalMode === 'failure' && <p>{errorMessage}</p>}
@@ -171,15 +194,16 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
   )
 
   const modalCustomHeight = useMemo(() => {
-    if (modalMode === 'download' && hasNonGFCRProject) {
-      return '750px'
+    if (modalMode === 'download' && projectsWithoutGFCRDataCount > 0) {
+      return '420px'
     }
 
-    if (modalMode === 'download' && !hasNonGFCRProject) {
-      return '700px'
+    if (modalMode === 'download' && projectsWithoutGFCRDataCount === 0) {
+      return '400px'
     }
+
     return '200px'
-  }, [modalMode])
+  }, [modalMode, projectsWithoutGFCRDataCount])
 
   if (!modalMode) {
     return null

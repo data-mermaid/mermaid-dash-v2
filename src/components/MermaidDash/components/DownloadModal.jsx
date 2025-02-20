@@ -5,7 +5,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { FormControl } from '@mui/material'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
-
 import theme from '../../../styles/theme'
 
 import { DOWNLOAD_METHODS } from '../../../constants/constants'
