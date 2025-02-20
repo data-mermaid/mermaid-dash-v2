@@ -33,15 +33,9 @@ const StyledWarningText = styled.div`
 `
 
 const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
-  const {
-    displayedProjects,
-    getActiveProjectCount,
-    mermaidUserData,
-    checkedProjects,
-    userIsMemberOfProject,
-  } = useContext(FilterProjectsContext)
+  const { displayedProjects, mermaidUserData, checkedProjects, userIsMemberOfProject } =
+    useContext(FilterProjectsContext)
 
-  const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [modalMode, setModalMode] = useState('')
   const [errorMessage, setErrorMessage] = useState('')
@@ -65,11 +59,11 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (modalOpen) {
       setErrorMessage('')
-      setModalMode(projectsWithGFCRData?.length === 0 ? 'no data' : 'download')
+      setModalMode(projectsWithGFCRData.length === 0 ? 'no data' : 'download')
     } else {
       setModalMode('')
     }
-  }, [modalOpen, activeProjectCount])
+  }, [modalOpen, projectsWithGFCRData])
 
   const _closeDisclaimerWithEscKey = useEffect(() => {
     const handleKeyDown = (event) => {

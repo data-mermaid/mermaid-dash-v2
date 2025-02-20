@@ -152,7 +152,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _fetchDataFromApi = useEffect(() => {
     const handleFetchDataFromApi = async () => {
-      if (isLoading) return
+      if (isLoading) {
+        return
+      }
 
       try {
         const token = isAuthenticated ? await getAccessTokenSilently() : ''
@@ -236,7 +238,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     map.fitBounds(bounds, { maxZoom: 17, padding: 20 })
   }
 
-  const handleFollowScreen = (e) => {
+  const handleFollowScreen = () => {
     setEnableFollowScreen((prevState) => !prevState)
 
     const newState = !enableFollowScreen
