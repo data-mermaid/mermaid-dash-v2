@@ -131,10 +131,6 @@ const MetricsPane = ({
   }, [calculateMetrics])
 
   const _getSelectedSampleEvent = useEffect(() => {
-    if (!selectedMarkerId || !displayedProjects.length) {
-      return
-    }
-
     const foundSelectedSampleEvent = displayedProjects
       .map((project) =>
         project.records.find((record) => record.sample_event_id === selectedMarkerId),
@@ -315,28 +311,34 @@ const MetricsPane = ({
             isRelativelyPositioned={true}
           />
         ) : null}
-      </StyledMetricsWrapper>
-      {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
-        <FollowToggleContainer>
-          <MuiTooltip
-            title={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
+        {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
+          <FollowToggleContainer>
+            <MuiTooltip
+              title={
+                enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
+              }
+            >
+              <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
+                <img src={zoomToMap} alt="Update metrics based on map view" />
+              </FollowButton>
+            </MuiTooltip>
+          </FollowToggleContainer>
+        ) : null}
+        {isDesktopWidth ? (
+          <DesktopToggleMetricsPaneButton
+            onClick={handleShowMetricsPane}
+            $isMetricsPaneShowing={isMetricsPaneShowing}
           >
-            <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
-              <img src={zoomToMap} alt="Update metrics based on map view" />
-            </FollowButton>
-          </MuiTooltip>
-        </FollowToggleContainer>
-      ) : null}
-      {isDesktopWidth ? (
-        <DesktopToggleMetricsPaneButton
-          onClick={handleShowMetricsPane}
-          $isMetricsPaneShowing={isMetricsPaneShowing}
-        >
-          <MuiTooltip title={isMetricsPaneShowing ? tooltipText.hideMetrics : tooltipText.showMetrics}>
-            <StyledChevronSpan>{isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
-          </MuiTooltip>
-        </DesktopToggleMetricsPaneButton>
-      ) : null}
+            <MuiTooltip
+              title={isMetricsPaneShowing ? tooltipText.hideMetrics : tooltipText.showMetrics}
+            >
+              <StyledChevronSpan>
+                {isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}
+              </StyledChevronSpan>
+            </MuiTooltip>
+          </DesktopToggleMetricsPaneButton>
+        ) : null}
+      </StyledMetricsWrapper>
     </>
   )
 }

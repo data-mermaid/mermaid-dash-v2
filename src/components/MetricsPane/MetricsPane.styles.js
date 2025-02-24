@@ -12,8 +12,9 @@ export const StyledMetricsWrapper = styled.div`
   ${({ $isMetricsPaneShowing }) =>
     $isMetricsPaneShowing
       ? css`
-          min-width: 42rem;
-          max-width: 42rem;
+          min-width: 41rem;
+          width: 50vw;
+          max-width: 54rem;
         `
       : css`
           max-width: 40rem;
@@ -23,7 +24,6 @@ export const StyledMetricsWrapper = styled.div`
   background-color: ${(props) =>
     props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
   height: 100%;
-  overflow-y: scroll;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;
@@ -42,6 +42,7 @@ export const StyledMetricsWrapper = styled.div`
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
   height: 100%;
+  overflow-y: scroll;
 `
 export const ChartsWrapper = styled.div`
   display: flex;
@@ -95,8 +96,8 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
-  top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
-  right: ${({ $isMetricsPaneShowing }) => ($isMetricsPaneShowing ? '42rem' : 0)};
+  top: 1.3rem;
+  left: -4rem;
   height: 4rem;
   z-index: 10;
   width: 4rem;
@@ -240,8 +241,8 @@ export const DesktopFollowScreenButton = styled(ButtonSecondary)`
 
 export const FollowToggleContainer = styled.div`
   position: absolute;
-  top: 6.2rem;
-  right: 47rem;
+  top: 1.3rem;
+  left: -9rem;
   height: 4rem;
   z-index: 100;
   display: flex;

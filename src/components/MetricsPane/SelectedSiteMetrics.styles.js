@@ -32,9 +32,10 @@ export const SelectedSiteContentContainer = styled.div`
 `
 
 export const SelectedSiteContentContainerWiderOnMobile = styled(SelectedSiteContentContainer)`
+  flex-grow: 1;
   ${mediaQueryTabletLandscapeOnly(css`
     width: 100%;
-  `)}
+  `)};
 `
 export const biggerIcons = css`
   width: ${theme.typography.mediumIconSize};
