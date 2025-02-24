@@ -9,6 +9,9 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
+const BIN_SIZE = 2
+const START_BIN = 0
+const END_BIN = 100
 
 export const AggregateHardCoralCover = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -57,29 +60,39 @@ export const AggregateHardCoralCover = () => {
     })
     .filter((record) => record !== undefined)
 
-  const markerColors = hardCoralAveragesPerSurvey.map((_, index) => {
-    const colors = chartTheme.aggregateCharts.hardCoralCover.marker
+  const binStartValues = Array.from(
+    { length: (END_BIN - START_BIN) / BIN_SIZE },
+    (_, index) => START_BIN + index * BIN_SIZE,
+  )
 
-    if (index <= 5) {
-      return colors.low
-    }
-    if (index > 5 && index <= 15) {
-      return colors.medium
+  const binColors = binStartValues.map((binStartValue) => {
+    const markerColors = chartTheme.aggregateCharts.hardCoralCover.marker
+
+    if (binStartValue < 10) {
+      return markerColors.low
     }
 
-    return colors.high
+    if (binStartValue >= 10 && binStartValue < 30) {
+      return markerColors.medium
+    }
+
+    return markerColors.high
   })
 
-  const plotlyDataConfiguration = [
-    {
-      x: hardCoralAveragesPerSurvey,
-      xbins: { start: 0, end: 100, size: 2 },
+  const plotlyDataConfiguration = binStartValues
+    .map((binStartValue, index) => ({
+      x: hardCoralAveragesPerSurvey.filter(
+        (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
+      ),
       type: 'histogram',
+      name: '',
       marker: {
-        color: markerColors,
+        color: binColors[index],
       },
-    },
-  ]
+      xbins: { start: binStartValue, end: binStartValue + BIN_SIZE, size: BIN_SIZE },
+      showlegend: false,
+    }))
+    .filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,

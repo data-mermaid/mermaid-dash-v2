@@ -12,31 +12,27 @@ const bleachingBenthicCategories = Object.entries(
 
 export const SampleEventBleachingPlot = ({ bleachingData }) => {
   const {
-    percent_hard_avg_avg,
-    percent_soft_avg_avg,
-    percent_algae_avg_avg,
-    quadrat_count_avg,
-    sample_unit_count,
+    percent_hard_avg_avg: percentHard,
+    percent_soft_avg_avg: percentSoft,
+    percent_algae_avg_avg: percentAlgae,
+    quadrat_count_avg: quadratCount,
+    sample_unit_count: sampleUnitCount,
   } = bleachingData
 
-  const isBleachingDataAvailable =
-    !!percent_hard_avg_avg &&
-    !!percent_soft_avg_avg &&
-    !!percent_algae_avg_avg &&
-    !!quadrat_count_avg
+  const isBleachingDataAvailable = [percentHard, percentSoft, percentAlgae, quadratCount].every(
+    (value) => value !== null && value !== undefined,
+  )
 
-  const totalSurveys = isBleachingDataAvailable ? quadrat_count_avg * sample_unit_count : 0
+  const totalSurveys = isBleachingDataAvailable ? quadratCount * sampleUnitCount : 0
   const otherBleachingPercentage = isBleachingDataAvailable
-    ? parseFloat(
-        (100 - percent_hard_avg_avg - percent_soft_avg_avg - percent_algae_avg_avg).toFixed(1),
-      )
+    ? parseFloat((100 - percentHard - percentSoft - percentAlgae).toFixed(1))
     : undefined
 
   const bleachingPercentageValues = [
-    percent_algae_avg_avg ?? 0,
-    percent_soft_avg_avg ?? 0,
+    percentAlgae ?? 0,
+    percentSoft ?? 0,
     otherBleachingPercentage ?? 0,
-    percent_hard_avg_avg ?? 0,
+    percentHard ?? 0,
   ]
 
   const plotlyDataConfiguration = bleachingBenthicCategories
@@ -53,7 +49,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { t: 50, r: 0, b: 40, l: 40 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {

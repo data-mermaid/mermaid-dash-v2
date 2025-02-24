@@ -6,9 +6,7 @@ import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
 import { PrivateChartView } from './PrivateChartView'
 
 const chartTheme = dashboardOnlyTheme.plotlyChart
-const benthicCategories = Object.entries(
-  chartTheme.chartCategoryType.benthicCoverColorMap,
-).reverse()
+const benthicCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const totalSurveys = benthicData?.sample_unit_count ?? 0
@@ -39,7 +37,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { t: 50, r: 0, b: 40, l: 40 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {

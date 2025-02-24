@@ -49,7 +49,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { ...chartTheme.layout.margin, b: 80 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 80 },
     xaxis: {
       ...chartTheme.layout.xaxis,
       tickangle: -45,

@@ -19,53 +19,27 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     percent_pale_avg: percentPale,
     sample_unit_count: sampleUnitCount,
   } = coloniesBleachedData
-  const isBleachingSeverityDataAvailable =
-    !!percent100 &&
-    !!percent20 &&
-    !!percent50 &&
-    !!percent80 &&
-    !!percentDead &&
-    !!percentNormal &&
-    !!percentPale &&
-    !!countTotalAvg
+
+  const isBleachingSeverityDataAvailable = [
+    percent100,
+    percent20,
+    percent50,
+    percent80,
+    percentDead,
+    percentNormal,
+    percentPale,
+    countTotalAvg,
+  ].every((value) => value !== null && value !== undefined)
 
   const totalSurveys = isBleachingSeverityDataAvailable ? countTotalAvg * sampleUnitCount : 0
 
   const plotlyDataConfiguration = [
     {
       x: [1],
-      y: [percentDead ? percentDead / 100 : 0],
+      y: [percentNormal ? percentNormal / 100 : 0],
       type: 'bar',
-      name: `Recently dead (${percentDead}%)`,
-      marker: { color: bleachingColor['Dead'] },
-    },
-    {
-      x: [1],
-      y: [percent100 ? percent100 / 100 : 0],
-      type: 'bar',
-      name: `80-100% bleached (${percent100}%)`,
-      marker: { color: bleachingColor['80-100%'] },
-    },
-    {
-      x: [1],
-      y: [percent80 ? percent80 / 100 : 0],
-      type: 'bar',
-      name: `50-80% bleached (${percent80}%)`,
-      marker: { color: bleachingColor['50-80%'] },
-    },
-    {
-      x: [1],
-      y: [percent50 ? percent50 / 100 : 0],
-      type: 'bar',
-      name: `20-50% bleached (${percent50}%)`,
-      marker: { color: bleachingColor['20-50%'] },
-    },
-    {
-      y: [percent20 ? percent20 / 100 : 0],
-      x: [1],
-      type: 'bar',
-      name: `0-20% bleached (${percent20}%)`,
-      marker: { color: bleachingColor['0-20%'] },
+      name: `Normal (${percentNormal}%)`,
+      marker: { color: bleachingColor['Normal'] },
     },
     {
       x: [1],
@@ -76,16 +50,44 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     },
     {
       x: [1],
-      y: [percentNormal ? percentNormal / 100 : 0],
+      y: [percent20 ? percent20 / 100 : 0],
       type: 'bar',
-      name: `Normal (${percentNormal}%)`,
-      marker: { color: bleachingColor['Normal'] },
+      name: `0-20% bleached (${percent20}%)`,
+      marker: { color: bleachingColor['0-20%'] },
+    },
+    {
+      x: [1],
+      y: [percent50 ? percent50 / 100 : 0],
+      type: 'bar',
+      name: `20-50% bleached (${percent50}%)`,
+      marker: { color: bleachingColor['20-50%'] },
+    },
+    {
+      x: [1],
+      y: [percent80 ? percent80 / 100 : 0],
+      type: 'bar',
+      name: `50-80% bleached (${percent80}%)`,
+      marker: { color: bleachingColor['50-80%'] },
+    },
+    {
+      x: [1],
+      y: [percent100 ? percent100 / 100 : 0],
+      type: 'bar',
+      name: `80-100% bleached (${percent100}%)`,
+      marker: { color: bleachingColor['80-100%'] },
+    },
+    {
+      x: [1],
+      y: [percentDead ? percentDead / 100 : 0],
+      type: 'bar',
+      name: `Recently dead (${percentDead}%)`,
+      marker: { color: bleachingColor['Dead'] },
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { t: 50, r: 0, b: 40, l: 40 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {

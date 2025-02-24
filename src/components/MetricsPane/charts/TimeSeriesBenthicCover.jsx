@@ -12,6 +12,10 @@ const chartTheme = dashboardOnlyTheme.plotlyChart
 const chartThemeLayout = chartTheme.layout
 const categories = Object.keys(chartTheme.chartCategoryType.benthicCoverColorMap)
 
+const isValidNumber = (num) => {
+  return typeof num === 'number' && !Number.isNaN(num)
+}
+
 export const TimeSeriesBenthicCover = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
@@ -87,20 +91,26 @@ export const TimeSeriesBenthicCover = () => {
     },
   )
   const totalSurveys = benthicPercentageCoverDistributions
-    .filter((record) => record['Hard coral'] > 0)
+    .filter((record) => isValidNumber(record['Hard coral']))
     .reduce((sum, { count }) => sum + count, 0)
 
   const plotlyDataConfiguration = categories
-    .map((category) => ({
-      x: benthicPercentageCoverDistributions.map((distribution) => distribution.year),
-      y: benthicPercentageCoverDistributions.map((distribution) => distribution[category]),
-      type: 'bar',
-      name: category,
-      marker: {
-        color: chartTheme.chartCategoryType.benthicCoverColorMap[category],
-      },
-      hovertemplate: '%{x}, %{y:.2f}',
-    }))
+    .map((category) => {
+      const validDistributions = benthicPercentageCoverDistributions.filter((distribution) =>
+        isValidNumber(distribution[category]),
+      )
+
+      return {
+        x: validDistributions.map((distribution) => distribution.year),
+        y: validDistributions.map((distribution) => distribution[category]),
+        type: 'bar',
+        name: category,
+        marker: {
+          color: chartTheme.chartCategoryType.benthicCoverColorMap[category],
+        },
+        hovertemplate: '%{x}, %{y:.2f}',
+      }
+    })
     .filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
