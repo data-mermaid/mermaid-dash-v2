@@ -9,8 +9,8 @@ export const StyledMetricsWrapper = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem;
-  ${({ $showMetricsPane }) =>
-    $showMetricsPane
+  ${({ $isMetricsPaneShowing }) =>
+    $isMetricsPaneShowing
       ? css`
           min-width: 41rem;
           width: 50vw;

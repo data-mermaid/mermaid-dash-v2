@@ -24,15 +24,15 @@ export const StyledFilterWrapper = styled.div`
   flex-direction: column;
   position: relative;
   max-width: 40rem;
-  ${(props) => props.$showFilterPane && 'width: 50%;'}
+  ${(props) => props.$isFilterPaneShowing && 'width: 50%;'}
   ${mediaQueryTabletLandscapeOnly(css`
     z-index: 400;
     background-color: ${theme.color.grey1};
     overflow-y: scroll;
-    width: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
+    width: ${(props) => (props.$isFilterPaneShowing ? '80%' : '0%')};
     position: absolute;
     top: 10%;
-    height: ${(props) => (props.$showFilterPane ? '80%' : '0%')};
+    height: ${(props) => (props.$isFilterPaneShowing ? '80%' : '0%')};
     left: 50%;
     transform: translateX(-50%);
   `)}

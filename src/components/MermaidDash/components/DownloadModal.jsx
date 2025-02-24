@@ -5,7 +5,6 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { FormControl } from '@mui/material'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
-
 import theme from '../../../styles/theme'
 
 import { DOWNLOAD_METHODS } from '../../../constants/constants'
@@ -82,7 +81,7 @@ const getSurveyedMethod = (countObj) => {
   )
 }
 
-const DownloadModal = ({ modalOpen, handleClose }) => {
+const DownloadModal = ({ isOpen, onDismiss }) => {
   const {
     displayedProjects,
     filteredSurveys,
@@ -111,35 +110,21 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   const [tableData, setTableData] = useState([])
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [selectedMethod, setSelectedMethod] = useState('')
-  const [modalMode, setModalMode] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
-  const [dataSharingModalOpen, setDataSharingModalOpen] = useState(false)
+  const [modalMode, setModalMode] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
 
   const collectionMethods = Object.entries(DOWNLOAD_METHODS)
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
-    if (modalOpen) {
-      setErrorMessage('')
+    if (isOpen) {
+      setErrorMessage(null)
       setModalMode(activeProjectCount === 0 ? 'no data' : 'download')
       setSelectedMethod(getSurveyedMethod(surveyedMethodCount))
     } else {
-      setModalMode('')
+      setModalMode(null)
     }
-  }, [modalOpen, activeProjectCount])
-
-  const _closeDisclaimerWithEscKey = useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        handleClose()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleClose])
+  }, [isOpen, activeProjectCount])
 
   const _getSiteRecords = useEffect(() => {
     if (!selectedMethod) {
@@ -188,6 +173,12 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
+
+      if (!token) {
+        setErrorMessage(downloadModal.failureContent)
+        setModalMode('failure')
+        return
+      }
 
       const selectedMethodProtocol = DOWNLOAD_METHODS[selectedMethod]?.protocol
       const projectsToEmail = tableData
@@ -278,14 +269,14 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
             </StyledDataSharingButton>
           </StyledDataSharingTabs>
         </StyledDataSharingWrapper>
-        <ButtonThatLooksLikeLinkUnderlined onClick={() => setDataSharingModalOpen(true)}>
+        <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
           Find out how your data are shared
         </ButtonThatLooksLikeLinkUnderlined>
       </StyledDownloadContentWrapper>
       <DownloadTableView tableData={tableData} />
       <DataSharingInfoModal
-        isOpen={dataSharingModalOpen}
-        onDismiss={() => setDataSharingModalOpen(false)}
+        isOpen={isDataSharingModalOpen}
+        onDismiss={() => setIsDataSharingModalOpen(false)}
       />
     </>
   )
@@ -297,18 +288,18 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
     </>
   )
 
-  const content = (
-    <ModalBody>
-      {modalMode === 'no data' && <p>{downloadModal.noDataContent}</p>}
-      {modalMode === 'download' && downloadContent}
-      {modalMode === 'success' && successContent}
-      {modalMode === 'failure' && <p>{errorMessage}</p>}
-    </ModalBody>
-  )
+  const MODAL_CONTENT_BY_MODE = {
+    'no data': <p>{downloadModal.noDataContent}</p>,
+    download: downloadContent,
+    success: successContent,
+    failure: <p>{errorMessage}</p>,
+  }
+
+  const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
 
   const footerContent = (
     <RightFooter>
-      <ButtonSecondary onClick={handleClose}>Close</ButtonSecondary>
+      <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
       {modalMode === 'download' && (
         <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>Send Email With Link</ButtonPrimary>
       )}
@@ -323,8 +314,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
     <Modal
       title={title}
       mainContent={content}
-      isOpen={modalOpen}
-      onDismiss={handleClose}
+      isOpen={isOpen}
+      onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
       modalCustomWidth={modalMode === 'download' ? '1150px' : '600px'}
@@ -334,8 +325,8 @@ const DownloadModal = ({ modalOpen, handleClose }) => {
 }
 
 DownloadModal.propTypes = {
-  modalOpen: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onDismiss: PropTypes.func.isRequired,
 }
 
 export default DownloadModal

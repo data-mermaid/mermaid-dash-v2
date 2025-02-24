@@ -52,6 +52,7 @@ import HideShow from '../Header/components/HideShow'
 import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
+import DownloadGFCRModal from './components/DownloadGFCRModal'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -67,10 +68,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     allProjectsFinishedFiltering,
   } = useContext(FilterProjectsContext)
 
-  const [showFilterPane, setShowFilterPane] = useLocalStorage('showFilterPane', true)
-  const [showFilterModal, setShowFilterModal] = useState(false)
-  const [showMetricsPane, setShowMetricsPane] = useState(true)
-  const [showDownloadModal, setShowDownloadModal] = useState(false)
+  const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
+  const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
+  const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
+  const [isDownloadModalShowing, setIsDownloadModalShowing] = useState(false)
+  const [isDownloadGFCRModalShowing, setIsDownloadGFCRModalShowing] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -150,7 +152,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _fetchDataFromApi = useEffect(() => {
     const handleFetchDataFromApi = async () => {
-      if (isLoading) return
+      if (isLoading) {
+        return
+      }
 
       try {
         const token = isAuthenticated ? await getAccessTokenSilently() : ''
@@ -193,15 +197,19 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }, [isMobileWidth])
 
   const handleShowFilterPane = () => {
-    setShowFilterPane(!showFilterPane)
+    setIsFilterPaneShowing(!isFilterPaneShowing)
   }
 
   const handleShowFilterModal = () => {
-    setShowFilterModal(!showFilterModal)
+    setIsFilterModalShowing(!isFilterModalShowing)
   }
 
   const handleShowDownloadModal = () => {
-    setShowDownloadModal(!showDownloadModal)
+    setIsDownloadModalShowing(true)
+  }
+
+  const handleShowDownloadGFCRModal = () => {
+    setIsDownloadGFCRModalShowing(true)
   }
 
   const handleZoomToFilteredData = () => {
@@ -230,7 +238,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     map.fitBounds(bounds, { maxZoom: 17, padding: 20 })
   }
 
-  const handleFollowScreen = (e) => {
+  const handleFollowScreen = () => {
     setEnableFollowScreen((prevState) => !prevState)
 
     const newState = !enableFollowScreen
@@ -256,7 +264,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const renderOverflowDownloadMenu = () => {
     return (
       <DownloadMenu>
-        <ButtonPrimary>
+        <ButtonPrimary onClick={handleShowDownloadGFCRModal}>
           <IconTrayDownload /> Download GFCR Data
         </ButtonPrimary>
       </DownloadMenu>
@@ -276,7 +284,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
     return isMobileWidth ? (
       <Modal
-        isOpen={showFilterModal}
+        isOpen={isFilterModalShowing}
         onDismiss={handleShowFilterModal}
         title=""
         mainContent={modalContent}
@@ -285,19 +293,21 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         modalCustomHeight={'100dvh'}
       />
     ) : (
-      <StyledFilterWrapper $showFilterPane={showFilterPane}>
-        {showFilterPane ? (
+      <StyledFilterWrapper $isFilterPaneShowing={isFilterPaneShowing}>
+        {isFilterPaneShowing ? (
           <StyledFilterContainer>
             <FilterPane mermaidUserData={mermaidUserData} />
           </StyledFilterContainer>
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          <MuiTooltip title={showFilterPane ? tooltipText.hideFilters : tooltipText.showFilters}>
-            <StyledChevronSpan>{showFilterPane ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
+          <MuiTooltip
+            title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
+          >
+            <StyledChevronSpan>{isFilterPaneShowing ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
-        {showFilterPane ? (
+        {isFilterPaneShowing ? (
           <FilterDownloadWrapper>
             <FilterDownloadButton
               disabled={!allProjectsFinishedFiltering}
@@ -327,8 +337,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           </FilterDownloadWrapper>
         ) : null}
         <DownloadModal
-          modalOpen={showDownloadModal}
-          handleClose={() => setShowDownloadModal(false)}
+          isOpen={isDownloadModalShowing}
+          onDismiss={() => setIsDownloadModalShowing(false)}
+        />
+        <DownloadGFCRModal
+          isOpen={isDownloadGFCRModalShowing}
+          onDismiss={() => setIsDownloadGFCRModalShowing(false)}
         />
       </StyledFilterWrapper>
     )
@@ -338,8 +352,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     <StyledMapContainer>
       <MaplibreMap
         mapRef={mapRef}
-        showFilterPane={showFilterPane}
-        showMetricsPane={showMetricsPane}
+        isFilterPaneShowing={isFilterPaneShowing}
+        isMetricsPaneShowing={isMetricsPaneShowing}
         view={view}
         setView={setView}
         projectDataCount={projectData?.count || 0}
@@ -384,11 +398,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <img src={zoomToMap} />
       </StyledMobileFollowMapButton>
       <StyledContentContainer>
-        {renderFilter(showFilterModal)}
+        {renderFilter(isFilterModalShowing)}
         {isMobileWidth || view === 'mapView' ? map : table}
         <MetricsPane
-          showMetricsPane={showMetricsPane}
-          setShowMetricsPane={setShowMetricsPane}
+          isMetricsPaneShowing={isMetricsPaneShowing}
+          setIsMetricsPaneShowing={setIsMetricsPaneShowing}
           view={view}
           showLoadingIndicator={showLoadingIndicator}
           setShowLoadingIndicator={setShowLoadingIndicator}
