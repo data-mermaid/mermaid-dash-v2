@@ -32,13 +32,13 @@ const StyledWarningText = styled.div`
   gap: 5px;
 `
 
-const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
+const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
   const { displayedProjects, mermaidUserData, checkedProjects, userIsMemberOfProject } =
     useContext(FilterProjectsContext)
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [modalMode, setModalMode] = useState('')
-  const [errorMessage, setErrorMessage] = useState('')
+  const [modalMode, setModalMode] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
 
   const { projectsWithGFCRData, projectsWithoutGFCRDataCount } = useMemo(() => {
     return displayedProjects
@@ -57,27 +57,13 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
   }, [displayedProjects, checkedProjects])
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
-    if (modalOpen) {
-      setErrorMessage('')
+    if (isOpen) {
+      setErrorMessage(null)
       setModalMode(projectsWithGFCRData.length === 0 ? 'no data' : 'download')
     } else {
-      setModalMode('')
+      setModalMode(null)
     }
-  }, [modalOpen, projectsWithGFCRData])
-
-  const _closeDisclaimerWithEscKey = useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        handleClose()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleClose])
+  }, [isOpen, projectsWithGFCRData])
 
   const title = useMemo(() => {
     const titles = {
@@ -92,6 +78,12 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
+
+      if (!token) {
+        setErrorMessage(downloadModal.failureContent)
+        setModalMode('failure')
+        return
+      }
 
       const projectsToEmail = projectsWithGFCRData.map(({ project_id }) => project_id)
 
@@ -169,18 +161,18 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
     </>
   )
 
-  const content = (
-    <ModalBody>
-      {modalMode === 'no data' && <p>{downloadModal.noGFCRDataContent}</p>}
-      {modalMode === 'download' && downloadContent}
-      {modalMode === 'success' && successContent}
-      {modalMode === 'failure' && <p>{errorMessage}</p>}
-    </ModalBody>
-  )
+  const MODAL_CONTENT_BY_MODE = {
+    'no data': <p>{downloadModal.noGFCRDataContent}</p>,
+    download: downloadContent,
+    success: successContent,
+    failure: <p>{errorMessage}</p>,
+  }
+
+  const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
 
   const footerContent = (
     <RightFooter>
-      <ButtonSecondary onClick={handleClose}>Close</ButtonSecondary>
+      <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
       {modalMode === 'download' && (
         <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>Send Email With Link</ButtonPrimary>
       )}
@@ -207,8 +199,8 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
     <Modal
       title={title}
       mainContent={content}
-      isOpen={modalOpen}
-      onDismiss={handleClose}
+      isOpen={isOpen}
+      onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
       modalCustomHeight={modalCustomHeight}
@@ -217,8 +209,8 @@ const DownloadGFCRModal = ({ modalOpen, handleClose }) => {
 }
 
 DownloadGFCRModal.propTypes = {
-  modalOpen: PropTypes.bool.isRequired,
-  handleClose: PropTypes.func.isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  onDismiss: PropTypes.func.isRequired,
 }
 
 export default DownloadGFCRModal

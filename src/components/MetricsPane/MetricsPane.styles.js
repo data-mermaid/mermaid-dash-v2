@@ -9,8 +9,8 @@ export const StyledMetricsWrapper = styled.div`
   flex-direction: column;
   gap: 0.5rem;
   padding: 0.5rem;
-  ${({ $showMetricsPane }) =>
-    $showMetricsPane
+  ${({ $isMetricsPaneShowing }) =>
+    $isMetricsPaneShowing
       ? css`
           min-width: 42rem;
           max-width: 42rem;
@@ -96,7 +96,7 @@ export const BiggerIconCaretDown = styled(IconCaretDown)`
 export const DesktopToggleMetricsPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 6.2rem; // 1.3rem + header height (theme.spacing.headerHeight)
-  right: ${({ $showMetricsPane }) => ($showMetricsPane ? '42rem' : 0)};
+  right: ${({ $isMetricsPaneShowing }) => ($isMetricsPaneShowing ? '42rem' : 0)};
   height: 4rem;
   z-index: 10;
   width: 4rem;

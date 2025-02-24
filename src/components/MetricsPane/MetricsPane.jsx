@@ -52,9 +52,9 @@ const FollowButton = styled(ButtonSecondary)`
 
 const MetricsPane = ({
   setShowLoadingIndicator,
-  setShowMetricsPane,
+  setIsMetricsPaneShowing,
   showLoadingIndicator,
-  showMetricsPane,
+  isMetricsPaneShowing,
   view,
 }) => {
   const [numSurveys, setNumSurveys] = useState(0)
@@ -145,7 +145,7 @@ const MetricsPane = ({
   }, [selectedMarkerId, displayedProjects])
 
   const handleShowMetricsPane = () => {
-    setShowMetricsPane((prevState) => !prevState)
+    setIsMetricsPaneShowing((prevState) => !prevState)
   }
 
   const handleShowMobileExpandedMetricsPane = () => {
@@ -291,7 +291,7 @@ const MetricsPane = ({
   return (
     <>
       <StyledMetricsWrapper
-        $showMetricsPane={showMetricsPane}
+        $isMetricsPaneShowing={isMetricsPaneShowing}
         $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
         $showLoadingIndicator={showLoadingIndicator}
         $isDesktopWidth={isDesktopWidth}
@@ -305,7 +305,7 @@ const MetricsPane = ({
             {showMobileExpandedMetricsPane ? <BiggerIconCaretDown /> : <BiggerIconCaretUp />}
           </MobileExpandMetricsPaneButton>
         ) : null}
-        {isMobileWidth || showMetricsPane ? metricsContent : null}
+        {isMobileWidth || isMetricsPaneShowing ? metricsContent : null}
         {isMobileWidth ? (
           <LoadingIndicator
             currentProgress={projectData?.results?.length || 0}
@@ -316,7 +316,7 @@ const MetricsPane = ({
           />
         ) : null}
       </StyledMetricsWrapper>
-      {isDesktopWidth && view === 'mapView' && showMetricsPane && !selectedMarkerId ? (
+      {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
         <FollowToggleContainer>
           <MuiTooltip
             title={enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap}
@@ -330,10 +330,10 @@ const MetricsPane = ({
       {isDesktopWidth ? (
         <DesktopToggleMetricsPaneButton
           onClick={handleShowMetricsPane}
-          $showMetricsPane={showMetricsPane}
+          $isMetricsPaneShowing={isMetricsPaneShowing}
         >
-          <MuiTooltip title={showMetricsPane ? tooltipText.hideMetrics : tooltipText.showMetrics}>
-            <StyledChevronSpan>{showMetricsPane ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
+          <MuiTooltip title={isMetricsPaneShowing ? tooltipText.hideMetrics : tooltipText.showMetrics}>
+            <StyledChevronSpan>{isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}</StyledChevronSpan>
           </MuiTooltip>
         </DesktopToggleMetricsPaneButton>
       ) : null}
@@ -342,8 +342,8 @@ const MetricsPane = ({
 }
 
 MetricsPane.propTypes = {
-  showMetricsPane: PropTypes.bool.isRequired,
-  setShowMetricsPane: PropTypes.func.isRequired,
+  isMetricsPaneShowing: PropTypes.bool.isRequired,
+  setIsMetricsPaneShowing: PropTypes.func.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
