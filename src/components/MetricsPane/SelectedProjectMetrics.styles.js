@@ -13,8 +13,9 @@ export const ProjectCard = styled.div`
 
 export const ProjectTitle = styled.h2`
   margin: 0;
-  width: 24rem;
+  width: 30rem;
   overflow-wrap: break-word;
+  flex-grow: 1;
 `
 
 export const ProjectCardContent = styled.div`
