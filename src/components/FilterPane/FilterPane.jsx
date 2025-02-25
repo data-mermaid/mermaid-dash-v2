@@ -189,7 +189,7 @@ const FilterPane = ({ mermaidUserData }) => {
   }
 
   const getOrganizationsAutocompleteGroup = () => {
-    return !!isAnyActiveFilters() ? autocompleteGroupNames.organizationsBasedOnCurrentFilters : ''
+    return isAnyActiveFilters() ? autocompleteGroupNames.organizationsBasedOnCurrentFilters : ''
   }
 
   const handleShowProjectsWithNoRecords = () => {

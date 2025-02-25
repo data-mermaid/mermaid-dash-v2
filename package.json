@@ -7,7 +7,8 @@
     "dev": "vite --port 3030",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "prepare": "husky"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
@@ -58,8 +59,8 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-react-refresh": "^0.4.6",
-    "husky": "^9.0.11",
-    "lint-staged": "^15.2.2",
+    "husky": "^9.1.7",
+    "lint-staged": "^15.4.3",
     "prettier": "^3.2.5",
     "vite": "^5.2.0",
     "vite-plugin-svgr": "^4.2.0"
@@ -70,9 +71,9 @@
     }
   },
   "lint-staged": {
-    "*.js": [
+    "**/*.{js,jsx,ts,tsx}": [
       "prettier --write",
-      "git add"
+      "eslint --fix"
     ]
   },
   "packageManager": "yarn@4.1.1"

@@ -1,6 +1,6 @@
 import styled from 'styled-components'
 import theme from '../../../styles/theme'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 
 export const ChartSubtitle = styled.p`
   font-size: ${theme.typography.smallFontSize};
@@ -18,7 +18,7 @@ export const TitlesWrapper = styled.div`
 `
 export const ChartWrapper = styled.div`
   position: relative;
-  height: ${dashboardOnlyTheme.plotlyChart.layout.height}px;
+  height: ${plotlyChartTheme.layout.height}px;
 `
 
 export const NoChartWrapper = styled.div`

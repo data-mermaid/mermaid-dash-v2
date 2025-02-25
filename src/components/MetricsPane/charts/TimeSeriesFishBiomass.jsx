@@ -4,18 +4,18 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
-const chartThemeLayout = chartTheme.layout
-
 function calculateMedian(values) {
-  if (!values.length) return null
+  if (!values.length) {
+    return null
+  }
 
   const sorted = values.slice().sort((a, b) => a - b)
   const mid = Math.floor(sorted.length / 2)
+
   return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
 }
 
@@ -46,12 +46,16 @@ export const TimeSeriesFishBiomass = () => {
       const { managementRule, avgBiomass, sampleDate } = record
       const year = new Date(sampleDate).getFullYear()
 
-      if (!accumulator[year]) accumulator[year] = {}
+      if (!accumulator[year]) {
+        accumulator[year] = {}
+      }
+
       if (!accumulator[year][managementRule]) {
         accumulator[year][managementRule] = []
       }
 
       accumulator[year][managementRule].push(avgBiomass)
+
       return accumulator
     },
     {},
@@ -80,25 +84,25 @@ export const TimeSeriesFishBiomass = () => {
       .map((distribution) => distribution.medianFishBiomass),
     type: 'bar',
     name: rule,
-    marker: { color: chartTheme.chartCategoryType.managementRuleColorMap[rule] },
+    marker: { color: plotlyChartTheme.chartCategoryType.managementRuleColorMap[rule] },
     hovertemplate: '%{x}, %{y:.2f}',
   }))
 
   const plotlyLayoutConfiguration = {
-    ...chartThemeLayout,
+    ...plotlyChartTheme.layout,
     xaxis: {
-      ...chartThemeLayout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartThemeLayout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartThemeLayout.yaxis,
-      title: { ...chartThemeLayout.yaxis.title, text: '(kg/ha)' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '(kg/ha)' },
     },
     showlegend: true,
-    legend: chartTheme.horizontalLegend,
+    legend: plotlyChartTheme.horizontalLegend,
   }
 
   return (
@@ -117,7 +121,7 @@ export const TimeSeriesFishBiomass = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

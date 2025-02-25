@@ -73,7 +73,7 @@ const AutocompleteCheckbox = ({
         return Object.values(filteredGroups).flat()
       }}
       renderOption={(props, option, { selected }) => {
-        const { key, ...optionProps } = props
+        const { key, ...optionProps } = props || {}
 
         return (
           <MermaidMenuItem key={key} {...optionProps}>
@@ -88,7 +88,7 @@ const AutocompleteCheckbox = ({
 
           return (
             <MermaidChip
-              key={option}
+              key={key}
               label={option}
               {...tagProps}
               onDelete={() => onDelete(option)}

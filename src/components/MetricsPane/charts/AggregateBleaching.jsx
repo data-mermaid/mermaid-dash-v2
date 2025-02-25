@@ -4,11 +4,9 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
-
-const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateBleaching = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -101,7 +99,7 @@ export const AggregateBleaching = () => {
       x: ['Normal', 'Pale', '0-20%', '20-50%', '50-80%', '80-100%', 'Dead'],
       type: 'bar',
       marker: {
-        color: chartTheme.aggregateCharts.bleaching.marker.color,
+        color: plotlyChartTheme.aggregateCharts.bleaching.marker.color,
       },
       xbins: {
         size: 100,
@@ -110,19 +108,19 @@ export const AggregateBleaching = () => {
   ]
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
-    margin: { ...chartTheme.layout.margin, b: 60 },
+    ...plotlyChartTheme.layout,
+    margin: { ...plotlyChartTheme.layout.margin, b: 60 },
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Bleaching severity',
       },
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
+      ...plotlyChartTheme.layout.yaxis,
       title: {
-        ...chartTheme.layout.yaxis.title,
+        ...plotlyChartTheme.layout.yaxis.title,
         text: 'Number of coral colonies',
       },
     },
@@ -142,7 +140,7 @@ export const AggregateBleaching = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

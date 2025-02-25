@@ -142,7 +142,7 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
     }
     const bounds = map.getBounds()
     setMapBbox(bounds)
-  }, [enableFollowScreen, setMapBbox])
+  }, [enableFollowScreen, setMapBbox, mapRef])
 
   const _addAndRemoveMarkersBasedOnFilters = useEffect(() => {
     const displayedProjectsChanged =
@@ -343,6 +343,9 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
 }
 
 MaplibreMap.propTypes = {
+  mapRef: PropTypes.shape({
+    current: PropTypes.object,
+  }).isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
 }

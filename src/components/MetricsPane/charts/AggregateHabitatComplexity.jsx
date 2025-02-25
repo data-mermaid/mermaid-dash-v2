@@ -4,11 +4,9 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
-
-const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateHabitatComplexity = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -26,7 +24,7 @@ export const AggregateHabitatComplexity = () => {
       x: habitatComplexityValues,
       type: 'histogram',
       marker: {
-        color: chartTheme.aggregateCharts.default.marker.color,
+        color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: {
         size: 1,
@@ -34,18 +32,18 @@ export const AggregateHabitatComplexity = () => {
     },
   ]
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...plotlyChartTheme.layout,
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Score',
       },
       tickvals: [0, 1, 2, 3, 4, 5],
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Number of surveys' },
     },
   }
 
@@ -63,7 +61,7 @@ export const AggregateHabitatComplexity = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

@@ -160,15 +160,15 @@ export const FilterProjectsProvider = ({ children }) => {
     const anyActiveProjects = projectNameFilter
     const followScreenEnabled = enableFollowScreen
 
-    return (
+    return Boolean(
       anyActiveCountries ||
-      anyActiveOrganizations ||
-      anyActiveSampleDateAfter ||
-      anyActiveSampleDateBefore ||
-      showYourDataOnly ||
-      anyInactiveMethodDataSharing ||
-      anyActiveProjects ||
-      followScreenEnabled
+        anyActiveOrganizations ||
+        anyActiveSampleDateAfter ||
+        anyActiveSampleDateBefore ||
+        showYourDataOnly ||
+        anyInactiveMethodDataSharing ||
+        anyActiveProjects ||
+        followScreenEnabled,
     )
   }, [
     selectedCountries,
@@ -312,11 +312,11 @@ export const FilterProjectsProvider = ({ children }) => {
       sampleDateAfter,
       sampleDateBefore,
       showYourData,
-      isAnyActiveFilters,
       showProjectsWithNoRecords,
       enableFollowScreen,
       isRecordWithinMapBounds,
       mapBbox,
+      noDataProjects,
     ],
   )
 

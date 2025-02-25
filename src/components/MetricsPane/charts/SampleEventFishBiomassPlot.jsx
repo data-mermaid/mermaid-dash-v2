@@ -1,11 +1,12 @@
 import Plot from 'react-plotly.js'
+import PropTypes from 'prop-types'
 
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartTheme = plotlyChartTheme
 const fishTropicGroupKey = {
   Omnivore: 'omnivore',
   Piscivore: 'piscivore',
@@ -88,4 +89,19 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       )}
     </ChartWrapper>
   )
+}
+
+SampleEventFishBiomassPlot.propTypes = {
+  fishbeltData: PropTypes.shape({
+    sample_unit_count: PropTypes.number,
+    biomass_kgha_trophic_group_avg: PropTypes.shape({
+      omnivore: PropTypes.number,
+      piscivore: PropTypes.number,
+      planktivore: PropTypes.number,
+      'invertivore-mobile': PropTypes.number,
+      'invertivore-sessile': PropTypes.number,
+      'herbivore-macroalgae': PropTypes.number,
+      'herbivore-detritivore': PropTypes.number,
+    }),
+  }).isRequired,
 }

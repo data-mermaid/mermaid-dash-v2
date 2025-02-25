@@ -1,14 +1,15 @@
 import Plot from 'react-plotly.js'
+import PropTypes from 'prop-types'
 
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import lowHabIcon from '../../../assets/low-hb-icon.png'
 import mediumHabIcon from '../../../assets/medium-hb-icon.png'
 import highHabIcon from '../../../assets/high-hb-icon.png'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartTheme = plotlyChartTheme
 
 export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
   const totalSurveys = habitatComplexityData?.sample_unit_count ?? 0
@@ -139,4 +140,11 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       )}
     </ChartWrapper>
   )
+}
+
+SampleEventHabitatComplexityPlot.propTypes = {
+  habitatComplexityData: PropTypes.shape({
+    sample_unit_count: PropTypes.number,
+    score_avg_avg: PropTypes.number,
+  }).isRequired,
 }

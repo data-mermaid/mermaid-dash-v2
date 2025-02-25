@@ -26,7 +26,7 @@ import {
 } from './MetricsPane.styles'
 import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
-import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/dashboardOnlyIcons'
+import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { noDataText, tooltipText } from '../../constants/language'
 
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
@@ -269,7 +269,7 @@ const MetricsPane = ({
       displayedProjectsMetrics
     )
 
-  const handleFollowScreen = (e) => {
+  const handleFollowScreen = () => {
     setEnableFollowScreen((prevState) => !prevState)
 
     const newState = !enableFollowScreen

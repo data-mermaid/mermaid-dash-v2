@@ -2,7 +2,6 @@ import styled from 'styled-components'
 import PropTypes from 'prop-types'
 
 import theme from '../../styles/theme'
-import dashboardOnlyTheme from '../../styles/dashboardOnlyTheme'
 
 import { IconButton } from '.'
 import { IconClose } from '../../assets/icons'
@@ -16,7 +15,7 @@ const FilterIndictorPillContainer = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
-  background-color: ${dashboardOnlyTheme.color.yellow};
+  background-color: ${theme.color.yellow};
   font-size: ${theme.typography.defaultFontSize};
   border: solid 1px ${theme.color.border};
   border-radius: 5px;

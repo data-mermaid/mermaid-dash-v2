@@ -4,7 +4,6 @@ import { CSVLink } from 'react-csv'
 import styled from 'styled-components'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-import theme from '../../styles/theme'
 import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { formatProjectDataHelper } from '../../helperFunctions'
 

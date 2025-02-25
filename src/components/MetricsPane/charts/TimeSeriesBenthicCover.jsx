@@ -4,13 +4,12 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
+
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
-const chartThemeLayout = chartTheme.layout
-const categories = Object.keys(chartTheme.chartCategoryType.benthicCoverColorMap)
+const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
 const isValidNumber = (num) => {
   return typeof num === 'number' && !Number.isNaN(num)
@@ -106,7 +105,7 @@ export const TimeSeriesBenthicCover = () => {
         type: 'bar',
         name: category,
         marker: {
-          color: chartTheme.chartCategoryType.benthicCoverColorMap[category],
+          color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
         hovertemplate: '%{x}, %{y:.2f}',
       }
@@ -114,21 +113,21 @@ export const TimeSeriesBenthicCover = () => {
     .filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
-    ...chartThemeLayout,
+    ...plotlyChartTheme.layout,
     barmode: 'stack',
     xaxis: {
-      ...chartThemeLayout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartThemeLayout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartThemeLayout.yaxis,
-      title: { ...chartThemeLayout.yaxis.title, text: 'Benthic % Cover' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Benthic % Cover' },
     },
     showlegend: true,
-    legend: chartTheme.horizontalLegend,
+    legend: plotlyChartTheme.horizontalLegend,
   }
 
   return (
@@ -145,7 +144,7 @@ export const TimeSeriesBenthicCover = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

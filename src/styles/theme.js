@@ -15,6 +15,7 @@ const grey2 = colorHelper.hsl(248, 13, 91)
 const grey3 = colorHelper.hsl(248, 13, 93)
 const grey4 = colorHelper.hsl(248, 13, 95)
 const grey5 = colorHelper.hsl(248, 13, 98)
+const yellow = colorHelper('#FFFAE0')
 const background = grey1
 const textColor = colorHelper('#13124A')
 const valid = textColor
@@ -35,6 +36,7 @@ const color = {
   grey3,
   grey4,
   grey5,
+  yellow,
   background,
   black,
   warning,

@@ -159,3 +159,10 @@ export const SelectedSiteChartWrapper = styled.div`
   border: ${theme.spacing.borderSmall} solid ${theme.color.border};
   box-sizing: border-box;
 `
+
+export const SelectedSiteContainer = styled.div`
+  overflow-y: scroll;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`

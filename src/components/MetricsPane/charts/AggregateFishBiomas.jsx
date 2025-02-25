@@ -4,11 +4,9 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
-
-const chartTheme = dashboardOnlyTheme.plotlyChart
 
 export const AggregateFishBiomass = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -30,7 +28,7 @@ export const AggregateFishBiomass = () => {
       type: 'histogram',
       name: '',
       marker: {
-        color: chartTheme.aggregateCharts.default.marker.color,
+        color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: 0, end: 5000, size: 100 },
       hovertemplate: '%{x} kg/ha<br>%{y} surveys',
@@ -41,7 +39,7 @@ export const AggregateFishBiomass = () => {
       type: 'histogram',
       name: '',
       marker: {
-        color: chartTheme.aggregateCharts.default.marker.color,
+        color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: 5000, end: 5100, size: 100 },
       hovertemplate: '5000+ kg/ha<br>%{y} surveys',
@@ -50,11 +48,11 @@ export const AggregateFishBiomass = () => {
   ].filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...plotlyChartTheme.layout,
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Fish biomass (kg/ha)',
       },
       tickmode: hasValuesAbove5000 ? 'array' : 'auto',
@@ -62,8 +60,8 @@ export const AggregateFishBiomass = () => {
       ticktext: hasValuesAbove5000 ? ['0', '1000', '2000', '3000', '4000', '5000+'] : [],
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Number of surveys' },
     },
   }
 
@@ -83,7 +81,7 @@ export const AggregateFishBiomass = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (
