@@ -30,10 +30,10 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     : undefined
 
   const bleachingPercentageValues = [
-    percentAlgae ?? 0,
-    percentSoft ?? 0,
-    otherBleachingPercentage ?? 0,
     percentHard ?? 0,
+    otherBleachingPercentage ?? 0,
+    percentSoft ?? 0,
+    percentAlgae ?? 0,
   ]
 
   const plotlyDataConfiguration = bleachingBenthicCategories
