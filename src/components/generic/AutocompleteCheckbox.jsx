@@ -73,9 +73,7 @@ const AutocompleteCheckbox = ({
         return Object.values(filteredGroups).flat()
       }}
       renderOption={(props, option, { selected }) => {
-        // ignore prop type check for MUI Autocomplete renderOption props
-        // eslint-disable-next-line react/prop-types
-        const { key, ...optionProps } = props
+        const { key, ...optionProps } = props || {}
 
         return (
           <MermaidMenuItem key={key} {...optionProps}>
