@@ -124,6 +124,8 @@ const DownloadModal = ({ isOpen, onDismiss }) => {
     } else {
       setModalMode(null)
     }
+    // Purposefully ignoring surveyedMethodCount to prevent unnecessary re-renders
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, activeProjectCount])
 
   const _getSiteRecords = useEffect(() => {

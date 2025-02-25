@@ -1,11 +1,12 @@
 import Plot from 'react-plotly.js'
+import PropTypes from 'prop-types'
 
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartTheme = plotlyChartTheme
 const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
 export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
   const {
@@ -128,4 +129,18 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       )}
     </ChartWrapper>
   )
+}
+
+SampleEventBleachingSeverityPlot.propTypes = {
+  coloniesBleachedData: PropTypes.shape({
+    count_total_avg: PropTypes.number,
+    percent_100_avg: PropTypes.number,
+    percent_20_avg: PropTypes.number,
+    percent_50_avg: PropTypes.number,
+    percent_80_avg: PropTypes.number,
+    percent_dead_avg: PropTypes.number,
+    percent_normal_avg: PropTypes.number,
+    percent_pale_avg: PropTypes.number,
+    sample_unit_count: PropTypes.number,
+  }).isRequired,
 }

@@ -31,6 +31,7 @@ import {
   StyledVisibleBackground,
   TabButtonContainer,
   TabContent,
+  SelectedSiteContainer,
 } from './SelectedSiteMetrics.styles'
 import {
   ButtonPrimary,
@@ -433,10 +434,10 @@ export const SelectedSiteMetrics = ({
     ) : null
 
   return (
-    <>
+    <SelectedSiteContainer>
       {selectedSiteHeader}
       {selectedSiteBody}
-    </>
+    </SelectedSiteContainer>
   )
 }
 

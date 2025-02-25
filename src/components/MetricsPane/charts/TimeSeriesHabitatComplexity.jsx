@@ -4,12 +4,9 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
-
-const chartTheme = dashboardOnlyTheme.plotlyChart
-const chartThemeLayout = chartTheme.layout
 
 export const TimeSeriesHabitatComplexity = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -84,26 +81,26 @@ export const TimeSeriesHabitatComplexity = () => {
         .map((distribution) => distribution.percentage),
       type: 'bar',
       name: score,
-      marker: { color: chartTheme.chartCategoryType.habitatComplexityColorMap[score] },
+      marker: { color: plotlyChartTheme.chartCategoryType.habitatComplexityColorMap[score] },
       hovertemplate: '%{x}, %{y:.2f}',
     }))
 
   const plotlyLayoutConfiguration = {
-    ...chartThemeLayout,
+    ...plotlyChartTheme.layout,
     barmode: 'stack',
     xaxis: {
-      ...chartThemeLayout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartThemeLayout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartThemeLayout.yaxis,
-      title: { ...chartThemeLayout.yaxis.title, text: '% of Surveys' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of Surveys' },
     },
     showlegend: true,
-    legend: chartTheme.horizontalLegend,
+    legend: plotlyChartTheme.horizontalLegend,
   }
 
   return (
@@ -122,7 +119,7 @@ export const TimeSeriesHabitatComplexity = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

@@ -13,7 +13,7 @@ export const StyledMetricsWrapper = styled.div`
     $isMetricsPaneShowing
       ? css`
           min-width: 41rem;
-          width: 50vw;
+          width: 50%;
           max-width: 54rem;
         `
       : css`

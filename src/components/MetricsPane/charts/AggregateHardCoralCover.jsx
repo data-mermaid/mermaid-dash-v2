@@ -4,11 +4,10 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
 const BIN_SIZE = 2
 const START_BIN = 0
 const END_BIN = 100
@@ -66,7 +65,7 @@ export const AggregateHardCoralCover = () => {
   )
 
   const binColors = binStartValues.map((binStartValue) => {
-    const markerColors = chartTheme.aggregateCharts.hardCoralCover.marker
+    const markerColors = plotlyChartTheme.aggregateCharts.hardCoralCover.marker
 
     if (binStartValue < 10) {
       return markerColors.low
@@ -95,18 +94,18 @@ export const AggregateHardCoralCover = () => {
     .filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
-    ...chartTheme.layout,
+    ...plotlyChartTheme.layout,
     xaxis: {
-      ...chartTheme.layout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartTheme.layout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: '% Hard Coral Cover',
       },
       tickvals: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
     },
     yaxis: {
-      ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: 'Number of surveys' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Number of surveys' },
     },
   }
 
@@ -126,7 +125,7 @@ export const AggregateHardCoralCover = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

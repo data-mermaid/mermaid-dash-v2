@@ -1,11 +1,12 @@
 import Plot from 'react-plotly.js'
+import PropTypes from 'prop-types'
 
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartTheme = plotlyChartTheme
 const benthicCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
@@ -78,4 +79,12 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
       )}
     </ChartWrapper>
   )
+}
+
+SampleEventBenthicPlot.propTypes = {
+  benthicType: PropTypes.string.isRequired,
+  benthicData: PropTypes.shape({
+    sample_unit_count: PropTypes.number,
+    percent_cover_benthic_category_avg: PropTypes.objectOf(PropTypes.number),
+  }).isRequired,
 }

@@ -4,13 +4,11 @@ import Plot from 'react-plotly.js'
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
-const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
-const chartThemeLayout = chartTheme.layout
+const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
 export const TimeSeriesBleaching = () => {
   const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -163,21 +161,21 @@ export const TimeSeriesBleaching = () => {
   ].filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
-    ...chartThemeLayout,
+    ...plotlyChartTheme.layout,
     barmode: 'stack',
     xaxis: {
-      ...chartThemeLayout.xaxis,
+      ...plotlyChartTheme.layout.xaxis,
       title: {
-        ...chartThemeLayout.xaxis.title,
+        ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
     },
     yaxis: {
-      ...chartThemeLayout.yaxis,
-      title: { ...chartThemeLayout.yaxis.title, text: '% of Colonies' },
+      ...plotlyChartTheme.layout.yaxis,
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of Colonies' },
     },
     showlegend: true,
-    legend: chartTheme.horizontalLegend,
+    legend: plotlyChartTheme.horizontalLegend,
   }
 
   return (
@@ -194,7 +192,7 @@ export const TimeSeriesBleaching = () => {
         <Plot
           data={plotlyDataConfiguration}
           layout={plotlyLayoutConfiguration}
-          config={chartTheme.config}
+          config={plotlyChartTheme.config}
           style={{ width: '100%', height: '100%' }}
         />
       ) : (

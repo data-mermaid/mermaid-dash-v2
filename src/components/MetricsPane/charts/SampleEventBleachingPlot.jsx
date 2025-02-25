@@ -1,11 +1,12 @@
 import Plot from 'react-plotly.js'
+import PropTypes from 'prop-types'
 
 import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
-import dashboardOnlyTheme from '../../../styles/dashboardOnlyTheme'
+import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 
-const chartTheme = dashboardOnlyTheme.plotlyChart
+const chartTheme = plotlyChartTheme
 const bleachingBenthicCategories = Object.entries(
   chartTheme.chartCategoryType.bleachingBenthicColorMap,
 )
@@ -90,4 +91,14 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
       )}
     </ChartWrapper>
   )
+}
+
+SampleEventBleachingPlot.propTypes = {
+  bleachingData: PropTypes.shape({
+    percent_hard_avg_avg: PropTypes.number,
+    percent_soft_avg_avg: PropTypes.number,
+    percent_algae_avg_avg: PropTypes.number,
+    quadrat_count_avg: PropTypes.number,
+    sample_unit_count: PropTypes.number,
+  }).isRequired,
 }

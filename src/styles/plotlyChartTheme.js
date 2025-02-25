@@ -1,12 +1,4 @@
-import colorHelper from 'color'
-
-const yellow = colorHelper('#FFFAE0')
-
-const color = {
-  yellow,
-}
-
-const plotlyChart = {
+const plotlyChartTheme = {
   aggregateCharts: {
     default: { marker: { color: '#769fca' } },
     hardCoralCover: { marker: { low: '#d13823', medium: '#f3a224', high: '#277d1d' } },
@@ -16,7 +8,6 @@ const plotlyChart = {
       },
     },
   },
-
   chartCategoryType: {
     managementRuleColorMap: {
       'Open Access': '#77b4c5',
@@ -68,7 +59,6 @@ const plotlyChart = {
       'Avg Macroalgae Cover': '#b6b400',
     },
   },
-
   layout: {
     bargap: 0.1,
     dragmode: false,
@@ -110,7 +100,6 @@ const plotlyChart = {
     displaylogo: false,
     responsive: true,
   },
-
   horizontalLegend: {
     orientation: 'h',
     xanchor: 'center',
@@ -121,6 +110,5 @@ const plotlyChart = {
     },
   },
 }
-const dashboardOnlyTheme = { color, plotlyChart }
 
-export default dashboardOnlyTheme
+export default plotlyChartTheme

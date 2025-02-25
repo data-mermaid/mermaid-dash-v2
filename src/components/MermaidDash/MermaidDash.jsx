@@ -33,12 +33,8 @@ import {
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
-import {
-  ARROW_LEFT,
-  ARROW_RIGHT,
-  IconCaretUp,
-  IconTrayDownload,
-} from '../../assets/dashboardOnlyIcons'
+import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
+import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
