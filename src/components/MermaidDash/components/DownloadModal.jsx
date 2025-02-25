@@ -59,29 +59,7 @@ const WiderFormControl = styled(FormControl)`
   width: 30rem;
 `
 
-const getSurveyedMethod = (countObj) => {
-  const customSortOrder = [
-    'colonies_bleached',
-    'benthicpit',
-    'benthiclit',
-    'benthicpqt',
-    'habitatcomplexity',
-    'quadrat_benthic_percent',
-  ]
-
-  if (countObj.beltfish > 0) {
-    return 'beltfish'
-  }
-
-  return (
-    Object.entries(countObj)
-      .filter(([, value]) => value > 0)
-      .sort((a, b) => customSortOrder.indexOf(a[0]) - customSortOrder.indexOf(b[0]))
-      .map(([key]) => key)[0] || 'beltfish'
-  )
-}
-
-const DownloadModal = ({ isOpen, onDismiss }) => {
+const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
   const {
     displayedProjects,
     filteredSurveys,
@@ -109,7 +87,6 @@ const DownloadModal = ({ isOpen, onDismiss }) => {
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [tableData, setTableData] = useState([])
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
-  const [selectedMethod, setSelectedMethod] = useState('')
   const [modalMode, setModalMode] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
@@ -120,12 +97,9 @@ const DownloadModal = ({ isOpen, onDismiss }) => {
     if (isOpen) {
       setErrorMessage(null)
       setModalMode(activeProjectCount === 0 ? 'no data' : 'download')
-      setSelectedMethod(getSurveyedMethod(surveyedMethodCount))
     } else {
       setModalMode(null)
     }
-    // Purposefully ignoring surveyedMethodCount to prevent unnecessary re-renders
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpen, activeProjectCount])
 
   const _getSiteRecords = useEffect(() => {
@@ -221,8 +195,6 @@ const DownloadModal = ({ isOpen, onDismiss }) => {
   const handleDataSharingChange = (e) => {
     setSelectedDataSharing(e.target.value)
   }
-
-  const handleSelectedMethodChange = (e) => setSelectedMethod(e.target.value)
 
   const downloadContent = (
     <>
@@ -329,6 +301,8 @@ const DownloadModal = ({ isOpen, onDismiss }) => {
 DownloadModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onDismiss: PropTypes.func.isRequired,
+  selectedMethod: PropTypes.string.isRequired,
+  handleSelectedMethodChange: PropTypes.func.isRequired,
 }
 
 export default DownloadModal

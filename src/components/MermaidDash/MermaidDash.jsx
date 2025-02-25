@@ -50,6 +50,28 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
 
+const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
+  const customSortOrder = [
+    'colonies_bleached',
+    'benthicpit',
+    'benthiclit',
+    'benthicpqt',
+    'habitatcomplexity',
+    'quadrat_benthic_percent',
+  ]
+
+  if (surveyCount.beltfish > 0) {
+    return 'beltfish'
+  }
+
+  return (
+    Object.entries(surveyCount)
+      .filter(([, value]) => value > 0)
+      .sort((a, b) => customSortOrder.indexOf(a[0]) - customSortOrder.indexOf(b[0]))
+      .map(([key]) => key)[0] || 'beltfish'
+  )
+}
+
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
     projectData,
@@ -62,6 +84,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     getURLParams,
     setEnableFollowScreen,
     allProjectsFinishedFiltering,
+    filteredSurveys,
   } = useContext(FilterProjectsContext)
 
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
@@ -75,8 +98,23 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
+  const [selectedMethod, setSelectedMethod] = useState('')
 
   const mapRef = useRef()
+
+  const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
+    const protocols = record.protocols || {}
+
+    Object.keys(protocols).map((protocol) => {
+      if (acc[protocol]) {
+        acc[protocol] += 1
+      } else {
+        acc[protocol] = 1
+      }
+    })
+
+    return acc
+  }, {})
 
   const getAuthorizationHeaders = async (getAccessTokenSilently) => ({
     headers: {
@@ -201,6 +239,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }
 
   const handleShowDownloadModal = () => {
+    setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
     setIsDownloadModalShowing(true)
   }
 
@@ -252,6 +291,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     updateURLParams(queryParams)
     toast.info(followScreenToastMessage)
   }
+
+  const handleSelectedMethodChange = (e) => setSelectedMethod(e.target.value)
 
   const handleLogin = () => {
     loginWithRedirect({ appState: { returnTo: location.search } })
@@ -335,6 +376,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <DownloadModal
           isOpen={isDownloadModalShowing}
           onDismiss={() => setIsDownloadModalShowing(false)}
+          selectedMethod={selectedMethod}
+          handleSelectedMethodChange={handleSelectedMethodChange}
         />
         <DownloadGFCRModal
           isOpen={isDownloadGFCRModalShowing}
