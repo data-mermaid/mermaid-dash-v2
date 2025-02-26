@@ -7,8 +7,12 @@ import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
 export const StyledMetricsWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  position: relative;
   gap: 0.5rem;
   padding: 0.5rem;
+  z-index: 5;
+  background-color: transparent;
+  height: 100%;
   ${({ $isMetricsPaneShowing }) =>
     $isMetricsPaneShowing
       ? css`
@@ -19,24 +23,20 @@ export const StyledMetricsWrapper = styled.div`
       : css`
           max-width: 40rem;
         `}
-  position: relative;
-  z-index: 5;
-  background-color: ${(props) =>
-    props.$showMobileExpandedMetricsPane ? theme.color.grey1 : 'transparent'};
-  height: 100%;
   ${mediaQueryTabletLandscapeOnly(css`
     position: absolute;
     width: 100%;
     max-width: unset;
+    min-width: unset;
     bottom: 0;
     height: auto;
     ${({ $showMobileExpandedMetricsPane }) =>
       $showMobileExpandedMetricsPane &&
       css`
         top: ${theme.spacing.headerHeight};
-        margin: 0.5rem;
-        margin-bottom: 0;
-        width: calc(100vw - 1rem);
+        background-color: ${theme.color.grey1};
+        min-height: 100%; // this ensures if not charts are loaded, that we have a grey background covering the map
+        height: fit-content; // this fixes a Samsung S10e bug where children (DisplayedProjectsMetricsWrapper) of an absolutely positioned element cant scroll, or at least plotly charts cant scroll. See https://trello.com/c/JGgOZlDN/1210-mobile-scrolling-on-chrome-on-android
       `};
   `)}
 `
@@ -159,6 +159,7 @@ export const MetricsCard = styled.div`
   ${mediaQueryTabletLandscapeOnly(css`
     margin: 0;
     flex-grow: 1;
+    padding: 1rem ${theme.spacing.small};
     height: 100%;
   `)}
 `
