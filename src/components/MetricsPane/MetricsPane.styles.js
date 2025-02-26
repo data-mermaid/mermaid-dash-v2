@@ -264,7 +264,6 @@ export const MapAttributeRow = styled.div`
   color: ${theme.color.secondaryDisabledText};
   margin-top: 2rem;
   padding: 1rem;
-  color: grey;
 
   ${mediaQueryTabletLandscapeOnly(css`
     display: ${(props) => (props.$showMobileExpandedMetricsPane ? 'flex' : 'none')};
