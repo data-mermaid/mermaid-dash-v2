@@ -27,6 +27,7 @@ export const StyledMetricsWrapper = styled.div`
     position: absolute;
     width: 100%;
     max-width: unset;
+    min-width: unset;
     bottom: 0;
     height: auto;
     ${({ $showMobileExpandedMetricsPane }) =>
@@ -35,7 +36,7 @@ export const StyledMetricsWrapper = styled.div`
         top: ${theme.spacing.headerHeight};
         background-color: ${theme.color.grey1};
         min-height: 100%; // this ensures if not charts are loaded, that we have a grey background covering the map
-        height: fit-content; // this fixes a Samsung S10e bug where children (DisplayedProjectsMetricsWrapper) of an absolutely positioned elemebnt cant scroll, or at least plotly charts cant scroll. See https://trello.com/c/JGgOZlDN/1210-mobile-scrolling-on-chrome-on-android
+        height: fit-content; // this fixes a Samsung S10e bug where children (DisplayedProjectsMetricsWrapper) of an absolutely positioned element cant scroll, or at least plotly charts cant scroll. See https://trello.com/c/JGgOZlDN/1210-mobile-scrolling-on-chrome-on-android
       `};
   `)}
 `
@@ -158,6 +159,7 @@ export const MetricsCard = styled.div`
   ${mediaQueryTabletLandscapeOnly(css`
     margin: 0;
     flex-grow: 1;
+    padding: 1rem ${theme.spacing.small};
     height: 100%;
   `)}
 `
