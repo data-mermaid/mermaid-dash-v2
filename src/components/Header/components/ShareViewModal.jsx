@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useCallback } from 'react'
 import { shareView } from '../../../constants/language'
 import theme from '../../../styles/theme'
 import styled from 'styled-components'
@@ -21,21 +21,24 @@ const ModalCopyContainer = styled.div`
   margin-bottom: ${theme.spacing.xlarge};
 `
 
-const ModalDescription = styled.div`
-  color: ${theme.color.black};
-`
-
 const ModalURLContainer = styled.div`
   flex-grow: 1;
 `
 
+const StyledCopyButton = styled(ButtonPrimary)`
+  width: 100px;
+`
+
 const ShareViewModal = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [buttonText, setButtonText] = useState('Copy')
   const handleOpenModal = () => setIsModalOpen(true)
   const handleCloseModal = useCallback(() => setIsModalOpen(false), [setIsModalOpen])
 
   const handleCopyURL = () => {
     navigator.clipboard.writeText(window.location.href)
+    setButtonText('Copied')
+    setTimeout(() => setButtonText('Copy'), 2000)
   }
 
   const modalTitle = shareView.modalHeader
@@ -45,11 +48,10 @@ const ShareViewModal = () => {
         <ModalURLContainer>
           <Input value={window.location.href} readOnly></Input>
         </ModalURLContainer>
-        <ButtonPrimary onClick={handleCopyURL}>
-          <IconCopy /> Copy
-        </ButtonPrimary>
+        <StyledCopyButton onClick={handleCopyURL}>
+          <IconCopy /> {buttonText}
+        </StyledCopyButton>
       </ModalCopyContainer>
-      <ModalDescription>{shareView.modalBody}</ModalDescription>
     </ModalBody>
   )
 
@@ -58,20 +60,6 @@ const ShareViewModal = () => {
       <ButtonSecondary onClick={handleCloseModal}>Close</ButtonSecondary>
     </RightFooter>
   )
-
-  const _closeModalWithEscKey = useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.key === 'Escape') {
-        handleCloseModal()
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown)
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [handleCloseModal])
 
   return (
     <div>

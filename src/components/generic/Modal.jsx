@@ -35,6 +35,7 @@ const ModalTitle = styled.div`
   justify-content: space-between;
   padding: 3rem ${theme.spacing.medium} 0 3rem;
   color: ${theme.color.textColor};
+  text-transform: capitalize;
   h2 {
     justify-self: start;
     align-self: center;
