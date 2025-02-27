@@ -257,3 +257,15 @@ export const FollowToggleContainer = styled.div`
 export const StyledLabel = styled.label`
   cursor: pointer;
 `
+
+export const MapAttributeRow = styled.div`
+  text-align: center;
+  font-size: 1rem;
+  color: ${theme.color.secondaryDisabledText};
+  margin-top: 2rem;
+  padding: 1rem;
+
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: ${(props) => (props.$showMobileExpandedMetricsPane ? 'flex' : 'none')};
+  `)}
+`
