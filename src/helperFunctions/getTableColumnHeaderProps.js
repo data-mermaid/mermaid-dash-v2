@@ -1,12 +1,12 @@
-import language from '../constants/language'
+import { table } from '../constants/language'
 
 export const getTableColumnHeaderProps = (column) => {
-  let sortByTitle = language.table.sortAscendingTitle
+  let sortByTitle = table.sortAscendingTitle
 
   if (column.isSortedDesc === true) {
-    sortByTitle = language.table.sortRemoveTitle
+    sortByTitle = table.sortRemoveTitle
   } else if (column.isSortedDesc === false) {
-    sortByTitle = language.table.sortDescendingTitle
+    sortByTitle = table.sortDescendingTitle
   }
 
   return column.getSortByToggleProps({ title: sortByTitle })
