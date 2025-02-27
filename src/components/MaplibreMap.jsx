@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 
 import Map from 'react-map-gl/maplibre'
 import 'maplibre-gl/dist/maplibre-gl.css'
-import { AttributionControl, Layer, NavigationControl, Source } from 'react-map-gl'
+import { Layer, NavigationControl, Source } from 'react-map-gl'
 
 import { FilterProjectsContext } from '../context/FilterProjectsContext'
 import usePrevious from '../hooks/usePrevious'
@@ -310,13 +310,6 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
         attributionControl={false}
       >
         {viewAndZoomControlsWrapper}
-        {isDesktopWidth && (
-          <AttributionControl
-            compact={true}
-            customAttribution="Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community"
-            position={'bottom-right'}
-          />
-        )}
         {isDesktopWidth && <NavigationControl showCompass={false} position="bottom-right" />}
 
         <Source

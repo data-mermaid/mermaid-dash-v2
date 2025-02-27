@@ -85,6 +85,9 @@ export const noDataText = {
   noChartsOnCurrentFilters: ['No data to show visualizations.', 'Try refining your filters.'],
 }
 
+export const mapAttributeText =
+  'Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+
 export default {
   shareView,
   table,

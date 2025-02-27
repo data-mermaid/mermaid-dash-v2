@@ -23,11 +23,12 @@ import {
   DisplayedProjectsMetricsWrapper,
   ChartsWrapper,
   FollowToggleContainer,
+  MapAttributeRow,
 } from './MetricsPane.styles'
 import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import { noDataText, tooltipText } from '../../constants/language'
+import { mapAttributeText, noDataText, tooltipText } from '../../constants/language'
 
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
@@ -250,6 +251,9 @@ const MetricsPane = ({
           </>
         )}
       </ChartsWrapper>
+      <MapAttributeRow $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
+        {mapAttributeText}
+      </MapAttributeRow>
     </DisplayedProjectsMetricsWrapper>
   )
 
