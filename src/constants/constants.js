@@ -9,6 +9,10 @@ export const URL_PARAMS = {
   METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
   SHOW_NO_DATA_PROJECTS: 'show_no_data_projects',
+  FISH_BIOMASS: 'fish_biomass',
+  BENTHIC_COVER: 'benthic_cover',
+  HABITAT_COMPLEXITY: 'habitat_complexity',
+  BLEACHING: 'bleaching',
 }
 
 export const COLLECTION_METHODS = {

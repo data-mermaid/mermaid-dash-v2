@@ -236,7 +236,7 @@ const MetricsPane = ({
             )}
             {bleachingFilterToggleOn && (
               <MetricsPaneChartTabs
-                id="Bleaching"
+                id="bleaching"
                 aggregatePanelContent={<AggregateBleaching />}
                 timeSeriesPanelContent={<TimeSeriesBleaching />}
               />
