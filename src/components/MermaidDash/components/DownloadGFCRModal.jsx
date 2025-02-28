@@ -75,14 +75,18 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
     return titles[modalMode] || downloadModal.downloadGFCRTitle
   }, [modalMode])
 
+  const errorMessageWithContactLink = (
+    <>
+      {downloadModal.failureContent} <a href="mailto:help@datamermaid.com">help@datamermaid.com</a>
+    </>
+  )
+
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error('Failed request - no token provided')
       }
 
       const projectsToEmail = projectsWithGFCRData.map(({ project_id }) => project_id)
@@ -103,14 +107,13 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
       })
 
       if (!response.ok) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error(`Failed request - ${response.status}`)
       }
 
       setModalMode('success')
-    } catch {
-      setErrorMessage(downloadModal.failureContent)
+    } catch (error) {
+      console.error(error)
+      setErrorMessage(errorMessageWithContactLink)
       setModalMode('failure')
     }
   }

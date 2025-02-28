@@ -26,8 +26,9 @@ export const downloadModal = {
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
   downloadGFCRTitle: 'Download GFCR data',
   successTitle: 'Download Request Sent',
-  failureTitle: 'Download Failed',
-  failureContent: 'Fail to sent email! Please contact MERMAID team.',
+  failureTitle: 'Error Fetching Data',
+  failureContent:
+    'There was an issue getting Data for Dashboard. If this problems persist, please contact',
 }
 
 export const pages = {
