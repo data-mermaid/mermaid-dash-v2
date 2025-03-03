@@ -129,10 +129,8 @@ export const ShareViewButton = styled.button`
   margin: 0.8rem;
   background-color: ${theme.color.callout};
   color: ${theme.color.white};
-  border-radius: 1.5rem;
   border: 0;
   padding: ${theme.spacing.buttonPadding};
-  width: 16rem;
   &:hover {
     cursor: pointer;
   },

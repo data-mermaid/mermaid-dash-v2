@@ -4,7 +4,7 @@ import theme from '../../../styles/theme'
 import styled from 'styled-components'
 import { ShareViewButton } from '../Header.styles'
 import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../../generic'
-import { IconCopy } from '../../../assets/icons'
+import { IconCopy, IconSharing } from '../../../assets/icons'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -63,7 +63,9 @@ const ShareViewModal = () => {
 
   return (
     <div>
-      <ShareViewButton onClick={handleOpenModal}>Share this view</ShareViewButton>
+      <ShareViewButton onClick={handleOpenModal}>
+        <IconSharing />
+      </ShareViewButton>
       <Modal
         isOpen={isModalOpen}
         onDismiss={handleCloseModal}
