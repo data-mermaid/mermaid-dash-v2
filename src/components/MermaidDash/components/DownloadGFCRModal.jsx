@@ -75,12 +75,6 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
     return titles[modalMode] || downloadModal.downloadGFCRTitle
   }, [modalMode])
 
-  const errorMessageWithContactLink = (
-    <>
-      {downloadModal.failureContent} <a href="mailto:help@datamermaid.com">help@datamermaid.com</a>
-    </>
-  )
-
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
@@ -113,7 +107,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
       setModalMode('success')
     } catch (error) {
       console.error(error)
-      setErrorMessage(errorMessageWithContactLink)
+      setErrorMessage(downloadModal.failureContent)
       setModalMode('failure')
     }
   }

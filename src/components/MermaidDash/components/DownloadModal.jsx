@@ -144,12 +144,6 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
     return titles[modalMode] || downloadModal.downloadTitle
   }, [modalMode])
 
-  const errorMessageWithContactLink = (
-    <>
-      {downloadModal.failureContent} <a href="mailto:help@datamermaid.com">help@datamermaid.com</a>
-    </>
-  )
-
   const handleSendEmailWithLinkSubmit = async () => {
     try {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
@@ -167,7 +161,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
-        report_type: 'summary_sample_unit_method',
+        report_type: 'summary_sampled_unit_method',
         project_ids: projectsToEmail,
         protocol: selectedMethodProtocol,
       }
@@ -188,7 +182,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       setModalMode('success')
     } catch (error) {
       console.error(error)
-      setErrorMessage(errorMessageWithContactLink)
+      setErrorMessage(downloadModal.failureContent)
       setModalMode('failure')
     }
   }
