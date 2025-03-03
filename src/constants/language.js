@@ -30,6 +30,12 @@ export const downloadModal = {
   failureContent: 'Fail to sent email! Please contact MERMAID team.',
 }
 
+export const errorModal = {
+  title: 'Error fetching data',
+  content:
+    'There was an issue getting data for the Dashboard. If this problem persists, please contact',
+}
+
 export const pages = {
   submittedTable: {
     filterSearchHelperText: {
