@@ -31,6 +31,7 @@ const ErrorFetchingModal = ({ isOpen, onDismiss }) => {
       title={errorModal.title}
       mainContent={content}
       footerContent={footerContent}
+      hideCloseIcon={true}
     />
   )
 }
