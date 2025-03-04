@@ -125,8 +125,11 @@ const Modal = ({
   toolbarContent = undefined,
   modalCustomWidth = '50vw',
   modalCustomHeight = '',
+  hideCloseIcon = false,
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
+    if (hideCloseIcon) {return}
+
     const close = (event) => {
       if (event.code === 'Escape') {
         onDismiss()
@@ -136,7 +139,7 @@ const Modal = ({
     window.addEventListener('keydown', close)
 
     return () => window.removeEventListener('keydown', close)
-  }, [onDismiss])
+  }, [onDismiss, hideCloseIcon])
 
   return (
     isOpen && (
@@ -151,9 +154,11 @@ const Modal = ({
           {title ? (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
-              <CloseButton type="button" className="close-button" onClick={onDismiss}>
-                <IconClose aria-label="close" />
-              </CloseButton>
+              {!hideCloseIcon && (
+                <CloseButton type="button" className="close-button" onClick={onDismiss}>
+                  <IconClose aria-label="close" />
+                </CloseButton>
+              )}
             </ModalTitle>
           ) : null}
           <ModalToolbar>{toolbarContent}</ModalToolbar>
@@ -177,6 +182,7 @@ Modal.propTypes = {
   toolbarContent: PropTypes.node,
   modalCustomWidth: PropTypes.string,
   modalCustomHeight: PropTypes.string,
+  hideCloseIcon: PropTypes.bool,
 }
 
 export default Modal

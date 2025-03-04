@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import PropTypes from 'prop-types'
-import styled from 'styled-components'
 import { useAuth0 } from '@auth0/auth0-react'
+import styled from 'styled-components'
 import { FormControl } from '@mui/material'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
@@ -69,10 +69,18 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
     checkedProjects,
   } = useContext(FilterProjectsContext)
 
+  const activeProjectCount = getActiveProjectCount()
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+  const [tableData, setTableData] = useState([])
+  const [selectedDataSharing, setSelectedDataSharing] = useState('public')
+  const [modalMode, setModalMode] = useState(null)
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
+
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
 
-    Object.keys(protocols).map((protocol) => {
+    Object.keys(protocols).forEach((protocol) => {
       if (acc[protocol]) {
         acc[protocol] += 1
       } else {
@@ -82,16 +90,6 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
 
     return acc
   }, {})
-
-  const activeProjectCount = getActiveProjectCount()
-  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [tableData, setTableData] = useState([])
-  const [selectedDataSharing, setSelectedDataSharing] = useState('public')
-  const [modalMode, setModalMode] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
-
-  const collectionMethods = Object.entries(DOWNLOAD_METHODS)
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
@@ -151,9 +149,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error('Failed request - No token provided')
       }
 
       const selectedMethodProtocol = DOWNLOAD_METHODS[selectedMethod]?.protocol
@@ -165,7 +161,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
-        report_type: 'summary_sample_unit_method',
+        report_type: 'summary_sampled_unit_method',
         project_ids: projectsToEmail,
         protocol: selectedMethodProtocol,
       }
@@ -180,13 +176,12 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       })
 
       if (!response.ok) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error(`Failed request - ${response.status}`)
       }
 
       setModalMode('success')
-    } catch {
+    } catch (error) {
+      console.error(error)
       setErrorMessage(downloadModal.failureContent)
       setModalMode('failure')
     }
@@ -206,7 +201,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
             value={selectedMethod}
             onChange={handleSelectedMethodChange}
           >
-            {collectionMethods.map(([key, method]) => {
+            {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
               return (
                 <MermaidMenuItem key={key} value={key}>
                   {method.description}{' '}

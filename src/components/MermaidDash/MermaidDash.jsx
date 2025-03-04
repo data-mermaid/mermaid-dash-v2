@@ -49,6 +49,7 @@ import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
+import ErrorFetchingModal from './components/ErrorFetchingModal'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -99,6 +100,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const { isLoading, isAuthenticated, loginWithRedirect, getAccessTokenSilently } = useAuth0()
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
   const [selectedMethod, setSelectedMethod] = useState('')
+  const [isErrorModalShowing, setIsErrorModalShowing] = useState(false)
 
   const mapRef = useRef()
 
@@ -142,14 +144,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           })
 
           if (!response.ok) {
-            console.error('Failed to fetch data:', response.status)
-            break
+            throw new Error(`Failed to fetch data - ${response.status}`)
           }
 
           const data = await response.json()
+
           if (!data.results) {
-            return
+            throw new Error(`Failed to fetch data - data is empty`)
           }
+
           const resultsProjectIds = data.results.map((project) => project.project_id)
 
           newApiData = {
@@ -166,7 +169,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
         setIsApiDataLoaded(true) // ensures we dont accidentally refetch data. Tends to happen with dev server hot reloading.
       } catch (error) {
-        console.error('Error fetching data:', error)
+        console.error(error)
+        setIsErrorModalShowing(true)
       }
     },
     [isApiDataLoaded, setProjectData, setCheckedProjects, setIsApiDataLoaded],
@@ -447,6 +451,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           setShowLoadingIndicator={setShowLoadingIndicator}
         />
       </StyledContentContainer>
+      <ErrorFetchingModal
+        isOpen={isErrorModalShowing}
+        onDismiss={() => setIsErrorModalShowing(false)}
+      />
     </StyledDashboardContainer>
   )
 }
