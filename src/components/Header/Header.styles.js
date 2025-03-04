@@ -109,20 +109,7 @@ export const LoggedInAs = styled.p`
 `
 
 export const GlobalNav = styled.nav`
-  .desktop {
-    display: flex;
-  }
-  .mobile {
-    display: none;
-  }
-  ${mediaQueryTabletLandscapeOnly(css`
-    .desktop {
-      display: none;
-    }
-    .mobile {
-      display: flex;
-    }
-  `)}
+  display: flex;
 `
 
 export const ShareViewButton = styled.button`

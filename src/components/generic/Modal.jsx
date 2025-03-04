@@ -25,9 +25,12 @@ const StyledDialog = styled.div`
   width: ${(props) => props.$modalCustomWidth};
   max-width: 114rem;
   background: ${theme.color.tableRowEven};
-  ${(props) => props.$modalCustomHeight !== '' && `height: ${props.$modalCustomHeight};`}
+  ${(props) => props.$modalCustomHeight && `height: ${props.$modalCustomHeight};`}
   display: flex;
   flex-direction: column;
+  ${mediaQueryPhoneOnly(css`
+    min-width: 40rem;
+  `)}
 `
 const ModalTitle = styled.div`
   display: flex;
@@ -45,6 +48,9 @@ const ModalTitle = styled.div`
     align-self: top;
     justify-self: end;
   }
+  ${mediaQueryPhoneOnly(css`
+    padding: 2rem 2rem 0rem 2rem;
+  `)}
 `
 
 const ModalToolbar = styled.div`
@@ -56,10 +62,11 @@ const ModalContent = styled.div`
     css`
       overflow: auto;
     `}
-  padding: ${theme.spacing.medium};
-  padding-bottom: 3rem;
-  padding-top: 0;
+  padding: 0 ${theme.spacing.medium} 3rem ${theme.spacing.medium};
   flex-grow: 1;
+  ${mediaQueryPhoneOnly(css`
+    padding: 0rem;
+  `)}
 `
 const ModalFooter = styled.div`
   padding: ${theme.spacing.medium};

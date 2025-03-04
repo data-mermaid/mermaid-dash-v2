@@ -24,9 +24,11 @@ import { LoginIcon } from '../../assets/dashboardOnlyIcons'
 import { IconDown } from '../../assets/icons'
 import { headerText, dataDisclaimer } from '../../constants/language'
 import DataDisclaimer from './components/DataDisclaimer'
+import useResponsive from '../../hooks/useResponsive'
 
 const Header = () => {
   const { user, isAuthenticated, loginWithRedirect, logout, getAccessTokenSilently } = useAuth0()
+  const { isMobileWidth, isDesktopWidth } = useResponsive()
   const [hasImageError, setHasImageError] = useState(false)
   const [showDisclaimer, setShowDisclaimer] = useState(false)
 
@@ -65,9 +67,14 @@ const Header = () => {
   const GlobalLinks = () => {
     return (
       <>
-        <StyledNavLink href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK} target="_blank">
-          {headerText.redirectDashboard}
-        </StyledNavLink>
+        {isDesktopWidth && (
+          <StyledNavLink
+            href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK}
+            target="_blank"
+          >
+            {headerText.redirectDashboard}
+          </StyledNavLink>
+        )}
         <ShareViewModal />
       </>
     )
@@ -76,6 +83,11 @@ const Header = () => {
   const renderOverflowMenu = () => {
     return (
       <UserMenu>
+        {isMobileWidth && (
+          <MenuLink href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK} target="_blank">
+            {headerText.redirectDashboard}
+          </MenuLink>
+        )}
         <UserMenuButton>Dashboard Highlights</UserMenuButton>
         <UserMenuButton onClick={handleOpenDisclaimer}>{dataDisclaimer.title}</UserMenuButton>
         <MenuLink href="https://datamermaid.org/terms-of-service/" target="_blank">
@@ -124,35 +136,33 @@ const Header = () => {
     <StyledHeader>
       <LogoImg src={MermaidLogo} alt="MERMAID Logo" />
       <GlobalNav>
-        <div className="desktop">
-          <GlobalLinks />
-          <HideShow
-            button={
-              <HeaderButtonThatLooksLikeLink>
-                <BiggerHamburgerIcon />
-              </HeaderButtonThatLooksLikeLink>
-            }
-            contents={renderOverflowMenu()}
-          />
-          {isAuthenticated ? (
-            <HideShow
-              closeOnClickWithin={true}
-              button={getUserButton()}
-              contents={UserAccountMenu()}
-            />
-          ) : (
-            <HeaderButtonThatLooksLikeLink onClick={handleLogin}>
-              <UserLoginContainer>
-                <LoginIcon />
-                <HeaderLoginText>Log in</HeaderLoginText>
-              </UserLoginContainer>
+        <GlobalLinks />
+        <HideShow
+          button={
+            <HeaderButtonThatLooksLikeLink>
+              <BiggerHamburgerIcon />
             </HeaderButtonThatLooksLikeLink>
-          )}
-          <DataDisclaimer
-            showDisclaimer={showDisclaimer}
-            handleCloseDisclaimer={handleCloseDisclaimer}
+          }
+          contents={renderOverflowMenu()}
+        />
+        {isAuthenticated ? (
+          <HideShow
+            closeOnClickWithin={true}
+            button={getUserButton()}
+            contents={UserAccountMenu()}
           />
-        </div>
+        ) : (
+          <HeaderButtonThatLooksLikeLink onClick={handleLogin}>
+            <UserLoginContainer>
+              <LoginIcon />
+              <HeaderLoginText>Log in</HeaderLoginText>
+            </UserLoginContainer>
+          </HeaderButtonThatLooksLikeLink>
+        )}
+        <DataDisclaimer
+          showDisclaimer={showDisclaimer}
+          handleCloseDisclaimer={handleCloseDisclaimer}
+        />
       </GlobalNav>
     </StyledHeader>
   )
