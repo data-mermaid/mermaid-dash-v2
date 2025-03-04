@@ -3,7 +3,11 @@ import { HamburgerMenu } from '../../assets/dashboardOnlyIcons'
 import { IconUser } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { ButtonThatLooksLikeLink } from '../generic'
-import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import {
+  hoverState,
+  mediaQueryPhoneOnly,
+  mediaQueryTabletLandscapeOnly,
+} from '../../styles/mediaQueries'
 
 export const StyledHeader = styled.header`
   background-color: ${theme.color.headerColor};
@@ -117,10 +121,14 @@ export const ShareViewButton = styled.button`
   background-color: ${theme.color.callout};
   color: ${theme.color.white};
   border: 0;
+  border-radius: 1.5rem;
   padding: ${theme.spacing.buttonPadding};
   &:hover {
     cursor: pointer;
-  },
+  }
+  ${mediaQueryPhoneOnly(css`
+    border-radius: 0;
+  `)}
 `
 
 export const UserMenuButton = styled.button`
