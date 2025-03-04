@@ -2,11 +2,12 @@ import { useContext, useEffect, useMemo, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
-import { downloadModal, tooltipText } from '../../../constants/language'
+import { downloadModal, toastMessageText, tooltipText } from '../../../constants/language'
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
@@ -38,7 +39,6 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [modalMode, setModalMode] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
 
   const { projectsWithGFCRData, projectsWithoutGFCRDataCount } = useMemo(() => {
     return displayedProjects
@@ -58,7 +58,6 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
-      setErrorMessage(null)
       setModalMode(projectsWithGFCRData.length === 0 ? 'no data' : 'download')
     } else {
       setModalMode(null)
@@ -107,8 +106,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
       setModalMode('success')
     } catch (error) {
       console.error(error)
-      setErrorMessage(downloadModal.failureContent)
-      setModalMode('failure')
+      toast.error(toastMessageText.sendEmailFailed)
     }
   }
 
@@ -162,7 +160,6 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
     'no data': <p>{downloadModal.noGFCRDataContent}</p>,
     download: downloadContent,
     success: successContent,
-    failure: <p>{errorMessage}</p>,
   }
 
   const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
