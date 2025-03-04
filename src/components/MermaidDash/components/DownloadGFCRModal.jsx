@@ -80,9 +80,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error('Failed request - no token provided')
       }
 
       const projectsToEmail = projectsWithGFCRData.map(({ project_id }) => project_id)
@@ -103,13 +101,12 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
       })
 
       if (!response.ok) {
-        setErrorMessage(downloadModal.failureContent)
-        setModalMode('failure')
-        return
+        throw new Error(`Failed request - ${response.status}`)
       }
 
       setModalMode('success')
-    } catch {
+    } catch (error) {
+      console.error(error)
       setErrorMessage(downloadModal.failureContent)
       setModalMode('failure')
     }
