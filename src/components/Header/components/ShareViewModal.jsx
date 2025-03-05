@@ -4,7 +4,8 @@ import theme from '../../../styles/theme'
 import styled from 'styled-components'
 import { ShareViewButton } from '../Header.styles'
 import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../../generic'
-import { IconCopy } from '../../../assets/icons'
+import { IconCopy, IconSharing } from '../../../assets/icons'
+import useResponsive from '../../../hooks/useResponsive'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -30,6 +31,7 @@ const StyledCopyButton = styled(ButtonPrimary)`
 `
 
 const ShareViewModal = () => {
+  const { isMobileWidth } = useResponsive()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [buttonText, setButtonText] = useState('Copy')
   const handleOpenModal = () => setIsModalOpen(true)
@@ -63,7 +65,9 @@ const ShareViewModal = () => {
 
   return (
     <div>
-      <ShareViewButton onClick={handleOpenModal}>Share this view</ShareViewButton>
+      <ShareViewButton onClick={handleOpenModal}>
+        {isMobileWidth ? <IconSharing /> : 'Share this view'}
+      </ShareViewButton>
       <Modal
         isOpen={isModalOpen}
         onDismiss={handleCloseModal}

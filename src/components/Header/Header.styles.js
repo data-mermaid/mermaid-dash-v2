@@ -3,7 +3,11 @@ import { HamburgerMenu } from '../../assets/dashboardOnlyIcons'
 import { IconUser } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { ButtonThatLooksLikeLink } from '../generic'
-import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import {
+  hoverState,
+  mediaQueryPhoneOnly,
+  mediaQueryTabletLandscapeOnly,
+} from '../../styles/mediaQueries'
 
 export const StyledHeader = styled.header`
   background-color: ${theme.color.headerColor};
@@ -109,33 +113,22 @@ export const LoggedInAs = styled.p`
 `
 
 export const GlobalNav = styled.nav`
-  .desktop {
-    display: flex;
-  }
-  .mobile {
-    display: none;
-  }
-  ${mediaQueryTabletLandscapeOnly(css`
-    .desktop {
-      display: none;
-    }
-    .mobile {
-      display: flex;
-    }
-  `)}
+  display: flex;
 `
 
 export const ShareViewButton = styled.button`
   margin: 0.8rem;
   background-color: ${theme.color.callout};
   color: ${theme.color.white};
-  border-radius: 1.5rem;
   border: 0;
+  border-radius: 1.5rem;
   padding: ${theme.spacing.buttonPadding};
-  width: 16rem;
   &:hover {
     cursor: pointer;
-  },
+  }
+  ${mediaQueryPhoneOnly(css`
+    border-radius: 0;
+  `)}
 `
 
 export const UserMenuButton = styled.button`
