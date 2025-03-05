@@ -72,6 +72,7 @@ export const tooltipText = {
 export const toastMessageText = {
   followMapEnabled: 'Metrics will now update based on the map view',
   followMapDisabled: 'Metrics will no longer update based on the map view',
+  sendEmailFailed: 'Failed to send email. Please try again',
 }
 
 export const autocompleteGroupNames = {
