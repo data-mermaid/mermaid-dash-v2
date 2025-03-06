@@ -80,7 +80,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     mermaidUserData,
     enableFollowScreen,
     setMermaidUserData,
-    setCheckedProjects,
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
@@ -134,7 +133,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
         let newApiData = { results: [] }
-        let newCheckedProjects = []
 
         while (nextPageUrl) {
           const response = await fetch(nextPageUrl, {
@@ -153,16 +151,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             throw new Error(`Failed to fetch data - data is empty`)
           }
 
-          const resultsProjectIds = data.results.map((project) => project.project_id)
-
           newApiData = {
             ...newApiData,
             count: data.count,
             results: [...newApiData.results, ...data.results],
           }
-          newCheckedProjects = [...newCheckedProjects, ...resultsProjectIds]
           setProjectData(newApiData)
-          setCheckedProjects(newCheckedProjects)
 
           nextPageUrl = data.next
         }
@@ -173,7 +167,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         setIsErrorModalShowing(true)
       }
     },
-    [isApiDataLoaded, setProjectData, setCheckedProjects, setIsApiDataLoaded],
+    [isApiDataLoaded, setProjectData, setIsApiDataLoaded],
   )
 
   const fetchUserProfile = useCallback(async () => {

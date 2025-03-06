@@ -8,14 +8,8 @@ import { DatePicker } from '@mui/x-date-pickers'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-import theme from '../../styles/theme'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import {
-  filterPane,
-  autocompleteGroupNames,
-  tooltipText,
-  noDataText,
-} from '../../constants/language'
+import { filterPane, autocompleteGroupNames, noDataText } from '../../constants/language'
 import { IconPlus } from '../../assets/icons'
 import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
@@ -26,49 +20,41 @@ import {
   StyledClickableArea,
   StyledDateField,
   StyledDateRangeContainer,
-  StyledEmptyListItem,
   StyledExpandFilters,
   StyledFilterPaneContainer,
   StyledHeader,
   StyledLabel,
   StyledLi,
   StyledMethodListContainer,
-  StyledProjectListContainer,
-  StyledProjectNameFilter,
   StyledUnorderedList,
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
   StyledCountryHeader,
   StyledLoginToViewContainer,
-  SmallerIconUserCircle,
 } from './FilterPane.styles'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
-import { ButtonThatLooksLikeLinkUnderlined, IconButton } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
+import { ButtonThatLooksLikeLinkUnderlined } from '../generic'
 
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
-const FilterPane = ({ mermaidUserData }) => {
+const FilterPane = () => {
   const todayDate = dayjs()
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, loginWithRedirect } = useAuth0()
   const {
-    checkedProjects,
     countriesSelectOnOpen,
     clearAllFilters,
     displayedCountries,
     displayedOrganizations,
-    displayedProjects,
     getActiveProjectCount,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
     handleMethodDataSharingFilter,
-    handleProjectNameFilter,
     handleSelectedCountriesChange,
     handleSelectedOrganizationsChange,
     handleYourDataFilter,
@@ -76,23 +62,27 @@ const FilterPane = ({ mermaidUserData }) => {
     methodDataSharingFilters,
     organizationsSelectOnOpen,
     projectData,
-    projectNameFilter,
     remainingDisplayedCountries,
     sampleDateAfter,
     sampleDateBefore,
     selectedCountries,
     selectedOrganizations,
-    setCheckedProjects,
     setCountries,
     setDisplayedCountries,
     setDisplayedOrganizations,
     setSelectedCountries,
     setSelectedOrganizations,
     showYourData,
-    userIsMemberOfProject,
     showProjectsWithNoRecords,
     setShowProjectsWithNoRecords,
+    selectedProjects,
+    setSelectedProjects,
+    remainingDisplayedProjectNames,
+    handleSelectedProjectChange,
+    projectsSelectOnOpen,
+    displayedProjectNames,
   } = useContext(FilterProjectsContext)
+
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
     colonies_bleached: false,
@@ -180,6 +170,20 @@ const FilterPane = ({ mermaidUserData }) => {
     updateURLParams(queryParams)
   }
 
+  const handleDeleteProject = (projectToBeDeleted) => {
+    const updatedProjects = selectedProjects.filter((project) => project !== projectToBeDeleted)
+    setSelectedProjects(updatedProjects)
+
+    const queryParams = getURLParams()
+    if (updatedProjects.length === 0) {
+      queryParams.delete('project')
+      queryParams.delete(URL_PARAMS.PROJECTS)
+    } else {
+      queryParams.set(URL_PARAMS.PROJECTS, updatedProjects)
+    }
+    updateURLParams(queryParams)
+  }
+
   const getCountriesAutocompleteGroup = (option) => {
     return remainingDisplayedCountries.length
       ? displayedCountries.includes(option)
@@ -192,25 +196,26 @@ const FilterPane = ({ mermaidUserData }) => {
     return isAnyActiveFilters() ? autocompleteGroupNames.organizationsBasedOnCurrentFilters : ''
   }
 
+  const getProjectsAutocompleteGroup = (option) => {
+    return remainingDisplayedProjectNames.length
+      ? displayedProjectNames.includes(option)
+        ? autocompleteGroupNames.projectsBasedOnCurrentFilters
+        : autocompleteGroupNames.otherProjects
+      : ''
+  }
+
   const handleShowProjectsWithNoRecords = () => {
     setShowProjectsWithNoRecords((prevState) => {
       const newState = !prevState
       const queryParams = getURLParams()
 
       newState
-        ? queryParams.set(URL_PARAMS.SHOW_NO_DATA_PROJECTS, 'true')
-        : queryParams.delete(URL_PARAMS.SHOW_NO_DATA_PROJECTS)
+        ? queryParams.delete(URL_PARAMS.SHOW_NO_DATA_PROJECTS)
+        : queryParams.set(URL_PARAMS.SHOW_NO_DATA_PROJECTS, 'false')
 
       updateURLParams(queryParams)
       return newState
     })
-  }
-
-  const handleCheckProject = (projectId) => {
-    const updatedCheckedProjects = checkedProjects.includes(projectId)
-      ? checkedProjects.filter((checkedProject) => checkedProject !== projectId)
-      : [...checkedProjects, projectId]
-    setCheckedProjects(updatedCheckedProjects)
   }
 
   const toggleShowExpanded = (section) => {
@@ -307,54 +312,11 @@ const FilterPane = ({ mermaidUserData }) => {
     </StyledMethodListContainer>
   )
 
-  const projectsList = (
-    <StyledProjectListContainer>
-      <StyledUnorderedList>
-        {displayedProjects.length ? (
-          displayedProjects.map((project) => {
-            return (
-              <li key={project.project_id}>
-                <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
-                  <input
-                    id={`checkbox-${project.project_id}`}
-                    type="checkbox"
-                    checked={checkedProjects.includes(project.project_id)}
-                    onChange={() => handleCheckProject(project.project_id)}
-                  />{' '}
-                  <StyledLabel
-                    htmlFor={`checkbox-${project.project_id}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {project.project_name}{' '}
-                    {userIsMemberOfProject(project.project_id, mermaidUserData) && (
-                      <MuiTooltip
-                        title={tooltipText.yourProject}
-                        placement="top"
-                        bgColor={theme.color.primaryColor}
-                        tooltipTextColor={theme.color.white}
-                      >
-                        <IconButton>
-                          <SmallerIconUserCircle />
-                        </IconButton>
-                      </MuiTooltip>
-                    )}
-                  </StyledLabel>
-                </StyledClickableArea>
-              </li>
-            )
-          })
-        ) : (
-          <StyledEmptyListItem>{noDataText.noProjectsOnCurrentFilters}</StyledEmptyListItem>
-        )}
-      </StyledUnorderedList>
-    </StyledProjectListContainer>
-  )
-
   return (
     <StyledFilterPaneContainer>
       <StyledCountryHeader>
         <StyledHeader>Countries</StyledHeader>
-        {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count ? (
+        {isAnyActiveFilters() ? (
           <FilterIndicatorPill
             searchFilteredRowLength={getActiveProjectCount()}
             unfilteredRowLength={projectData?.count || 0}
@@ -379,6 +341,16 @@ const FilterPane = ({ mermaidUserData }) => {
         onOpen={organizationsSelectOnOpen}
         onChange={handleSelectedOrganizationsChange}
         onDelete={handleDeleteOrganization}
+      />
+      <StyledHeader>Projects</StyledHeader>
+      <AutocompleteCheckbox
+        selectedValues={selectedProjects}
+        displayOptions={displayedProjectNames}
+        remainingOptions={remainingDisplayedProjectNames}
+        autocompleteGroupBy={getProjectsAutocompleteGroup}
+        onOpen={projectsSelectOnOpen}
+        onChange={handleSelectedProjectChange}
+        onDelete={handleDeleteProject}
       />
       <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
         Show {showMoreFilters ? 'fewer' : 'more'} filters
@@ -470,13 +442,6 @@ const FilterPane = ({ mermaidUserData }) => {
           </StyledCategoryContainer>
         </ShowMoreFiltersContainer>
       ) : null}
-      <StyledHeader>Projects</StyledHeader>
-      <StyledProjectNameFilter
-        value={projectNameFilter}
-        placeholder="Type to filter projects"
-        onChange={handleProjectNameFilter}
-      />
-      {projectsList}
     </StyledFilterPaneContainer>
   )
 }

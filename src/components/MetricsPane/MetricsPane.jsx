@@ -64,7 +64,6 @@ const MetricsPane = ({
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
-    checkedProjects,
     displayedProjects,
     enableFollowScreen,
     getActiveProjectCount,
@@ -86,9 +85,6 @@ const MetricsPane = ({
     let years = new Set()
 
     displayedProjects.forEach((project) => {
-      if (!checkedProjects.includes(project.project_id)) {
-        return
-      }
       project.records.forEach((record) => {
         Object.values(record.protocols).forEach((value) => {
           transects += value.sample_unit_count
@@ -122,7 +118,7 @@ const MetricsPane = ({
       numUniqueCountries: countries.size,
       yearRange,
     }
-  }, [displayedProjects, checkedProjects])
+  }, [displayedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
     const { numSurveys, numTransects, numUniqueCountries } = calculateMetrics

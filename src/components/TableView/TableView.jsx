@@ -50,13 +50,8 @@ const StyledTr = styled(Tr)`
 `
 
 const TableView = ({ view, setView, mermaidUserData }) => {
-  const {
-    checkedProjects,
-    displayedProjects,
-    setShowProjectsWithNoRecords,
-    userIsMemberOfProject,
-    setSelectedProject,
-  } = useContext(FilterProjectsContext)
+  const { displayedProjects, userIsMemberOfProject, setSelectedProject } =
+    useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
@@ -65,18 +60,9 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const queryParamsProjectId = queryParams.get('project_id')
   const initialPageIndex = Number(queryParams.get('page_index')) || 0
 
-  const _onUnmount = useEffect(() => {
-    return () => {
-      setShowProjectsWithNoRecords(false)
-    }
-  }, [setShowProjectsWithNoRecords])
-
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects
       .map((project, i) => {
-        if (!checkedProjects.includes(project.project_id)) {
-          return null
-        }
         const {
           projectName,
           formattedDateRange,
@@ -98,7 +84,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       })
       .filter((project) => project !== null)
     setTableData(formattedTableData)
-  }, [displayedProjects, checkedProjects])
+  }, [displayedProjects])
 
   const tableColumns = useMemo(
     () => [
