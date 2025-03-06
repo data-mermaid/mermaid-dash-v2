@@ -146,7 +146,6 @@ const FilterPane = () => {
 
     const queryParams = getURLParams()
     if (updatedCountries.length === 0) {
-      queryParams.delete('country')
       queryParams.delete(URL_PARAMS.COUNTRIES)
     } else {
       queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
@@ -162,7 +161,6 @@ const FilterPane = () => {
 
     const queryParams = getURLParams()
     if (updatedOrganizations.length === 0) {
-      queryParams.delete('organization')
       queryParams.delete(URL_PARAMS.ORGANIZATIONS)
     } else {
       queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
@@ -176,7 +174,6 @@ const FilterPane = () => {
 
     const queryParams = getURLParams()
     if (updatedProjects.length === 0) {
-      queryParams.delete('project')
       queryParams.delete(URL_PARAMS.PROJECTS)
     } else {
       queryParams.set(URL_PARAMS.PROJECTS, updatedProjects)

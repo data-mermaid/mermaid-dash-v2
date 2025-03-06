@@ -36,6 +36,7 @@ import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { ButtonPrimary, Modal } from '../generic'
@@ -209,12 +210,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
+    if (queryParams.get(URL_PARAMS.VIEW) === 'tableView' && isDesktopWidth) {
       setView('tableView')
       return
     }
     setView('mapView')
-    queryParams.delete('view')
+    queryParams.delete(URL_PARAMS.VIEW)
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
 
@@ -281,9 +282,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       : toastMessageText.followMapEnabled
 
     if (newState) {
-      queryParams.set('follow_screen', 'true')
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.delete('follow_screen')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)

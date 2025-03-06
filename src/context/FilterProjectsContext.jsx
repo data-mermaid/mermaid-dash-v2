@@ -20,7 +20,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [sampleDateBefore, setSampleDateBefore] = useState(null)
   const [methodDataSharingFilters, setMethodDataSharingFilters] = useState([])
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const queryParamsSampleEventId = queryParams.get('sample_event_id')
+  const queryParamsSampleEventId = queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
   const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [selectedProject, setSelectedProject] = useState(null)
@@ -49,12 +49,9 @@ export const FilterProjectsProvider = ({ children }) => {
   const _setFiltersBasedOnUrlParams = useEffect(() => {
     const queryParams = getURLParams()
 
-    const setFilterValue = (primaryKey, secondaryKey, setValue) => {
-      if (queryParams.has(primaryKey)) {
-        const values = queryParams.getAll(primaryKey)[0].split(',').map(decodeURIComponent)
-        setValue(values)
-      } else if (queryParams.has(secondaryKey)) {
-        const values = queryParams.getAll(secondaryKey)[0].split(',').map(decodeURIComponent)
+    const handleSelectInputFilter = (key, setValue) => {
+      if (queryParams.has(key)) {
+        const values = queryParams.getAll(key)[0].split(',').map(decodeURIComponent)
         setValue(values)
       }
     }
@@ -73,13 +70,13 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const handleMethodDataSharingFilter = () => {
-      if (!queryParams.has(URL_PARAMS.METHOD_DATA_SHARING) && !queryParams.has('method')) {
+      if (!queryParams.has(URL_PARAMS.METHOD_DATA_SHARING)) {
         return
       }
 
-      const queryParamsMethodDataSharing = queryParams.has('method')
-        ? queryParams.getAll('method')[0].split(',')
-        : queryParams.getAll(URL_PARAMS.METHOD_DATA_SHARING)[0].split(',')
+      const queryParamsMethodDataSharing = queryParams
+        .getAll(URL_PARAMS.METHOD_DATA_SHARING)[0]
+        .split(',')
       const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
         (method) => method.dataSharingOptions,
       )
@@ -88,7 +85,6 @@ export const FilterProjectsProvider = ({ children }) => {
       })
       setMethodDataSharingFilters(validMethodDataSharing)
       if (validMethodDataSharing.length === 0) {
-        queryParams.delete('method')
         queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
       } else {
         queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, validMethodDataSharing)
@@ -108,9 +104,9 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
-    setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
-    setFilterValue(URL_PARAMS.PROJECTS, 'project', setSelectedProjects)
+    handleSelectInputFilter(URL_PARAMS.COUNTRIES, setSelectedCountries)
+    handleSelectInputFilter(URL_PARAMS.ORGANIZATIONS, setSelectedOrganizations)
+    handleSelectInputFilter(URL_PARAMS.PROJECTS, setSelectedProjects)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, true)
     handleMethodDataSharingFilter()
@@ -129,7 +125,7 @@ export const FilterProjectsProvider = ({ children }) => {
         })
       })
       if (!displaySelectedSampleEvent) {
-        queryParams.delete('sample_event_id')
+        queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
         setSelectedMarkerId(null)
         updateURLParams(queryParams)
       }
@@ -329,7 +325,7 @@ export const FilterProjectsProvider = ({ children }) => {
       selectedProjects,
     )
     const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+      queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID) && queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
     if (projectData.results.length === projectData.count) {
       doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
     }
@@ -421,7 +417,7 @@ export const FilterProjectsProvider = ({ children }) => {
       return
     }
     const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+      queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID) && queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
     doesSelectedSampleEventPassFilters(paramsSampleEventId, displayedProjects)
   }, [
     allProjectsFinishedFiltering,
@@ -439,7 +435,6 @@ export const FilterProjectsProvider = ({ children }) => {
       const encodedCountries = selectedCountries.map((country) => encodeURIComponent(country))
       queryParams.set(URL_PARAMS.COUNTRIES, encodedCountries.join(','))
     }
-    queryParams.delete('country')
     updateURLParams(queryParams)
     setSelectedCountries(selectedCountries)
   }
@@ -455,7 +450,6 @@ export const FilterProjectsProvider = ({ children }) => {
       )
       queryParams.set(URL_PARAMS.ORGANIZATIONS, encodedOrganizations.join(','))
     }
-    queryParams.delete('organization')
     updateURLParams(queryParams)
     setSelectedOrganizations(selectedOrganizations)
   }
@@ -469,7 +463,6 @@ export const FilterProjectsProvider = ({ children }) => {
       const encodedProjects = selectedProjects.map((project) => encodeURIComponent(project))
       queryParams.set(URL_PARAMS.PROJECTS, encodedProjects.join(','))
     }
-    queryParams.delete('project')
     updateURLParams(queryParams)
     setSelectedProjects(selectedProjects)
   }
@@ -543,7 +536,6 @@ export const FilterProjectsProvider = ({ children }) => {
     } else {
       queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, updatedFilter)
     }
-    queryParams.delete('method')
     updateURLParams(queryParams)
     setMethodDataSharingFilters(updatedFilter)
   }
@@ -578,7 +570,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const updateCurrentSampleEvent = useCallback(
     (sampleEventId) => {
       const newQueryParams = new URLSearchParams(location.search)
-      newQueryParams.set('sample_event_id', sampleEventId)
+      newQueryParams.set(URL_PARAMS.SAMPLE_EVENT_ID, sampleEventId)
       updateURLParams(newQueryParams)
       setSelectedMarkerId(sampleEventId)
     },

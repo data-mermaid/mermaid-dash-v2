@@ -1,6 +1,12 @@
 import { useContext, useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
+
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
+import { URL_PARAMS } from '../../constants/constants'
+
 import { ButtonThatLooksLikeLinkUnderlined, CloseButton } from '../generic'
+
 import { BiggerIconClose } from './SelectedSiteMetrics.styles'
 import {
   AdminIcon,
@@ -17,7 +23,6 @@ import {
   ProjectNotesIcon,
   ProjectTitle,
 } from './SelectedProjectMetrics.styles'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 const MAX_NOTES_LENGTH = 250
 
@@ -38,7 +43,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
   } = selectedProject
 
   const handleClearProject = () => {
-    queryParams.delete('project_id')
+    queryParams.delete(URL_PARAMS.PROJECT_ID)
     setSelectedProject(null)
     updateURLParams(queryParams)
   }
