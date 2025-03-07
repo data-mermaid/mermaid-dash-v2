@@ -59,7 +59,7 @@ jobs:
 
       - name: Install CDK
         run: |
-          cd iac && npm ci
+          cd iac && npm ci && cdk --version
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
