@@ -102,7 +102,7 @@ export class StaticSite extends Construct {
       ],
       defaultBehavior: {
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        origin: new cloudfront_origins.S3Origin(siteBucket, { originAccessIdentity: cloudfrontOAI }),
+        origin: new cloudfront_origins.S3StaticWebsiteOrigin(siteBucket),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
