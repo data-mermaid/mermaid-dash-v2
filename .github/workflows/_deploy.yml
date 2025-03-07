@@ -67,13 +67,13 @@ jobs:
       - name: Install IaC dependancies
         if: ${{ steps.iac-cache.outputs.cache-hit != 'true' }}
         working-directory: iac
-        run: npm ci
+        run: npm ci && npm install -g aws-cdk
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4.1.0
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
-          DEPLOY_AWS_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
+          CDK_DEPLOY_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
         with:
           role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
           aws-region: us-east-1
