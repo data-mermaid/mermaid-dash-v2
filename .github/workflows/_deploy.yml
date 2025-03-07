@@ -57,15 +57,7 @@ jobs:
           VITE_REACT_APP_MERMAID_DASHBOARD_LINK: ${{ inputs.vite_react_app_mermaid_dashboard_link }}
           VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
 
-      - name: Fetch iac node cache
-        uses: actions/cache@v4.2.2
-        id: iac-cache
-        with:
-          path: iac/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('iac/package-lock.json') }}
-
       - name: Install IaC dependancies
-        if: ${{ steps.iac-cache.outputs.cache-hit != 'true' }}
         working-directory: iac
         run: npm ci && npm install -g aws-cdk
 
