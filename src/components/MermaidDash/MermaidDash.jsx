@@ -24,6 +24,7 @@ import {
   MobileFooterContainer,
   StyledChevronSpan,
   StyledMobileZoomToDataButton,
+  StyledMobileFilterPill,
   StyledMobileFollowMapButton,
   FilterDownloadWrapper,
   FilterDownloadButton,
@@ -50,6 +51,8 @@ import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
+import FilterIndicatorPill from '../generic/FilterIndicatorPill'
+import { IconFilter } from '../../assets/icons'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -86,6 +89,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setEnableFollowScreen,
     allProjectsFinishedFiltering,
     filteredSurveys,
+    getActiveProjectCount,
+    clearAllFilters,
+    isAnyActiveFilters,
   } = useContext(FilterProjectsContext)
 
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
@@ -345,7 +351,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           <MuiTooltip
             title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
           >
-            <StyledChevronSpan>{isFilterPaneShowing ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
+            {isFilterPaneShowing ? (
+              <StyledChevronSpan>
+                {ARROW_LEFT} <IconFilter />
+              </StyledChevronSpan>
+            ) : (
+              <StyledChevronSpan>
+                <IconFilter /> {ARROW_RIGHT}
+              </StyledChevronSpan>
+            )}
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
@@ -434,6 +448,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <StyledMobileZoomToDataButton onClick={handleZoomToFilteredData}>
         <img src={zoomToFiltered} />
       </StyledMobileZoomToDataButton>
+      {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count && (
+        <StyledMobileFilterPill>
+          <FilterIndicatorPill
+            searchFilteredRowLength={getActiveProjectCount()}
+            unfilteredRowLength={projectData?.count || 0}
+            clearFilters={clearAllFilters}
+          />
+        </StyledMobileFilterPill>
+      )}
       <StyledMobileFollowMapButton
         enableFollowScreen={enableFollowScreen}
         onClick={handleFollowScreen}
