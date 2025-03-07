@@ -78,10 +78,10 @@ export const BiggerFilterIcon = styled(IconFilter)`
 export const DesktopToggleFilterPaneButton = styled(ButtonSecondary)`
   position: absolute;
   top: 1.3rem;
-  right: -4rem;
+  right: -6rem;
   height: 4rem;
   z-index: 5;
-  width: 4rem;
+  width: 6rem;
   border: none;
   background-color: ${theme.color.grey1};
   ${mediaQueryTabletLandscapeOnly(css`
@@ -116,6 +116,18 @@ export const StyledMobileZoomToDataButton = styled(ButtonSecondary)`
   `)};
 `
 
+export const StyledMobileFilterPill = styled.div`
+  position: absolute;
+  display: none;
+  height: 6rem;
+  ${mediaQueryTabletLandscapeOnly(css`
+    display: block;
+    top: calc(${theme.spacing.headerHeight} + 1rem);
+    left: 13.5rem;
+    z-index: 5;
+  `)};
+`
+
 export const StyledMobileFollowMapButton = styled(ButtonSecondary)`
   position: absolute;
   display: none;
@@ -146,7 +158,9 @@ export const MobileFooterContainer = styled.div`
 `
 
 export const StyledChevronSpan = styled.span`
-  padding-right: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 `
 
 export const FilterDownloadWrapper = styled.div`

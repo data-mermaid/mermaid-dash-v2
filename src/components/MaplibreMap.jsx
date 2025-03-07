@@ -98,7 +98,7 @@ const sitesSource = {
   clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
-const MaplibreMap = ({ mapRef, view, setView }) => {
+const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const {
     checkedProjects,
     displayedProjects,
@@ -251,7 +251,12 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
   }
 
   const viewAndZoomControlsWrapper = mapRef.current ? (
-    <MapAndTableControls map={mapRef.current.getMap()} view={view} setView={setView} />
+    <MapAndTableControls
+      map={mapRef.current.getMap()}
+      view={view}
+      setView={setView}
+      isFilterPaneShowing={isFilterPaneShowing}
+    />
   ) : null
 
   const hideMapStyleLayers = (map) => {
@@ -341,6 +346,7 @@ MaplibreMap.propTypes = {
   }).isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
+  isFilterPaneShowing: PropTypes.bool.isRequired,
 }
 
 export default MaplibreMap

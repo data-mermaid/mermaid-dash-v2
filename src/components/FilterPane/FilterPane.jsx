@@ -29,6 +29,7 @@ import {
   StyledEmptyListItem,
   StyledExpandFilters,
   StyledFilterPaneContainer,
+  StyledFilterPaneHeader,
   StyledHeader,
   StyledLabel,
   StyledLi,
@@ -39,7 +40,7 @@ import {
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
-  StyledCountryHeader,
+  StyledFilterPaneHeaderWrapper,
   StyledLoginToViewContainer,
   SmallerIconUserCircle,
 } from './FilterPane.styles'
@@ -352,8 +353,8 @@ const FilterPane = ({ mermaidUserData }) => {
 
   return (
     <StyledFilterPaneContainer>
-      <StyledCountryHeader>
-        <StyledHeader>Countries</StyledHeader>
+      <StyledFilterPaneHeaderWrapper>
+        <StyledFilterPaneHeader>Filters</StyledFilterPaneHeader>
         {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count ? (
           <FilterIndicatorPill
             searchFilteredRowLength={getActiveProjectCount()}
@@ -361,7 +362,8 @@ const FilterPane = ({ mermaidUserData }) => {
             clearFilters={clearAllFilters}
           />
         ) : null}
-      </StyledCountryHeader>
+      </StyledFilterPaneHeaderWrapper>
+      <StyledHeader>Countries</StyledHeader>
       <AutocompleteCheckbox
         selectedValues={selectedCountries}
         displayOptions={displayedCountries}
