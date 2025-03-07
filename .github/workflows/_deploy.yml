@@ -82,7 +82,7 @@ jobs:
       - name: Deploy
         run: |
           echo "Deploying to ${{ inputs.environment }} with domain ${{ inputs.domain }}" && \
-          cd iac && cdk diff --all
+          cd iac && cdk deploy --require-approval never
         env:
           CDK_DEPLOY_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
           AWS_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
