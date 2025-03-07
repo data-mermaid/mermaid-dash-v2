@@ -38,7 +38,7 @@ jobs:
         with:
           node-version-file: '.nvmrc'
 
-      - uses: actions/cache@v4.0.2
+      - uses: actions/cache@v4.2.2
         id: yarn-cache
         with:
           path: node_modules
