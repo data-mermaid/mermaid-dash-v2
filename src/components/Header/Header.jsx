@@ -88,7 +88,6 @@ const Header = () => {
             {headerText.redirectDashboard}
           </MenuLink>
         )}
-        <UserMenuButton>Dashboard Highlights</UserMenuButton>
         <UserMenuButton onClick={handleOpenDisclaimer}>{dataDisclaimer.title}</UserMenuButton>
         <MenuLink href="https://datamermaid.org/terms-of-service/" target="_blank">
           Data Protection and Privacy

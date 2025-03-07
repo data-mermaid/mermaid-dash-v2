@@ -250,7 +250,7 @@ export const SelectedSiteMetrics = ({
         <SelectedSiteMetricsCardContainer>
           <BiggerIconCalendar />
           <SelectedSiteContentContainer>
-            <StyledHeader as="label">Sample Date</StyledHeader>
+            <StyledHeader as="label">Survey Date</StyledHeader>
             {otherSurveysAtSameProjectSiteMenuItems?.length > 1 ? (
               <MermaidFormContainer>
                 <MermaidFormControl>
