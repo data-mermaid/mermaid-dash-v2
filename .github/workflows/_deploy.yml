@@ -56,6 +56,21 @@ jobs:
           VITE_REACT_APP_AUTH0_AUDIENCE: ${{ inputs.vite_react_app_auth0_audience }}
           VITE_REACT_APP_MERMAID_DASHBOARD_LINK: ${{ inputs.vite_react_app_mermaid_dashboard_link }}
           VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
+
+      - name: Install CDK
+        run: |
+          cd iac && npm ci
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4.1.0
+        env:
+          CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
+          DEPLOY_AWS_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
+          aws-region: us-east-1
+          role-skip-session-tagging: true
+
       - name: Deploy
         run: |
           echo "Deploying to ${{ inputs.environment }} with domain ${{ inputs.domain }}" && \
