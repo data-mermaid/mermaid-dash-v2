@@ -44,6 +44,7 @@ import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexit
 import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
+import { pluralizeWord } from '../../helperFunctions/pluralize'
 
 const FollowButton = styled(ButtonSecondary)`
   height: 100%;
@@ -153,17 +154,15 @@ const MetricsPane = ({
     handleShowMobileExpandedMetricsPane()
   }
 
-  const countryLabel = numUniqueCountries === 1 ? 'Country' : 'Countries'
-
   const transectAndProjectCountCards = (
     <>
       <MetricsCard>
         <MetricCardPMedium>{numTransects.toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>Transects</MetricCardH3>
+        <MetricCardH3>{pluralizeWord(numTransects || 0, 'Transect')}</MetricCardH3>
       </MetricsCard>
       <MetricsCard>
         <MetricCardPMedium>{getActiveProjectCount().toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>Projects </MetricCardH3>
+        <MetricCardH3>{pluralizeWord(getActiveProjectCount() || 0, 'Project')}</MetricCardH3>
       </MetricsCard>
     </>
   )
@@ -192,18 +191,22 @@ const MetricsPane = ({
       >
         <MetricsCard>
           <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
-          <MetricCardH3>Surveys</MetricCardH3>
+          <MetricCardH3>{pluralizeWord(numSurveys || 0, 'Survey')}</MetricCardH3>
         </MetricsCard>
         <MetricsCard>
           {isDesktopWidth ? (
             <InlineOnDesktopMetricWrapper>
               <span>{numUniqueCountries.toLocaleString()}</span>{' '}
-              <MetricCardH3>{countryLabel}</MetricCardH3>
+              <MetricCardH3>
+                {pluralizeWord(numUniqueCountries || 0, 'Country', 'Countries')}
+              </MetricCardH3>
             </InlineOnDesktopMetricWrapper>
           ) : (
             <>
               <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
-              <MetricCardH3>{countryLabel}</MetricCardH3>
+              <MetricCardH3>
+                {pluralizeWord(numUniqueCountries || 0, 'Country', 'Countries')}
+              </MetricCardH3>
             </>
           )}
         </MetricsCard>
