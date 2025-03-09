@@ -1,16 +1,19 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
-import GlobalStyle from './styles/globalStyles.js'
-import { ToastContainer } from 'react-toastify'
-import { createTheme, ThemeProvider } from '@mui/material/styles'
-import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
-import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
-import { Auth0Provider } from '@auth0/auth0-react'
-import { FilterProjectsProvider } from './context/FilterProjectsContext'
-import { MapProvider } from 'react-map-gl'
 import { useState } from 'react'
+import { Routes, Route, useLocation, useNavigate } from 'react-router-dom'
+
+import { Auth0Provider } from '@auth0/auth0-react'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
 import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+import { MapProvider } from 'react-map-gl'
+
+import { FilterProjectsProvider } from './context/FilterProjectsContext'
+
+import GlobalStyle from './styles/globalStyles.js'
+import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
+
+import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
+import { CustomToastContainer } from './components/generic/toast.js'
 
 const App = () => {
   const navigateTo = useNavigate()
@@ -39,7 +42,7 @@ const App = () => {
           <MapProvider>
             <FilterProjectsProvider>
               <GlobalStyle />
-              <ToastContainer />
+              <CustomToastContainer limit={5} />
               <Routes>
                 <Route
                   path="/"
