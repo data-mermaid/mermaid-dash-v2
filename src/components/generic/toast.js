@@ -16,6 +16,7 @@ export const CustomToastContainer = styled(ToastContainer).attrs({
   pauseOnFocusLoss: true,
   draggable: false,
   pauseOnHover: true,
+  icon: false,
 })`
   .toast {
     &,
