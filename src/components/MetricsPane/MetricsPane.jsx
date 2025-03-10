@@ -29,7 +29,10 @@ import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { mapAttributeText, noDataText, tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
 
+import { ButtonSecondary } from '../generic'
+import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
@@ -41,8 +44,6 @@ import { TimeSeriesFishBiomass } from './charts/TimeSeriesFishBiomass'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
-import { ButtonSecondary } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 
 const FollowButton = styled(ButtonSecondary)`
@@ -64,7 +65,6 @@ const MetricsPane = ({
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
-    checkedProjects,
     displayedProjects,
     enableFollowScreen,
     getActiveProjectCount,
@@ -86,9 +86,6 @@ const MetricsPane = ({
     let years = new Set()
 
     displayedProjects.forEach((project) => {
-      if (!checkedProjects.includes(project.project_id)) {
-        return
-      }
       project.records.forEach((record) => {
         Object.values(record.protocols).forEach((value) => {
           transects += value.sample_unit_count
@@ -122,7 +119,7 @@ const MetricsPane = ({
       numUniqueCountries: countries.size,
       yearRange,
     }
-  }, [displayedProjects, checkedProjects])
+  }, [displayedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
     const { numSurveys, numTransects, numUniqueCountries } = calculateMetrics
@@ -280,9 +277,9 @@ const MetricsPane = ({
     const queryParams = getURLParams()
 
     if (newState) {
-      queryParams.set('follow_screen', 'true')
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.delete('follow_screen')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)

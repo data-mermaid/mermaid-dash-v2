@@ -1,6 +1,6 @@
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
-
+import { useLocation, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { bbox } from '@turf/bbox'
 import { points } from '@turf/helpers'
@@ -9,15 +9,17 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
 
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import theme from '../../styles/theme'
+
+import { tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
+
+import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 
 import { ButtonSecondary } from '../generic'
-import { useLocation, useNavigate } from 'react-router-dom'
 import { MuiTooltip } from '../generic/MuiTooltip'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
-import { tooltipText } from '../../constants/language'
 import { BiggerIconMapOutline, BiggerIconTable } from '../MetricsPane/SelectedSiteMetrics.styles'
-import theme from '../../styles/theme'
-import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import ProjectTableDownload from '../ProjectTableDownload/ProjectTableDownload'
 
 const ControlContainer = styled.div`
@@ -66,13 +68,13 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
 
   const handleMapView = () => {
     setView('mapView')
-    queryParams.delete('view')
+    queryParams.delete(URL_PARAMS.VIEW)
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
   const handleTableView = () => {
     setView('tableView')
-    queryParams.set('view', 'tableView')
+    queryParams.set(URL_PARAMS.VIEW, 'tableView')
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 

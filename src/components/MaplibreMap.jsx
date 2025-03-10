@@ -100,7 +100,6 @@ const sitesSource = {
 
 const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const {
-    checkedProjects,
     displayedProjects,
     enableFollowScreen,
     selectedMarkerId,
@@ -126,7 +125,6 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [sitesFeatureClass, setSitesFeatureClass] = useState(null)
   const { isDesktopWidth } = useResponsive()
-  const prevCheckedProjects = usePrevious(checkedProjects)
 
   const updateURLParams = useCallback(
     (newQueryParams) => {
@@ -148,17 +146,11 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
     const displayedProjectsChanged =
       JSON.stringify(displayedProjects) !== JSON.stringify(prevDisplayedProjects)
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
-    const checkedProjectsChanged = checkedProjects !== prevCheckedProjects
 
-    if (displayedProjectsChanged || selectedMarkerChanged || checkedProjectsChanged) {
+    if (displayedProjectsChanged || selectedMarkerChanged) {
       const features = displayedProjects.flatMap((project) => {
         return project.records
           .map((record) => {
-            const isProjectChecked = checkedProjects.includes(project.project_id)
-            if (!isProjectChecked) {
-              return
-            }
-
             return {
               type: 'Feature',
               properties: { ...record },
@@ -175,14 +167,7 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
 
       setSitesFeatureClass(featureClass)
     }
-  }, [
-    displayedProjects,
-    prevDisplayedProjects,
-    selectedMarkerId,
-    prevSelectedMarkerId,
-    checkedProjects,
-    prevCheckedProjects,
-  ])
+  }, [displayedProjects, prevDisplayedProjects, selectedMarkerId, prevSelectedMarkerId])
 
   const handleMoveEnd = () => {
     const map = mapRef.current?.getMap()

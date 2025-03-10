@@ -67,7 +67,6 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
     getActiveProjectCount,
     userIsMemberOfProject,
     mermaidUserData,
-    checkedProjects,
   } = useContext(FilterProjectsContext)
 
   const activeProjectCount = getActiveProjectCount()
@@ -104,31 +103,28 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       return
     }
 
-    const formattedTableData = displayedProjects
-      .filter(({ project_id }) => checkedProjects.includes(project_id))
-      .map((project, i) => {
-        const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-        const formattedData = formatDownloadProjectDataHelper(
-          project,
-          isMemberOfProject,
-          selectedMethod,
-          selectedDataSharing,
-        )
+    const formattedTableData = displayedProjects.map((project, i) => {
+      const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
+      const formattedData = formatDownloadProjectDataHelper(
+        project,
+        isMemberOfProject,
+        selectedMethod,
+        selectedDataSharing,
+      )
 
-        return {
-          id: i,
-          ...formattedData,
-          isMemberOfProject,
-          rawProjectData: project,
-        }
-      })
+      return {
+        id: i,
+        ...formattedData,
+        isMemberOfProject,
+        rawProjectData: project,
+      }
+    })
 
     setTableData(formattedTableData)
   }, [
     displayedProjects,
     selectedMethod,
     selectedDataSharing,
-    checkedProjects,
     mermaidUserData,
     userIsMemberOfProject,
   ])

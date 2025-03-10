@@ -37,6 +37,7 @@ import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { ButtonPrimary, Modal } from '../generic'
@@ -83,7 +84,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     mermaidUserData,
     enableFollowScreen,
     setMermaidUserData,
-    setCheckedProjects,
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
@@ -140,7 +140,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
         let newApiData = { results: [] }
-        let newCheckedProjects = []
 
         while (nextPageUrl) {
           const response = await fetch(nextPageUrl, {
@@ -159,16 +158,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             throw new Error(`Failed to fetch data - data is empty`)
           }
 
-          const resultsProjectIds = data.results.map((project) => project.project_id)
-
           newApiData = {
             ...newApiData,
             count: data.count,
             results: [...newApiData.results, ...data.results],
           }
-          newCheckedProjects = [...newCheckedProjects, ...resultsProjectIds]
           setProjectData(newApiData)
-          setCheckedProjects(newCheckedProjects)
 
           nextPageUrl = data.next
         }
@@ -179,7 +174,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         setIsErrorModalShowing(true)
       }
     },
-    [isApiDataLoaded, setProjectData, setCheckedProjects, setIsApiDataLoaded],
+    [isApiDataLoaded, setProjectData, setIsApiDataLoaded],
   )
 
   const fetchUserProfile = useCallback(async () => {
@@ -221,12 +216,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
+    if (queryParams.get(URL_PARAMS.VIEW) === 'tableView' && isDesktopWidth) {
       setView('tableView')
       return
     }
     setView('mapView')
-    queryParams.delete('view')
+    queryParams.delete(URL_PARAMS.VIEW)
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
 
@@ -293,9 +288,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       : toastMessageText.followMapEnabled
 
     if (newState) {
-      queryParams.set('follow_screen', 'true')
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.delete('follow_screen')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)

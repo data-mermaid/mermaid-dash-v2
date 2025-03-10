@@ -5,6 +5,9 @@ import theme from '../../styles/theme'
 import { IconClose } from '../../assets/icons'
 import { Autocomplete, TextField } from '@mui/material'
 import { MermaidChip, MermaidListSubheader, MermaidMenuItem } from './MermaidMui'
+import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+import { useContext } from 'react'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
 const deleteIconSize = {
   height: '15px',
@@ -31,12 +34,14 @@ const AutocompleteCheckbox = ({
   onChange,
   onDelete,
 }) => {
+  const { mermaidUserData, userIsMemberOfProjectByProjectName } = useContext(FilterProjectsContext)
   const options = [...displayOptions, ...remainingOptions]
 
   return (
     <Autocomplete
       multiple
       options={options}
+      limitTags={2}
       value={selectedValues}
       onChange={(e, newValue) => onChange(newValue)}
       onOpen={onOpen}
@@ -78,7 +83,10 @@ const AutocompleteCheckbox = ({
         return (
           <MermaidMenuItem key={key} {...optionProps}>
             <input type="checkbox" checked={selected} readOnly />
-            {option}
+            {option}{' '}
+            {userIsMemberOfProjectByProjectName(option, mermaidUserData) ? (
+              <IconUserCircle />
+            ) : null}
           </MermaidMenuItem>
         )
       }}

@@ -2,11 +2,18 @@ import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
 import useResponsive from '../../hooks/useResponsive'
+
+import { URL_PARAMS } from '../../constants/constants'
 
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
+
+import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
+import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+
 import { ChartsWrapper, StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
@@ -33,12 +40,14 @@ import {
   TabContent,
   SelectedSiteContainer,
 } from './SelectedSiteMetrics.styles'
+
 import {
   ButtonPrimary,
   ButtonSecondary,
   ButtonThatLooksLikeLinkUnderlined,
   CloseButton,
 } from '../generic'
+
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -47,8 +56,6 @@ import {
   MermaidSelect,
 } from '../generic/MermaidMui'
 
-import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
-import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
 import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
@@ -132,7 +139,7 @@ export const SelectedSiteMetrics = ({
     setSelectedSampleEvent(null)
     setSelectedMarkerId(null)
     const queryParams = getURLParams()
-    queryParams.delete('sample_event_id')
+    queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     updateURLParams(queryParams)
   }
 

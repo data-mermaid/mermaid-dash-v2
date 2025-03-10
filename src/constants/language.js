@@ -80,6 +80,8 @@ export const autocompleteGroupNames = {
   otherCountries: 'Other countries',
   organizationsBasedOnCurrentFilters: 'Organizations based on current filters',
   noOrganizationsMatchCurrentFilters: 'No organizations match current filters',
+  projectsBasedOnCurrentFilters: 'Projects based on current filters',
+  otherProjects: 'Other projects',
 }
 
 export const noDataText = {

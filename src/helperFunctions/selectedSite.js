@@ -1,3 +1,5 @@
+import { URL_PARAMS } from '../constants/constants'
+
 export const zoomToSelectedSite = ({ displayedProjects, map }) => {
   const queryParams = new URLSearchParams(location.search)
 
@@ -5,8 +7,8 @@ export const zoomToSelectedSite = ({ displayedProjects, map }) => {
     return
   }
 
-  if (queryParams.has('sample_event_id')) {
-    const sample_event_id = queryParams.get('sample_event_id')
+  if (queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID)) {
+    const sample_event_id = queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
     const foundSampleEvent = displayedProjects
       .flatMap((project) => project.records)
       .find((record) => record.sample_event_id === sample_event_id)
@@ -22,5 +24,5 @@ export const zoomToSelectedSite = ({ displayedProjects, map }) => {
 export const getIsSiteSelected = () => {
   const queryParams = new URLSearchParams(location.search)
 
-  return queryParams.has('sample_event_id')
+  return queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID)
 }
