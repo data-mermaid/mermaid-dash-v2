@@ -5,6 +5,13 @@ import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQue
 import { css } from 'styled-components'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
+export const StyledFilterPaneHeader = styled.h2`
+  font-size: ${theme.typography.largeFontSize};
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+`
+
 export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
@@ -12,10 +19,11 @@ export const StyledHeader = styled.h2`
   margin-bottom: 0.5rem;
 `
 
-export const StyledCountryHeader = styled.div`
+export const StyledFilterPaneHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid ${theme.color.grey0};
 `
 
 export const StyledFilterPaneContainer = styled.div`

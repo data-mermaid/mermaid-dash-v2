@@ -22,6 +22,7 @@ import {
   StyledDateRangeContainer,
   StyledExpandFilters,
   StyledFilterPaneContainer,
+  StyledFilterPaneHeader,
   StyledHeader,
   StyledLabel,
   StyledLi,
@@ -30,7 +31,7 @@ import {
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
-  StyledCountryHeader,
+  StyledFilterPaneHeaderWrapper,
   StyledLoginToViewContainer,
 } from './FilterPane.styles'
 
@@ -311,16 +312,17 @@ const FilterPane = () => {
 
   return (
     <StyledFilterPaneContainer>
-      <StyledCountryHeader>
-        <StyledHeader>Countries</StyledHeader>
-        {isAnyActiveFilters() ? (
+      <StyledFilterPaneHeaderWrapper>
+        <StyledFilterPaneHeader>Filters</StyledFilterPaneHeader>
+        {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count ? (
           <FilterIndicatorPill
             searchFilteredRowLength={getActiveProjectCount()}
             unfilteredRowLength={projectData?.count || 0}
             clearFilters={clearAllFilters}
           />
         ) : null}
-      </StyledCountryHeader>
+      </StyledFilterPaneHeaderWrapper>
+      <StyledHeader>Countries</StyledHeader>
       <AutocompleteCheckbox
         selectedValues={selectedCountries}
         displayOptions={displayedCountries}
