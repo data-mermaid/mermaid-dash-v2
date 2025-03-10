@@ -46,13 +46,36 @@ export const FilterProjectsProvider = ({ children }) => {
     [navigate, location.pathname],
   )
 
+  const updateSelectInputQueryParams = (selectedItems, singularParam, pluralParam, setValues) => {
+    const queryParams = getURLParams()
+    const encodedItems = selectedItems.map(encodeURIComponent)
+
+    queryParams.delete(singularParam)
+    queryParams.delete(pluralParam)
+
+    if (selectedItems.length === 1) {
+      queryParams.set(singularParam, encodedItems[0])
+    } else if (selectedItems.length > 1) {
+      queryParams.set(pluralParam, encodedItems.join(','))
+    }
+
+    updateURLParams(queryParams)
+    setValues(selectedItems)
+  }
+
   const _setFiltersBasedOnUrlParams = useEffect(() => {
     const queryParams = getURLParams()
 
-    const handleSelectInputFilter = (key, setValue) => {
-      if (queryParams.has(key)) {
-        const values = queryParams.getAll(key)[0].split(',').map(decodeURIComponent)
-        setValue(values)
+    const handleSelectInputFilter = (keys, setValues) => {
+      const selectedValues = keys.reduce((acc, key) => {
+        if (queryParams.has(key)) {
+          return queryParams.getAll(key)[0].split(',').map(decodeURIComponent)
+        }
+        return acc
+      }, [])
+
+      if (selectedValues.length > 0) {
+        setValues(selectedValues)
       }
     }
 
@@ -104,9 +127,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
-    handleSelectInputFilter(URL_PARAMS.COUNTRIES, setSelectedCountries)
-    handleSelectInputFilter(URL_PARAMS.ORGANIZATIONS, setSelectedOrganizations)
-    handleSelectInputFilter(URL_PARAMS.PROJECTS, setSelectedProjects)
+    handleSelectInputFilter([URL_PARAMS.COUNTRY, URL_PARAMS.COUNTRIES], setSelectedCountries)
+    handleSelectInputFilter(
+      [URL_PARAMS.ORGANIZATION, URL_PARAMS.ORGANIZATIONS],
+      setSelectedOrganizations,
+    )
+    handleSelectInputFilter([URL_PARAMS.PROJECT, URL_PARAMS.PROJECTS], setSelectedProjects)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, true)
     handleMethodDataSharingFilter()
@@ -427,44 +453,65 @@ export const FilterProjectsProvider = ({ children }) => {
   ])
 
   const handleSelectedCountriesChange = (selectedCountries) => {
-    const queryParams = getURLParams()
-
-    if (selectedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
-    } else {
-      const encodedCountries = selectedCountries.map((country) => encodeURIComponent(country))
-      queryParams.set(URL_PARAMS.COUNTRIES, encodedCountries.join(','))
-    }
-    updateURLParams(queryParams)
-    setSelectedCountries(selectedCountries)
+    updateSelectInputQueryParams(
+      selectedCountries,
+      URL_PARAMS.COUNTRY,
+      URL_PARAMS.COUNTRIES,
+      setSelectedCountries,
+    )
   }
 
   const handleSelectedOrganizationsChange = (selectedOrganizations) => {
-    const queryParams = getURLParams()
-
-    if (selectedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
-    } else {
-      const encodedOrganizations = selectedOrganizations.map((organization) =>
-        encodeURIComponent(organization),
-      )
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, encodedOrganizations.join(','))
-    }
-    updateURLParams(queryParams)
-    setSelectedOrganizations(selectedOrganizations)
+    updateSelectInputQueryParams(
+      selectedOrganizations,
+      URL_PARAMS.ORGANIZATION,
+      URL_PARAMS.ORGANIZATIONS,
+      setSelectedOrganizations,
+    )
   }
 
   const handleSelectedProjectChange = (selectedProjects) => {
-    const queryParams = getURLParams()
+    updateSelectInputQueryParams(
+      selectedProjects,
+      URL_PARAMS.PROJECT,
+      URL_PARAMS.PROJECTS,
+      setSelectedProjects,
+    )
+  }
 
-    if (selectedProjects.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECTS)
-    } else {
-      const encodedProjects = selectedProjects.map((project) => encodeURIComponent(project))
-      queryParams.set(URL_PARAMS.PROJECTS, encodedProjects.join(','))
-    }
-    updateURLParams(queryParams)
-    setSelectedProjects(selectedProjects)
+  const handleDeleteCountry = (countryToBeDeleted) => {
+    const updatedCountries = selectedCountries.filter((country) => country !== countryToBeDeleted)
+
+    updateSelectInputQueryParams(
+      updatedCountries,
+      URL_PARAMS.COUNTRY,
+      URL_PARAMS.COUNTRIES,
+      setSelectedCountries,
+    )
+  }
+
+  const handleDeleteOrganization = (organizationToBeDeleted) => {
+    const updatedOrganizations = selectedOrganizations.filter(
+      (organization) => organization !== organizationToBeDeleted,
+    )
+
+    updateSelectInputQueryParams(
+      updatedOrganizations,
+      URL_PARAMS.ORGANIZATION,
+      URL_PARAMS.ORGANIZATIONS,
+      setSelectedOrganizations,
+    )
+  }
+
+  const handleDeleteProject = (projectToBeDeleted) => {
+    const updatedProjects = selectedProjects.filter((project) => project !== projectToBeDeleted)
+
+    updateSelectInputQueryParams(
+      updatedProjects,
+      URL_PARAMS.PROJECT,
+      URL_PARAMS.PROJECTS,
+      setSelectedProjects,
+    )
   }
 
   const formattedDate = (date) => {
@@ -635,6 +682,9 @@ export const FilterProjectsProvider = ({ children }) => {
         setSelectedProjects,
         displayedProjectNames,
         userIsMemberOfProjectByProjectName,
+        handleDeleteCountry,
+        handleDeleteOrganization,
+        handleDeleteProject,
       }}
     >
       {children}
