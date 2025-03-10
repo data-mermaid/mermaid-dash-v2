@@ -22,7 +22,7 @@ import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../gene
 import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
-import { pluralize } from '../../../helperFunctions/pluralize'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 import DownloadTableView from './DownloadTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
@@ -199,7 +199,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
               return (
                 <MermaidMenuItem key={key} value={key}>
                   {method.description}{' '}
-                  {`(${pluralize(surveyedMethodCount[key] || 0, 'Survey', 'Surveys')})`}
+                  {`(${pluralizeWordWithCount(surveyedMethodCount[key] || 0, 'Survey')})`}
                 </MermaidMenuItem>
               )
             })}

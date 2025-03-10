@@ -12,7 +12,7 @@ import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
 import { MuiTooltip } from '../../generic/MuiTooltip'
-import { pluralize } from '../../../helperFunctions/pluralize'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -135,7 +135,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
         <StyledWarningText>
           <IconInfo />{' '}
           <span>
-            {pluralize(
+            {pluralizeWordWithCount(
               projectsWithoutGFCRDataCount,
               'other filtered project does',
               'other filtered projects do',
