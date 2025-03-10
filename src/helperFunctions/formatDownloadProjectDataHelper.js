@@ -1,5 +1,8 @@
 import { DOWNLOAD_METHODS } from '../constants/constants'
 
+const getMethodSurveyCount = (projectRecords, selectedMethod) =>
+  projectRecords.filter((record) => record.protocols?.[selectedMethod]).length
+
 export const formatDownloadProjectDataHelper = (
   project,
   isMemberOfProject,
@@ -8,7 +11,7 @@ export const formatDownloadProjectDataHelper = (
 ) => {
   const methodDataSharing = DOWNLOAD_METHODS[selectedMethod]?.policy
   const dataSharingPolicy = project[methodDataSharing]
-  const surveyCount = project.records.length
+  const surveyCount = getMethodSurveyCount(project?.records || [], selectedMethod)
 
   if (isMemberOfProject) {
     return {
