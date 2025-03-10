@@ -435,7 +435,7 @@ const FilterPane = () => {
                 checked={showProjectsWithNoRecords}
               />
               <StyledLabel htmlFor="show-no-data" onClick={(e) => e.stopPropagation()}>
-                Show Projects With No Data
+                Show projects with no data
               </StyledLabel>
             </StyledClickableArea>
           </StyledCategoryContainer>

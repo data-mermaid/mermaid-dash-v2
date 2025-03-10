@@ -66,7 +66,7 @@ const TableControls = () => {
     <>
       <ButtonSecondaryWithMargin onClick={handleDownload}>
         <IconTrayDownload />
-        <span>Download</span>
+        <span>Download CSV</span>
       </ButtonSecondaryWithMargin>
       <StyledCSVLink
         data={tableContent}

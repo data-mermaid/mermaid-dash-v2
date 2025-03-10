@@ -85,7 +85,7 @@ export const autocompleteGroupNames = {
 }
 
 export const noDataText = {
-  noMethodData: 'No data',
+  noMethodData: 'No Data',
   noYearRange: 'No data to obtain year range',
   noTableData: 'No project data',
   noProjectsOnCurrentFilters: 'No projects match current filters',
