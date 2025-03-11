@@ -10,7 +10,7 @@ const StyledLoadingContainer = styled.div`
       ? 'relative'
       : 'absolute'}; // if the loader is in the metric pane, it needs relative positioning, otherwise in the map pane, it needs absolute.
   width: '20rem';
-  bottom: ${({ $isRelativelyPositioned }) => $isRelativelyPositioned ? 0 : '1.5rem'};
+  bottom: ${({ $isRelativelyPositioned }) => ($isRelativelyPositioned ? 0 : '1.5rem')};
   left: 1.5rem;
   padding: 0.8rem 1rem;
   z-index: 400;
@@ -23,7 +23,7 @@ const StyledLoadingContainer = styled.div`
     justify-content: center;
     background-color: ${theme.color.white};
     justify-self: center;
-    bottom: ${({ $isRelativelyPositioned }) => $isRelativelyPositioned ? 0 : '0.5rem'};
+    bottom: ${({ $isRelativelyPositioned }) => ($isRelativelyPositioned ? 0 : '0.5rem')};
     justify-self: center;
   `)}
 `
@@ -72,7 +72,7 @@ const LoadingIndicator = ({
     if (loadingProgressValue === 100) {
       setTimeout(() => {
         setShowLoadingIndicator(false)
-      }, 10000)
+      }, 7000)
     }
   }, [loadingProgressValue, setShowLoadingIndicator])
 
