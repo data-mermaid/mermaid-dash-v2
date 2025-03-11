@@ -71,17 +71,17 @@ const FilterPane = () => {
     setCountries,
     setDisplayedCountries,
     setDisplayedOrganizations,
-    setSelectedCountries,
-    setSelectedOrganizations,
     showYourData,
     showProjectsWithNoRecords,
     setShowProjectsWithNoRecords,
     selectedProjects,
-    setSelectedProjects,
     remainingDisplayedProjectNames,
     handleSelectedProjectChange,
     projectsSelectOnOpen,
     displayedProjectNames,
+    handleDeleteCountry,
+    handleDeleteOrganization,
+    handleDeleteProject,
   } = useContext(FilterProjectsContext)
 
   const [expandedSections, setExpandedSections] = useState({
@@ -139,47 +139,6 @@ const FilterPane = () => {
     if (!newEndDate || (isEndDateValid && isAfterBeforeDate)) {
       handleChangeSampleDateBefore(newEndDate)
     }
-  }
-
-  const handleDeleteCountry = (countryToBeDeleted) => {
-    const updatedCountries = selectedCountries.filter((country) => country !== countryToBeDeleted)
-    setSelectedCountries(updatedCountries)
-
-    const queryParams = getURLParams()
-    if (updatedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
-    } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
-    }
-    updateURLParams(queryParams)
-  }
-
-  const handleDeleteOrganization = (organizationToBeDeleted) => {
-    const updatedOrganizations = selectedOrganizations.filter(
-      (organization) => organization !== organizationToBeDeleted,
-    )
-    setSelectedOrganizations(updatedOrganizations)
-
-    const queryParams = getURLParams()
-    if (updatedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
-    } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
-    }
-    updateURLParams(queryParams)
-  }
-
-  const handleDeleteProject = (projectToBeDeleted) => {
-    const updatedProjects = selectedProjects.filter((project) => project !== projectToBeDeleted)
-    setSelectedProjects(updatedProjects)
-
-    const queryParams = getURLParams()
-    if (updatedProjects.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECTS)
-    } else {
-      queryParams.set(URL_PARAMS.PROJECTS, updatedProjects)
-    }
-    updateURLParams(queryParams)
   }
 
   const getCountriesAutocompleteGroup = (option) => {
