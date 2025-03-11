@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import theme from '../../../styles/theme'
 
 const LoadingBarContainer = styled.div`
   position: absolute;
   left: 0px;
   bottom: 0px;
-  background-color: #f2645a;
+  background-color: ${theme.color.callout};
   height: 4px;
   width: ${({ width }) => width}%;
   opacity: ${({ showLoadingBar }) => (showLoadingBar ? 1 : 0)};
