@@ -287,15 +287,16 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Applies method data sharing filters
           const filteredRecords = project.records.filter((record) => {
-            const recordHasSampleUnitsAndMatches = !methodDataSharingFilters.some((filter) => {
+            const hasSingleProtocol = Object.keys(record?.protocols).length === 1
+            const recordNotInOmittedFilterList = !methodDataSharingFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
-              return sampleUnitExists && isPolicyValueMatch
+              return sampleUnitExists && isPolicyValueMatch && hasSingleProtocol
             })
-            return recordHasSampleUnitsAndMatches
+
+            return recordNotInOmittedFilterList
           })
 
           return {
