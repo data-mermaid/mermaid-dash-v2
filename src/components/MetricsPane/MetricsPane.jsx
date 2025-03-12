@@ -1,21 +1,20 @@
 import { useEffect, useState, useMemo, useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import styled from 'styled-components'
-
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
 
 import {
   StyledMetricsWrapper,
   SummarizedMetrics,
-  MetricsCard,
   MultipleMetricCardsRow,
   DesktopToggleMetricsPaneButton,
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
   BiggerIconCaretUp,
   StyledChevronSpan,
+  MetricsCard,
+  MetricCardInlineText,
   MetricCardH3,
   MetricCardPBig,
   MetricCardPMedium,
@@ -23,17 +22,18 @@ import {
   DisplayedProjectsMetricsWrapper,
   ChartsWrapper,
   FollowToggleContainer,
+  FollowButton,
   MapAttributeRow,
+  CircleLoader,
 } from './MetricsPane.styles'
-import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { mapAttributeText, noDataText, tooltipText } from '../../constants/language'
 import { URL_PARAMS } from '../../constants/constants'
 
-import { ButtonSecondary } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
+import LoadingBar from '../MermaidDash/components/LoadingBar'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
@@ -46,12 +46,6 @@ import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 import { pluralizeWord } from '../../helperFunctions/pluralize'
-
-const FollowButton = styled(ButtonSecondary)`
-  height: 100%;
-  background-color: ${({ enableFollowScreen }) =>
-    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
-`
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -188,7 +182,21 @@ const MetricsPane = ({
       >
         <MetricsCard>
           <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
-          <MetricCardH3>{pluralizeWord(numSurveys || 0, 'Survey')}</MetricCardH3>
+          <MetricCardInlineText>
+            <CircleLoader showLoadingCircle={showLoadingIndicator && isDesktopWidth} />
+            <MetricCardH3>
+              {isDesktopWidth && showLoadingIndicator && 'Loading'}{' '}
+              {pluralizeWord(numSurveys || 0, 'Survey')}
+            </MetricCardH3>
+          </MetricCardInlineText>
+          {isDesktopWidth && (
+            <LoadingBar
+              showLoadingIndicator={showLoadingIndicator}
+              setShowLoadingIndicator={setShowLoadingIndicator}
+              currentProgress={projectData?.results?.length || 0}
+              finalProgress={projectData?.count || 0}
+            />
+          )}
         </MetricsCard>
         <MetricsCard>
           {isDesktopWidth ? (

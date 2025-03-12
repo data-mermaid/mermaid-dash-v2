@@ -47,7 +47,6 @@ import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
-import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
@@ -410,27 +409,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         setView={setView}
         projectDataCount={projectData?.count || 0}
       />
-      {isMobileWidth ? null : (
-        <LoadingIndicator
-          currentProgress={projectData?.results?.length || 0}
-          finalProgress={projectData?.count || 0}
-          showLoadingIndicator={showLoadingIndicator}
-          setShowLoadingIndicator={setShowLoadingIndicator}
-          isRelativelyPositioned={false}
-        />
-      )}
     </StyledMapContainer>
   )
 
   const table = (
     <StyledTableContainer>
       <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
-      <LoadingIndicator
-        currentProgress={projectData?.results?.length || 0}
-        finalProgress={projectData?.count || 0}
-        showLoadingIndicator={showLoadingIndicator}
-        setShowLoadingIndicator={setShowLoadingIndicator}
-      />
     </StyledTableContainer>
   )
 
