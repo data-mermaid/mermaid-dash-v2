@@ -35,9 +35,6 @@ export const FilterProjectsProvider = ({ children }) => {
   const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
-  const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
-    (method) => method.dataSharingOptions,
-  )
   const filteredSurveys = displayedProjects.flatMap((project) => project.records)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
@@ -104,6 +101,10 @@ export const FilterProjectsProvider = ({ children }) => {
         .getAll(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)[0]
         .split(',')
 
+      const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+        (method) => method.dataSharingOptions,
+      )
+
       const validOmittedMethodDataSharing = queryParamsOmittedMethodDataSharing.filter((option) => {
         return allDataSharingOptions.includes(option)
       })
@@ -140,7 +141,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleMethodDataSharingFilter()
     setFollowScreen()
     setShowProjectsWithNoData()
-  }, [getURLParams, updateURLParams, allDataSharingOptions])
+  }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
     (sampleEventId, projects) => {
@@ -289,9 +290,14 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
+          const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+            (method) => method.dataSharingOptions,
+          )
+
           const selectedMethodFilters = allDataSharingOptions.filter(
             (option) => !omittedMethodDataSharingFilters.includes(option),
           )
+
           const filteredRecords = project.records.filter((record) => {
             const recordHasSampleUnitAndPolicyMatch = selectedMethodFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
@@ -342,7 +348,6 @@ export const FilterProjectsProvider = ({ children }) => {
       isRecordWithinMapBounds,
       mapBbox,
       noDataProjects,
-      allDataSharingOptions,
     ],
   )
 
