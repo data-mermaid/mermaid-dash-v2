@@ -16,13 +16,17 @@ const isValidNumber = (num) => {
 }
 
 export const TimeSeriesBenthicCover = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
 
   const privateBenthicToggleOn =
-    privateBenthicFilters.some((filterLabel) => !methodDataSharingFilters.includes(filterLabel)) &&
-    otherBenthicFilters.every((filterLabel) => methodDataSharingFilters.includes(filterLabel))
+    privateBenthicFilters.some(
+      (filterLabel) => !omittedMethodDataSharingFilters.includes(filterLabel),
+    ) &&
+    otherBenthicFilters.every((filterLabel) =>
+      omittedMethodDataSharingFilters.includes(filterLabel),
+    )
 
   const groupedBenthicCategoryCountByYear = filteredSurveys.reduce(
     (accumulator, { sample_date, protocols }) => {

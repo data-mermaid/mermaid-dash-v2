@@ -11,11 +11,11 @@ import { NoDataChartView } from './NoDataChartView'
 const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
 export const TimeSeriesBleaching = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBleachingToggleOn =
-    !methodDataSharingFilters.includes('cb_3') &&
-    methodDataSharingFilters.includes('cb_2') &&
-    methodDataSharingFilters.includes('cb_1')
+    !omittedMethodDataSharingFilters.includes('cb_3') &&
+    omittedMethodDataSharingFilters.includes('cb_2') &&
+    omittedMethodDataSharingFilters.includes('cb_1')
 
   const groupedBleachingPercentageColonyCountByYear = filteredSurveys
     .filter((record) => !!record.protocols?.colonies_bleached)

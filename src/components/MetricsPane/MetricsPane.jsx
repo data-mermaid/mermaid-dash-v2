@@ -70,7 +70,7 @@ const MetricsPane = ({
     updateURLParams,
     selectedProject,
     setSelectedProject,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -158,12 +158,12 @@ const MetricsPane = ({
     </>
   )
 
-  const fishBeltFilterToggleOn = !methodDataSharingFilters.includes('bf_all')
+  const fishBeltFilterToggleOn = !omittedMethodDataSharingFilters.includes('bf_all')
   const benthicsFilterToggleOn = ['bl_all', 'bp_all', 'qbp_all'].some(
-    (filterLabel) => !methodDataSharingFilters.includes(filterLabel),
+    (filterLabel) => !omittedMethodDataSharingFilters.includes(filterLabel),
   )
-  const bleachingFilterToggleOn = !methodDataSharingFilters.includes('cb_all')
-  const habitatComplexityFilterToggleOn = !methodDataSharingFilters.includes('hc_all')
+  const bleachingFilterToggleOn = !omittedMethodDataSharingFilters.includes('cb_all')
+  const habitatComplexityFilterToggleOn = !omittedMethodDataSharingFilters.includes('hc_all')
 
   const noChartsToDisplay = (
     <>

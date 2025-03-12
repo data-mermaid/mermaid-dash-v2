@@ -20,12 +20,12 @@ function calculateMedian(values) {
 }
 
 export const TimeSeriesFishBiomass = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const medianFishBiomassDistributions = []
   const privateFishBeltToggleOn =
-    !methodDataSharingFilters.includes('bf_3') &&
-    methodDataSharingFilters.includes('bf_2') &&
-    methodDataSharingFilters.includes('bf_1')
+    !omittedMethodDataSharingFilters.includes('bf_3') &&
+    omittedMethodDataSharingFilters.includes('bf_2') &&
+    omittedMethodDataSharingFilters.includes('bf_1')
 
   const surveyedFishBiomassRecords = filteredSurveys
     .filter(
