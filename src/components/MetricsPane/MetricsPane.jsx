@@ -189,11 +189,14 @@ const MetricsPane = ({
               {pluralizeWord(numSurveys || 0, 'Survey')}
             </MetricCardH3>
           </MetricCardInlineText>
-          <LoadingBar
-            showLoadingBar={showLoadingIndicator && isDesktopWidth}
-            currentProgress={projectData?.results?.length || 0}
-            finalProgress={projectData?.count || 0}
-          />
+          {isDesktopWidth && (
+            <LoadingBar
+              showLoadingIndicator={showLoadingIndicator}
+              setShowLoadingIndicator={setShowLoadingIndicator}
+              currentProgress={projectData?.results?.length || 0}
+              finalProgress={projectData?.count || 0}
+            />
+          )}
         </MetricsCard>
         <MetricsCard>
           {isDesktopWidth ? (

@@ -7,30 +7,39 @@ const LoadingBarContainer = styled.div`
   position: absolute;
   left: 0px;
   bottom: 0px;
-  background-color: ${theme.color.callout};
+  background-color: ${theme.color.primaryColor};
   height: 4px;
-  width: ${({ width }) => width}%;
-  opacity: ${({ showLoadingBar }) => (showLoadingBar ? 1 : 0)};
-  transition:
-    width 1s ease-in-out,
-    opacity 1s ease-in-out;
+  width: ${({ $value }) => $value}%;
+  transition: width 1s ease-in-out;
 `
 
-const LoadingBar = ({ showLoadingBar, currentProgress, finalProgress }) => {
+const LoadingBar = ({
+  showLoadingIndicator,
+  setShowLoadingIndicator,
+  currentProgress,
+  finalProgress,
+}) => {
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (finalProgress === 0) {
-      return
+    if (finalProgress > 0) {
+      setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
     }
-    setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
   }, [currentProgress, finalProgress])
 
-  return <LoadingBarContainer width={loadingProgressValue} showLoadingBar={showLoadingBar} />
+  const _hideLoadingBarAfterTimeout = useEffect(() => {
+    if (loadingProgressValue === 100) {
+      const timeout = setTimeout(() => setShowLoadingIndicator(false), 2000)
+      return () => clearTimeout(timeout)
+    }
+  }, [loadingProgressValue, setShowLoadingIndicator])
+
+  return showLoadingIndicator === true && <LoadingBarContainer $value={loadingProgressValue} />
 }
 
 LoadingBar.propTypes = {
-  showLoadingBar: PropTypes.bool.isRequired,
+  showLoadingIndicator: PropTypes.bool.isRequired,
+  setShowLoadingIndicator: PropTypes.func.isRequired,
   currentProgress: PropTypes.number.isRequired,
   finalProgress: PropTypes.number.isRequired,
 }

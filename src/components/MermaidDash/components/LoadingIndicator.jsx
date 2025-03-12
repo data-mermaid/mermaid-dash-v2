@@ -44,6 +44,7 @@ const StyledProgressBar = styled.div`
   width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
+  transition: width 1s ease-in-out;
 `
 
 const StyledHeader = styled.header`
@@ -62,32 +63,32 @@ const LoadingIndicator = ({
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (finalProgress === 0) {
-      return // we cant divide by zero
+    if (finalProgress > 0) {
+      setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
     }
-    setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
   }, [currentProgress, finalProgress])
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
-      setTimeout(() => {
-        setShowLoadingIndicator(false)
-      }, 7000)
+      const timeout = setTimeout(() => setShowLoadingIndicator(false), 2000)
+      return () => clearTimeout(timeout)
     }
   }, [loadingProgressValue, setShowLoadingIndicator])
 
-  return showLoadingIndicator === true ? (
-    <StyledLoadingContainer $isRelativelyPositioned={isRelativelyPositioned}>
-      <StyledHeader>
-        {loadingProgressValue === 100
-          ? `Done ${loadingProgressValue}%`
-          : `Loading ${loadingProgressValue}%`}
-      </StyledHeader>
-      <StyledProgressBarContainer>
-        <StyledProgressBar $value={loadingProgressValue} />
-      </StyledProgressBarContainer>
-    </StyledLoadingContainer>
-  ) : null
+  return (
+    showLoadingIndicator === true && (
+      <StyledLoadingContainer $isRelativelyPositioned={isRelativelyPositioned}>
+        <StyledHeader>
+          {loadingProgressValue === 100
+            ? `Done ${loadingProgressValue}%`
+            : `Loading ${loadingProgressValue}%`}
+        </StyledHeader>
+        <StyledProgressBarContainer>
+          <StyledProgressBar $value={loadingProgressValue} />
+        </StyledProgressBarContainer>
+      </StyledLoadingContainer>
+    )
+  )
 }
 
 LoadingIndicator.propTypes = {
