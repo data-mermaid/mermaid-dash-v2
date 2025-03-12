@@ -12,8 +12,8 @@ const LoadingBarContainer = styled.div`
   width: ${({ width }) => width}%;
   opacity: ${({ showLoadingBar }) => (showLoadingBar ? 1 : 0)};
   transition:
-    width ease-in-out,
-    opacity ease-in-out;
+    width 1s ease-in-out,
+    opacity 1s ease-in-out;
 `
 
 const LoadingBar = ({ showLoadingBar, currentProgress, finalProgress }) => {
