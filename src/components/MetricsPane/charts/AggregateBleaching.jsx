@@ -9,11 +9,11 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
 export const AggregateBleaching = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBleachingToggleOn =
-    !methodDataSharingFilters.includes('cb_3') &&
-    methodDataSharingFilters.includes('cb_2') &&
-    methodDataSharingFilters.includes('cb_1')
+    !omittedMethodDataSharingFilters.includes('cb_3') &&
+    omittedMethodDataSharingFilters.includes('cb_2') &&
+    omittedMethodDataSharingFilters.includes('cb_1')
 
   const initialColoniesBleachedSummarizedBySeverity = {
     numColoniesTotal: 0,

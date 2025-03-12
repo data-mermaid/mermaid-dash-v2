@@ -60,7 +60,7 @@ const FilterPane = () => {
     handleSelectedOrganizationsChange,
     handleYourDataFilter,
     isAnyActiveFilters,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
     organizationsSelectOnOpen,
     projectData,
     remainingDisplayedCountries,
@@ -189,10 +189,10 @@ const FilterPane = () => {
 
     const foundMethod = COLLECTION_METHODS[methodName]
     const allDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).every((option) => {
-      return methodDataSharingFilters.includes(option)
+      return omittedMethodDataSharingFilters.includes(option)
     })
     const someDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).some((option) => {
-      return methodDataSharingFilters.includes(option)
+      return omittedMethodDataSharingFilters.includes(option)
     })
     inputElement.indeterminate =
       !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
@@ -211,7 +211,7 @@ const FilterPane = () => {
                     handleMethodDataSharingFilter({
                       target: {
                         name: dataSharingOptions[0],
-                        checked: methodDataSharingFilters.includes(dataSharingOptions[0]),
+                        checked: omittedMethodDataSharingFilters.includes(dataSharingOptions[0]),
                       },
                     })
                   }
@@ -221,7 +221,7 @@ const FilterPane = () => {
                     type="checkbox"
                     name={dataSharingOptions[0]}
                     onChange={handleMethodDataSharingFilter}
-                    checked={!methodDataSharingFilters.includes(dataSharingOptions[0])}
+                    checked={!omittedMethodDataSharingFilters.includes(dataSharingOptions[0])}
                     onClick={(e) => e.stopPropagation()}
                     ref={(inputElement) => isIndeterminate(inputElement, method)}
                   />
@@ -243,7 +243,7 @@ const FilterPane = () => {
                           target: {
                             method,
                             name: option,
-                            checked: methodDataSharingFilters.includes(option),
+                            checked: omittedMethodDataSharingFilters.includes(option),
                           },
                         })
                       }
@@ -252,7 +252,7 @@ const FilterPane = () => {
                         type="checkbox"
                         name={option}
                         id={option}
-                        checked={!methodDataSharingFilters.includes(option)}
+                        checked={!omittedMethodDataSharingFilters.includes(option)}
                         onChange={handleMethodDataSharingFilter}
                       />
                       <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>

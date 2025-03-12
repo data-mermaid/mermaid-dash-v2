@@ -9,11 +9,11 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
 export const AggregateFishBiomass = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateFishBeltToggleOn =
-    !methodDataSharingFilters.includes('bf_3') &&
-    methodDataSharingFilters.includes('bf_2') &&
-    methodDataSharingFilters.includes('bf_1')
+    !omittedMethodDataSharingFilters.includes('bf_3') &&
+    omittedMethodDataSharingFilters.includes('bf_2') &&
+    omittedMethodDataSharingFilters.includes('bf_1')
 
   const surveyFishbeltBiomassValues = filteredSurveys
     .map((record) => record.protocols?.beltfish?.biomass_kgha_avg)

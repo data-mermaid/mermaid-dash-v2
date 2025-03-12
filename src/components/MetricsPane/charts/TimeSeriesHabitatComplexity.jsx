@@ -9,11 +9,11 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 
 export const TimeSeriesHabitatComplexity = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateHabitatComplexityToggleOn =
-    !methodDataSharingFilters.includes('hc_3') &&
-    methodDataSharingFilters.includes('hc_2') &&
-    methodDataSharingFilters.includes('hc_1')
+    !omittedMethodDataSharingFilters.includes('hc_3') &&
+    omittedMethodDataSharingFilters.includes('hc_2') &&
+    omittedMethodDataSharingFilters.includes('hc_1')
 
   const surveyedHabitatComplexityRecords = filteredSurveys
     .filter(

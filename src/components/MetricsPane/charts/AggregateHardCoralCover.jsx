@@ -13,13 +13,13 @@ const START_BIN = 0
 const END_BIN = 100
 
 export const AggregateHardCoralCover = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
 
   const privateBenthicToggleOn =
-    privateBenthicFilters.some((filter) => !methodDataSharingFilters.includes(filter)) &&
-    otherBenthicFilters.every((filter) => methodDataSharingFilters.includes(filter))
+    privateBenthicFilters.some((filter) => !omittedMethodDataSharingFilters.includes(filter)) &&
+    otherBenthicFilters.every((filter) => omittedMethodDataSharingFilters.includes(filter))
 
   const hardCoralAveragesPerSurvey = filteredSurveys
     .map(({ protocols }) => {

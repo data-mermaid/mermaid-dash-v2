@@ -18,7 +18,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [selectedProjects, setSelectedProjects] = useState([])
   const [sampleDateAfter, setSampleDateAfter] = useState(null)
   const [sampleDateBefore, setSampleDateBefore] = useState(null)
-  const [methodDataSharingFilters, setMethodDataSharingFilters] = useState([])
+  const [omittedMethodDataSharingFilters, setOmittedMethodDataSharingFilters] = useState([])
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
   const queryParamsSampleEventId = queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
   const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
@@ -35,6 +35,9 @@ export const FilterProjectsProvider = ({ children }) => {
   const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
+  const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+    (method) => method.dataSharingOptions,
+  )
   const filteredSurveys = displayedProjects.flatMap((project) => project.records)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
@@ -93,24 +96,23 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const handleMethodDataSharingFilter = () => {
-      if (!queryParams.has(URL_PARAMS.METHOD_DATA_SHARING)) {
+      if (!queryParams.has(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)) {
         return
       }
 
-      const queryParamsMethodDataSharing = queryParams
-        .getAll(URL_PARAMS.METHOD_DATA_SHARING)[0]
+      const queryParamsOmittedMethodDataSharing = queryParams
+        .getAll(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)[0]
         .split(',')
-      const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
-        (method) => method.dataSharingOptions,
-      )
-      const validMethodDataSharing = queryParamsMethodDataSharing.filter((option) => {
+
+      const validOmittedMethodDataSharing = queryParamsOmittedMethodDataSharing.filter((option) => {
         return allDataSharingOptions.includes(option)
       })
-      setMethodDataSharingFilters(validMethodDataSharing)
-      if (validMethodDataSharing.length === 0) {
-        queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
+
+      setOmittedMethodDataSharingFilters(validOmittedMethodDataSharing)
+      if (validOmittedMethodDataSharing.length === 0) {
+        queryParams.delete(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)
       } else {
-        queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, validMethodDataSharing)
+        queryParams.set(URL_PARAMS.OMITTED_METHOD_DATA_SHARING, validOmittedMethodDataSharing)
       }
       updateURLParams(queryParams)
     }
@@ -138,7 +140,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleMethodDataSharingFilter()
     setFollowScreen()
     setShowProjectsWithNoData()
-  }, [getURLParams, updateURLParams])
+  }, [getURLParams, updateURLParams, allDataSharingOptions])
 
   const doesSelectedSampleEventPassFilters = useCallback(
     (sampleEventId, projects) => {
@@ -178,7 +180,7 @@ export const FilterProjectsProvider = ({ children }) => {
     const anyActiveSampleDateAfter = sampleDateAfter
     const anyActiveSampleDateBefore = sampleDateBefore
     const showYourDataOnly = showYourData
-    const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
+    const anyInactiveMethodDataSharing = omittedMethodDataSharingFilters.length > 0
     const followScreenEnabled = enableFollowScreen
 
     return Boolean(
@@ -199,7 +201,7 @@ export const FilterProjectsProvider = ({ children }) => {
     sampleDateAfter,
     sampleDateBefore,
     showYourData,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
     enableFollowScreen,
     showProjectsWithNoRecords,
   ])
@@ -287,15 +289,11 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
-            (method) => method.dataSharingOptions,
-          )
-
-          const validMethodFilters = allDataSharingOptions.filter(
-            (option) => !methodDataSharingFilters.includes(option),
+          const selectedMethodFilters = allDataSharingOptions.filter(
+            (option) => !omittedMethodDataSharingFilters.includes(option),
           )
           const filteredRecords = project.records.filter((record) => {
-            const recordHasSampleUnitAndPolicyMatch = validMethodFilters.some((filter) => {
+            const recordHasSampleUnitAndPolicyMatch = selectedMethodFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
@@ -335,7 +333,7 @@ export const FilterProjectsProvider = ({ children }) => {
       projectData.results,
       userIsMemberOfProject,
       mermaidUserData,
-      methodDataSharingFilters,
+      omittedMethodDataSharingFilters,
       sampleDateAfter,
       sampleDateBefore,
       showYourData,
@@ -344,6 +342,7 @@ export const FilterProjectsProvider = ({ children }) => {
       isRecordWithinMapBounds,
       mapBbox,
       noDataProjects,
+      allDataSharingOptions,
     ],
   )
 
@@ -376,7 +375,7 @@ export const FilterProjectsProvider = ({ children }) => {
     selectedOrganizations,
     sampleDateAfter,
     sampleDateBefore,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
     doesSelectedSampleEventPassFilters,
     setDisplayedProjects,
     showYourData,
@@ -561,7 +560,7 @@ export const FilterProjectsProvider = ({ children }) => {
       value.dataSharingOptions.includes(name),
     )
     const [allOption, ...subOptions] = foundMethod.dataSharingOptions
-    let updatedFilter = [...methodDataSharingFilters]
+    let updatedFilter = [...omittedMethodDataSharingFilters]
     if (name.includes('all')) {
       updatedFilter = checked
         ? updatedFilter.filter((method) => !foundMethod.dataSharingOptions.includes(method))
@@ -586,12 +585,12 @@ export const FilterProjectsProvider = ({ children }) => {
     updatedFilter = [...new Set(updatedFilter)]
     const queryParams = getURLParams()
     if (updatedFilter.length === 0) {
-      queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
+      queryParams.delete(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)
     } else {
-      queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, updatedFilter)
+      queryParams.set(URL_PARAMS.OMITTED_METHOD_DATA_SHARING, updatedFilter)
     }
     updateURLParams(queryParams)
-    setMethodDataSharingFilters(updatedFilter)
+    setOmittedMethodDataSharingFilters(updatedFilter)
   }
 
   const clearAllFilters = () => {
@@ -605,7 +604,7 @@ export const FilterProjectsProvider = ({ children }) => {
     setSelectedProjects([])
     setSampleDateAfter(null)
     setSampleDateBefore(null)
-    setMethodDataSharingFilters([])
+    setOmittedMethodDataSharingFilters([])
     setShowYourData(false)
     setEnableFollowScreen(false)
     setShowProjectsWithNoRecords(true)
@@ -653,7 +652,7 @@ export const FilterProjectsProvider = ({ children }) => {
         handleYourDataFilter,
         isAnyActiveFilters,
         mermaidUserData,
-        methodDataSharingFilters,
+        omittedMethodDataSharingFilters,
         organizationsSelectOnOpen,
         projectData,
         projectDataCount: projectData?.count || 0,

@@ -9,7 +9,7 @@ export const URL_PARAMS = {
   SAMPLE_DATE_BEFORE: 'sample_date_before',
   PROJECTS: 'projects',
   PROJECT: 'project',
-  METHOD_DATA_SHARING: 'omitted_method_data_sharing',
+  OMITTED_METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
   SHOW_NO_DATA_PROJECTS: 'show_no_data_projects',
   FISH_BIOMASS: 'fish_biomass',
