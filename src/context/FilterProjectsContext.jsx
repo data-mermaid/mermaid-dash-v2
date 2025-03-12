@@ -287,16 +287,22 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
+          const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+            (method) => method.dataSharingOptions,
+          )
+
+          const validMethodFilters = allDataSharingOptions.filter(
+            (option) => !methodDataSharingFilters.includes(option),
+          )
           const filteredRecords = project.records.filter((record) => {
-            const hasSingleProtocol = Object.keys(record?.protocols).length === 1
-            const recordNotInOmittedFilterList = !methodDataSharingFilters.some((filter) => {
+            const recordHasSampleUnitAndPolicyMatch = validMethodFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
-              return sampleUnitExists && isPolicyValueMatch && hasSingleProtocol
+              return sampleUnitExists && isPolicyValueMatch
             })
 
-            return recordNotInOmittedFilterList
+            return recordHasSampleUnitAndPolicyMatch
           })
 
           return {
