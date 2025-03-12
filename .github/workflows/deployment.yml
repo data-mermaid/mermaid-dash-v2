@@ -4,12 +4,11 @@ on:
   push:
     branches:
       - develop
-      - 165-gh-actions
     tags:
       - 'v*.*.*'
 jobs:
   deploy_develop:
-    if: startsWith(github.ref, 'refs/heads/develop') || startsWith(github.ref, 'refs/heads/165-gh-actions')
+    if: startsWith(github.ref, 'refs/heads/develop')
     uses: ./.github/workflows/_deploy.yml
     secrets: inherit
     with:
