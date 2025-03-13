@@ -99,6 +99,7 @@ export const StyledDateRangeContainer = styled.div`
   gap: 1rem;
   ${mediaQueryForMediumDesktop(css`
     flex-direction: column;
+    margin-left: 1rem;
   `)}
 `
 
