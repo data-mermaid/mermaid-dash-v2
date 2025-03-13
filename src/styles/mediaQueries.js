@@ -25,6 +25,12 @@ const mediaQueryForDesktopUp = (content) => css`
     ${content};
   }
 `
+
+const mediaQueryForMediumDesktop = (content) => css`
+  @media (max-width: 1560px) {
+    ${content};
+  }
+`
 const mediaQueryForBigDesktopUp = (content) => css`
   @media (min-width: 1800px) {
     ${content};
@@ -45,5 +51,6 @@ export {
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
   mediaQueryForDesktopUp,
+  mediaQueryForMediumDesktop,
   hoverState,
 }

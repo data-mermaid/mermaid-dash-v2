@@ -1,7 +1,11 @@
 import { TextField } from '@mui/material'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
-import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import {
+  hoverState,
+  mediaQueryForMediumDesktop,
+  mediaQueryTabletLandscapeOnly,
+} from '../../styles/mediaQueries'
 import { css } from 'styled-components'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 
@@ -93,6 +97,9 @@ export const StyledDateRangeContainer = styled.div`
   margin-right: 1rem;
   margin-top: 1rem;
   gap: 1rem;
+  ${mediaQueryForMediumDesktop(css`
+    flex-direction: column;
+  `)}
 `
 
 export const StyledDateInputContainer = styled.div`
