@@ -15,16 +15,9 @@ import { MAIN_MAP_ID } from '../constants/constants'
 
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
-const defaultLon = -79
-const defaultLat = 32
+const defaultLon = 166
+const defaultLat = -8
 const defaultMapZoom = 1
-
-const basemapLayerStyle = {
-  id: 'basemap-layer',
-  type: 'raster',
-  minzoom: 0,
-  maxzoom: 22,
-}
 
 const sitesClusterLayer = {
   type: 'circle',
@@ -290,7 +283,7 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
           latitude: initialMapCenter?.[0] ?? defaultLat,
           zoom: initialMapZoom ?? defaultMapZoom,
         }}
-        mapStyle="https://demotiles.maplibre.org/style.json"
+        mapStyle={`https://api.maptiler.com/maps/satellite/style.json?key=${import.meta.env.VITE_REACT_APP_MAP_TILER_API_KEY}`}
         onLoad={handleMapLoad}
         onMoveEnd={handleMoveEnd}
         onClick={handleClick}
@@ -302,15 +295,6 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
         {viewAndZoomControlsWrapper}
         {isDesktopWidth && <NavigationControl showCompass={false} position="bottom-right" />}
 
-        <Source
-          id="basemap-source"
-          type="raster"
-          tiles={[
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          ]}
-        >
-          <Layer {...basemapLayerStyle} />
-        </Source>
         <Source id="sites-source" data={sitesFeatureClass} {...sitesSource}>
           <Layer id="sites-cluster-layer" {...sitesClusterLayer} />
           <Layer id="sites-cluster-count-layer" {...sitesClusterCountLayer} />
