@@ -5,7 +5,6 @@ import theme from '../../styles/theme'
 const selectCustomStyles = {
   '&.MuiInputBase-root': {
     minHeight: '3.5rem',
-    maxWidth: '30rem',
   },
   '& .MuiSelect-select': {
     paddingRight: '1rem',

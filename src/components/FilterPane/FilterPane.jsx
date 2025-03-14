@@ -15,7 +15,6 @@ import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
 import {
   ExpandableFilterRowContainer,
-  ShowMoreFiltersContainer,
   StyledCategoryContainer,
   StyledClickableArea,
   StyledDateField,
@@ -310,11 +309,8 @@ const FilterPane = () => {
         onChange={handleSelectedProjectChange}
         onDelete={handleDeleteProject}
       />
-      <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
-        Show {showMoreFilters ? 'fewer' : 'more'} filters
-      </StyledExpandFilters>
       {showMoreFilters ? (
-        <ShowMoreFiltersContainer>
+        <div>
           <StyledHeader>Date Range</StyledHeader>
           <StyledDateRangeContainer>
             <StyledDateInputContainer>
@@ -398,8 +394,11 @@ const FilterPane = () => {
               </StyledLabel>
             </StyledClickableArea>
           </StyledCategoryContainer>
-        </ShowMoreFiltersContainer>
+        </div>
       ) : null}
+      <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
+        Show {showMoreFilters ? 'fewer' : 'more'} filters
+      </StyledExpandFilters>
     </StyledFilterPaneContainer>
   )
 }

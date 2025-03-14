@@ -48,11 +48,6 @@ export const StyledExpandFilters = styled.button`
   padding: 0;
 `
 
-export const ShowMoreFiltersContainer = styled.div`
-  padding: 0.5rem 0 1.5rem 0.8rem;
-  background-color: ${theme.color.grey4};
-`
-
 export const StyledProjectNameFilter = styled(TextField)`
   width: 100%;
   background-color: ${theme.color.white};
@@ -80,7 +75,6 @@ export const StyledProjectListContainer = styled.div`
 `
 
 export const StyledMethodListContainer = styled.div`
-  margin-right: 1rem;
   border: 1px solid ${theme.color.grey0};
 `
 
@@ -94,7 +88,6 @@ export const StyledUnorderedList = styled.ul`
 export const StyledDateRangeContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-right: 1rem;
   margin-top: 1rem;
   gap: 1rem;
   ${mediaQueryForMediumDesktop(css`
@@ -150,7 +143,6 @@ export const StyledLabel = styled.label`
 export const StyledCategoryContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
-  margin-right: 1rem;
 `
 
 export const StyledLoginToViewContainer = styled(StyledCategoryContainer)`

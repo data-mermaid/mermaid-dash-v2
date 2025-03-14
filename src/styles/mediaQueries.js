@@ -27,7 +27,7 @@ const mediaQueryForDesktopUp = (content) => css`
 `
 
 const mediaQueryForMediumDesktop = (content) => css`
-  @media (max-width: 1560px) {
+  @media (max-width: 1510px) {
     ${content};
   }
 `
