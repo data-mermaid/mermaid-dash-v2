@@ -1,29 +1,20 @@
+import { useContext } from 'react' // React and Third-Party Hooks
+
 import PropTypes from 'prop-types'
 import { matchSorter } from 'match-sorter'
-import styled from 'styled-components'
-import theme from '../../styles/theme'
+import { Autocomplete } from '@mui/material' // Third-Party Libraries
+
+import { FilterProjectsContext } from '../../context/FilterProjectsContext' // Context
+
 import { IconClose } from '../../assets/icons'
-import { Autocomplete, TextField } from '@mui/material'
-import { MermaidChip, MermaidListSubheader, MermaidMenuItem } from './MermaidMui'
-import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { useContext } from 'react'
-import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
+import { IconUserCircle } from '../../assets/dashboardOnlyIcons' // Assets
+
+import { MermaidChip, MermaidListSubheader, MermaidMenuItem, StyledTextField } from './MermaidMui' // Custom Components
 
 const deleteIconSize = {
   height: '15px',
   width: '15px',
 }
-
-const StyledTextField = styled(TextField)`
-  & .MuiInputBase-root {
-    background-color: ${theme.color.white};
-    border-radius: 0;
-    font-size: ${theme.typography.defaultFontSize};
-    font-family: ${theme.typography.fontFamily};
-    color: ${theme.color.textColor};
-    border: 1px solid ${theme.color.grey0};
-  }
-`
 
 const AutocompleteCheckbox = ({
   selectedValues,
@@ -82,11 +73,15 @@ const AutocompleteCheckbox = ({
 
         return (
           <MermaidMenuItem key={key} {...optionProps}>
-            <input type="checkbox" checked={selected} readOnly />
-            {option}{' '}
-            {userIsMemberOfProjectByProjectName(option, mermaidUserData) ? (
-              <IconUserCircle />
-            ) : null}
+            <div className="menu-item-content">
+              <input className="menu-item-checkbox" type="checkbox" checked={selected} readOnly />
+              <span className="menu-item-text">
+                {option}
+                {userIsMemberOfProjectByProjectName(option, mermaidUserData) ? (
+                  <IconUserCircle />
+                ) : null}
+              </span>
+            </div>
           </MermaidMenuItem>
         )
       }}
