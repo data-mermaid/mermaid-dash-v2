@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
@@ -186,6 +186,7 @@ export const TimeSeriesBleaching = () => {
           <ChartSubtitle>{Math.round(totalSurveys).toLocaleString()} Colonies</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateBleachingToggleOn ? (
         <PrivateChartView />
       ) : totalSurveys > 0 ? (

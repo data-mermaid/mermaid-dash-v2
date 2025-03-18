@@ -1,7 +1,7 @@
 import Plot from 'react-plotly.js'
 import PropTypes from 'prop-types'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
@@ -67,6 +67,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
           <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {benthicPercentageData ? (
         <Plot
           data={plotlyDataConfiguration}

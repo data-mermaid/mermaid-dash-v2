@@ -1,7 +1,7 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
@@ -113,6 +113,7 @@ export const TimeSeriesHabitatComplexity = () => {
           </ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateHabitatComplexityToggleOn ? (
         <PrivateChartView />
       ) : surveyedHabitatComplexityRecords.length > 0 ? (

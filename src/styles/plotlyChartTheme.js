@@ -68,7 +68,7 @@ const plotlyChartTheme = {
       l: 50,
       r: 30,
       b: 40,
-      t: 50,
+      t: 55,
     },
     xaxis: {
       fixedrange: true,

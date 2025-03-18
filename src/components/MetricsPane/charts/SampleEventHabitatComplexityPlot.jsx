@@ -1,7 +1,7 @@
 import Plot from 'react-plotly.js'
 import PropTypes from 'prop-types'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import lowHabIcon from '../../../assets/low-hb-icon.png'
 import mediumHabIcon from '../../../assets/medium-hb-icon.png'
@@ -128,6 +128,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
           <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {habitatComplexityScore ? (
         <Plot
           data={plotlyDataConfiguration}
