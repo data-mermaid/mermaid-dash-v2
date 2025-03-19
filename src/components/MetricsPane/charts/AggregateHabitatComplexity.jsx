@@ -29,6 +29,7 @@ export const AggregateHabitatComplexity = () => {
       xbins: {
         size: 1,
       },
+      hovertemplate: '<b>%{x}</b><br>%{y} surveys',
     },
   ]
   const plotlyLayoutConfiguration = {

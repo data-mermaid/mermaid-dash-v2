@@ -111,7 +111,7 @@ export const TimeSeriesBenthicCover = () => {
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: '%{x}, %{y:.2f}',
+        hovertemplate: `<b>${category}</b><br>%{x}<br>%{y:.1f}%<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))

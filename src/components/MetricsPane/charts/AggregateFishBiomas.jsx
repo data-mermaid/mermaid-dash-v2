@@ -31,7 +31,7 @@ export const AggregateFishBiomass = () => {
         color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: 0, end: 5000, size: 100 },
-      hovertemplate: '%{x} kg/ha<br>%{y} surveys',
+      hovertemplate: '<b>%{x}kg/ha</b><br>%{y} surveys',
       showlegend: false,
     },
     {
@@ -42,7 +42,7 @@ export const AggregateFishBiomass = () => {
         color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: 5000, end: 5100, size: 100 },
-      hovertemplate: '5000+ kg/ha<br>%{y} surveys',
+      hovertemplate: '5000+kg/ha<br>%{y} surveys',
       showlegend: false,
     },
   ].filter((trace) => trace.x && trace.x.length > 0)

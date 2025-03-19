@@ -85,7 +85,7 @@ export const TimeSeriesFishBiomass = () => {
     type: 'bar',
     name: rule,
     marker: { color: plotlyChartTheme.chartCategoryType.managementRuleColorMap[rule] },
-    hovertemplate: '%{x}, %{y:.2f}',
+    hovertemplate: `<b>${rule}</b><br>%{x}<br>%{y:.1f}kg/ha<extra></extra>`,
   }))
 
   const plotlyLayoutConfiguration = {

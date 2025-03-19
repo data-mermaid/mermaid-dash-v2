@@ -79,18 +79,24 @@ export const AggregateHardCoralCover = () => {
   })
 
   const plotlyDataConfiguration = binStartValues
-    .map((binStartValue, index) => ({
-      x: hardCoralAveragesPerSurvey.filter(
-        (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
-      ),
-      type: 'histogram',
-      name: '',
-      marker: {
-        color: binColors[index],
-      },
-      xbins: { start: binStartValue, end: binStartValue + BIN_SIZE, size: BIN_SIZE },
-      showlegend: false,
-    }))
+    .map((binStartValue, index) => {
+      const binEndValue = binStartValue + BIN_SIZE
+      const binEndValueDisplay = binEndValue - 0.1
+
+      return {
+        x: hardCoralAveragesPerSurvey.filter(
+          (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
+        ),
+        type: 'histogram',
+        name: '',
+        marker: {
+          color: binColors[index],
+        },
+        xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
+        hovertemplate: `<b>${binStartValue} - ${binEndValueDisplay}</b>%<br>%{y} surveys`,
+        showlegend: false,
+      }
+    })
     .filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
@@ -99,7 +105,7 @@ export const AggregateHardCoralCover = () => {
       ...plotlyChartTheme.layout.xaxis,
       title: {
         ...plotlyChartTheme.layout.xaxis.title,
-        text: '% Hard Coral Cover',
+        text: 'Hard coral cover (%)',
       },
       tickvals: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
     },

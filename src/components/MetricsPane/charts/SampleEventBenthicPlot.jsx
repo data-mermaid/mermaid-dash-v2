@@ -29,10 +29,11 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
         x: [1],
         y: [value / 100],
         type: 'bar',
-        name: `${name} (${value}%)`,
+        name: name,
         marker: {
           color: color,
         },
+        hovertemplate: `<b>${name}</b><br>%{y}<extra></extra>`,
       }
     })
 

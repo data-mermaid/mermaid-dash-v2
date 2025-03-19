@@ -104,6 +104,7 @@ export const AggregateBleaching = () => {
       xbins: {
         size: 100,
       },
+      hovertemplate: '<b>%{x}</b><br>%{y:.1f} colonies',
     },
   ]
 

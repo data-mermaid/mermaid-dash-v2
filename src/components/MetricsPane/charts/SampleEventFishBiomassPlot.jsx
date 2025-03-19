@@ -45,6 +45,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       xbins: {
         size: 100,
       },
+      hovertemplate: '<b>%{x}</b><br>%{y}kg/ha<extra></extra>',
     },
   ]
 

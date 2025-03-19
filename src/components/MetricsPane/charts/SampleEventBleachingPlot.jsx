@@ -45,6 +45,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
       marker: {
         color: color,
       },
+      hovertemplate: `<b>${category}</b><br>%{y}<extra></extra>`,
     }))
     .filter((trace) => trace.y.some((value) => value > 0))
 

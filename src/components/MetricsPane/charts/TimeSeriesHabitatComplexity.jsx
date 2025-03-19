@@ -82,7 +82,7 @@ export const TimeSeriesHabitatComplexity = () => {
       type: 'bar',
       name: score,
       marker: { color: plotlyChartTheme.chartCategoryType.habitatComplexityColorMap[score] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: `<b>Score: ${score}</b><br>%{x}<br>%{y:.1f}%<extra></extra>`,
     }))
 
   const plotlyLayoutConfiguration = {
@@ -97,7 +97,7 @@ export const TimeSeriesHabitatComplexity = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of Surveys' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of surveys' },
     },
     showlegend: true,
     legend: plotlyChartTheme.horizontalLegend,

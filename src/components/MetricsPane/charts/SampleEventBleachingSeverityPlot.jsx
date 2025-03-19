@@ -41,6 +41,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `Normal (${percentNormal}%)`,
       marker: { color: bleachingColor['Normal'] },
+      hovertemplate: '<b>Normal</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -48,6 +49,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `Pale (${percentPale}%)`,
       marker: { color: bleachingColor['Pale'] },
+      hovertemplate: '<b>Pale</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -55,6 +57,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `0-20% bleached (${percent20}%)`,
       marker: { color: bleachingColor['0-20%'] },
+      hovertemplate: '<b>0-20% bleached</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -62,6 +65,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `20-50% bleached (${percent50}%)`,
       marker: { color: bleachingColor['20-50%'] },
+      hovertemplate: '<b>20-50% bleached</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -69,6 +73,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `50-80% bleached (${percent80}%)`,
       marker: { color: bleachingColor['50-80%'] },
+      hovertemplate: '<b>50-80% bleached</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -76,6 +81,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `80-100% bleached (${percent100}%)`,
       marker: { color: bleachingColor['80-100%'] },
+      hovertemplate: '<b>80-100% bleached</b><br>%{y}<extra></extra>',
     },
     {
       x: [1],
@@ -83,6 +89,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       type: 'bar',
       name: `Recently dead (${percentDead}%)`,
       marker: { color: bleachingColor['Dead'] },
+      hovertemplate: '<b>Recently dead</b><br>%{y}<extra></extra>',
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 

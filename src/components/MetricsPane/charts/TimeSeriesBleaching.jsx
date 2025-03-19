@@ -96,7 +96,7 @@ export const TimeSeriesBleaching = () => {
       name: 'Normal',
       type: 'bar',
       marker: { color: bleachingColor.Normal },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>Normal</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -106,7 +106,7 @@ export const TimeSeriesBleaching = () => {
       name: 'Pale',
       type: 'bar',
       marker: { color: bleachingColor.Pale },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>Pale</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -116,7 +116,7 @@ export const TimeSeriesBleaching = () => {
       name: '0-20%',
       type: 'bar',
       marker: { color: bleachingColor['0-20%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>0-20%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -126,7 +126,7 @@ export const TimeSeriesBleaching = () => {
       name: '20-50%',
       type: 'bar',
       marker: { color: bleachingColor['20-50%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>20-50%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -136,7 +136,7 @@ export const TimeSeriesBleaching = () => {
       name: '50-80%',
       type: 'bar',
       marker: { color: bleachingColor['50-80%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>50-80%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -146,7 +146,7 @@ export const TimeSeriesBleaching = () => {
       name: '80-100%',
       type: 'bar',
       marker: { color: bleachingColor['80-100%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>80-100%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
     {
       x: years,
@@ -156,7 +156,7 @@ export const TimeSeriesBleaching = () => {
       name: 'Dead',
       type: 'bar',
       marker: { color: bleachingColor.Dead },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate: '<b>Dead</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
@@ -172,7 +172,7 @@ export const TimeSeriesBleaching = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of Colonies' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of colonies' },
     },
     showlegend: true,
     legend: plotlyChartTheme.horizontalLegend,

@@ -16,13 +16,21 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
   const habitatComplexityScore = habitatComplexityData?.score_avg_avg
 
   const plotlyDataConfiguration = [
-    { x: [0, 5], y: [0, 0], type: 'scatter', mode: 'lines', line: { color: 'black', width: 4 } },
+    {
+      x: [0, 5],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      line: { color: 'black', width: 4 },
+      hoverinfo: 'skip',
+    },
     ...[0, 1, 2, 3, 4, 5].map((x) => ({
       x: [x, x],
       y: [-0.05, 0.05],
       type: 'scatter',
       mode: 'lines',
       line: { color: 'black', width: 4 },
+      hoverinfo: 'skip',
     })),
     {
       x: [habitatComplexityScore, habitatComplexityScore],
@@ -30,6 +38,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       type: 'scatter',
       mode: 'lines',
       line: { color: '#70aae6', width: 4 },
+      hoverinfo: 'skip',
     },
     {
       x: [habitatComplexityScore],
@@ -37,6 +46,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       type: 'scatter',
       mode: 'markers',
       marker: { color: '#70aae6', size: 20 },
+      hoverinfo: 'skip',
     },
   ]
 
