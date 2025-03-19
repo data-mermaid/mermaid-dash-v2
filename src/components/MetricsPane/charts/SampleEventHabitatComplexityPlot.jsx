@@ -8,11 +8,12 @@ import mediumHabIcon from '../../../assets/medium-hb-icon.png'
 import highHabIcon from '../../../assets/high-hb-icon.png'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const chartTheme = plotlyChartTheme
 
 export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
-  const totalSurveys = habitatComplexityData?.sample_unit_count ?? 0
+  const totalSampleUnits = habitatComplexityData?.sample_unit_count ?? 0
   const habitatComplexityScore = habitatComplexityData?.score_avg_avg
 
   const plotlyDataConfiguration = [
@@ -135,7 +136,9 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         {habitatComplexityScore && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>
+            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+          </ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

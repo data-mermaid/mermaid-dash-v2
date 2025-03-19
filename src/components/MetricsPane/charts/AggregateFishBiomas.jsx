@@ -51,7 +51,7 @@ export const AggregateFishBiomass = () => {
         color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
-      hovertemplate: `Bin: ${binStartValue} - ${binEndValueDisplay}kg/ha<br>%{y:,} ${surveyCountText}`,
+      hovertemplate: `Bin: ${binStartValue} - ${binEndValueDisplay} kg/ha<br>%{y:,} ${surveyCountText}`,
       showlegend: false,
     }
   })

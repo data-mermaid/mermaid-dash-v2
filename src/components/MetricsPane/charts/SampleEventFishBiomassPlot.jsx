@@ -5,6 +5,7 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const chartTheme = plotlyChartTheme
 const fishTropicGroupKey = {
@@ -20,7 +21,7 @@ const fishTropicGroupCategories = Object.keys(chartTheme.chartCategoryType.fishT
 const fishTropicGroupColors = Object.values(chartTheme.chartCategoryType.fishTropicGroupColorMap)
 
 export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
-  const totalSurveys = fishbeltData?.sample_unit_count ?? 0
+  const totalSampleUnits = fishbeltData?.sample_unit_count ?? 0
   const fishBiomassTropicGroupData = fishbeltData?.biomass_kgha_trophic_group_avg
 
   const fishTropicGroupValues = fishTropicGroupCategories.map((category) => {
@@ -45,7 +46,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       xbins: {
         size: 100,
       },
-      hovertemplate: '<b>%{x}</b><br>%{y}kg/ha<extra></extra>',
+      hovertemplate: '%{x}<br>%{y:,.0f} kg/ha<extra></extra>',
     },
   ]
 
@@ -75,7 +76,9 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       <TitlesWrapper>
         <MetricCardH3>Fish Biomass</MetricCardH3>
         {fishBiomassTropicGroupData && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>
+            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+          </ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
