@@ -7,6 +7,11 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+
+const BIN_SIZE = 100
+const START_BIN = 0
+const END_BIN = 5000
 
 export const AggregateFishBiomass = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -22,27 +27,46 @@ export const AggregateFishBiomass = () => {
   const maxXValue = Math.max(...surveyFishbeltBiomassValues)
   const hasValuesAbove5000 = maxXValue > 5000
 
-  const plotlyDataConfiguration = [
-    {
-      x: surveyFishbeltBiomassValues.filter((value) => value <= 5000),
+  const binStartValues = Array.from(
+    { length: (END_BIN - START_BIN) / BIN_SIZE },
+    (_, index) => START_BIN + index * BIN_SIZE,
+  )
+  const filtered5000OrMoreSurveys = surveyFishbeltBiomassValues
+    .filter((value) => value > 5000)
+    .map(() => 5000)
+
+  const lessThan5000Data = binStartValues.map((binStartValue) => {
+    const binEndValue = binStartValue + BIN_SIZE
+    const binEndValueDisplay = binEndValue - 0.1
+    const xValues = surveyFishbeltBiomassValues.filter(
+      (value) => value <= 5000 && value >= binStartValue && value < binEndValue,
+    )
+    const surveyCountText = pluralizeWord(xValues.length, 'survey')
+
+    return {
+      x: xValues,
       type: 'histogram',
       name: '',
       marker: {
         color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
-      xbins: { start: 0, end: 5000, size: 100 },
-      hovertemplate: '<b>%{x}kg/ha</b><br>%{y} surveys',
+      xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
+      hovertemplate: `Bin: ${binStartValue} - ${binEndValueDisplay}kg/ha<br>%{y:,} ${surveyCountText}`,
       showlegend: false,
-    },
+    }
+  })
+
+  const plotlyDataConfiguration = [
+    ...lessThan5000Data,
     {
-      x: surveyFishbeltBiomassValues.filter((value) => value > 5000).map(() => 5000),
+      x: filtered5000OrMoreSurveys,
       type: 'histogram',
       name: '',
       marker: {
         color: plotlyChartTheme.aggregateCharts.default.marker.color,
       },
       xbins: { start: 5000, end: 5100, size: 100 },
-      hovertemplate: '5000+kg/ha<br>%{y} surveys',
+      hovertemplate: `Bin: 5000+kg/ha<br>%{y} ${pluralizeWord(filtered5000OrMoreSurveys.length, 'survey')}`,
       showlegend: false,
     },
   ].filter((trace) => trace.x && trace.x.length > 0)
@@ -68,10 +92,10 @@ export const AggregateFishBiomass = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
+        <MetricCardH3>Fish Biomass</MetricCardH3>
         {!privateFishBeltToggleOn && (
           <ChartSubtitle>
-            {surveyFishbeltBiomassValues.length.toLocaleString()} Surveys
+            {`${pluralizeWordWithCount(surveyFishbeltBiomassValues.length || 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

@@ -10,6 +10,7 @@ import { NoDataChartView } from './NoDataChartView'
 import { IconHelpCircle } from '../../../assets/icons'
 import { IconButton } from '../../generic'
 import HardCoralInfoModal from './HardCoralInfoModal'
+import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const BIN_SIZE = 2
 const START_BIN = 0
@@ -88,18 +89,20 @@ export const AggregateHardCoralCover = () => {
     .map((binStartValue, index) => {
       const binEndValue = binStartValue + BIN_SIZE
       const binEndValueDisplay = binEndValue - 0.1
+      const xValues = hardCoralAveragesPerSurvey.filter(
+        (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
+      )
+      const surveyCountText = pluralizeWord(xValues.length, 'survey')
 
       return {
-        x: hardCoralAveragesPerSurvey.filter(
-          (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
-        ),
+        x: xValues,
         type: 'histogram',
         name: '',
         marker: {
           color: binColors[index],
         },
         xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
-        hovertemplate: `<b>${binStartValue} - ${binEndValueDisplay}</b>%<br>%{y} surveys`,
+        hovertemplate: `Bin: ${binStartValue} - ${binEndValueDisplay}%<br>%{y:,} ${surveyCountText}`,
         showlegend: false,
       }
     })
@@ -138,7 +141,7 @@ export const AggregateHardCoralCover = () => {
           </MetricCardH3>
           {!privateBenthicToggleOn && (
             <ChartSubtitle>
-              {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
+              {`${pluralizeWordWithCount(hardCoralAveragesPerSurvey.length || 0, 'Survey')}`}
             </ChartSubtitle>
           )}
         </TitlesWrapper>
