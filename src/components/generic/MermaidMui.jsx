@@ -1,5 +1,13 @@
-import { Chip, FormControl, OutlinedInput, MenuItem, Select, ListSubheader } from '@mui/material'
 import styled from 'styled-components'
+import {
+  Chip,
+  FormControl,
+  OutlinedInput,
+  MenuItem,
+  Select,
+  ListSubheader,
+  TextField,
+} from '@mui/material'
 import theme from '../../styles/theme'
 
 const selectCustomStyles = {
@@ -20,6 +28,17 @@ const selectCustomStyles = {
     },
   },
 }
+
+export const StyledTextField = styled(TextField)`
+  & .MuiInputBase-root {
+    background-color: ${theme.color.white};
+    border-radius: 0;
+    font-size: ${theme.typography.defaultFontSize};
+    font-family: ${theme.typography.fontFamily};
+    color: ${theme.color.textColor};
+    border: 1px solid ${theme.color.grey0};
+  }
+`
 
 export const MermaidFormControl = styled(FormControl)`
   &.MuiFormControl-root {
@@ -53,7 +72,21 @@ export const MermaidChip = styled(Chip)`
 `
 
 export const MermaidMenuItem = styled(MenuItem)`
-  &.MuiMenuItem-root {
+  .menu-item-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 5px;
+    width: 100%;
+  }
+
+  .menu-item-checkbox {
+    margin-top: 5px;
+  }
+
+  .menu-item-text {
+    flex: 1;
+    word-break: break-word;
+    white-space: normal;
     font-size: ${theme.typography.defaultFontSize};
   }
 `
