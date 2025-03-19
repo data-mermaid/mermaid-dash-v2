@@ -7,6 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 export const TimeSeriesHabitatComplexity = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -82,7 +83,7 @@ export const TimeSeriesHabitatComplexity = () => {
       type: 'bar',
       name: score,
       marker: { color: plotlyChartTheme.chartCategoryType.habitatComplexityColorMap[score] },
-      hovertemplate: `<b>Score: ${score}</b><br>%{x}<br>%{y:.1f}%<extra></extra>`,
+      hovertemplate: `Complexity score: ${score}<br>Year: %{x}<br>%{y:.1f}% of surveys<extra></extra>`,
     }))
 
   const plotlyLayoutConfiguration = {
@@ -100,7 +101,16 @@ export const TimeSeriesHabitatComplexity = () => {
       title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of surveys' },
     },
     showlegend: true,
-    legend: plotlyChartTheme.horizontalLegend,
+    legend: {
+      ...plotlyChartTheme.horizontalLegend,
+      title: {
+        text: 'Complexity score:',
+        side: 'top',
+        font: {
+          size: 12,
+        },
+      },
+    },
   }
 
   return (
@@ -109,7 +119,7 @@ export const TimeSeriesHabitatComplexity = () => {
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         {!privateHabitatComplexityToggleOn && (
           <ChartSubtitle>
-            {surveyedHabitatComplexityRecords.length.toLocaleString()} Surveys
+            {`${pluralizeWordWithCount(surveyedHabitatComplexityRecords.length || 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

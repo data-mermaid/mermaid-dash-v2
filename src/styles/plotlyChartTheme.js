@@ -10,7 +10,7 @@ const plotlyChartTheme = {
   },
   chartCategoryType: {
     managementRuleColorMap: {
-      'Open Access': '#77b4c5',
+      'Open Access': '#e69f00',
       Restrictions: '#70aae6',
     },
     benthicCoverColorMap: {
@@ -103,7 +103,7 @@ const plotlyChartTheme = {
   horizontalLegend: {
     orientation: 'h',
     xanchor: 'center',
-    x: 0.5,
+    x: 0.4,
     y: -0.2,
     font: {
       size: 9,

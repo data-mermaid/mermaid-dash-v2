@@ -7,6 +7,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
@@ -96,7 +97,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Normal',
       type: 'bar',
       marker: { color: bleachingColor.Normal },
-      hovertemplate: '<b>Normal</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: Normal<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -106,7 +108,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Pale',
       type: 'bar',
       marker: { color: bleachingColor.Pale },
-      hovertemplate: '<b>Pale</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: Pale<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -116,7 +119,8 @@ export const TimeSeriesBleaching = () => {
       name: '0-20%',
       type: 'bar',
       marker: { color: bleachingColor['0-20%'] },
-      hovertemplate: '<b>0-20%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: 0-20%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -126,7 +130,8 @@ export const TimeSeriesBleaching = () => {
       name: '20-50%',
       type: 'bar',
       marker: { color: bleachingColor['20-50%'] },
-      hovertemplate: '<b>20-50%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: 20-50%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -136,7 +141,8 @@ export const TimeSeriesBleaching = () => {
       name: '50-80%',
       type: 'bar',
       marker: { color: bleachingColor['50-80%'] },
-      hovertemplate: '<b>50-80%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: 50-80%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -146,7 +152,8 @@ export const TimeSeriesBleaching = () => {
       name: '80-100%',
       type: 'bar',
       marker: { color: bleachingColor['80-100%'] },
-      hovertemplate: '<b>80-100%</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: 80-100%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -156,7 +163,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Dead',
       type: 'bar',
       marker: { color: bleachingColor.Dead },
-      hovertemplate: '<b>Dead</b><br>%{x}<br>%{y:.1f}%<extra></extra>',
+      hovertemplate:
+        'Bleaching severity: Dead<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
@@ -175,7 +183,16 @@ export const TimeSeriesBleaching = () => {
       title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of colonies' },
     },
     showlegend: true,
-    legend: plotlyChartTheme.horizontalLegend,
+    legend: {
+      ...plotlyChartTheme.horizontalLegend,
+      title: {
+        text: 'Bleaching severity:',
+        side: 'top',
+        font: {
+          size: 12,
+        },
+      },
+    },
   }
 
   return (
@@ -183,7 +200,7 @@ export const TimeSeriesBleaching = () => {
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
         {!privateBleachingToggleOn && (
-          <ChartSubtitle>{Math.round(totalSurveys).toLocaleString()} Colonies</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys || 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
