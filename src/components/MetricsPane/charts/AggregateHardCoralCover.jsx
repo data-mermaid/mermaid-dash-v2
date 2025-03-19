@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Plot from 'react-plotly.js'
 
 import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
@@ -7,6 +7,9 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { IconHelpCircle } from '../../../assets/icons'
+import { IconButton } from '../../generic'
+import HardCoralInfoModal from './HardCoralInfoModal'
 
 const BIN_SIZE = 2
 const START_BIN = 0
@@ -14,8 +17,11 @@ const END_BIN = 100
 
 export const AggregateHardCoralCover = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
+
+  const handleCloseModal = () => setIsModalOpen(false)
 
   const privateBenthicToggleOn =
     privateBenthicFilters.some((filter) => !omittedMethodDataSharingFilters.includes(filter)) &&
@@ -116,28 +122,41 @@ export const AggregateHardCoralCover = () => {
   }
 
   return (
-    <ChartWrapper>
-      <TitlesWrapper>
-        <MetricCardH3>Hard Coral Cover</MetricCardH3>
-        {!privateBenthicToggleOn && (
-          <ChartSubtitle>
-            {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
-          </ChartSubtitle>
+    <>
+      <ChartWrapper>
+        <TitlesWrapper>
+          <MetricCardH3>
+            Hard Coral Cover
+            <IconButton
+              type="button"
+              onClick={() => {
+                setIsModalOpen(true)
+              }}
+            >
+              <IconHelpCircle />
+            </IconButton>
+          </MetricCardH3>
+          {!privateBenthicToggleOn && (
+            <ChartSubtitle>
+              {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
+            </ChartSubtitle>
+          )}
+        </TitlesWrapper>
+        <HorizontalLine />
+        {privateBenthicToggleOn ? (
+          <PrivateChartView />
+        ) : hardCoralAveragesPerSurvey.length > 0 ? (
+          <Plot
+            data={plotlyDataConfiguration}
+            layout={plotlyLayoutConfiguration}
+            config={plotlyChartTheme.config}
+            style={{ width: '100%', height: '100%' }}
+          />
+        ) : (
+          <NoDataChartView />
         )}
-      </TitlesWrapper>
-      <HorizontalLine />
-      {privateBenthicToggleOn ? (
-        <PrivateChartView />
-      ) : hardCoralAveragesPerSurvey.length > 0 ? (
-        <Plot
-          data={plotlyDataConfiguration}
-          layout={plotlyLayoutConfiguration}
-          config={plotlyChartTheme.config}
-          style={{ width: '100%', height: '100%' }}
-        />
-      ) : (
-        <NoDataChartView />
-      )}
-    </ChartWrapper>
+      </ChartWrapper>
+      <HardCoralInfoModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
+    </>
   )
 }
