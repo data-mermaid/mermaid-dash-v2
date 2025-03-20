@@ -32,8 +32,12 @@ export const AggregateHabitatComplexity = () => {
   const getHoverTemplate = (binStart, binEndDisplay, surveyText) => {
     const baseText = `Average score: ${binStart} - ${binEndDisplay}<br>%{y:,} ${surveyText}`
 
-    if (binStart === -0.5) {return `Average score: 0 - ${binEndDisplay}<br>%{y:,} ${surveyText}`}
-    if (binStart === 4.5) {return `Average score: ${binStart} - 5<br>%{y:,} ${surveyText}`}
+    if (binStart < 0) {
+      return `Average score: 0 - ${binEndDisplay}<br>%{y:,} ${surveyText}`
+    }
+    if (binEndDisplay > 5) {
+      return `Average score: ${binStart} - 5<br>%{y:,} ${surveyText}`
+    }
 
     return baseText
   }
