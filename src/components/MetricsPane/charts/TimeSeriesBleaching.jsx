@@ -54,7 +54,7 @@ export const TimeSeriesBleaching = () => {
         }
       }
       const updateTotalColonies = (category, percentage) => {
-        accumulator[year][category] += (numColoniesTotal * (percentage || 0)) / 100
+        accumulator[year][category] += (numColoniesTotal * (percentage ?? 0)) / 100
       }
 
       updateTotalColonies('totalColoniesNormal', percentNormal)
@@ -200,7 +200,7 @@ export const TimeSeriesBleaching = () => {
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
         {!privateBleachingToggleOn && (
-          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys || 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys ?? 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

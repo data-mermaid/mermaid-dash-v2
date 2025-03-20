@@ -38,57 +38,57 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
   const plotlyDataConfiguration = [
     {
       x: [1],
-      y: [percentNormal || 0],
+      y: [percentNormal ?? 0],
       type: 'bar',
-      name: `Normal (${percentNormal.toFixed(1)}%)`,
+      name: `Normal (${(percentNormal ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Normal'] },
       hovertemplate: 'Normal<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percentPale || 0],
+      y: [percentPale ?? 0],
       type: 'bar',
-      name: `Pale (${percentPale.toFixed(1)}%)`,
+      name: `Pale (${(percentPale ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Pale'] },
       hovertemplate: 'Pale<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percent20 || 0],
+      y: [percent20 ?? 0],
       type: 'bar',
-      name: `0-20% bleached (${percent20.toFixed(1)}%)`,
+      name: `0-20% bleached (${(percent20 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['0-20%'] },
       hovertemplate: '0-20% bleached<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percent50 || 0],
+      y: [percent50 ?? 0],
       type: 'bar',
-      name: `20-50% bleached (${percent50.toFixed(1)}%)`,
+      name: `20-50% bleached (${(percent50 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['20-50%'] },
       hovertemplate: '20-50% bleached<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percent80 || 0],
+      y: [percent80 ?? 0],
       type: 'bar',
-      name: `50-80% bleached (${percent80.toFixed(1)}%)`,
+      name: `50-80% bleached (${(percent80 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['50-80%'] },
       hovertemplate: '50-80% bleached<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percent100 || 0],
+      y: [percent100 ?? 0],
       type: 'bar',
-      name: `80-100% bleached (${percent100.toFixed(1)}%)`,
+      name: `80-100% bleached (${(percent100 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['80-100%'] },
       hovertemplate: '80-100% bleached<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: [1],
-      y: [percentDead || 0],
+      y: [percentDead ?? 0],
       type: 'bar',
-      name: `Recently dead (${percentDead}%)`,
+      name: `Recently dead (${(percentDead ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Dead'] },
       hovertemplate: 'Recently dead<br>%{y:.1f}% of colonies<extra></extra>',
     },
@@ -123,7 +123,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
         <MetricCardH3>Bleaching Severity</MetricCardH3>
         {isBleachingSeverityDataAvailable && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

@@ -79,7 +79,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
         <MetricCardH3>Bleaching % Cover (Bleaching)</MetricCardH3>
         {isBleachingDataAvailable && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

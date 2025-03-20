@@ -77,7 +77,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
         <MetricCardH3>Fish Biomass</MetricCardH3>
         {fishBiomassTropicGroupData && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

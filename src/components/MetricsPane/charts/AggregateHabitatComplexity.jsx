@@ -74,7 +74,7 @@ export const AggregateHabitatComplexity = () => {
         <MetricCardH3>Habitat Complexity </MetricCardH3>
         {!privateHabitatComplexityToggleOn && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(habitatComplexityValues.length || 0, 'Survey')}`}
+            {`${pluralizeWordWithCount(habitatComplexityValues.length ?? 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

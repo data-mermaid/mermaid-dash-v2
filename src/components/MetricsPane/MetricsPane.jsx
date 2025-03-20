@@ -149,11 +149,11 @@ const MetricsPane = ({
     <>
       <MetricsCard>
         <MetricCardPMedium>{numTransects.toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>{pluralizeWord(numTransects || 0, 'Transect')}</MetricCardH3>
+        <MetricCardH3>{pluralizeWord(numTransects ?? 0, 'Transect')}</MetricCardH3>
       </MetricsCard>
       <MetricsCard>
         <MetricCardPMedium>{getActiveProjectCount().toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>{pluralizeWord(getActiveProjectCount() || 0, 'Project')}</MetricCardH3>
+        <MetricCardH3>{pluralizeWord(getActiveProjectCount() ?? 0, 'Project')}</MetricCardH3>
       </MetricsCard>
     </>
   )
@@ -186,15 +186,15 @@ const MetricsPane = ({
             <CircleLoader showLoadingCircle={showLoadingIndicator && isDesktopWidth} />
             <MetricCardH3>
               {isDesktopWidth && showLoadingIndicator && 'Loading'}{' '}
-              {pluralizeWord(numSurveys || 0, 'Survey')}
+              {pluralizeWord(numSurveys ?? 0, 'Survey')}
             </MetricCardH3>
           </MetricCardInlineText>
           {isDesktopWidth && (
             <LoadingBar
               showLoadingIndicator={showLoadingIndicator}
               setShowLoadingIndicator={setShowLoadingIndicator}
-              currentProgress={projectData?.results?.length || 0}
-              finalProgress={projectData?.count || 0}
+              currentProgress={projectData?.results?.length ?? 0}
+              finalProgress={projectData?.count ?? 0}
             />
           )}
         </MetricsCard>
@@ -203,14 +203,14 @@ const MetricsPane = ({
             <InlineOnDesktopMetricWrapper>
               <span>{numUniqueCountries.toLocaleString()}</span>{' '}
               <MetricCardH3>
-                {pluralizeWord(numUniqueCountries || 0, 'Country', 'Countries')}
+                {pluralizeWord(numUniqueCountries ?? 0, 'Country', 'Countries')}
               </MetricCardH3>
             </InlineOnDesktopMetricWrapper>
           ) : (
             <>
               <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
               <MetricCardH3>
-                {pluralizeWord(numUniqueCountries || 0, 'Country', 'Countries')}
+                {pluralizeWord(numUniqueCountries ?? 0, 'Country', 'Countries')}
               </MetricCardH3>
             </>
           )}
@@ -316,8 +316,8 @@ const MetricsPane = ({
         {isMobileWidth || isMetricsPaneShowing ? metricsContent : null}
         {isMobileWidth ? (
           <LoadingIndicator
-            currentProgress={projectData?.results?.length || 0}
-            finalProgress={projectData?.count || 0}
+            currentProgress={projectData?.results?.length ?? 0}
+            finalProgress={projectData?.count ?? 0}
             showLoadingIndicator={showLoadingIndicator}
             setShowLoadingIndicator={setShowLoadingIndicator}
             isRelativelyPositioned={true}

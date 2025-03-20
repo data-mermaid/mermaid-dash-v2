@@ -407,7 +407,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         isMetricsPaneShowing={isMetricsPaneShowing}
         view={view}
         setView={setView}
-        projectDataCount={projectData?.count || 0}
+        projectDataCount={projectData?.count ?? 0}
       />
     </StyledMapContainer>
   )
@@ -431,7 +431,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <StyledMobileFilterPill>
           <FilterIndicatorPill
             searchFilteredRowLength={getActiveProjectCount()}
-            unfilteredRowLength={projectData?.count || 0}
+            unfilteredRowLength={projectData?.count ?? 0}
             clearFilters={clearAllFilters}
           />
         </StyledMobileFilterPill>

@@ -151,7 +151,7 @@ export const AggregateHardCoralCover = () => {
           </MetricCardH3>
           {!privateBenthicToggleOn && (
             <ChartSubtitle>
-              {`${pluralizeWordWithCount(hardCoralAveragesPerSurvey.length || 0, 'Survey')}`}
+              {`${pluralizeWordWithCount(hardCoralAveragesPerSurvey.length ?? 0, 'Survey')}`}
             </ChartSubtitle>
           )}
         </TitlesWrapper>

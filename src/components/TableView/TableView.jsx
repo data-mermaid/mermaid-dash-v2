@@ -58,7 +58,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
   const queryParamsProjectId = queryParams.get(URL_PARAMS.PROJECT_ID)
-  const initialPageIndex = Number(queryParams.get(URL_PARAMS.PAGE_INDEX)) || 0
+  const initialPageIndex = Number(queryParams.get(URL_PARAMS.PAGE_INDEX)) ?? 0
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects

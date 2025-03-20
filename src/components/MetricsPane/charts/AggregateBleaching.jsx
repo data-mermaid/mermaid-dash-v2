@@ -199,7 +199,7 @@ export const AggregateBleaching = () => {
       <TitlesWrapper>
         <MetricCardH3>Bleaching Severity</MetricCardH3>
         {!privateBleachingToggleOn && (
-          <ChartSubtitle>{`${pluralizeWordWithCount(numColoniesTotal || 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(numColoniesTotal ?? 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

@@ -130,7 +130,7 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
               getActiveProjectCount() < projectData?.count ? (
                 <FilterIndicatorPill
                   searchFilteredRowLength={getActiveProjectCount()}
-                  unfilteredRowLength={projectData?.count || 0}
+                  unfilteredRowLength={projectData?.count ?? 0}
                   clearFilters={clearAllFilters}
                 />
               ) : null}
