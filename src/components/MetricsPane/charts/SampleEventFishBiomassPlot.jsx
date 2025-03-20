@@ -62,7 +62,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       ticktext: formattedFishTropicGroupLabels,
       title: {
         ...chartTheme.layout.xaxis.title,
-        text: 'Tropic group',
+        text: 'Trophic group',
       },
     },
     yaxis: {
