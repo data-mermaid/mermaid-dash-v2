@@ -299,16 +299,6 @@ export const SelectedSiteMetrics = ({
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
             <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
-              {protocols?.beltfish && (
-                <SelectedSiteChartWrapper>
-                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
-                </SelectedSiteChartWrapper>
-              )}
-              {protocols?.quadrat_benthic_percent && (
-                <SelectedSiteChartWrapper>
-                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
-                </SelectedSiteChartWrapper>
-              )}
               {protocols?.benthicpit && (
                 <SelectedSiteChartWrapper>
                   <SampleEventBenthicPlot benthicType="pit" benthicData={protocols?.benthicpit} />
@@ -322,6 +312,16 @@ export const SelectedSiteMetrics = ({
               {protocols?.benthicpqt && (
                 <SelectedSiteChartWrapper>
                   <SampleEventBenthicPlot benthicType="pqt" benthicData={protocols?.benthicpqt} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.quadrat_benthic_percent && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.beltfish && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
                 </SelectedSiteChartWrapper>
               )}
               {protocols?.colonies_bleached && (

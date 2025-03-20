@@ -99,6 +99,7 @@ const plotlyChartTheme = {
     ],
     displaylogo: false,
     responsive: true,
+    displayModeBar: true,
   },
   horizontalLegend: {
     orientation: 'h',
