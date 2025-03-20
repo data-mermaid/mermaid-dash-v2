@@ -25,18 +25,14 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
 
   const plotlyDataConfiguration = benthicPercentageCover
     .filter(({ value }) => value > 0)
-    .map(({ name, value, color }) => {
-      return {
-        x: [1],
-        y: [value],
-        type: 'bar',
-        name: `${name} (${value.toFixed(1)}%)`,
-        marker: {
-          color: color,
-        },
-        hovertemplate: `${name}<br>%{y:.1f}% cover<extra></extra>`,
-      }
-    })
+    .map(({ name, value, color }) => ({
+      x: [1],
+      y: [value],
+      type: 'bar',
+      name: `${name} (${(value ?? 0).toFixed(1)}%)`,
+      marker: { color },
+      hovertemplate: `${name}<br>%{y:.1f}% cover<extra></extra>`,
+    }))
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
