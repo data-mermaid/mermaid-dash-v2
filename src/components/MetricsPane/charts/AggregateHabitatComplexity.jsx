@@ -29,14 +29,22 @@ export const AggregateHabitatComplexity = () => {
     (_, index) => START_BIN + index * BIN_SIZE,
   )
 
+  const getHoverTemplate = (binStart, binEndDisplay, surveyText) => {
+    const baseText = `Average score: ${binStart} - ${binEndDisplay}<br>%{y:,} ${surveyText}`
+
+    if (binStart === -0.5) {return `Average score: 0 - ${binEndDisplay}<br>%{y:,} ${surveyText}`}
+    if (binStart === 4.5) {return `Average score: ${binStart} - 5<br>%{y:,} ${surveyText}`}
+
+    return baseText
+  }
+
   const plotlyDataConfiguration = binStartValues
     .map((binStartValue) => {
       const binEndValue = binStartValue + BIN_SIZE
-      const binEndValueDisplay = binEndValue - 0.1
+      const binEndValueDisplay = binEndValue - 0.01
       const xValues = habitatComplexityValues.filter(
         (value) => value >= binStartValue && value < binEndValue,
       )
-      const surveyCountText = pluralizeWord(xValues.length, 'survey')
 
       return {
         x: xValues,
@@ -46,7 +54,11 @@ export const AggregateHabitatComplexity = () => {
           color: plotlyChartTheme.aggregateCharts.default.marker.color,
         },
         xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
-        hovertemplate: `Average score: ${binStartValue} - ${binEndValueDisplay}<br>%{y:,} ${surveyCountText}`,
+        hovertemplate: getHoverTemplate(
+          binStartValue,
+          binEndValueDisplay,
+          pluralizeWord(xValues.length, 'survey'),
+        ),
         showlegend: false,
       }
     })
