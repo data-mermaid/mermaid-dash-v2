@@ -29,7 +29,7 @@ const StyledDialog = styled.div`
   display: flex;
   flex-direction: column;
   ${mediaQueryPhoneOnly(css`
-    min-width: 40rem;
+    min-width: 35rem;
   `)}
 `
 const ModalTitle = styled.div`
@@ -135,7 +135,9 @@ const Modal = ({
   hideCloseIcon = false,
 }) => {
   const _closeModalWithEscapeKey = useEffect(() => {
-    if (hideCloseIcon) {return}
+    if (hideCloseIcon) {
+      return
+    }
 
     const close = (event) => {
       if (event.code === 'Escape') {
