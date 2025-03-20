@@ -81,6 +81,7 @@ const HardCoralInfoModal = ({ isModalOpen, handleCloseModal }) => {
         title={modalTitle}
         mainContent={modalContent}
         footerContent={footerContent}
+        modalCustomHeight={'600px'}
       />
     </>
   )
