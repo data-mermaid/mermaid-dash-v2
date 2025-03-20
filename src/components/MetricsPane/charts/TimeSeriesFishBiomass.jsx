@@ -112,7 +112,7 @@ export const TimeSeriesFishBiomass = () => {
         <MetricCardH3>Fish Biomass</MetricCardH3>
         {!privateFishBeltToggleOn && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(surveyedFishBiomassRecords.length || 0, 'Survey')}`}
+            {`${pluralizeWordWithCount(surveyedFishBiomassRecords.length ?? 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

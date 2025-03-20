@@ -95,7 +95,7 @@ export const AggregateFishBiomass = () => {
         <MetricCardH3>Fish Biomass</MetricCardH3>
         {!privateFishBeltToggleOn && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(surveyFishbeltBiomassValues.length || 0, 'Survey')}`}
+            {`${pluralizeWordWithCount(surveyFishbeltBiomassValues.length ?? 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

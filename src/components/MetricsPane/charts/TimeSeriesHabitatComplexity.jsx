@@ -119,7 +119,7 @@ export const TimeSeriesHabitatComplexity = () => {
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         {!privateHabitatComplexityToggleOn && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(surveyedHabitatComplexityRecords.length || 0, 'Survey')}`}
+            {`${pluralizeWordWithCount(surveyedHabitatComplexityRecords.length ?? 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

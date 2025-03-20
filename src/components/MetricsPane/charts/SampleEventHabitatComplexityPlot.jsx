@@ -137,7 +137,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         {habitatComplexityScore && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

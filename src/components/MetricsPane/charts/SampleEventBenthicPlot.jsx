@@ -67,7 +67,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
         <MetricCardH3>Benthic % Cover ({benthicType})</MetricCardH3>
         {benthicPercentageData && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

@@ -123,7 +123,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
         <MetricCardH3>Bleaching Severity</MetricCardH3>
         {isBleachingSeverityDataAvailable && (
           <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits || 0, 'Sample unit')}`}
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>

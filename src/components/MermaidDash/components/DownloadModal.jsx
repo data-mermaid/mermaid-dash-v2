@@ -199,7 +199,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
               return (
                 <MermaidMenuItem key={key} value={key}>
                   {method.description}{' '}
-                  {`(${pluralizeWordWithCount(surveyedMethodCount[key] || 0, 'Survey')})`}
+                  {`(${pluralizeWordWithCount(surveyedMethodCount[key] ?? 0, 'Survey')})`}
                 </MermaidMenuItem>
               )
             })}

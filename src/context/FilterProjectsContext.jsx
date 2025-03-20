@@ -622,7 +622,7 @@ export const FilterProjectsProvider = ({ children }) => {
   }
 
   const getActiveProjectCount = () => {
-    return displayedProjects?.length || 0
+    return displayedProjects?.length ?? 0
   }
 
   const updateCurrentSampleEvent = useCallback(
@@ -660,7 +660,7 @@ export const FilterProjectsProvider = ({ children }) => {
         omittedMethodDataSharingFilters,
         organizationsSelectOnOpen,
         projectData,
-        projectDataCount: projectData?.count || 0,
+        projectDataCount: projectData?.count ?? 0,
         remainingDisplayedCountries,
         sampleDateAfter,
         sampleDateBefore,

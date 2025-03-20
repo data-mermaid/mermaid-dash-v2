@@ -140,7 +140,7 @@ export const TimeSeriesBenthicCover = () => {
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
         {!privateBenthicToggleOn && (
-          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys || 0, 'Survey')}`}</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys ?? 0, 'Survey')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
