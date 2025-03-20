@@ -96,7 +96,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { ...chartTheme.layout.margin, t: 70, b: 20, r: 210 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20, r: 200 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {
@@ -113,7 +113,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     },
     showlegend: true,
     legend: {
-      font: { size: 10 },
+      font: { size: 9 },
     },
   }
 

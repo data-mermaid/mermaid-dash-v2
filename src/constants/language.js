@@ -67,6 +67,7 @@ export const tooltipText = {
   downloadData: 'Download data',
   yourProject: 'You are part of this project',
   contactAdmins: 'Contact admins',
+  hardCoralCoverInfo: 'More information & references',
 }
 
 export const toastMessageText = {
