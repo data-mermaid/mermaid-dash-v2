@@ -10,7 +10,7 @@ const plotlyChartTheme = {
   },
   chartCategoryType: {
     managementRuleColorMap: {
-      'Open Access': '#77b4c5',
+      'Open Access': '#e69f00',
       Restrictions: '#70aae6',
     },
     benthicCoverColorMap: {
@@ -53,10 +53,10 @@ const plotlyChartTheme = {
       'Herbivore detritivore': '#d9ed8b',
     },
     bleachingBenthicColorMap: {
-      'Avg Hard Coral Cover': '#498fc9',
-      'Other Cover': '#b4b4b4',
-      'Avg Soft Coral Cover': '#9ce5fa',
-      'Avg Macroalgae Cover': '#b6b400',
+      'Hard coral': '#498fc9',
+      'Soft coral': '#9ce5fa',
+      Macroalgae: '#b6b400',
+      Other: '#b4b4b4',
     },
   },
   layout: {
@@ -68,7 +68,7 @@ const plotlyChartTheme = {
       l: 50,
       r: 30,
       b: 40,
-      t: 50,
+      t: 55,
     },
     xaxis: {
       fixedrange: true,
@@ -103,7 +103,7 @@ const plotlyChartTheme = {
   horizontalLegend: {
     orientation: 'h',
     xanchor: 'center',
-    x: 0.5,
+    x: 0.4,
     y: -0.2,
     font: {
       size: 9,

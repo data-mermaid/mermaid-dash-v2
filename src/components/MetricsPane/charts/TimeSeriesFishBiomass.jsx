@@ -1,12 +1,13 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 function calculateMedian(values) {
   if (!values.length) {
@@ -85,7 +86,7 @@ export const TimeSeriesFishBiomass = () => {
     type: 'bar',
     name: rule,
     marker: { color: plotlyChartTheme.chartCategoryType.managementRuleColorMap[rule] },
-    hovertemplate: '%{x}, %{y:.2f}',
+    hovertemplate: `${rule}<br>Year: %{x}<br>%{y:.0f} kg/ha<extra></extra>`,
   }))
 
   const plotlyLayoutConfiguration = {
@@ -99,7 +100,7 @@ export const TimeSeriesFishBiomass = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: '(kg/ha)' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Fish biomass (kg/ha)' },
     },
     showlegend: true,
     legend: plotlyChartTheme.horizontalLegend,
@@ -108,13 +109,14 @@ export const TimeSeriesFishBiomass = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
+        <MetricCardH3>Fish Biomass</MetricCardH3>
         {!privateFishBeltToggleOn && (
           <ChartSubtitle>
-            {surveyedFishBiomassRecords.length.toLocaleString()} Surveys
+            {`${pluralizeWordWithCount(surveyedFishBiomassRecords.length || 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateFishBeltToggleOn ? (
         <PrivateChartView />
       ) : surveyedFishBiomassRecords.length > 0 ? (

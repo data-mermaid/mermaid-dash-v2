@@ -1,13 +1,14 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
@@ -111,7 +112,7 @@ export const TimeSeriesBenthicCover = () => {
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: '%{x}, %{y:.2f}',
+        hovertemplate: `${category}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))
@@ -139,9 +140,10 @@ export const TimeSeriesBenthicCover = () => {
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
         {!privateBenthicToggleOn && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys || 0, 'Survey')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateBenthicToggleOn ? (
         <PrivateChartView />
       ) : totalSurveys > 0 ? (

@@ -1,12 +1,15 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+
+const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
 export const AggregateBleaching = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -87,23 +90,88 @@ export const AggregateBleaching = () => {
 
   const plotlyDataConfiguration = [
     {
-      y: [
-        totalColoniesNormal,
-        totalColoniesPale,
-        totalColonies0to20,
-        totalColonies20to50,
-        totalColonies50to80,
-        totalColonies80to100,
-        totalColoniesDead,
-      ],
-      x: ['Normal', 'Pale', '0-20%', '20-50%', '50-80%', '80-100%', 'Dead'],
+      y: [totalColoniesNormal],
+      x: ['Normal'],
       type: 'bar',
-      marker: {
-        color: plotlyChartTheme.aggregateCharts.bleaching.marker.color,
-      },
+      name: 'Normal',
+      marker: { color: bleachingColor.Normal },
       xbins: {
         size: 100,
       },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColoniesNormal, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColoniesPale],
+      x: ['Pale'],
+      type: 'bar',
+      name: 'Pale',
+      marker: { color: bleachingColor.Pale },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColoniesPale, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColonies0to20],
+      x: ['0-20%'],
+      type: 'bar',
+      name: '0-20%',
+      marker: { color: bleachingColor['0-20%'] },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColonies0to20, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColonies20to50],
+      x: ['20-50%'],
+      type: 'bar',
+      name: '20-50%',
+      marker: { color: bleachingColor['20-50%'] },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColonies20to50, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColonies50to80],
+      x: ['50-80%'],
+      type: 'bar',
+      name: '50-80%',
+      marker: { color: bleachingColor['50-80%'] },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColonies50to80, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColonies80to100],
+      x: ['80-100%'],
+      type: 'bar',
+      name: '80-100%',
+      marker: { color: bleachingColor['80-100%'] },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColonies80to100, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
+    },
+    {
+      y: [totalColoniesDead],
+      x: ['Dead'],
+      type: 'bar',
+      name: 'Dead',
+      marker: { color: bleachingColor.Dead },
+      xbins: {
+        size: 100,
+      },
+      hovertemplate: `Bleaching severity: %{x}</b><br>%{y:,.0f} ${pluralizeWord(totalColoniesDead, 'colony', 'colonies')}<extra></extra>`,
+      showlegend: false,
     },
   ]
 
@@ -129,11 +197,12 @@ export const AggregateBleaching = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Bleaching</MetricCardH3>
+        <MetricCardH3>Bleaching Severity</MetricCardH3>
         {!privateBleachingToggleOn && (
-          <ChartSubtitle>{Math.round(numColoniesTotal).toLocaleString()} Colonies</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(numColoniesTotal || 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateBleachingToggleOn ? (
         <PrivateChartView />
       ) : numColoniesTotal > 0 ? (
