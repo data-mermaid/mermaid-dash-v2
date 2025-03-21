@@ -33,7 +33,7 @@ const HardCoralInfoModal = ({ isModalOpen, handleCloseModal }) => {
         {'- '}
         <a
           target="_blank"
-          href="https://c532f75abb9c1c021b8c-e46e473f8aadb72cf2a8ea564b4e6a76.ssl.cf5.rackcdn.com/2019/10/28/932fl66562_Post_2020_Coral_Target_2p_v7.pdf"
+          href="https://cdn.wcs.org/2020/08/03/38nwqd2fjr_7.31.20_CBD_Rec_2_Pager.pdf?_gl=1*1xvnuqk*_gcl_au*MTM2MTI2NjQzNC4xNzM3NTk3OTM1*_ga*MTI4Mzc1NzA3LjE3MjgyNjk4MTg.*_ga_BTX9HXMYSX*MTc0MjU3ODA0My4xOS4xLjE3NDI1NzgwNDQuNTkuMC4w"
           rel="noopener noreferrer"
         >
           WCS Policy Brief on Coral Reef Indicators
