@@ -278,7 +278,7 @@ DownloadModal.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   selectedMethod: PropTypes.string.isRequired,
   handleSelectedMethodChange: PropTypes.func.isRequired,
-  surveyedMethodCount: PropTypes.object.isRequired, // Added propType for surveyedMethodCount
+  surveyedMethodCount: PropTypes.object.isRequired,
 }
 
 export default DownloadModal
