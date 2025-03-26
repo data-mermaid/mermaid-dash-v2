@@ -29,18 +29,24 @@ import {
   FilterDownloadWrapper,
   FilterDownloadButton,
   DownloadMenu,
-  GFCRDataDownloadButton,
+  DownloadMenuButton,
+  ExpressDownloadMenu,
+  ExpressDownloadMenuItem,
+  ExpressDownloadMenuHeaderItem,
+  MediumIconUp,
+  MediumIconDown,
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
-import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
+import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
+import { IconFilter } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
 import { URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
-import { ButtonPrimary, Modal } from '../generic'
+import { Modal } from '../generic'
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
 import TableView from '../TableView/TableView'
@@ -52,7 +58,6 @@ import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
-import { IconFilter } from '../../assets/icons'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -106,6 +111,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
   const [selectedMethod, setSelectedMethod] = useState('')
   const [isErrorModalShowing, setIsErrorModalShowing] = useState(false)
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
 
   const mapRef = useRef()
 
@@ -305,9 +311,42 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const renderOverflowDownloadMenu = () => {
     return (
       <DownloadMenu>
-        <ButtonPrimary onClick={handleShowDownloadGFCRModal}>
-          <IconTrayDownload /> Download GFCR Data
-        </ButtonPrimary>
+        <ExpressDownloadMenu>
+          <ExpressDownloadMenuHeaderItem>
+            <div>Method</div>
+            <div>Number of Surveys</div>
+          </ExpressDownloadMenuHeaderItem>
+          <ExpressDownloadMenuItem disabled>
+            <div>Fish Belt</div>
+            <div>1</div>
+          </ExpressDownloadMenuItem>
+          <ExpressDownloadMenuItem>
+            <div>Bleaching</div>
+            <div>2</div>
+          </ExpressDownloadMenuItem>
+          <ExpressDownloadMenuItem>
+            <div>Benthic PIT</div>
+            <div>2</div>
+          </ExpressDownloadMenuItem>
+          <ExpressDownloadMenuItem>
+            <div>Benthic LIT</div>
+            <div>2</div>
+          </ExpressDownloadMenuItem>
+          <ExpressDownloadMenuItem>
+            <div>Benthic Photo Quadrat</div>
+            <div>2</div>
+          </ExpressDownloadMenuItem>
+          <ExpressDownloadMenuItem>
+            <div>Habitat Complexity</div>
+            <div>2</div>
+          </ExpressDownloadMenuItem>
+        </ExpressDownloadMenu>
+        <DownloadMenuButton onClick={handleShowDownloadModal} role="button">
+          Advance Export...
+        </DownloadMenuButton>
+        <DownloadMenuButton onClick={handleShowDownloadGFCRModal} role="button">
+          GFCR Data
+        </DownloadMenuButton>
       </DownloadMenu>
     )
   }
@@ -358,30 +397,29 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
           <FilterDownloadWrapper>
-            <FilterDownloadButton
-              disabled={!allProjectsFinishedFiltering}
-              $isAuthenticated={isAuthenticated}
-              onClick={isAuthenticated ? handleShowDownloadModal : handleLogin}
-            >
-              {isAuthenticated ? (
-                <>
-                  <IconTrayDownload /> <span>Download</span>
-                </>
-              ) : (
-                <>
-                  <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
-                </>
-              )}
-            </FilterDownloadButton>
-            {isAuthenticated && (
+            {isAuthenticated ? (
               <HideShow
                 button={
-                  <GFCRDataDownloadButton disabled={!allProjectsFinishedFiltering}>
-                    <IconCaretUp />
-                  </GFCRDataDownloadButton>
+                  <FilterDownloadButton
+                    disabled={!allProjectsFinishedFiltering}
+                    $isAuthenticated={isAuthenticated}
+                  >
+                    <IconTrayDownload /> <span>Export data</span>
+                    {isExportMenuOpen ? <MediumIconDown /> : <MediumIconUp />}
+                  </FilterDownloadButton>
                 }
                 contents={renderOverflowDownloadMenu()}
+                customStyleProps={{ width: '100%' }}
+                onToggle={setIsExportMenuOpen}
               />
+            ) : (
+              <FilterDownloadButton
+                disabled={!allProjectsFinishedFiltering}
+                $isAuthenticated={isAuthenticated}
+                onClick={handleLogin}
+              >
+                <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
+              </FilterDownloadButton>
             )}
           </FilterDownloadWrapper>
         ) : null}
