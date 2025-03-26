@@ -43,7 +43,7 @@ import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { IconFilter } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
-import { URL_PARAMS } from '../../constants/constants'
+import { DOWNLOAD_METHODS, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { Modal } from '../generic'
@@ -249,7 +249,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }
 
   const handleShowDownloadModal = () => {
-    setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
+    const newSelectedMethod = getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount)
+
+    setSelectedMethod(newSelectedMethod)
     setIsDownloadModalShowing(true)
   }
 
@@ -316,30 +318,16 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             <div>Method</div>
             <div>Number of Surveys</div>
           </ExpressDownloadMenuHeaderItem>
-          <ExpressDownloadMenuItem disabled>
-            <div>Fish Belt</div>
-            <div>1</div>
-          </ExpressDownloadMenuItem>
-          <ExpressDownloadMenuItem>
-            <div>Bleaching</div>
-            <div>2</div>
-          </ExpressDownloadMenuItem>
-          <ExpressDownloadMenuItem>
-            <div>Benthic PIT</div>
-            <div>2</div>
-          </ExpressDownloadMenuItem>
-          <ExpressDownloadMenuItem>
-            <div>Benthic LIT</div>
-            <div>2</div>
-          </ExpressDownloadMenuItem>
-          <ExpressDownloadMenuItem>
-            <div>Benthic Photo Quadrat</div>
-            <div>2</div>
-          </ExpressDownloadMenuItem>
-          <ExpressDownloadMenuItem>
-            <div>Habitat Complexity</div>
-            <div>2</div>
-          </ExpressDownloadMenuItem>
+          {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
+            const count = surveyedMethodCount[key] ?? 0
+
+            return (
+              <ExpressDownloadMenuItem key={key} onClick={() => {}} disabled={count === 0}>
+                <div>{method.description}</div>
+                <div>{count}</div>
+              </ExpressDownloadMenuItem>
+            )
+          })}
         </ExpressDownloadMenu>
         <DownloadMenuButton onClick={handleShowDownloadModal} role="button">
           Advance Export...
@@ -426,6 +414,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <DownloadModal
           isOpen={isDownloadModalShowing}
           onDismiss={() => setIsDownloadModalShowing(false)}
+          surveyedMethodCount={surveyedMethodCount}
           selectedMethod={selectedMethod}
           handleSelectedMethodChange={handleSelectedMethodChange}
         />

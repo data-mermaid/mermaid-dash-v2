@@ -60,14 +60,15 @@ const WiderFormControl = styled(FormControl)`
   width: 30rem;
 `
 
-const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
-  const {
-    displayedProjects,
-    filteredSurveys,
-    getActiveProjectCount,
-    userIsMemberOfProject,
-    mermaidUserData,
-  } = useContext(FilterProjectsContext)
+const DownloadModal = ({
+  isOpen,
+  onDismiss,
+  surveyedMethodCount,
+  selectedMethod,
+  handleSelectedMethodChange,
+}) => {
+  const { displayedProjects, getActiveProjectCount, userIsMemberOfProject, mermaidUserData } =
+    useContext(FilterProjectsContext)
 
   const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
@@ -75,20 +76,6 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [modalMode, setModalMode] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
-
-  const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
-    const protocols = record.protocols || {}
-
-    Object.keys(protocols).forEach((protocol) => {
-      if (acc[protocol]) {
-        acc[protocol] += 1
-      } else {
-        acc[protocol] = 1
-      }
-    })
-
-    return acc
-  }, {})
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
@@ -291,6 +278,7 @@ DownloadModal.propTypes = {
   onDismiss: PropTypes.func.isRequired,
   selectedMethod: PropTypes.string.isRequired,
   handleSelectedMethodChange: PropTypes.func.isRequired,
+  surveyedMethodCount: PropTypes.object.isRequired, // Added propType for surveyedMethodCount
 }
 
 export default DownloadModal
