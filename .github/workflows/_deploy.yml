@@ -9,6 +9,9 @@ on:
       domain:
         required: true
         type: string
+      subdomain:
+        required: true
+        type: string
       vite_react_app_auth0_domain:
         required: true
         type: string
@@ -72,3 +75,4 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           ENV: ${{ inputs.environment }}
           DOMAIN: ${{ inputs.domain }}
+          SUBDOMAIN: ${{ inputs.subdomain }}

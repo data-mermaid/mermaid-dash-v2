@@ -13,6 +13,7 @@ jobs:
     secrets: inherit
     with:
       environment: dev
+      subdomain: dev
       domain: dev.dashboard3.datamermaid.org
       vite_react_app_auth0_domain: datamermaid.auth0.com
       vite_react_app_auth0_client_id: Yahf5mGpQDyYOqbvQlaKE1WqBnUeFPj0
@@ -32,6 +33,7 @@ jobs:
     secrets: inherit
     with:
       environment: prod
+      subdomain: prod
       domain: dashboard3.datamermaid.org
       vite_react_app_auth0_domain: datamermaid.auth0.com
       vite_react_app_auth0_client_id: Yahf5mGpQDyYOqbvQlaKE1WqBnUeFPj0
