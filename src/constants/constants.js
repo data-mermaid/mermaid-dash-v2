@@ -2,17 +2,24 @@ export const MAIN_MAP_ID = 'main-map'
 export const PAGE_SIZE_DEFAULT = 15
 export const URL_PARAMS = {
   COUNTRIES: 'countries',
+  COUNTRY: 'country',
   ORGANIZATIONS: 'organizations',
+  ORGANIZATION: 'organization',
   SAMPLE_DATE_AFTER: 'sample_date_after',
   SAMPLE_DATE_BEFORE: 'sample_date_before',
   PROJECTS: 'projects',
-  METHOD_DATA_SHARING: 'omitted_method_data_sharing',
+  PROJECT: 'project',
+  OMITTED_METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
   SHOW_NO_DATA_PROJECTS: 'show_no_data_projects',
   FISH_BIOMASS: 'fish_biomass',
   BENTHIC_COVER: 'benthic_cover',
   HABITAT_COMPLEXITY: 'habitat_complexity',
   BLEACHING: 'bleaching',
+  VIEW: 'view',
+  PAGE_INDEX: 'page_index',
+  PROJECT_ID: 'project_id',
+  SAMPLE_EVENT_ID: 'sample_event_id',
 }
 
 export const COLLECTION_METHODS = {

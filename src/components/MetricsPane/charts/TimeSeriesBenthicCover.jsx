@@ -1,13 +1,14 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
@@ -16,13 +17,17 @@ const isValidNumber = (num) => {
 }
 
 export const TimeSeriesBenthicCover = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
 
   const privateBenthicToggleOn =
-    privateBenthicFilters.some((filterLabel) => !methodDataSharingFilters.includes(filterLabel)) &&
-    otherBenthicFilters.every((filterLabel) => methodDataSharingFilters.includes(filterLabel))
+    privateBenthicFilters.some(
+      (filterLabel) => !omittedMethodDataSharingFilters.includes(filterLabel),
+    ) &&
+    otherBenthicFilters.every((filterLabel) =>
+      omittedMethodDataSharingFilters.includes(filterLabel),
+    )
 
   const groupedBenthicCategoryCountByYear = filteredSurveys.reduce(
     (accumulator, { sample_date, protocols }) => {
@@ -107,7 +112,7 @@ export const TimeSeriesBenthicCover = () => {
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: '%{x}, %{y:.2f}',
+        hovertemplate: `${category}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))
@@ -124,7 +129,7 @@ export const TimeSeriesBenthicCover = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Benthic % Cover' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Benthic cover (%)' },
     },
     showlegend: true,
     legend: plotlyChartTheme.horizontalLegend,
@@ -135,9 +140,10 @@ export const TimeSeriesBenthicCover = () => {
       <TitlesWrapper>
         <MetricCardH3>Benthic % Cover</MetricCardH3>
         {!privateBenthicToggleOn && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys ?? 0, 'Survey')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateBenthicToggleOn ? (
         <PrivateChartView />
       ) : totalSurveys > 0 ? (

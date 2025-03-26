@@ -22,7 +22,7 @@ import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../gene
 import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
-import { pluralize } from '../../../helperFunctions/pluralize'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 import DownloadTableView from './DownloadTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
@@ -67,7 +67,6 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
     getActiveProjectCount,
     userIsMemberOfProject,
     mermaidUserData,
-    checkedProjects,
   } = useContext(FilterProjectsContext)
 
   const activeProjectCount = getActiveProjectCount()
@@ -104,31 +103,28 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       return
     }
 
-    const formattedTableData = displayedProjects
-      .filter(({ project_id }) => checkedProjects.includes(project_id))
-      .map((project, i) => {
-        const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-        const formattedData = formatDownloadProjectDataHelper(
-          project,
-          isMemberOfProject,
-          selectedMethod,
-          selectedDataSharing,
-        )
+    const formattedTableData = displayedProjects.map((project, i) => {
+      const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
+      const formattedData = formatDownloadProjectDataHelper(
+        project,
+        isMemberOfProject,
+        selectedMethod,
+        selectedDataSharing,
+      )
 
-        return {
-          id: i,
-          ...formattedData,
-          isMemberOfProject,
-          rawProjectData: project,
-        }
-      })
+      return {
+        id: i,
+        ...formattedData,
+        isMemberOfProject,
+        rawProjectData: project,
+      }
+    })
 
     setTableData(formattedTableData)
   }, [
     displayedProjects,
     selectedMethod,
     selectedDataSharing,
-    checkedProjects,
     mermaidUserData,
     userIsMemberOfProject,
   ])
@@ -203,7 +199,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
               return (
                 <MermaidMenuItem key={key} value={key}>
                   {method.description}{' '}
-                  {`(${pluralize(surveyedMethodCount[key] || 0, 'Survey', 'Surveys')})`}
+                  {`(${pluralizeWordWithCount(surveyedMethodCount[key] ?? 0, 'Survey')})`}
                 </MermaidMenuItem>
               )
             })}
@@ -285,7 +281,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       footerContent={footerContent}
       contentOverflowIsVisible={true}
       modalCustomWidth={modalMode === 'download' ? '1150px' : '600px'}
-      modalCustomHeight={modalMode === 'download' ? '750px' : '200px'}
+      modalCustomHeight={modalMode === 'download' ? '600px' : '200px'}
     />
   )
 }

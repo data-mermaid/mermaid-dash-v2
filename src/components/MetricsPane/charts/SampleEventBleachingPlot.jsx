@@ -1,10 +1,11 @@
 import Plot from 'react-plotly.js'
 import PropTypes from 'prop-types'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const chartTheme = plotlyChartTheme
 const bleachingBenthicCategories = Object.entries(
@@ -24,61 +25,65 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     (value) => value !== null && value !== undefined,
   )
 
-  const totalSurveys = isBleachingDataAvailable ? quadratCount * sampleUnitCount : 0
+  const totalSampleUnits = isBleachingDataAvailable ? quadratCount * sampleUnitCount : 0
   const otherBleachingPercentage = isBleachingDataAvailable
     ? parseFloat((100 - percentHard - percentSoft - percentAlgae).toFixed(1))
     : undefined
 
   const bleachingPercentageValues = [
     percentHard ?? 0,
-    otherBleachingPercentage ?? 0,
     percentSoft ?? 0,
     percentAlgae ?? 0,
+    otherBleachingPercentage ?? 0,
   ]
 
   const plotlyDataConfiguration = bleachingBenthicCategories
     .map(([category, color], index) => ({
       x: [1],
-      y: [bleachingPercentageValues[index] / 100],
+      y: [bleachingPercentageValues[index]],
       type: 'bar',
-      name: `${category} (${bleachingPercentageValues[index]}%)`,
+      name: `${category} (${bleachingPercentageValues[index].toFixed(1)}%)`,
       marker: {
         color: color,
       },
+      hovertemplate: `${category}<br>%{y:.1f}%<extra></extra>`,
     }))
     .filter((trace) => trace.y.some((value) => value > 0))
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
-    margin: { ...chartTheme.layout.margin, t: 70, b: 20 },
+    margin: { ...chartTheme.layout.margin, t: 70, b: 20, r: 200 },
     barmode: 'stack',
     bargap: 0,
     xaxis: {
       ...chartTheme.layout.xaxis,
-      title: '',
       showticklabels: false,
     },
     yaxis: {
       ...chartTheme.layout.yaxis,
-      title: '',
-      range: [0, 1],
-      tickvals: Array.from({ length: 11 }, (_, i) => i / 10),
-      tickformat: '.0%',
+      title: {
+        text: 'Benthic cover (%)',
+      },
+      range: [0, 100],
+      tickvals: Array.from({ length: 11 }, (_, i) => i * 10),
     },
     showlegend: true,
     legend: {
-      font: { size: 10 },
+      font: { size: 9 },
     },
   }
 
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Bleaching - % Benthic Cover</MetricCardH3>
+        <MetricCardH3>Bleaching % Cover (Bleaching)</MetricCardH3>
         {isBleachingDataAvailable && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
+          </ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {isBleachingDataAvailable ? (
         <Plot
           data={plotlyDataConfiguration}

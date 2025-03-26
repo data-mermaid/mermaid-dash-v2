@@ -156,12 +156,18 @@ export const MetricsCard = styled.div`
   justify-content: center;
   padding: 1rem;
   gap: 0.5rem;
+  position: relative;
   ${mediaQueryTabletLandscapeOnly(css`
     margin: 0;
     flex-grow: 1;
     padding: 1rem ${theme.spacing.small};
     height: 100%;
   `)}
+`
+
+export const MetricCardInlineText = styled.div`
+  display: flex;
+  align-items: center;
 `
 
 export const MetricCardH3 = styled.h3`
@@ -254,6 +260,12 @@ export const FollowToggleContainer = styled.div`
   `)}
 `
 
+export const FollowButton = styled(ButtonSecondary)`
+  height: 100%;
+  background-color: ${({ enableFollowScreen }) =>
+    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+`
+
 export const StyledLabel = styled.label`
   cursor: pointer;
 `
@@ -268,4 +280,22 @@ export const MapAttributeRow = styled.div`
   ${mediaQueryTabletLandscapeOnly(css`
     display: ${(props) => (props.$showMobileExpandedMetricsPane ? 'flex' : 'none')};
   `)}
+`
+
+export const CircleLoader = styled.div`
+  height: 1.6rem;
+  display: ${({ showLoadingCircle }) => (showLoadingCircle ? 'inline-block' : 'none')};
+  aspect-ratio: 1 / 1;
+  border: 2px dashed;
+  border-radius: 50%;
+  animation: rotation 2s linear infinite;
+  margin-right: 0.5rem;
+  @keyframes rotation {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
 `

@@ -12,15 +12,15 @@ export const FilterProjectsProvider = ({ children }) => {
   const [projectData, setProjectData] = useState({})
   const [countries, setCountries] = useState([])
   const [displayedProjects, setDisplayedProjects] = useState([])
+  const [displayedProjectNames, setDisplayedProjectNames] = useState([])
   const [selectedCountries, setSelectedCountries] = useState([])
   const [selectedOrganizations, setSelectedOrganizations] = useState([])
+  const [selectedProjects, setSelectedProjects] = useState([])
   const [sampleDateAfter, setSampleDateAfter] = useState(null)
   const [sampleDateBefore, setSampleDateBefore] = useState(null)
-  const [methodDataSharingFilters, setMethodDataSharingFilters] = useState([])
-  const [projectNameFilter, setProjectNameFilter] = useState('')
-  const [checkedProjects, setCheckedProjects] = useState([])
+  const [omittedMethodDataSharingFilters, setOmittedMethodDataSharingFilters] = useState([])
   const queryParams = useMemo(() => new URLSearchParams(location.search), [location.search])
-  const queryParamsSampleEventId = queryParams.get('sample_event_id')
+  const queryParamsSampleEventId = queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
   const initialSelectedMarker = queryParamsSampleEventId !== null ? queryParamsSampleEventId : null
   const [selectedMarkerId, setSelectedMarkerId] = useState(initialSelectedMarker)
   const [selectedProject, setSelectedProject] = useState(null)
@@ -29,14 +29,13 @@ export const FilterProjectsProvider = ({ children }) => {
   const [displayedOrganizations, setDisplayedOrganizations] = useState([])
   const [displayedCountries, setDisplayedCountries] = useState([])
   const [remainingDisplayedCountries, setRemainingDisplayedCountries] = useState([])
+  const [remainingDisplayedProjectNames, setRemainingDisplayedProjectNames] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
-  const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(false)
+  const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(true)
   const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
-  const filteredSurveys = displayedProjects
-    .filter((project) => checkedProjects.includes(project.project_id))
-    .flatMap((project) => project.records)
+  const filteredSurveys = displayedProjects.flatMap((project) => project.records)
 
   const getURLParams = useCallback(() => new URLSearchParams(location.search), [location.search])
 
@@ -47,14 +46,36 @@ export const FilterProjectsProvider = ({ children }) => {
     [navigate, location.pathname],
   )
 
+  const updateSelectInputQueryParams = (selectedItems, singularParam, pluralParam, setValues) => {
+    const queryParams = getURLParams()
+    const encodedItems = selectedItems.map(encodeURIComponent)
+
+    queryParams.delete(singularParam)
+    queryParams.delete(pluralParam)
+
+    if (selectedItems.length === 1) {
+      queryParams.set(singularParam, encodedItems[0])
+    } else if (selectedItems.length > 1) {
+      queryParams.set(pluralParam, encodedItems.join(','))
+    }
+
+    updateURLParams(queryParams)
+    setValues(selectedItems)
+  }
+
   const _setFiltersBasedOnUrlParams = useEffect(() => {
     const queryParams = getURLParams()
 
-    const setFilterValue = (primaryKey, secondaryKey, setValue) => {
-      if (queryParams.has(primaryKey)) {
-        setValue(queryParams.getAll(primaryKey)[0].split(','))
-      } else if (queryParams.has(secondaryKey)) {
-        setValue(queryParams.getAll(secondaryKey)[0].split(','))
+    const handleSelectInputFilter = (keys, setValues) => {
+      const selectedValues = keys.reduce((acc, key) => {
+        if (queryParams.has(key)) {
+          return queryParams.getAll(key)[0].split(',').map(decodeURIComponent)
+        }
+        return acc
+      }, [])
+
+      if (selectedValues.length > 0) {
+        setValues(selectedValues)
       }
     }
 
@@ -72,35 +93,29 @@ export const FilterProjectsProvider = ({ children }) => {
     }
 
     const handleMethodDataSharingFilter = () => {
-      if (!queryParams.has(URL_PARAMS.METHOD_DATA_SHARING) && !queryParams.has('method')) {
+      if (!queryParams.has(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)) {
         return
       }
 
-      const queryParamsMethodDataSharing = queryParams.has('method')
-        ? queryParams.getAll('method')[0].split(',')
-        : queryParams.getAll(URL_PARAMS.METHOD_DATA_SHARING)[0].split(',')
+      const queryParamsOmittedMethodDataSharing = queryParams
+        .getAll(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)[0]
+        .split(',')
+
       const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
         (method) => method.dataSharingOptions,
       )
-      const validMethodDataSharing = queryParamsMethodDataSharing.filter((option) => {
+
+      const validOmittedMethodDataSharing = queryParamsOmittedMethodDataSharing.filter((option) => {
         return allDataSharingOptions.includes(option)
       })
-      setMethodDataSharingFilters(validMethodDataSharing)
-      if (validMethodDataSharing.length === 0) {
-        queryParams.delete('method')
-        queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
+
+      setOmittedMethodDataSharingFilters(validOmittedMethodDataSharing)
+      if (validOmittedMethodDataSharing.length === 0) {
+        queryParams.delete(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)
       } else {
-        queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, validMethodDataSharing)
+        queryParams.set(URL_PARAMS.OMITTED_METHOD_DATA_SHARING, validOmittedMethodDataSharing)
       }
       updateURLParams(queryParams)
-    }
-
-    const setProjectNameValue = () => {
-      if (queryParams.has(URL_PARAMS.PROJECTS)) {
-        setProjectNameFilter(queryParams.get(URL_PARAMS.PROJECTS))
-      } else if (queryParams.has('project')) {
-        setProjectNameFilter(queryParams.get('project'))
-      }
     }
 
     const setFollowScreen = () => {
@@ -111,16 +126,19 @@ export const FilterProjectsProvider = ({ children }) => {
 
     const setShowProjectsWithNoData = () => {
       if (queryParams.has(URL_PARAMS.SHOW_NO_DATA_PROJECTS)) {
-        setShowProjectsWithNoRecords(true)
+        setShowProjectsWithNoRecords(false)
       }
     }
 
-    setFilterValue(URL_PARAMS.COUNTRIES, 'country', setSelectedCountries)
-    setFilterValue(URL_PARAMS.ORGANIZATIONS, 'organization', setSelectedOrganizations)
+    handleSelectInputFilter([URL_PARAMS.COUNTRY, URL_PARAMS.COUNTRIES], setSelectedCountries)
+    handleSelectInputFilter(
+      [URL_PARAMS.ORGANIZATION, URL_PARAMS.ORGANIZATIONS],
+      setSelectedOrganizations,
+    )
+    handleSelectInputFilter([URL_PARAMS.PROJECT, URL_PARAMS.PROJECTS], setSelectedProjects)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_AFTER, setSampleDateAfter)
     handleDateFilter(URL_PARAMS.SAMPLE_DATE_BEFORE, setSampleDateBefore, true)
     handleMethodDataSharingFilter()
-    setProjectNameValue()
     setFollowScreen()
     setShowProjectsWithNoData()
   }, [getURLParams, updateURLParams])
@@ -136,7 +154,7 @@ export const FilterProjectsProvider = ({ children }) => {
         })
       })
       if (!displaySelectedSampleEvent) {
-        queryParams.delete('sample_event_id')
+        queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
         setSelectedMarkerId(null)
         updateURLParams(queryParams)
       }
@@ -150,14 +168,20 @@ export const FilterProjectsProvider = ({ children }) => {
     [],
   )
 
+  const userIsMemberOfProjectByProjectName = useCallback(
+    (projectName, mermaidUserData) =>
+      mermaidUserData?.projects?.some((project) => project.name === projectName),
+    [],
+  )
+
   const isAnyActiveFilters = useCallback(() => {
     const anyActiveCountries = selectedCountries.length
     const anyActiveOrganizations = selectedOrganizations.length
+    const anyActiveProjects = selectedProjects.length
     const anyActiveSampleDateAfter = sampleDateAfter
     const anyActiveSampleDateBefore = sampleDateBefore
     const showYourDataOnly = showYourData
-    const anyInactiveMethodDataSharing = methodDataSharingFilters.length > 0
-    const anyActiveProjects = projectNameFilter
+    const anyInactiveMethodDataSharing = omittedMethodDataSharingFilters.length > 0
     const followScreenEnabled = enableFollowScreen
 
     return Boolean(
@@ -168,17 +192,19 @@ export const FilterProjectsProvider = ({ children }) => {
         showYourDataOnly ||
         anyInactiveMethodDataSharing ||
         anyActiveProjects ||
-        followScreenEnabled,
+        followScreenEnabled ||
+        !showProjectsWithNoRecords,
     )
   }, [
     selectedCountries,
     selectedOrganizations,
+    selectedProjects,
     sampleDateAfter,
     sampleDateBefore,
     showYourData,
-    methodDataSharingFilters,
-    projectNameFilter,
+    omittedMethodDataSharingFilters,
     enableFollowScreen,
+    showProjectsWithNoRecords,
   ])
 
   const isRecordWithinMapBounds = useCallback((record, mapBbox) => {
@@ -216,7 +242,7 @@ export const FilterProjectsProvider = ({ children }) => {
   )
 
   const applyFilterToProjects = useCallback(
-    (selectedCountries, selectedOrganizations) => {
+    (selectedCountries, selectedOrganizations, selectedProjects) => {
       const fallbackSampleDateAfter = new Date('1970-01-01')
       const fallbackSampleDateBefore = new Date(Date.now())
 
@@ -232,10 +258,8 @@ export const FilterProjectsProvider = ({ children }) => {
             selectedOrganizations.length === 0 ||
             project.tags?.map((tag) => tag.name).some((tag) => selectedOrganizations.includes(tag))
 
-          // Filter by project name
-          const matchesProjectName =
-            projectNameFilter === '' ||
-            project.project_name.toLowerCase().includes(projectNameFilter.toLowerCase())
+          const matchesSelectedProjects =
+            selectedProjects.length === 0 || selectedProjects.includes(project.project_name)
 
           // Filter out projects that the user is not a member of
           const onlyShowProjectsUserIsAMemberOf = showYourData
@@ -245,7 +269,7 @@ export const FilterProjectsProvider = ({ children }) => {
           const isProjectVisible =
             matchesSelectedCountries &&
             matchesSelectedOrganizations &&
-            matchesProjectName &&
+            matchesSelectedProjects &&
             onlyShowProjectsUserIsAMemberOf
 
           return isProjectVisible
@@ -266,15 +290,23 @@ export const FilterProjectsProvider = ({ children }) => {
           }
         })
         .map((project) => {
-          // Applies method data sharing filters
+          const allDataSharingOptions = Object.values(COLLECTION_METHODS).flatMap(
+            (method) => method.dataSharingOptions,
+          )
+
+          const selectedMethodFilters = allDataSharingOptions.filter(
+            (option) => !omittedMethodDataSharingFilters.includes(option),
+          )
+
           const filteredRecords = project.records.filter((record) => {
-            const recordHasSampleUnitsAndMatches = !methodDataSharingFilters.some((filter) => {
+            const recordHasSampleUnitAndPolicyMatch = selectedMethodFilters.some((filter) => {
               const { policy, value, name } = POLICY_MAPPINGS[filter] || {}
               const sampleUnitExists = record.protocols[name]?.sample_unit_count !== undefined
               const isPolicyValueMatch = record[policy] === value
               return sampleUnitExists && isPolicyValueMatch
             })
-            return recordHasSampleUnitsAndMatches
+
+            return recordHasSampleUnitAndPolicyMatch
           })
 
           return {
@@ -307,8 +339,7 @@ export const FilterProjectsProvider = ({ children }) => {
       projectData.results,
       userIsMemberOfProject,
       mermaidUserData,
-      methodDataSharingFilters,
-      projectNameFilter,
+      omittedMethodDataSharingFilters,
       sampleDateAfter,
       sampleDateBefore,
       showYourData,
@@ -325,9 +356,13 @@ export const FilterProjectsProvider = ({ children }) => {
       return
     }
 
-    const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations)
+    const filteredProjects = applyFilterToProjects(
+      selectedCountries,
+      selectedOrganizations,
+      selectedProjects,
+    )
     const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+      queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID) && queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
     if (projectData.results.length === projectData.count) {
       doesSelectedSampleEventPassFilters(paramsSampleEventId, filteredProjects)
     }
@@ -343,10 +378,9 @@ export const FilterProjectsProvider = ({ children }) => {
     projectData.count,
     selectedCountries,
     selectedOrganizations,
-    projectNameFilter,
     sampleDateAfter,
     sampleDateBefore,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
     doesSelectedSampleEventPassFilters,
     setDisplayedProjects,
     showYourData,
@@ -354,10 +388,11 @@ export const FilterProjectsProvider = ({ children }) => {
     queryParams,
     enableFollowScreen,
     mapBbox,
+    selectedProjects,
   ])
 
   const countriesSelectOnOpen = () => {
-    const filteredProjects = applyFilterToProjects([], selectedOrganizations)
+    const filteredProjects = applyFilterToProjects([], selectedOrganizations, selectedProjects)
     const uniqueCountries = [
       ...new Set(
         filteredProjects
@@ -382,7 +417,7 @@ export const FilterProjectsProvider = ({ children }) => {
   }
 
   const organizationsSelectOnOpen = () => {
-    const filteredProjects = applyFilterToProjects(selectedCountries, [])
+    const filteredProjects = applyFilterToProjects(selectedCountries, [], selectedProjects)
     const uniqueOrganizations = [
       ...new Set(
         filteredProjects
@@ -403,12 +438,23 @@ export const FilterProjectsProvider = ({ children }) => {
     ]
     setDisplayedOrganizations(uniqueOrganizations)
   }
+
+  const projectsSelectOnOpen = () => {
+    const filteredProjects = applyFilterToProjects(selectedCountries, selectedOrganizations, [])
+    const filteredProjectNames = filteredProjects.map(({ project_name }) => project_name)
+    const remainingProjectNames = projectData.results
+      .filter(({ project_name }) => !filteredProjectNames.includes(project_name))
+      .map(({ project_name }) => project_name)
+    setDisplayedProjectNames(filteredProjectNames)
+    setRemainingDisplayedProjectNames(remainingProjectNames)
+  }
+
   const _removeSampleIdParamsIfDoesntPassFilters = useEffect(() => {
     if (!allProjectsFinishedFiltering) {
       return
     }
     const paramsSampleEventId =
-      queryParams.has('sample_event_id') && queryParams.get('sample_event_id')
+      queryParams.has(URL_PARAMS.SAMPLE_EVENT_ID) && queryParams.get(URL_PARAMS.SAMPLE_EVENT_ID)
     doesSelectedSampleEventPassFilters(paramsSampleEventId, displayedProjects)
   }, [
     allProjectsFinishedFiltering,
@@ -418,29 +464,65 @@ export const FilterProjectsProvider = ({ children }) => {
   ])
 
   const handleSelectedCountriesChange = (selectedCountries) => {
-    const queryParams = getURLParams()
-
-    if (selectedCountries.length === 0) {
-      queryParams.delete(URL_PARAMS.COUNTRIES)
-    } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, selectedCountries)
-    }
-    queryParams.delete('country')
-    updateURLParams(queryParams)
-    setSelectedCountries(selectedCountries)
+    updateSelectInputQueryParams(
+      selectedCountries,
+      URL_PARAMS.COUNTRY,
+      URL_PARAMS.COUNTRIES,
+      setSelectedCountries,
+    )
   }
 
   const handleSelectedOrganizationsChange = (selectedOrganizations) => {
-    const queryParams = getURLParams()
+    updateSelectInputQueryParams(
+      selectedOrganizations,
+      URL_PARAMS.ORGANIZATION,
+      URL_PARAMS.ORGANIZATIONS,
+      setSelectedOrganizations,
+    )
+  }
 
-    if (selectedOrganizations.length === 0) {
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
-    } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, selectedOrganizations)
-    }
-    queryParams.delete('organization')
-    updateURLParams(queryParams)
-    setSelectedOrganizations(selectedOrganizations)
+  const handleSelectedProjectChange = (selectedProjects) => {
+    updateSelectInputQueryParams(
+      selectedProjects,
+      URL_PARAMS.PROJECT,
+      URL_PARAMS.PROJECTS,
+      setSelectedProjects,
+    )
+  }
+
+  const handleDeleteCountry = (countryToBeDeleted) => {
+    const updatedCountries = selectedCountries.filter((country) => country !== countryToBeDeleted)
+
+    updateSelectInputQueryParams(
+      updatedCountries,
+      URL_PARAMS.COUNTRY,
+      URL_PARAMS.COUNTRIES,
+      setSelectedCountries,
+    )
+  }
+
+  const handleDeleteOrganization = (organizationToBeDeleted) => {
+    const updatedOrganizations = selectedOrganizations.filter(
+      (organization) => organization !== organizationToBeDeleted,
+    )
+
+    updateSelectInputQueryParams(
+      updatedOrganizations,
+      URL_PARAMS.ORGANIZATION,
+      URL_PARAMS.ORGANIZATIONS,
+      setSelectedOrganizations,
+    )
+  }
+
+  const handleDeleteProject = (projectToBeDeleted) => {
+    const updatedProjects = selectedProjects.filter((project) => project !== projectToBeDeleted)
+
+    updateSelectInputQueryParams(
+      updatedProjects,
+      URL_PARAMS.PROJECT,
+      URL_PARAMS.PROJECTS,
+      setSelectedProjects,
+    )
   }
 
   const formattedDate = (date) => {
@@ -483,7 +565,7 @@ export const FilterProjectsProvider = ({ children }) => {
       value.dataSharingOptions.includes(name),
     )
     const [allOption, ...subOptions] = foundMethod.dataSharingOptions
-    let updatedFilter = [...methodDataSharingFilters]
+    let updatedFilter = [...omittedMethodDataSharingFilters]
     if (name.includes('all')) {
       updatedFilter = checked
         ? updatedFilter.filter((method) => !foundMethod.dataSharingOptions.includes(method))
@@ -508,26 +590,12 @@ export const FilterProjectsProvider = ({ children }) => {
     updatedFilter = [...new Set(updatedFilter)]
     const queryParams = getURLParams()
     if (updatedFilter.length === 0) {
-      queryParams.delete(URL_PARAMS.METHOD_DATA_SHARING)
+      queryParams.delete(URL_PARAMS.OMITTED_METHOD_DATA_SHARING)
     } else {
-      queryParams.set(URL_PARAMS.METHOD_DATA_SHARING, updatedFilter)
+      queryParams.set(URL_PARAMS.OMITTED_METHOD_DATA_SHARING, updatedFilter)
     }
-    queryParams.delete('method')
     updateURLParams(queryParams)
-    setMethodDataSharingFilters(updatedFilter)
-  }
-
-  const handleProjectNameFilter = (event) => {
-    const queryParams = getURLParams()
-    const projectName = event.target.value
-    if (projectName.length === 0) {
-      queryParams.delete(URL_PARAMS.PROJECTS)
-    } else {
-      queryParams.set(URL_PARAMS.PROJECTS, projectName)
-    }
-    queryParams.delete('project')
-    updateURLParams(queryParams)
-    setProjectNameFilter(projectName)
+    setOmittedMethodDataSharingFilters(updatedFilter)
   }
 
   const clearAllFilters = () => {
@@ -538,12 +606,13 @@ export const FilterProjectsProvider = ({ children }) => {
     updateURLParams(queryParams)
     setSelectedCountries([])
     setSelectedOrganizations([])
+    setSelectedProjects([])
     setSampleDateAfter(null)
     setSampleDateBefore(null)
-    setMethodDataSharingFilters([])
-    setProjectNameFilter('')
+    setOmittedMethodDataSharingFilters([])
     setShowYourData(false)
     setEnableFollowScreen(false)
+    setShowProjectsWithNoRecords(true)
     updateURLParams(queryParams)
   }
 
@@ -553,21 +622,13 @@ export const FilterProjectsProvider = ({ children }) => {
   }
 
   const getActiveProjectCount = () => {
-    let count = 0
-
-    displayedProjects.forEach((project) => {
-      if (checkedProjects.includes(project.project_id)) {
-        count++
-      }
-    })
-
-    return count
+    return displayedProjects?.length ?? 0
   }
 
   const updateCurrentSampleEvent = useCallback(
     (sampleEventId) => {
       const newQueryParams = new URLSearchParams(location.search)
-      newQueryParams.set('sample_event_id', sampleEventId)
+      newQueryParams.set(URL_PARAMS.SAMPLE_EVENT_ID, sampleEventId)
       updateURLParams(newQueryParams)
       setSelectedMarkerId(sampleEventId)
     },
@@ -578,7 +639,6 @@ export const FilterProjectsProvider = ({ children }) => {
     <FilterProjectsContext.Provider
       value={{
         allProjectsFinishedFiltering,
-        checkedProjects,
         clearAllFilters,
         countriesSelectOnOpen,
         displayedCountries,
@@ -592,17 +652,15 @@ export const FilterProjectsProvider = ({ children }) => {
         handleChangeSampleDateAfter,
         handleChangeSampleDateBefore,
         handleMethodDataSharingFilter,
-        handleProjectNameFilter,
         handleSelectedCountriesChange,
         handleSelectedOrganizationsChange,
         handleYourDataFilter,
         isAnyActiveFilters,
         mermaidUserData,
-        methodDataSharingFilters,
+        omittedMethodDataSharingFilters,
         organizationsSelectOnOpen,
         projectData,
-        projectDataCount: projectData?.count || 0,
-        projectNameFilter,
+        projectDataCount: projectData?.count ?? 0,
         remainingDisplayedCountries,
         sampleDateAfter,
         sampleDateBefore,
@@ -610,7 +668,6 @@ export const FilterProjectsProvider = ({ children }) => {
         selectedMarkerId,
         selectedOrganizations,
         selectedProject,
-        setCheckedProjects,
         setCountries,
         setDisplayedCountries,
         setDisplayedOrganizations,
@@ -629,6 +686,16 @@ export const FilterProjectsProvider = ({ children }) => {
         updateCurrentSampleEvent,
         updateURLParams,
         userIsMemberOfProject,
+        projectsSelectOnOpen,
+        remainingDisplayedProjectNames,
+        handleSelectedProjectChange,
+        selectedProjects,
+        setSelectedProjects,
+        displayedProjectNames,
+        userIsMemberOfProjectByProjectName,
+        handleDeleteCountry,
+        handleDeleteOrganization,
+        handleDeleteProject,
       }}
     >
       {children}

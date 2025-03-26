@@ -1,21 +1,20 @@
 import { useEffect, useState, useMemo, useContext } from 'react'
 import PropTypes from 'prop-types'
 
-import styled from 'styled-components'
-
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
 
 import {
   StyledMetricsWrapper,
   SummarizedMetrics,
-  MetricsCard,
   MultipleMetricCardsRow,
   DesktopToggleMetricsPaneButton,
   MobileExpandMetricsPaneButton,
   BiggerIconCaretDown,
   BiggerIconCaretUp,
   StyledChevronSpan,
+  MetricsCard,
+  MetricCardInlineText,
   MetricCardH3,
   MetricCardPBig,
   MetricCardPMedium,
@@ -23,14 +22,18 @@ import {
   DisplayedProjectsMetricsWrapper,
   ChartsWrapper,
   FollowToggleContainer,
+  FollowButton,
   MapAttributeRow,
+  CircleLoader,
 } from './MetricsPane.styles'
-import theme from '../../styles/theme'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { mapAttributeText, noDataText, tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
 
+import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
+import LoadingBar from '../MermaidDash/components/LoadingBar'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
 import { SelectedProjectMetrics } from './SelectedProjectMetrics'
 import { MetricsPaneChartTabs } from './MetricsPaneChartTabs'
@@ -41,15 +44,8 @@ import { TimeSeriesFishBiomass } from './charts/TimeSeriesFishBiomass'
 import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
-import { ButtonSecondary } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
-
-const FollowButton = styled(ButtonSecondary)`
-  height: 100%;
-  background-color: ${({ enableFollowScreen }) =>
-    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
-`
+import { pluralizeWord } from '../../helperFunctions/pluralize'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -64,7 +60,6 @@ const MetricsPane = ({
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
-    checkedProjects,
     displayedProjects,
     enableFollowScreen,
     getActiveProjectCount,
@@ -75,7 +70,7 @@ const MetricsPane = ({
     updateURLParams,
     selectedProject,
     setSelectedProject,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
 
@@ -86,9 +81,6 @@ const MetricsPane = ({
     let years = new Set()
 
     displayedProjects.forEach((project) => {
-      if (!checkedProjects.includes(project.project_id)) {
-        return
-      }
       project.records.forEach((record) => {
         Object.values(record.protocols).forEach((value) => {
           transects += value.sample_unit_count
@@ -122,7 +114,7 @@ const MetricsPane = ({
       numUniqueCountries: countries.size,
       yearRange,
     }
-  }, [displayedProjects, checkedProjects])
+  }, [displayedProjects])
 
   const _setMetricsAfterCalculating = useEffect(() => {
     const { numSurveys, numTransects, numUniqueCountries } = calculateMetrics
@@ -153,27 +145,25 @@ const MetricsPane = ({
     handleShowMobileExpandedMetricsPane()
   }
 
-  const countryLabel = numUniqueCountries === 1 ? 'Country' : 'Countries'
-
   const transectAndProjectCountCards = (
     <>
       <MetricsCard>
         <MetricCardPMedium>{numTransects.toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>Transects</MetricCardH3>
+        <MetricCardH3>{pluralizeWord(numTransects ?? 0, 'Transect')}</MetricCardH3>
       </MetricsCard>
       <MetricsCard>
         <MetricCardPMedium>{getActiveProjectCount().toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>Projects </MetricCardH3>
+        <MetricCardH3>{pluralizeWord(getActiveProjectCount() ?? 0, 'Project')}</MetricCardH3>
       </MetricsCard>
     </>
   )
 
-  const fishBeltFilterToggleOn = !methodDataSharingFilters.includes('bf_all')
+  const fishBeltFilterToggleOn = !omittedMethodDataSharingFilters.includes('bf_all')
   const benthicsFilterToggleOn = ['bl_all', 'bp_all', 'qbp_all'].some(
-    (filterLabel) => !methodDataSharingFilters.includes(filterLabel),
+    (filterLabel) => !omittedMethodDataSharingFilters.includes(filterLabel),
   )
-  const bleachingFilterToggleOn = !methodDataSharingFilters.includes('cb_all')
-  const habitatComplexityFilterToggleOn = !methodDataSharingFilters.includes('hc_all')
+  const bleachingFilterToggleOn = !omittedMethodDataSharingFilters.includes('cb_all')
+  const habitatComplexityFilterToggleOn = !omittedMethodDataSharingFilters.includes('hc_all')
 
   const noChartsToDisplay = (
     <>
@@ -192,18 +182,36 @@ const MetricsPane = ({
       >
         <MetricsCard>
           <MetricCardPBig>{numSurveys.toLocaleString()}</MetricCardPBig>
-          <MetricCardH3>Surveys</MetricCardH3>
+          <MetricCardInlineText>
+            <CircleLoader showLoadingCircle={showLoadingIndicator && isDesktopWidth} />
+            <MetricCardH3>
+              {isDesktopWidth && showLoadingIndicator && 'Loading'}{' '}
+              {pluralizeWord(numSurveys ?? 0, 'Survey')}
+            </MetricCardH3>
+          </MetricCardInlineText>
+          {isDesktopWidth && (
+            <LoadingBar
+              showLoadingIndicator={showLoadingIndicator}
+              setShowLoadingIndicator={setShowLoadingIndicator}
+              currentProgress={projectData?.results?.length ?? 0}
+              finalProgress={projectData?.count ?? 0}
+            />
+          )}
         </MetricsCard>
         <MetricsCard>
           {isDesktopWidth ? (
             <InlineOnDesktopMetricWrapper>
               <span>{numUniqueCountries.toLocaleString()}</span>{' '}
-              <MetricCardH3>{countryLabel}</MetricCardH3>
+              <MetricCardH3>
+                {pluralizeWord(numUniqueCountries ?? 0, 'Country', 'Countries')}
+              </MetricCardH3>
             </InlineOnDesktopMetricWrapper>
           ) : (
             <>
               <MetricCardPBig>{numUniqueCountries.toLocaleString()}</MetricCardPBig>
-              <MetricCardH3>{countryLabel}</MetricCardH3>
+              <MetricCardH3>
+                {pluralizeWord(numUniqueCountries ?? 0, 'Country', 'Countries')}
+              </MetricCardH3>
             </>
           )}
         </MetricsCard>
@@ -280,9 +288,9 @@ const MetricsPane = ({
     const queryParams = getURLParams()
 
     if (newState) {
-      queryParams.set('follow_screen', 'true')
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.delete('follow_screen')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)
@@ -308,8 +316,8 @@ const MetricsPane = ({
         {isMobileWidth || isMetricsPaneShowing ? metricsContent : null}
         {isMobileWidth ? (
           <LoadingIndicator
-            currentProgress={projectData?.results?.length || 0}
-            finalProgress={projectData?.count || 0}
+            currentProgress={projectData?.results?.length ?? 0}
+            finalProgress={projectData?.count ?? 0}
             showLoadingIndicator={showLoadingIndicator}
             setShowLoadingIndicator={setShowLoadingIndicator}
             isRelativelyPositioned={true}

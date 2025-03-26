@@ -15,16 +15,9 @@ import { MAIN_MAP_ID } from '../constants/constants'
 
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
-const defaultLon = -79
-const defaultLat = 32
+const defaultLon = 166
+const defaultLat = -8
 const defaultMapZoom = 1
-
-const basemapLayerStyle = {
-  id: 'basemap-layer',
-  type: 'raster',
-  minzoom: 0,
-  maxzoom: 22,
-}
 
 const sitesClusterLayer = {
   type: 'circle',
@@ -98,9 +91,8 @@ const sitesSource = {
   clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
-const MaplibreMap = ({ mapRef, view, setView }) => {
+const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const {
-    checkedProjects,
     displayedProjects,
     enableFollowScreen,
     selectedMarkerId,
@@ -126,7 +118,6 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [sitesFeatureClass, setSitesFeatureClass] = useState(null)
   const { isDesktopWidth } = useResponsive()
-  const prevCheckedProjects = usePrevious(checkedProjects)
 
   const updateURLParams = useCallback(
     (newQueryParams) => {
@@ -148,17 +139,11 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
     const displayedProjectsChanged =
       JSON.stringify(displayedProjects) !== JSON.stringify(prevDisplayedProjects)
     const selectedMarkerChanged = selectedMarkerId !== prevSelectedMarkerId
-    const checkedProjectsChanged = checkedProjects !== prevCheckedProjects
 
-    if (displayedProjectsChanged || selectedMarkerChanged || checkedProjectsChanged) {
+    if (displayedProjectsChanged || selectedMarkerChanged) {
       const features = displayedProjects.flatMap((project) => {
         return project.records
           .map((record) => {
-            const isProjectChecked = checkedProjects.includes(project.project_id)
-            if (!isProjectChecked) {
-              return
-            }
-
             return {
               type: 'Feature',
               properties: { ...record },
@@ -175,14 +160,7 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
 
       setSitesFeatureClass(featureClass)
     }
-  }, [
-    displayedProjects,
-    prevDisplayedProjects,
-    selectedMarkerId,
-    prevSelectedMarkerId,
-    checkedProjects,
-    prevCheckedProjects,
-  ])
+  }, [displayedProjects, prevDisplayedProjects, selectedMarkerId, prevSelectedMarkerId])
 
   const handleMoveEnd = () => {
     const map = mapRef.current?.getMap()
@@ -251,7 +229,12 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
   }
 
   const viewAndZoomControlsWrapper = mapRef.current ? (
-    <MapAndTableControls map={mapRef.current.getMap()} view={view} setView={setView} />
+    <MapAndTableControls
+      map={mapRef.current.getMap()}
+      view={view}
+      setView={setView}
+      isFilterPaneShowing={isFilterPaneShowing}
+    />
   ) : null
 
   const hideMapStyleLayers = (map) => {
@@ -300,7 +283,7 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
           latitude: initialMapCenter?.[0] ?? defaultLat,
           zoom: initialMapZoom ?? defaultMapZoom,
         }}
-        mapStyle="https://demotiles.maplibre.org/style.json"
+        mapStyle={`https://api.maptiler.com/maps/satellite/style.json?key=${import.meta.env.VITE_REACT_APP_MAP_TILER_API_KEY}`}
         onLoad={handleMapLoad}
         onMoveEnd={handleMoveEnd}
         onClick={handleClick}
@@ -312,15 +295,6 @@ const MaplibreMap = ({ mapRef, view, setView }) => {
         {viewAndZoomControlsWrapper}
         {isDesktopWidth && <NavigationControl showCompass={false} position="bottom-right" />}
 
-        <Source
-          id="basemap-source"
-          type="raster"
-          tiles={[
-            'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
-          ]}
-        >
-          <Layer {...basemapLayerStyle} />
-        </Source>
         <Source id="sites-source" data={sitesFeatureClass} {...sitesSource}>
           <Layer id="sites-cluster-layer" {...sitesClusterLayer} />
           <Layer id="sites-cluster-count-layer" {...sitesClusterCountLayer} />
@@ -341,6 +315,7 @@ MaplibreMap.propTypes = {
   }).isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
+  isFilterPaneShowing: PropTypes.bool.isRequired,
 }
 
 export default MaplibreMap

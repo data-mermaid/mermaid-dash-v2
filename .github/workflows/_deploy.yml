@@ -24,6 +24,9 @@ on:
       vite_react_app_mermaid_api_endcpoint:
         required: true
         type: string
+      vite_react_app_map_tiler_api_key:
+        required: true
+        type: string
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -82,4 +85,3 @@ jobs:
           GITHUB_TOKEN: ${{ github.token }}
           ENV: ${{ inputs.environment }}
           DOMAIN: ${{ inputs.domain }}
-

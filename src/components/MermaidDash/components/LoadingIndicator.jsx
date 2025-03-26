@@ -10,7 +10,7 @@ const StyledLoadingContainer = styled.div`
       ? 'relative'
       : 'absolute'}; // if the loader is in the metric pane, it needs relative positioning, otherwise in the map pane, it needs absolute.
   width: '20rem';
-  bottom: ${({ $isRelativelyPositioned }) => $isRelativelyPositioned ? 0 : '1.5rem'};
+  bottom: ${({ $isRelativelyPositioned }) => ($isRelativelyPositioned ? 0 : '1.5rem')};
   left: 1.5rem;
   padding: 0.8rem 1rem;
   z-index: 400;
@@ -23,7 +23,7 @@ const StyledLoadingContainer = styled.div`
     justify-content: center;
     background-color: ${theme.color.white};
     justify-self: center;
-    bottom: ${({ $isRelativelyPositioned }) => $isRelativelyPositioned ? 0 : '0.5rem'};
+    bottom: ${({ $isRelativelyPositioned }) => ($isRelativelyPositioned ? 0 : '0.5rem')};
     justify-self: center;
   `)}
 `
@@ -44,6 +44,7 @@ const StyledProgressBar = styled.div`
   width: ${(props) => props.$value}%;
   background-color: ${theme.color.primaryColor};
   height: 100%;
+  transition: width 1s ease-in-out;
 `
 
 const StyledHeader = styled.header`
@@ -62,32 +63,32 @@ const LoadingIndicator = ({
   const [loadingProgressValue, setLoadingProgressValue] = useState(0)
 
   const _calculateCurrentLoadingPercentage = useEffect(() => {
-    if (finalProgress === 0) {
-      return // we cant divide by zero
+    if (finalProgress > 0) {
+      setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
     }
-    setLoadingProgressValue(Math.floor((currentProgress / finalProgress) * 100))
   }, [currentProgress, finalProgress])
 
   const _hideLoadingBarAfterTimeout = useEffect(() => {
     if (loadingProgressValue === 100) {
-      setTimeout(() => {
-        setShowLoadingIndicator(false)
-      }, 10000)
+      const timeout = setTimeout(() => setShowLoadingIndicator(false), 2000)
+      return () => clearTimeout(timeout)
     }
   }, [loadingProgressValue, setShowLoadingIndicator])
 
-  return showLoadingIndicator === true ? (
-    <StyledLoadingContainer $isRelativelyPositioned={isRelativelyPositioned}>
-      <StyledHeader>
-        {loadingProgressValue === 100
-          ? `Done ${loadingProgressValue}%`
-          : `Loading ${loadingProgressValue}%`}
-      </StyledHeader>
-      <StyledProgressBarContainer>
-        <StyledProgressBar $value={loadingProgressValue} />
-      </StyledProgressBarContainer>
-    </StyledLoadingContainer>
-  ) : null
+  return (
+    showLoadingIndicator === true && (
+      <StyledLoadingContainer $isRelativelyPositioned={isRelativelyPositioned}>
+        <StyledHeader>
+          {loadingProgressValue === 100
+            ? `Done ${loadingProgressValue}%`
+            : `Loading ${loadingProgressValue}%`}
+        </StyledHeader>
+        <StyledProgressBarContainer>
+          <StyledProgressBar $value={loadingProgressValue} />
+        </StyledProgressBarContainer>
+      </StyledLoadingContainer>
+    )
+  )
 }
 
 LoadingIndicator.propTypes = {

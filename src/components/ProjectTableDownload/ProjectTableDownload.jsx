@@ -25,7 +25,7 @@ const StyledCSVLink = styled(CSVLink)`
 const TableControls = () => {
   const csvLinkRef = useRef()
 
-  const { checkedProjects, displayedProjects } = useContext(FilterProjectsContext)
+  const { displayedProjects } = useContext(FilterProjectsContext)
 
   const tableHeaders = [
     { label: 'Project Name', key: 'projectName' },
@@ -38,9 +38,6 @@ const TableControls = () => {
 
   const tableContent = displayedProjects
     .map((project) => {
-      if (!checkedProjects.includes(project.project_id)) {
-        return null
-      }
       const { projectName, formattedDateRange, countries, organizations, surveyCount, transects } =
         formatProjectDataHelper(project)
       const formattedTableRowData = {
@@ -69,7 +66,7 @@ const TableControls = () => {
     <>
       <ButtonSecondaryWithMargin onClick={handleDownload}>
         <IconTrayDownload />
-        <span>Download</span>
+        <span>Download CSV</span>
       </ButtonSecondaryWithMargin>
       <StyledCSVLink
         data={tableContent}

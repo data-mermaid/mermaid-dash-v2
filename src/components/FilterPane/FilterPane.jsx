@@ -8,91 +8,81 @@ import { DatePicker } from '@mui/x-date-pickers'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
-import theme from '../../styles/theme'
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
-import {
-  filterPane,
-  autocompleteGroupNames,
-  tooltipText,
-  noDataText,
-} from '../../constants/language'
+import { filterPane, autocompleteGroupNames, noDataText } from '../../constants/language'
 import { IconPlus } from '../../assets/icons'
 import { IconMinus } from '../../assets/dashboardOnlyIcons'
 
 import {
   ExpandableFilterRowContainer,
-  ShowMoreFiltersContainer,
   StyledCategoryContainer,
   StyledClickableArea,
   StyledDateField,
   StyledDateRangeContainer,
-  StyledEmptyListItem,
   StyledExpandFilters,
   StyledFilterPaneContainer,
+  StyledFilterPaneHeader,
   StyledHeader,
   StyledLabel,
   StyledLi,
   StyledMethodListContainer,
-  StyledProjectListContainer,
-  StyledProjectNameFilter,
   StyledUnorderedList,
   TieredStyledClickableArea,
   ToggleMethodDataSharingButton,
   StyledDateInputContainer,
-  StyledCountryHeader,
+  StyledFilterPaneHeaderWrapper,
   StyledLoginToViewContainer,
-  SmallerIconUserCircle,
 } from './FilterPane.styles'
 
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import AutocompleteCheckbox from '../generic/AutocompleteCheckbox'
-import { ButtonThatLooksLikeLinkUnderlined, IconButton } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
+import { ButtonThatLooksLikeLinkUnderlined } from '../generic'
 
 const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
-const FilterPane = ({ mermaidUserData }) => {
+const FilterPane = () => {
   const todayDate = dayjs()
   const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
   const { isAuthenticated, loginWithRedirect } = useAuth0()
   const {
-    checkedProjects,
     countriesSelectOnOpen,
     clearAllFilters,
     displayedCountries,
     displayedOrganizations,
-    displayedProjects,
     getActiveProjectCount,
     handleChangeSampleDateAfter,
     handleChangeSampleDateBefore,
     handleMethodDataSharingFilter,
-    handleProjectNameFilter,
     handleSelectedCountriesChange,
     handleSelectedOrganizationsChange,
     handleYourDataFilter,
     isAnyActiveFilters,
-    methodDataSharingFilters,
+    omittedMethodDataSharingFilters,
     organizationsSelectOnOpen,
     projectData,
-    projectNameFilter,
     remainingDisplayedCountries,
     sampleDateAfter,
     sampleDateBefore,
     selectedCountries,
     selectedOrganizations,
-    setCheckedProjects,
     setCountries,
     setDisplayedCountries,
     setDisplayedOrganizations,
-    setSelectedCountries,
-    setSelectedOrganizations,
     showYourData,
-    userIsMemberOfProject,
     showProjectsWithNoRecords,
     setShowProjectsWithNoRecords,
+    selectedProjects,
+    remainingDisplayedProjectNames,
+    handleSelectedProjectChange,
+    projectsSelectOnOpen,
+    displayedProjectNames,
+    handleDeleteCountry,
+    handleDeleteOrganization,
+    handleDeleteProject,
   } = useContext(FilterProjectsContext)
+
   const [expandedSections, setExpandedSections] = useState({
     beltfish: false,
     colonies_bleached: false,
@@ -150,36 +140,6 @@ const FilterPane = ({ mermaidUserData }) => {
     }
   }
 
-  const handleDeleteCountry = (countryToBeDeleted) => {
-    const updatedCountries = selectedCountries.filter((country) => country !== countryToBeDeleted)
-    setSelectedCountries(updatedCountries)
-
-    const queryParams = getURLParams()
-    if (updatedCountries.length === 0) {
-      queryParams.delete('country')
-      queryParams.delete(URL_PARAMS.COUNTRIES)
-    } else {
-      queryParams.set(URL_PARAMS.COUNTRIES, updatedCountries)
-    }
-    updateURLParams(queryParams)
-  }
-
-  const handleDeleteOrganization = (organizationToBeDeleted) => {
-    const updatedOrganizations = selectedOrganizations.filter(
-      (organization) => organization !== organizationToBeDeleted,
-    )
-    setSelectedOrganizations(updatedOrganizations)
-
-    const queryParams = getURLParams()
-    if (updatedOrganizations.length === 0) {
-      queryParams.delete('organization')
-      queryParams.delete(URL_PARAMS.ORGANIZATIONS)
-    } else {
-      queryParams.set(URL_PARAMS.ORGANIZATIONS, updatedOrganizations)
-    }
-    updateURLParams(queryParams)
-  }
-
   const getCountriesAutocompleteGroup = (option) => {
     return remainingDisplayedCountries.length
       ? displayedCountries.includes(option)
@@ -192,25 +152,26 @@ const FilterPane = ({ mermaidUserData }) => {
     return isAnyActiveFilters() ? autocompleteGroupNames.organizationsBasedOnCurrentFilters : ''
   }
 
+  const getProjectsAutocompleteGroup = (option) => {
+    return remainingDisplayedProjectNames.length
+      ? displayedProjectNames.includes(option)
+        ? autocompleteGroupNames.projectsBasedOnCurrentFilters
+        : autocompleteGroupNames.otherProjects
+      : ''
+  }
+
   const handleShowProjectsWithNoRecords = () => {
     setShowProjectsWithNoRecords((prevState) => {
       const newState = !prevState
       const queryParams = getURLParams()
 
       newState
-        ? queryParams.set(URL_PARAMS.SHOW_NO_DATA_PROJECTS, 'true')
-        : queryParams.delete(URL_PARAMS.SHOW_NO_DATA_PROJECTS)
+        ? queryParams.delete(URL_PARAMS.SHOW_NO_DATA_PROJECTS)
+        : queryParams.set(URL_PARAMS.SHOW_NO_DATA_PROJECTS, 'false')
 
       updateURLParams(queryParams)
       return newState
     })
-  }
-
-  const handleCheckProject = (projectId) => {
-    const updatedCheckedProjects = checkedProjects.includes(projectId)
-      ? checkedProjects.filter((checkedProject) => checkedProject !== projectId)
-      : [...checkedProjects, projectId]
-    setCheckedProjects(updatedCheckedProjects)
   }
 
   const toggleShowExpanded = (section) => {
@@ -227,10 +188,10 @@ const FilterPane = ({ mermaidUserData }) => {
 
     const foundMethod = COLLECTION_METHODS[methodName]
     const allDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).every((option) => {
-      return methodDataSharingFilters.includes(option)
+      return omittedMethodDataSharingFilters.includes(option)
     })
     const someDataSharingOptionsChecked = foundMethod.dataSharingOptions.slice(1).some((option) => {
-      return methodDataSharingFilters.includes(option)
+      return omittedMethodDataSharingFilters.includes(option)
     })
     inputElement.indeterminate =
       !allDataSharingOptionsChecked && someDataSharingOptionsChecked ? true : false
@@ -249,7 +210,7 @@ const FilterPane = ({ mermaidUserData }) => {
                     handleMethodDataSharingFilter({
                       target: {
                         name: dataSharingOptions[0],
-                        checked: methodDataSharingFilters.includes(dataSharingOptions[0]),
+                        checked: omittedMethodDataSharingFilters.includes(dataSharingOptions[0]),
                       },
                     })
                   }
@@ -259,7 +220,7 @@ const FilterPane = ({ mermaidUserData }) => {
                     type="checkbox"
                     name={dataSharingOptions[0]}
                     onChange={handleMethodDataSharingFilter}
-                    checked={!methodDataSharingFilters.includes(dataSharingOptions[0])}
+                    checked={!omittedMethodDataSharingFilters.includes(dataSharingOptions[0])}
                     onClick={(e) => e.stopPropagation()}
                     ref={(inputElement) => isIndeterminate(inputElement, method)}
                   />
@@ -281,7 +242,7 @@ const FilterPane = ({ mermaidUserData }) => {
                           target: {
                             method,
                             name: option,
-                            checked: methodDataSharingFilters.includes(option),
+                            checked: omittedMethodDataSharingFilters.includes(option),
                           },
                         })
                       }
@@ -290,7 +251,7 @@ const FilterPane = ({ mermaidUserData }) => {
                         type="checkbox"
                         name={option}
                         id={option}
-                        checked={!methodDataSharingFilters.includes(option)}
+                        checked={!omittedMethodDataSharingFilters.includes(option)}
                         onChange={handleMethodDataSharingFilter}
                       />
                       <StyledLabel htmlFor={option} onClick={(e) => e.stopPropagation()}>
@@ -307,61 +268,19 @@ const FilterPane = ({ mermaidUserData }) => {
     </StyledMethodListContainer>
   )
 
-  const projectsList = (
-    <StyledProjectListContainer>
-      <StyledUnorderedList>
-        {displayedProjects.length ? (
-          displayedProjects.map((project) => {
-            return (
-              <li key={project.project_id}>
-                <StyledClickableArea onClick={() => handleCheckProject(project.project_id)}>
-                  <input
-                    id={`checkbox-${project.project_id}`}
-                    type="checkbox"
-                    checked={checkedProjects.includes(project.project_id)}
-                    onChange={() => handleCheckProject(project.project_id)}
-                  />{' '}
-                  <StyledLabel
-                    htmlFor={`checkbox-${project.project_id}`}
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    {project.project_name}{' '}
-                    {userIsMemberOfProject(project.project_id, mermaidUserData) && (
-                      <MuiTooltip
-                        title={tooltipText.yourProject}
-                        placement="top"
-                        bgColor={theme.color.primaryColor}
-                        tooltipTextColor={theme.color.white}
-                      >
-                        <IconButton>
-                          <SmallerIconUserCircle />
-                        </IconButton>
-                      </MuiTooltip>
-                    )}
-                  </StyledLabel>
-                </StyledClickableArea>
-              </li>
-            )
-          })
-        ) : (
-          <StyledEmptyListItem>{noDataText.noProjectsOnCurrentFilters}</StyledEmptyListItem>
-        )}
-      </StyledUnorderedList>
-    </StyledProjectListContainer>
-  )
-
   return (
     <StyledFilterPaneContainer>
-      <StyledCountryHeader>
-        <StyledHeader>Countries</StyledHeader>
+      <StyledFilterPaneHeaderWrapper>
+        <StyledFilterPaneHeader>Filters</StyledFilterPaneHeader>
         {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count ? (
           <FilterIndicatorPill
             searchFilteredRowLength={getActiveProjectCount()}
-            unfilteredRowLength={projectData?.count || 0}
+            unfilteredRowLength={projectData?.count ?? 0}
             clearFilters={clearAllFilters}
           />
         ) : null}
-      </StyledCountryHeader>
+      </StyledFilterPaneHeaderWrapper>
+      <StyledHeader>Countries</StyledHeader>
       <AutocompleteCheckbox
         selectedValues={selectedCountries}
         displayOptions={displayedCountries}
@@ -380,11 +299,18 @@ const FilterPane = ({ mermaidUserData }) => {
         onChange={handleSelectedOrganizationsChange}
         onDelete={handleDeleteOrganization}
       />
-      <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
-        Show {showMoreFilters ? 'fewer' : 'more'} filters
-      </StyledExpandFilters>
+      <StyledHeader>Projects</StyledHeader>
+      <AutocompleteCheckbox
+        selectedValues={selectedProjects}
+        displayOptions={displayedProjectNames}
+        remainingOptions={remainingDisplayedProjectNames}
+        autocompleteGroupBy={getProjectsAutocompleteGroup}
+        onOpen={projectsSelectOnOpen}
+        onChange={handleSelectedProjectChange}
+        onDelete={handleDeleteProject}
+      />
       {showMoreFilters ? (
-        <ShowMoreFiltersContainer>
+        <div>
           <StyledHeader>Date Range</StyledHeader>
           <StyledDateRangeContainer>
             <StyledDateInputContainer>
@@ -464,19 +390,15 @@ const FilterPane = ({ mermaidUserData }) => {
                 checked={showProjectsWithNoRecords}
               />
               <StyledLabel htmlFor="show-no-data" onClick={(e) => e.stopPropagation()}>
-                Show Projects With No Data
+                Show projects with no data
               </StyledLabel>
             </StyledClickableArea>
           </StyledCategoryContainer>
-        </ShowMoreFiltersContainer>
+        </div>
       ) : null}
-      <StyledHeader>Projects</StyledHeader>
-      <StyledProjectNameFilter
-        value={projectNameFilter}
-        placeholder="Type to filter projects"
-        onChange={handleProjectNameFilter}
-      />
-      {projectsList}
+      <StyledExpandFilters onClick={() => setShowMoreFilters(!showMoreFilters)}>
+        Show {showMoreFilters ? 'fewer' : 'more'} filters
+      </StyledExpandFilters>
     </StyledFilterPaneContainer>
   )
 }

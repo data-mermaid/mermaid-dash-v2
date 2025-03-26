@@ -55,6 +55,7 @@ import upload from '@iconify-icons/mdi/upload'
 import user from '@iconify-icons/mdi/user'
 import usersAndTransects from '@iconify-icons/mdi/account-box-multiple-outline'
 import email from '@iconify-icons/mdi/email-outline'
+import helpCircle from '@iconify-icons/mdi/help-circle'
 import theme from '../styles/theme'
 
 const WarningIcon = styled(InlineIcon)`
@@ -122,3 +123,4 @@ export const IconManagementRegimesOverview = (props) => (
   <InlineIcon icon={multiFileTable} {...props} />
 )
 export const IconContact = (props) => <InlineIcon icon={email} {...props} />
+export const IconHelpCircle = (props) => <InlineIcon icon={helpCircle} {...props} />

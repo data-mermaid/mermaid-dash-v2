@@ -1,28 +1,37 @@
 import Plot from 'react-plotly.js'
 import PropTypes from 'prop-types'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import lowHabIcon from '../../../assets/low-hb-icon.png'
 import mediumHabIcon from '../../../assets/medium-hb-icon.png'
 import highHabIcon from '../../../assets/high-hb-icon.png'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const chartTheme = plotlyChartTheme
 
 export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
-  const totalSurveys = habitatComplexityData?.sample_unit_count ?? 0
+  const totalSampleUnits = habitatComplexityData?.sample_unit_count ?? 0
   const habitatComplexityScore = habitatComplexityData?.score_avg_avg
 
   const plotlyDataConfiguration = [
-    { x: [0, 5], y: [0, 0], type: 'scatter', mode: 'lines', line: { color: 'black', width: 4 } },
+    {
+      x: [0, 5],
+      y: [0, 0],
+      type: 'scatter',
+      mode: 'lines',
+      line: { color: 'black', width: 4 },
+      hoverinfo: 'skip',
+    },
     ...[0, 1, 2, 3, 4, 5].map((x) => ({
       x: [x, x],
       y: [-0.05, 0.05],
       type: 'scatter',
       mode: 'lines',
       line: { color: 'black', width: 4 },
+      hoverinfo: 'skip',
     })),
     {
       x: [habitatComplexityScore, habitatComplexityScore],
@@ -30,6 +39,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       type: 'scatter',
       mode: 'lines',
       line: { color: '#70aae6', width: 4 },
+      hoverinfo: 'skip',
     },
     {
       x: [habitatComplexityScore],
@@ -37,6 +47,7 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       type: 'scatter',
       mode: 'markers',
       marker: { color: '#70aae6', size: 20 },
+      hoverinfo: 'skip',
     },
   ]
 
@@ -125,9 +136,12 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
       <TitlesWrapper>
         <MetricCardH3>Habitat Complexity</MetricCardH3>
         {habitatComplexityScore && (
-          <ChartSubtitle>{totalSurveys.toLocaleString()} Surveys</ChartSubtitle>
+          <ChartSubtitle>
+            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
+          </ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {habitatComplexityScore ? (
         <Plot
           data={plotlyDataConfiguration}

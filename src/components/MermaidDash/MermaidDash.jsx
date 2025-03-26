@@ -24,6 +24,7 @@ import {
   MobileFooterContainer,
   StyledChevronSpan,
   StyledMobileZoomToDataButton,
+  StyledMobileFilterPill,
   StyledMobileFollowMapButton,
   FilterDownloadWrapper,
   FilterDownloadButton,
@@ -36,6 +37,7 @@ import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
+import { URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { ButtonPrimary, Modal } from '../generic'
@@ -45,11 +47,12 @@ import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
-import LoadingIndicator from './components/LoadingIndicator'
 import useLocalStorage from '../../hooks/useLocalStorage'
 import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
+import FilterIndicatorPill from '../generic/FilterIndicatorPill'
+import { IconFilter } from '../../assets/icons'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -80,12 +83,14 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     mermaidUserData,
     enableFollowScreen,
     setMermaidUserData,
-    setCheckedProjects,
     displayedProjects,
     getURLParams,
     setEnableFollowScreen,
     allProjectsFinishedFiltering,
     filteredSurveys,
+    getActiveProjectCount,
+    clearAllFilters,
+    isAnyActiveFilters,
   } = useContext(FilterProjectsContext)
 
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
@@ -134,7 +139,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         const initialUrl = `${apiEndpoint}?limit=300&page=1`
         let nextPageUrl = initialUrl
         let newApiData = { results: [] }
-        let newCheckedProjects = []
 
         while (nextPageUrl) {
           const response = await fetch(nextPageUrl, {
@@ -153,16 +157,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             throw new Error(`Failed to fetch data - data is empty`)
           }
 
-          const resultsProjectIds = data.results.map((project) => project.project_id)
-
           newApiData = {
             ...newApiData,
             count: data.count,
             results: [...newApiData.results, ...data.results],
           }
-          newCheckedProjects = [...newCheckedProjects, ...resultsProjectIds]
           setProjectData(newApiData)
-          setCheckedProjects(newCheckedProjects)
 
           nextPageUrl = data.next
         }
@@ -173,7 +173,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         setIsErrorModalShowing(true)
       }
     },
-    [isApiDataLoaded, setProjectData, setCheckedProjects, setIsApiDataLoaded],
+    [isApiDataLoaded, setProjectData, setIsApiDataLoaded],
   )
 
   const fetchUserProfile = useCallback(async () => {
@@ -215,12 +215,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get('view') === 'tableView' && isDesktopWidth) {
+    if (queryParams.get(URL_PARAMS.VIEW) === 'tableView' && isDesktopWidth) {
       setView('tableView')
       return
     }
     setView('mapView')
-    queryParams.delete('view')
+    queryParams.delete(URL_PARAMS.VIEW)
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
 
@@ -287,9 +287,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       : toastMessageText.followMapEnabled
 
     if (newState) {
-      queryParams.set('follow_screen', 'true')
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.delete('follow_screen')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)
@@ -345,7 +345,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           <MuiTooltip
             title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
           >
-            <StyledChevronSpan>{isFilterPaneShowing ? ARROW_LEFT : ARROW_RIGHT}</StyledChevronSpan>
+            {isFilterPaneShowing ? (
+              <StyledChevronSpan>
+                {ARROW_LEFT} <IconFilter />
+              </StyledChevronSpan>
+            ) : (
+              <StyledChevronSpan>
+                <IconFilter /> {ARROW_RIGHT}
+              </StyledChevronSpan>
+            )}
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
@@ -399,29 +407,14 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         isMetricsPaneShowing={isMetricsPaneShowing}
         view={view}
         setView={setView}
-        projectDataCount={projectData?.count || 0}
+        projectDataCount={projectData?.count ?? 0}
       />
-      {isMobileWidth ? null : (
-        <LoadingIndicator
-          currentProgress={projectData?.results?.length || 0}
-          finalProgress={projectData?.count || 0}
-          showLoadingIndicator={showLoadingIndicator}
-          setShowLoadingIndicator={setShowLoadingIndicator}
-          isRelativelyPositioned={false}
-        />
-      )}
     </StyledMapContainer>
   )
 
   const table = (
     <StyledTableContainer>
       <TableView view={view} setView={setView} mermaidUserData={mermaidUserData} />
-      <LoadingIndicator
-        currentProgress={projectData?.results?.length || 0}
-        finalProgress={projectData?.count || 0}
-        showLoadingIndicator={showLoadingIndicator}
-        setShowLoadingIndicator={setShowLoadingIndicator}
-      />
     </StyledTableContainer>
   )
 
@@ -434,6 +427,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <StyledMobileZoomToDataButton onClick={handleZoomToFilteredData}>
         <img src={zoomToFiltered} />
       </StyledMobileZoomToDataButton>
+      {isAnyActiveFilters() && getActiveProjectCount() < projectData?.count && (
+        <StyledMobileFilterPill>
+          <FilterIndicatorPill
+            searchFilteredRowLength={getActiveProjectCount()}
+            unfilteredRowLength={projectData?.count ?? 0}
+            clearFilters={clearAllFilters}
+          />
+        </StyledMobileFilterPill>
+      )}
       <StyledMobileFollowMapButton
         enableFollowScreen={enableFollowScreen}
         onClick={handleFollowScreen}

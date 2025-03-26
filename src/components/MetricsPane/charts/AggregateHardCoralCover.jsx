@@ -1,25 +1,35 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { IconHelpCircle } from '../../../assets/icons'
+import { IconButton } from '../../generic'
+import HardCoralInfoModal from './HardCoralInfoModal'
+import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { MuiTooltip } from '../../generic/MuiTooltip'
+import theme from '../../../styles/theme'
+import { tooltipText } from '../../../constants/language'
 
 const BIN_SIZE = 2
 const START_BIN = 0
 const END_BIN = 100
 
 export const AggregateHardCoralCover = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
+  const [isModalOpen, setIsModalOpen] = useState(false)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
 
+  const handleCloseModal = () => setIsModalOpen(false)
+
   const privateBenthicToggleOn =
-    privateBenthicFilters.some((filter) => !methodDataSharingFilters.includes(filter)) &&
-    otherBenthicFilters.every((filter) => methodDataSharingFilters.includes(filter))
+    privateBenthicFilters.some((filter) => !omittedMethodDataSharingFilters.includes(filter)) &&
+    otherBenthicFilters.every((filter) => omittedMethodDataSharingFilters.includes(filter))
 
   const hardCoralAveragesPerSurvey = filteredSurveys
     .map(({ protocols }) => {
@@ -79,18 +89,26 @@ export const AggregateHardCoralCover = () => {
   })
 
   const plotlyDataConfiguration = binStartValues
-    .map((binStartValue, index) => ({
-      x: hardCoralAveragesPerSurvey.filter(
+    .map((binStartValue, index) => {
+      const binEndValue = binStartValue + BIN_SIZE
+      const binEndValueDisplay = binEndValue - 0.1
+      const xValues = hardCoralAveragesPerSurvey.filter(
         (val) => val >= binStartValue && val < binStartValue + BIN_SIZE,
-      ),
-      type: 'histogram',
-      name: '',
-      marker: {
-        color: binColors[index],
-      },
-      xbins: { start: binStartValue, end: binStartValue + BIN_SIZE, size: BIN_SIZE },
-      showlegend: false,
-    }))
+      )
+      const surveyCountText = pluralizeWord(xValues.length, 'survey')
+
+      return {
+        x: xValues,
+        type: 'histogram',
+        name: '',
+        marker: {
+          color: binColors[index],
+        },
+        xbins: { start: binStartValue, end: binEndValue, size: BIN_SIZE },
+        hovertemplate: `Bin: ${binStartValue} - ${binEndValueDisplay}%<br>%{y:,} ${surveyCountText}`,
+        showlegend: false,
+      }
+    })
     .filter((trace) => trace.x && trace.x.length > 0)
 
   const plotlyLayoutConfiguration = {
@@ -99,7 +117,7 @@ export const AggregateHardCoralCover = () => {
       ...plotlyChartTheme.layout.xaxis,
       title: {
         ...plotlyChartTheme.layout.xaxis.title,
-        text: '% Hard Coral Cover',
+        text: 'Hard coral cover (%)',
       },
       tickvals: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
     },
@@ -110,27 +128,48 @@ export const AggregateHardCoralCover = () => {
   }
 
   return (
-    <ChartWrapper>
-      <TitlesWrapper>
-        <MetricCardH3>Hard Coral Cover</MetricCardH3>
-        {!privateBenthicToggleOn && (
-          <ChartSubtitle>
-            {hardCoralAveragesPerSurvey.length.toLocaleString()} Surveys
-          </ChartSubtitle>
+    <>
+      <ChartWrapper>
+        <TitlesWrapper>
+          <MetricCardH3>
+            Hard Coral Cover
+            <MuiTooltip
+              title={tooltipText.hardCoralCoverInfo}
+              placement="bottom"
+              bgColor={theme.color.primaryColor}
+              tooltipTextColor={theme.color.white}
+            >
+              <IconButton
+                type="button"
+                onClick={() => {
+                  setIsModalOpen(true)
+                }}
+              >
+                <IconHelpCircle />
+              </IconButton>
+            </MuiTooltip>
+          </MetricCardH3>
+          {!privateBenthicToggleOn && (
+            <ChartSubtitle>
+              {`${pluralizeWordWithCount(hardCoralAveragesPerSurvey.length ?? 0, 'Survey')}`}
+            </ChartSubtitle>
+          )}
+        </TitlesWrapper>
+        <HorizontalLine />
+        {privateBenthicToggleOn ? (
+          <PrivateChartView />
+        ) : hardCoralAveragesPerSurvey.length > 0 ? (
+          <Plot
+            data={plotlyDataConfiguration}
+            layout={plotlyLayoutConfiguration}
+            config={plotlyChartTheme.config}
+            style={{ width: '100%', height: '100%' }}
+          />
+        ) : (
+          <NoDataChartView />
         )}
-      </TitlesWrapper>
-      {privateBenthicToggleOn ? (
-        <PrivateChartView />
-      ) : hardCoralAveragesPerSurvey.length > 0 ? (
-        <Plot
-          data={plotlyDataConfiguration}
-          layout={plotlyLayoutConfiguration}
-          config={plotlyChartTheme.config}
-          style={{ width: '100%', height: '100%' }}
-        />
-      ) : (
-        <NoDataChartView />
-      )}
-    </ChartWrapper>
+      </ChartWrapper>
+      <HardCoralInfoModal isModalOpen={isModalOpen} handleCloseModal={handleCloseModal} />
+    </>
   )
 }

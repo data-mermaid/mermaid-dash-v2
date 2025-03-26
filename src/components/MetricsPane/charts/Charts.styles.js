@@ -10,11 +10,8 @@ export const ChartSubtitle = styled.p`
 export const TitlesWrapper = styled.div`
   position: absolute;
   top: 0;
-  left: 0;
   z-index: 1;
-  width: 100%;
-  padding-bottom: 2px;
-  border-bottom: 1px solid ${theme.color.border};
+  width: 80%;
 `
 export const ChartWrapper = styled.div`
   position: relative;
@@ -27,4 +24,12 @@ export const NoChartWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+`
+
+export const HorizontalLine = styled.div`
+  position: absolute;
+  top: 45px;
+  border-top: 1px solid ${theme.color.border};
+  width: 100%;
+  z-index: 1;
 `

@@ -7,7 +7,7 @@ import styled, { css } from 'styled-components'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import theme from '../../styles/theme'
-import { PAGE_SIZE_DEFAULT } from '../../constants/constants'
+import { PAGE_SIZE_DEFAULT, URL_PARAMS } from '../../constants/constants'
 import { noDataText } from '../../constants/language'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { getTableColumnHeaderProps, formatProjectDataHelper } from '../../helperFunctions'
@@ -50,33 +50,19 @@ const StyledTr = styled(Tr)`
 `
 
 const TableView = ({ view, setView, mermaidUserData }) => {
-  const {
-    checkedProjects,
-    displayedProjects,
-    setShowProjectsWithNoRecords,
-    userIsMemberOfProject,
-    setSelectedProject,
-  } = useContext(FilterProjectsContext)
+  const { displayedProjects, userIsMemberOfProject, setSelectedProject } =
+    useContext(FilterProjectsContext)
   const [tableData, setTableData] = useState([])
   const location = useLocation()
   const navigate = useNavigate()
   const getURLParams = () => new URLSearchParams(location.search)
   const queryParams = getURLParams()
-  const queryParamsProjectId = queryParams.get('project_id')
-  const initialPageIndex = Number(queryParams.get('page_index')) || 0
-
-  const _onUnmount = useEffect(() => {
-    return () => {
-      setShowProjectsWithNoRecords(false)
-    }
-  }, [setShowProjectsWithNoRecords])
+  const queryParamsProjectId = queryParams.get(URL_PARAMS.PROJECT_ID)
+  const initialPageIndex = Number(queryParams.get(URL_PARAMS.PAGE_INDEX)) ?? 0
 
   const _getSiteRecords = useEffect(() => {
     const formattedTableData = displayedProjects
       .map((project, i) => {
-        if (!checkedProjects.includes(project.project_id)) {
-          return null
-        }
         const {
           projectName,
           formattedDateRange,
@@ -98,7 +84,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
       })
       .filter((project) => project !== null)
     setTableData(formattedTableData)
-  }, [displayedProjects, checkedProjects])
+  }, [displayedProjects])
 
   const tableColumns = useMemo(
     () => [
@@ -200,27 +186,27 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   }
 
   const handleTableRowClick = (projectData) => {
-    queryParams.delete('sample_event_id')
+    queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     if (queryParamsProjectId !== projectData.project_id) {
-      queryParams.set('project_id', projectData.project_id)
+      queryParams.set(URL_PARAMS.PROJECT_ID, projectData.project_id)
       setSelectedProject(projectData)
     } else {
-      queryParams.delete('project_id')
+      queryParams.delete(URL_PARAMS.PROJECT_ID)
       setSelectedProject(null)
     }
-    queryParams.set('page_index', pageIndex)
+    queryParams.set(URL_PARAMS.PAGE_INDEX, pageIndex)
     updateURLParams(queryParams)
   }
 
   const handleGoToPage = (page) => {
-    queryParams.set('page_index', page)
+    queryParams.set(URL_PARAMS.PAGE_INDEX, page)
     updateURLParams(queryParams)
     gotoPage(page)
   }
 
   const handleNextPage = () => {
     if (canNextPage) {
-      queryParams.set('page_index', pageIndex + 1)
+      queryParams.set(URL_PARAMS.PAGE_INDEX, pageIndex + 1)
       updateURLParams(queryParams)
       nextPage()
     }
@@ -228,7 +214,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
 
   const handlePreviousPage = () => {
     if (canPreviousPage) {
-      queryParams.set('page_index', pageIndex - 1)
+      queryParams.set(URL_PARAMS.PAGE_INDEX, pageIndex - 1)
       updateURLParams(queryParams)
       previousPage()
     }
@@ -244,7 +230,7 @@ const TableView = ({ view, setView, mermaidUserData }) => {
   }, [displayedProjects, queryParamsProjectId, setSelectedProject])
 
   const _updatePageIndex = useEffect(() => {
-    const newPageIndex = Number(queryParams.get('page_index'))
+    const newPageIndex = Number(queryParams.get(URL_PARAMS.PAGE_INDEX))
     if (!isNaN(newPageIndex) && newPageIndex !== pageIndex) {
       gotoPage(newPageIndex)
     }

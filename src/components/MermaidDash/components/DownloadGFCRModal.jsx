@@ -12,7 +12,7 @@ import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
 import { MuiTooltip } from '../../generic/MuiTooltip'
-import { pluralize } from '../../../helperFunctions/pluralize'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -34,27 +34,25 @@ const StyledWarningText = styled.div`
 `
 
 const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
-  const { displayedProjects, mermaidUserData, checkedProjects, userIsMemberOfProject } =
+  const { displayedProjects, mermaidUserData, userIsMemberOfProject } =
     useContext(FilterProjectsContext)
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [modalMode, setModalMode] = useState(null)
 
   const { projectsWithGFCRData, projectsWithoutGFCRDataCount } = useMemo(() => {
-    return displayedProjects
-      .filter(({ project_id }) => checkedProjects.includes(project_id))
-      .reduce(
-        (acc, project) => {
-          if (project.project_includes_gfcr) {
-            acc.projectsWithGFCRData.push(project)
-          } else {
-            acc.projectsWithoutGFCRDataCount++
-          }
-          return acc
-        },
-        { projectsWithGFCRData: [], projectsWithoutGFCRDataCount: 0 },
-      )
-  }, [displayedProjects, checkedProjects])
+    return displayedProjects.reduce(
+      (acc, project) => {
+        if (project.project_includes_gfcr) {
+          acc.projectsWithGFCRData.push(project)
+        } else {
+          acc.projectsWithoutGFCRDataCount++
+        }
+        return acc
+      },
+      { projectsWithGFCRData: [], projectsWithoutGFCRDataCount: 0 },
+    )
+  }, [displayedProjects])
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
@@ -137,7 +135,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
         <StyledWarningText>
           <IconInfo />{' '}
           <span>
-            {pluralize(
+            {pluralizeWordWithCount(
               projectsWithoutGFCRDataCount,
               'other filtered project does',
               'other filtered projects do',

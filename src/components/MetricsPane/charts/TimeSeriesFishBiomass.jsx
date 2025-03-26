@@ -1,12 +1,13 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 function calculateMedian(values) {
   if (!values.length) {
@@ -20,12 +21,12 @@ function calculateMedian(values) {
 }
 
 export const TimeSeriesFishBiomass = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const medianFishBiomassDistributions = []
   const privateFishBeltToggleOn =
-    !methodDataSharingFilters.includes('bf_3') &&
-    methodDataSharingFilters.includes('bf_2') &&
-    methodDataSharingFilters.includes('bf_1')
+    !omittedMethodDataSharingFilters.includes('bf_3') &&
+    omittedMethodDataSharingFilters.includes('bf_2') &&
+    omittedMethodDataSharingFilters.includes('bf_1')
 
   const surveyedFishBiomassRecords = filteredSurveys
     .filter(
@@ -85,7 +86,7 @@ export const TimeSeriesFishBiomass = () => {
     type: 'bar',
     name: rule,
     marker: { color: plotlyChartTheme.chartCategoryType.managementRuleColorMap[rule] },
-    hovertemplate: '%{x}, %{y:.2f}',
+    hovertemplate: `${rule}<br>Year: %{x}<br>%{y:.0f} kg/ha<extra></extra>`,
   }))
 
   const plotlyLayoutConfiguration = {
@@ -99,7 +100,7 @@ export const TimeSeriesFishBiomass = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: '(kg/ha)' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Fish biomass (kg/ha)' },
     },
     showlegend: true,
     legend: plotlyChartTheme.horizontalLegend,
@@ -108,13 +109,14 @@ export const TimeSeriesFishBiomass = () => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Fish Biomass (KG/HA) </MetricCardH3>
+        <MetricCardH3>Fish Biomass</MetricCardH3>
         {!privateFishBeltToggleOn && (
           <ChartSubtitle>
-            {surveyedFishBiomassRecords.length.toLocaleString()} Surveys
+            {`${pluralizeWordWithCount(surveyedFishBiomassRecords.length ?? 0, 'Survey')}`}
           </ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateFishBeltToggleOn ? (
         <PrivateChartView />
       ) : surveyedFishBiomassRecords.length > 0 ? (

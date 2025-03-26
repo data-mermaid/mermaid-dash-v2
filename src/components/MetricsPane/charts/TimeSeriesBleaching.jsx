@@ -1,21 +1,22 @@
 import { useContext } from 'react'
 import Plot from 'react-plotly.js'
 
-import { ChartSubtitle, ChartWrapper, TitlesWrapper } from './Charts.styles'
+import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
+import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
 export const TimeSeriesBleaching = () => {
-  const { filteredSurveys, methodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
   const privateBleachingToggleOn =
-    !methodDataSharingFilters.includes('cb_3') &&
-    methodDataSharingFilters.includes('cb_2') &&
-    methodDataSharingFilters.includes('cb_1')
+    !omittedMethodDataSharingFilters.includes('cb_3') &&
+    omittedMethodDataSharingFilters.includes('cb_2') &&
+    omittedMethodDataSharingFilters.includes('cb_1')
 
   const groupedBleachingPercentageColonyCountByYear = filteredSurveys
     .filter((record) => !!record.protocols?.colonies_bleached)
@@ -53,7 +54,7 @@ export const TimeSeriesBleaching = () => {
         }
       }
       const updateTotalColonies = (category, percentage) => {
-        accumulator[year][category] += (numColoniesTotal * (percentage || 0)) / 100
+        accumulator[year][category] += (numColoniesTotal * (percentage ?? 0)) / 100
       }
 
       updateTotalColonies('totalColoniesNormal', percentNormal)
@@ -96,7 +97,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Normal',
       type: 'bar',
       marker: { color: bleachingColor.Normal },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: Normal<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -106,7 +108,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Pale',
       type: 'bar',
       marker: { color: bleachingColor.Pale },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: Pale<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -116,7 +119,8 @@ export const TimeSeriesBleaching = () => {
       name: '0-20%',
       type: 'bar',
       marker: { color: bleachingColor['0-20%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: 0-20%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -126,7 +130,8 @@ export const TimeSeriesBleaching = () => {
       name: '20-50%',
       type: 'bar',
       marker: { color: bleachingColor['20-50%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: 20-50%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -136,7 +141,8 @@ export const TimeSeriesBleaching = () => {
       name: '50-80%',
       type: 'bar',
       marker: { color: bleachingColor['50-80%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: 50-80%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -146,7 +152,8 @@ export const TimeSeriesBleaching = () => {
       name: '80-100%',
       type: 'bar',
       marker: { color: bleachingColor['80-100%'] },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: 80-100%<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
     {
       x: years,
@@ -156,7 +163,8 @@ export const TimeSeriesBleaching = () => {
       name: 'Dead',
       type: 'bar',
       marker: { color: bleachingColor.Dead },
-      hovertemplate: '%{x}, %{y:.2f}',
+      hovertemplate:
+        'Bleaching severity: Dead<br>Year: %{x}<br>%{y:.1f}% of colonies<extra></extra>',
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
@@ -172,10 +180,19 @@ export const TimeSeriesBleaching = () => {
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
-      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of Colonies' },
+      title: { ...plotlyChartTheme.layout.yaxis.title, text: '% of colonies' },
     },
     showlegend: true,
-    legend: plotlyChartTheme.horizontalLegend,
+    legend: {
+      ...plotlyChartTheme.horizontalLegend,
+      title: {
+        text: 'Bleaching severity:',
+        side: 'top',
+        font: {
+          size: 12,
+        },
+      },
+    },
   }
 
   return (
@@ -183,9 +200,10 @@ export const TimeSeriesBleaching = () => {
       <TitlesWrapper>
         <MetricCardH3>Bleaching</MetricCardH3>
         {!privateBleachingToggleOn && (
-          <ChartSubtitle>{Math.round(totalSurveys).toLocaleString()} Colonies</ChartSubtitle>
+          <ChartSubtitle>{`${pluralizeWordWithCount(totalSurveys ?? 0, 'Colony', 'Colonies')}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
+      <HorizontalLine />
       {privateBleachingToggleOn ? (
         <PrivateChartView />
       ) : totalSurveys > 0 ? (

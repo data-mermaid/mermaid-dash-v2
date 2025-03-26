@@ -2,11 +2,18 @@ import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+
 import useResponsive from '../../hooks/useResponsive'
+
+import { URL_PARAMS } from '../../constants/constants'
 
 import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
+
+import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
+import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+
 import { ChartsWrapper, StyledHeader } from './MetricsPane.styles'
 import {
   BiggerIconCalendar,
@@ -33,12 +40,14 @@ import {
   TabContent,
   SelectedSiteContainer,
 } from './SelectedSiteMetrics.styles'
+
 import {
   ButtonPrimary,
   ButtonSecondary,
   ButtonThatLooksLikeLinkUnderlined,
   CloseButton,
 } from '../generic'
+
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -47,8 +56,6 @@ import {
   MermaidSelect,
 } from '../generic/MermaidMui'
 
-import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
-import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
 import { SampleEventFishBiomassPlot } from './charts/SampleEventFishBiomassPlot'
 import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
@@ -132,7 +139,7 @@ export const SelectedSiteMetrics = ({
     setSelectedSampleEvent(null)
     setSelectedMarkerId(null)
     const queryParams = getURLParams()
-    queryParams.delete('sample_event_id')
+    queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     updateURLParams(queryParams)
   }
 
@@ -250,7 +257,7 @@ export const SelectedSiteMetrics = ({
         <SelectedSiteMetricsCardContainer>
           <BiggerIconCalendar />
           <SelectedSiteContentContainer>
-            <StyledHeader as="label">Sample Date</StyledHeader>
+            <StyledHeader as="label">Survey Date</StyledHeader>
             {otherSurveysAtSameProjectSiteMenuItems?.length > 1 ? (
               <MermaidFormContainer>
                 <MermaidFormControl>
@@ -292,16 +299,6 @@ export const SelectedSiteMetrics = ({
         <TabContent>
           {metricsView === TAB_NAMES.summary ? (
             <ChartsWrapper $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
-              {protocols?.beltfish && (
-                <SelectedSiteChartWrapper>
-                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
-                </SelectedSiteChartWrapper>
-              )}
-              {protocols?.quadrat_benthic_percent && (
-                <SelectedSiteChartWrapper>
-                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
-                </SelectedSiteChartWrapper>
-              )}
               {protocols?.benthicpit && (
                 <SelectedSiteChartWrapper>
                   <SampleEventBenthicPlot benthicType="pit" benthicData={protocols?.benthicpit} />
@@ -315,6 +312,16 @@ export const SelectedSiteMetrics = ({
               {protocols?.benthicpqt && (
                 <SelectedSiteChartWrapper>
                   <SampleEventBenthicPlot benthicType="pqt" benthicData={protocols?.benthicpqt} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.quadrat_benthic_percent && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventBleachingPlot bleachingData={protocols?.quadrat_benthic_percent} />
+                </SelectedSiteChartWrapper>
+              )}
+              {protocols?.beltfish && (
+                <SelectedSiteChartWrapper>
+                  <SampleEventFishBiomassPlot fishbeltData={protocols?.beltfish} />
                 </SelectedSiteChartWrapper>
               )}
               {protocols?.colonies_bleached && (

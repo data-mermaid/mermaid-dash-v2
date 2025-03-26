@@ -67,6 +67,7 @@ export const tooltipText = {
   downloadData: 'Download data',
   yourProject: 'You are part of this project',
   contactAdmins: 'Contact admins',
+  hardCoralCoverInfo: 'More information & references',
 }
 
 export const toastMessageText = {
@@ -80,10 +81,12 @@ export const autocompleteGroupNames = {
   otherCountries: 'Other countries',
   organizationsBasedOnCurrentFilters: 'Organizations based on current filters',
   noOrganizationsMatchCurrentFilters: 'No organizations match current filters',
+  projectsBasedOnCurrentFilters: 'Projects based on current filters',
+  otherProjects: 'Other projects',
 }
 
 export const noDataText = {
-  noMethodData: 'No data',
+  noMethodData: 'No Data',
   noYearRange: 'No data to obtain year range',
   noTableData: 'No project data',
   noProjectsOnCurrentFilters: 'No projects match current filters',

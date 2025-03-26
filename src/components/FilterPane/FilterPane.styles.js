@@ -1,9 +1,20 @@
 import { TextField } from '@mui/material'
 import styled from 'styled-components'
 import theme from '../../styles/theme'
-import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import {
+  hoverState,
+  mediaQueryForMediumDesktop,
+  mediaQueryTabletLandscapeOnly,
+} from '../../styles/mediaQueries'
 import { css } from 'styled-components'
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
+
+export const StyledFilterPaneHeader = styled.h2`
+  font-size: ${theme.typography.largeFontSize};
+  font-weight: bold;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+`
 
 export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
@@ -12,10 +23,11 @@ export const StyledHeader = styled.h2`
   margin-bottom: 0.5rem;
 `
 
-export const StyledCountryHeader = styled.div`
+export const StyledFilterPaneHeaderWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-bottom: 1px solid ${theme.color.grey0};
 `
 
 export const StyledFilterPaneContainer = styled.div`
@@ -34,11 +46,6 @@ export const StyledExpandFilters = styled.button`
   border: none;
   background: none;
   padding: 0;
-`
-
-export const ShowMoreFiltersContainer = styled.div`
-  padding: 0.5rem 0 1.5rem 0.8rem;
-  background-color: ${theme.color.grey4};
 `
 
 export const StyledProjectNameFilter = styled(TextField)`
@@ -68,7 +75,6 @@ export const StyledProjectListContainer = styled.div`
 `
 
 export const StyledMethodListContainer = styled.div`
-  margin-right: 1rem;
   border: 1px solid ${theme.color.grey0};
 `
 
@@ -82,9 +88,12 @@ export const StyledUnorderedList = styled.ul`
 export const StyledDateRangeContainer = styled.div`
   display: flex;
   flex-direction: row;
-  margin-right: 1rem;
   margin-top: 1rem;
   gap: 1rem;
+  ${mediaQueryForMediumDesktop(css`
+    flex-direction: column;
+    margin-left: 1rem;
+  `)}
 `
 
 export const StyledDateInputContainer = styled.div`
@@ -134,7 +143,6 @@ export const StyledLabel = styled.label`
 export const StyledCategoryContainer = styled.div`
   border: 1px solid ${theme.color.grey0};
   background-color: ${theme.color.white};
-  margin-right: 1rem;
 `
 
 export const StyledLoginToViewContainer = styled(StyledCategoryContainer)`
