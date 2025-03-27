@@ -58,6 +58,7 @@ import DownloadModal from './components/DownloadModal'
 import DownloadGFCRModal from './components/DownloadGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
+import SuccessExportModal from './components/SuccessExportModal'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -112,6 +113,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [selectedMethod, setSelectedMethod] = useState('')
   const [isErrorModalShowing, setIsErrorModalShowing] = useState(false)
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
+  const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
 
   const mapRef = useRef()
 
@@ -255,6 +257,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsDownloadModalShowing(true)
   }
 
+  const handleExpressExport = () => {
+    setIsSuccessExportModalOpen(true)
+  }
+
   const handleShowDownloadGFCRModal = () => {
     setIsDownloadGFCRModalShowing(true)
   }
@@ -322,7 +328,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             const count = surveyedMethodCount[key] ?? 0
 
             return (
-              <ExpressDownloadMenuItem key={key} onClick={() => {}} disabled={count === 0}>
+              <ExpressDownloadMenuItem
+                key={key}
+                onClick={handleExpressExport}
+                disabled={count === 0}
+              >
                 <div>{method.description}</div>
                 <div>{count}</div>
               </ExpressDownloadMenuItem>
@@ -483,6 +493,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <ErrorFetchingModal
         isOpen={isErrorModalShowing}
         onDismiss={() => setIsErrorModalShowing(false)}
+      />
+      <SuccessExportModal
+        isOpen={isSuccessExportModalOpen}
+        onDismiss={() => setIsSuccessExportModalOpen(false)}
       />
     </StyledDashboardContainer>
   )

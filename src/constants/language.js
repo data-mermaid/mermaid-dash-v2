@@ -36,6 +36,17 @@ export const errorModal = {
     'There was an issue getting data for the Dashboard. If this problem persists, please contact',
 }
 
+export const successExportModal = {
+  title: 'Export data',
+  content: (email) => {
+    return `An email has been sent to ${email}. This can sometimes take up to 15 minutes.`
+  },
+  citationHeader: 'Please credit the data owners.',
+  citationContent:
+    'Suggested citations can be found in all tabs of xlsx files you are exporting. Please ensure you cite the data you have exported in any publications to properly credit the data owners.',
+  footerButton: 'Done',
+}
+
 export const pages = {
   submittedTable: {
     filterSearchHelperText: {
