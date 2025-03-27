@@ -3,7 +3,6 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-new */
 import * as cdk from 'aws-cdk-lib'
-import * as iam from 'aws-cdk-lib/aws-iam'
 import { StaticSite } from '../static-site'
 
 /**
@@ -14,6 +13,7 @@ import { StaticSite } from '../static-site'
 interface StaticSiteStackProps extends cdk.StackProps {
   domainName: string;
   siteSubDomain: string;
+  hostedZoneId: string;
 }
 
 export class StaticSiteStack extends cdk.Stack {
@@ -23,6 +23,7 @@ export class StaticSiteStack extends cdk.Stack {
         const site = new StaticSite(this, 'StaticSite', {
             domainName: props.domainName,
             siteSubDomain: props.siteSubDomain,
+            hostedZoneId: props.hostedZoneId
         })
     }
 }

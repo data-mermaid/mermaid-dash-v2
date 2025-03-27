@@ -13,6 +13,7 @@ const tags = {
 
 const subdomain = app.node.tryGetContext('subdomain') || 'dev'
 const domain = app.node.tryGetContext('domain') || 'dashboard3.datamermaid.org'
+const hostedZoneId = app.node.tryGetContext('hostedZoneId') || 'Z04309691UBJ1O79WWKW4'
 
 const cdkEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -23,7 +24,8 @@ new StaticSiteStack(app, `${subdomain}-dashboard3`, {
     env: cdkEnv,
     tags,
     domainName: domain,
-    siteSubDomain: subdomain
+    siteSubDomain: subdomain,
+    hostedZoneId: hostedZoneId
 })
 
 app.synth()
