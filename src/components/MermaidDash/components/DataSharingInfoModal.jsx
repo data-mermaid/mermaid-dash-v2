@@ -172,6 +172,7 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
       onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
+      // The modalCustomWidth prop is commented out for now. Uncomment and set a value if custom width is needed in the future.
       // modalCustomWidth={'1000px'}
     />
   )
