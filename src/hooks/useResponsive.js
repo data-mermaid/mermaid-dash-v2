@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const MOBILE_WIDTH_THRESHOLD = 960
+const MOBILE_WIDTH_THRESHOLD = 1080
 
 const useResponsive = () => {
   const [isMobileWidth, setIsMobileWidth] = useState(window.innerWidth <= MOBILE_WIDTH_THRESHOLD)
