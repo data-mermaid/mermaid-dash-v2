@@ -2,16 +2,8 @@ import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 
 import { IconCheck, IconClose } from '../../../assets/icons'
-import {
-  Modal,
-  RightFooter,
-  ButtonSecondary,
-  Table,
-  Tr,
-  Th,
-  Td,
-  TableOverflowWrapper,
-} from '../../generic'
+import { Modal, RightFooter, ButtonSecondary, Tr, Th, Td } from '../../generic'
+import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -59,8 +51,8 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
 
   const modalContent = (
     <ModalBody>
-      <TableOverflowWrapper>
-        <Table>
+      <ModalTableOverflowWrapper $tableCustomHeight="735px">
+        <ModalStickyTable>
           <thead>
             <Tr>
               <StyledTh $width="550px" $alignLeft>
@@ -162,8 +154,8 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
               {greenIconCheck}
             </Tr>
           </tbody>
-        </Table>
-      </TableOverflowWrapper>
+        </ModalStickyTable>
+      </ModalTableOverflowWrapper>
     </ModalBody>
   )
   const footerContent = (
@@ -180,7 +172,6 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
       onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
-      modalCustomWidth={'1000px'}
     />
   )
 }
