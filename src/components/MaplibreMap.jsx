@@ -15,9 +15,8 @@ import { MAIN_MAP_ID } from '../constants/constants'
 
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
-const defaultLon = 166
-const defaultLat = -8
-const defaultMapZoom = 1
+const defaultLon = 130
+const defaultLat = -7
 
 const sitesClusterLayer = {
   type: 'circle',
@@ -92,6 +91,7 @@ const sitesSource = {
 }
 
 const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
+  const { isDesktopWidth, isShorterWindowHeight } = useResponsive()
   const {
     displayedProjects,
     enableFollowScreen,
@@ -112,12 +112,12 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
     ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
+  const defaultMapZoom = isShorterWindowHeight ? 1.2 : 1.7
   const initialMapZoom = isValidZoom(initialQueryParamsZoom)
     ? initialQueryParamsZoom
     : defaultMapZoom
   const prevSelectedMarkerId = usePrevious(selectedMarkerId)
   const [sitesFeatureClass, setSitesFeatureClass] = useState(null)
-  const { isDesktopWidth } = useResponsive()
 
   const updateURLParams = useCallback(
     (newQueryParams) => {
