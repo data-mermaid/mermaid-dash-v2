@@ -267,8 +267,6 @@ const DownloadModal = ({
       onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
-      modalCustomWidth={modalMode === 'download' ? '1150px' : '600px'}
-      modalCustomHeight={modalMode === 'download' ? '600px' : '200px'}
     />
   )
 }

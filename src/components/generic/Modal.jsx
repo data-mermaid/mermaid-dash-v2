@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { IconClose } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { CloseButton } from './buttons'
-import { mediaQueryPhoneOnly } from '../../styles/mediaQueries'
+import { mediaQuery960To1200, mediaQueryPhoneOnly } from '../../styles/mediaQueries'
 
 const StyledDialogOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -21,13 +21,16 @@ const StyledDialogOverlay = styled.div`
 const StyledDialog = styled.div`
   padding: 0;
   margin: 0;
-  min-width: 30rem;
-  width: ${(props) => props.$modalCustomWidth};
-  max-width: 114rem;
+  min-width: 60rem;
+  width: ${(props) => props.$modalCustomWidth || 'auto'};
+  max-width: 110rem;
   background: ${theme.color.tableRowEven};
   ${(props) => props.$modalCustomHeight && `height: ${props.$modalCustomHeight};`}
   display: flex;
   flex-direction: column;
+  ${mediaQuery960To1200(css`
+    width: 850px;
+  `)}
   ${mediaQueryPhoneOnly(css`
     min-width: 35rem;
   `)}
@@ -130,7 +133,7 @@ const Modal = ({
   footerContent,
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
-  modalCustomWidth = '50vw',
+  modalCustomWidth = '',
   modalCustomHeight = '',
   hideCloseIcon = false,
 }) => {
