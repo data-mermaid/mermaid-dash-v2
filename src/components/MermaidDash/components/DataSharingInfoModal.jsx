@@ -2,16 +2,8 @@ import PropTypes from 'prop-types'
 import styled, { css } from 'styled-components'
 
 import { IconCheck, IconClose } from '../../../assets/icons'
-import {
-  Modal,
-  RightFooter,
-  ButtonSecondary,
-  Table,
-  Tr,
-  Th,
-  Td,
-  TableOverflowWrapper,
-} from '../../generic'
+import { Modal, RightFooter, ButtonSecondary, Tr, Th, Td } from '../../generic'
+import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -20,7 +12,7 @@ const ModalBody = styled.div`
 
 const StyledTd = styled(Td)`
   ${(props) =>
-    props.$cellWithText
+    props.$alignLeft
       ? css`
           text-align: left;
         `
@@ -30,7 +22,19 @@ const StyledTd = styled(Td)`
 `
 
 const StyledTh = styled(Th)`
-  text-align: center;
+  ${(props) =>
+    props.$alignLeft
+      ? css`
+          text-align: left;
+        `
+      : css`
+          text-align: center;
+        `};
+  ${(props) =>
+    props.$width &&
+    css`
+      width: ${props.$width};
+    `};
 `
 
 const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
@@ -47,15 +51,17 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
 
   const modalContent = (
     <ModalBody>
-      <TableOverflowWrapper>
-        <Table>
+      <ModalTableOverflowWrapper $tableCustomHeight="735px">
+        <ModalStickyTable>
           <thead>
             <Tr>
-              <StyledTh style={{ width: '550px' }}>Project-level information</StyledTh>
+              <StyledTh $width="550px" $alignLeft>
+                Project-level information
+              </StyledTh>
               <StyledTh>Private</StyledTh>
               <StyledTh>
-                <span style={{ display: 'block' }}>Public Summary</span>
-                <span style={{ display: 'block' }}>(default)</span>
+                <div>Public Summary</div>
+                <div>(default)</div>
               </StyledTh>
               <StyledTh>Public</StyledTh>
             </Tr>
@@ -67,18 +73,18 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
               </Td>
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Organization and admin names</StyledTd>
+              <StyledTd $alignLeft>Organization and admin names</StyledTd>
               {greenIconCheck}
               {greenIconCheck}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <Td colSpan="4" $cellWithText>
+              <Td colSpan="4" $alignLeft>
                 <strong>Metadata</strong>
               </Td>
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>
+              <StyledTd $alignLeft>
                 Project name and notes, country, site name and location, survey date, depth, habitat
                 (reef zone, reef type and exposure), management regime name, number of transects
               </StyledTd>
@@ -87,47 +93,47 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
               {greenIconCheck}
             </Tr>
             <Tr>
-              <Td colSpan="4" $cellWithText>
+              <Td colSpan="4" $alignLeft>
                 <strong>Site-level averages</strong>
               </Td>
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Average benthic cover (%)</StyledTd>
+              <StyledTd $alignLeft>Average benthic cover (%)</StyledTd>
               {redIconClose}
               {greenIconCheck}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Average total reef fish biomass (kg/ha)</StyledTd>
+              <StyledTd $alignLeft>Average total reef fish biomass (kg/ha)</StyledTd>
               {redIconClose}
               {greenIconCheck}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Average habitat complexity scores</StyledTd>
+              <StyledTd $alignLeft>Average habitat complexity scores</StyledTd>
               {redIconClose}
               {greenIconCheck}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Average colonies bleached (%)</StyledTd>
+              <StyledTd $alignLeft>Average colonies bleached (%)</StyledTd>
               {redIconClose}
               {greenIconCheck}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <Td colSpan="4" $cellWithText>
+              <Td colSpan="4" $alignLeft>
                 <strong>Transect-level observations</strong>
               </Td>
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Benthic observations and growth forms</StyledTd>
+              <StyledTd $alignLeft>Benthic observations and growth forms</StyledTd>
               {redIconClose}
               {redIconClose}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>
+              <StyledTd $alignLeft>
                 Reef fish species, size and abundance, taxonomy and functional group information,
                 biomass coefficients
               </StyledTd>
@@ -136,20 +142,20 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Individual habitat complexity scores</StyledTd>
+              <StyledTd $alignLeft>Individual habitat complexity scores</StyledTd>
               {redIconClose}
               {redIconClose}
               {greenIconCheck}
             </Tr>
             <Tr>
-              <StyledTd $cellWithText>Colonies bleached and benthic percent cover</StyledTd>
+              <StyledTd $alignLeft>Colonies bleached and benthic percent cover</StyledTd>
               {redIconClose}
               {redIconClose}
               {greenIconCheck}
             </Tr>
           </tbody>
-        </Table>
-      </TableOverflowWrapper>
+        </ModalStickyTable>
+      </ModalTableOverflowWrapper>
     </ModalBody>
   )
   const footerContent = (
@@ -166,7 +172,6 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
       onDismiss={onDismiss}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
-      modalCustomWidth={'1000px'}
     />
   )
 }

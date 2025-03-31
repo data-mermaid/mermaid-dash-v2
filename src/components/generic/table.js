@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 import {
   hoverState,
+  mediaQueryHeightMax680,
   mediaQueryPhoneOnly,
   mediaQueryTabletLandscapeOnly,
 } from '../../styles/mediaQueries'
@@ -112,7 +113,11 @@ export const StickyTableOverflowWrapper = styled(TableOverflowWrapper)`
 
 export const ModalTableOverflowWrapper = styled(TableOverflowWrapper)`
   overflow: auto;
-  height: 400px;
+  height: ${(props) => props.$tableCustomHeight || '400px'};
+
+  ${mediaQueryHeightMax680(css`
+    height: 280px;
+  `)}
 `
 
 const stickyStyles = css`
