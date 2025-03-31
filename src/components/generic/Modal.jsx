@@ -38,6 +38,7 @@ const StyledDialog = styled.div`
 const ModalTitle = styled.div`
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   padding: 3rem ${theme.spacing.medium} 0 3rem;
   color: ${theme.color.textColor};
   text-transform: capitalize;
@@ -75,6 +76,7 @@ const ModalFooter = styled.div`
   display: flex;
   justify-content: space-between;
   background: ${theme.color.white};
+  gap: 5px;
   ${mediaQueryPhoneOnly(css`
     > * {
       display: block;
@@ -127,6 +129,7 @@ const RightFooter = styled.div`
   align-items: center;
   margin-left: auto;
   justify-content: flex-end;
+  width: 350px;
 `
 
 const Modal = ({

@@ -24,49 +24,49 @@ const StyledTr = styled(Tr)`
     `}
 `
 
-const DownloadTableView = ({ tableData }) => {
+const ExportTableView = ({ tableData }) => {
   const tableColumns = useMemo(
     () => [
       {
         Header: 'Project Name',
         accessor: 'projectName',
         sortType: reactTableNaturalSort,
-        width: 350,
+        width: 360,
       },
       {
         Header: 'Surveys',
         accessor: 'surveyCount',
         sortType: reactTableNaturalSort,
         align: 'right',
-        width: 70,
+        width: 110,
       },
       {
         Header: 'Data sharing',
         accessor: 'dataSharingPolicy',
         sortType: reactTableNaturalSort,
         align: 'left',
-        width: 120,
+        width: 130,
       },
       {
         Header: 'Metadata',
         accessor: 'metaData',
         sortType: reactTableNaturalSort,
         align: 'center',
-        width: 100,
+        width: 110,
       },
       {
         Header: 'Survey Data',
         accessor: 'surveyData',
         sortType: reactTableNaturalSort,
         align: 'center',
-        width: 100,
+        width: 140,
       },
       {
         Header: 'Observation Data',
         accessor: 'observationData',
         sortType: reactTableNaturalSort,
         align: 'center',
-        width: 140,
+        width: 180,
       },
     ],
     [],
@@ -221,8 +221,8 @@ const DownloadTableView = ({ tableData }) => {
   )
 }
 
-DownloadTableView.propTypes = {
+ExportTableView.propTypes = {
   tableData: PropTypes.array.isRequired,
 }
 
-export default DownloadTableView
+export default ExportTableView
