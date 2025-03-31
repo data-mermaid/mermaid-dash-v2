@@ -35,7 +35,6 @@ const StyledDialog = styled.div`
 const ModalTitle = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
   padding: 3rem ${theme.spacing.medium} 0 3rem;
   color: ${theme.color.textColor};
   text-transform: capitalize;
@@ -70,8 +69,8 @@ const ModalContent = styled.div`
 `
 const ModalFooter = styled.div`
   padding: ${theme.spacing.medium};
-  display: grid;
-  grid-auto-columns: auto auto;
+  display: flex;
+  justify-content: space-between;
   background: ${theme.color.white};
   ${mediaQueryPhoneOnly(css`
     > * {
@@ -115,11 +114,16 @@ const ModalLoadingIndicatorWrapper = styled.div`
   }
 `
 const LeftFooter = styled.div`
-  justify-self: start;
-`
-const RightFooter = styled.div`
-  justify-self: end;
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
+const RightFooter = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  justify-content: flex-end;
 `
 
 const Modal = ({

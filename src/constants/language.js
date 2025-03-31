@@ -21,7 +21,7 @@ export const dataDisclaimer = {
 export const downloadModal = {
   noDataTitle: 'No data to download',
   noDataContent: 'Selected projects contain no data to download.',
-  downloadTitle: 'Download data',
+  downloadTitle: 'Export data',
   noGFCRDataTitle: 'No GFCR data to download',
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
   downloadGFCRTitle: 'Download GFCR data',

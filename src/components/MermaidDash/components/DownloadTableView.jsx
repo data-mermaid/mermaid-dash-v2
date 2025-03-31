@@ -74,29 +74,31 @@ const DownloadTableView = ({ tableData }) => {
 
   const tableCellData = useMemo(
     () =>
-      tableData.map(
-        ({
-          projectId,
-          projectName,
-          surveyCount,
-          dataSharingPolicy,
-          metaData,
-          surveyData,
-          observationData,
-          isMemberOfProject,
-          rawProjectData,
-        }) => ({
-          projectId,
-          projectName,
-          surveyCount,
-          dataSharingPolicy,
-          metaData,
-          surveyData,
-          observationData,
-          isMemberOfProject,
-          rawProjectData,
-        }),
-      ),
+      tableData
+        .filter(({ surveyCount }) => surveyCount > 0)
+        .map(
+          ({
+            projectId,
+            projectName,
+            surveyCount,
+            dataSharingPolicy,
+            metaData,
+            surveyData,
+            observationData,
+            isMemberOfProject,
+            rawProjectData,
+          }) => ({
+            projectId,
+            projectName,
+            surveyCount,
+            dataSharingPolicy,
+            metaData,
+            surveyData,
+            observationData,
+            isMemberOfProject,
+            rawProjectData,
+          }),
+        ),
     [tableData],
   )
 

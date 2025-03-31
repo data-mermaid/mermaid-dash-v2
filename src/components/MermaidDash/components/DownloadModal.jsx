@@ -26,6 +26,8 @@ import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 import DownloadTableView from './DownloadTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
+import { IconInfo } from '../../../assets/icons'
+import { LeftFooter } from '../../generic/Modal'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -60,6 +62,15 @@ const WiderFormControl = styled(FormControl)`
   width: 30rem;
 `
 
+const StyledWarningText = styled.div`
+  height: 40px;
+  display: flex;
+  background: lightgrey;
+  align-items: center;
+  padding-left: 20px;
+  gap: 5px;
+`
+
 const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
   const {
     displayedProjects,
@@ -75,6 +86,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [modalMode, setModalMode] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
+  const [projectWithoutSurveyCount, setProjectWithoutSurveyCount] = useState(0)
 
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
@@ -120,6 +132,10 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       }
     })
 
+    const projectsWithoutSurveyData =
+      formattedTableData.filter((data) => data.surveyCount === 0) ?? 0
+
+    setProjectWithoutSurveyCount(projectsWithoutSurveyData.length)
     setTableData(formattedTableData)
   }, [
     displayedProjects,
@@ -260,12 +276,30 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
 
   const footerContent = (
-    <RightFooter>
-      <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
-      {modalMode === 'download' && (
-        <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>Send Email With Link</ButtonPrimary>
-      )}
-    </RightFooter>
+    <>
+      <LeftFooter>
+        <StyledWarningText>
+          <IconInfo />
+          <span>
+            {pluralizeWordWithCount(
+              projectWithoutSurveyCount,
+              'other project does',
+              'other projects do',
+            )}{' '}
+            not have {DOWNLOAD_METHODS[selectedMethod]?.description} data or you don&apos;t have
+            access for the selected data sharing.
+          </span>
+        </StyledWarningText>
+      </LeftFooter>
+      <RightFooter>
+        <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
+        {modalMode === 'download' && (
+          <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
+            Send Email With Link
+          </ButtonPrimary>
+        )}
+      </RightFooter>
+    </>
   )
 
   if (!modalMode) {
