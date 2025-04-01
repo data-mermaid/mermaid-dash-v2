@@ -132,7 +132,16 @@ export const TimeSeriesBenthicCover = () => {
       title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Benthic cover (%)' },
     },
     showlegend: true,
-    legend: plotlyChartTheme.horizontalLegend,
+    legend: {
+      ...plotlyChartTheme.horizontalLegend,
+      title: {
+        text: 'Benthic category:',
+        side: 'top',
+        font: {
+          size: 12,
+        },
+      },
+    },
   }
 
   return (
