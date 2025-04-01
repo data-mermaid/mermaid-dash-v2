@@ -9,7 +9,7 @@ import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
 import { DOWNLOAD_METHODS } from '../../../constants/constants'
-import { downloadModal, toastMessageText } from '../../../constants/language'
+import { exportModal, toastMessageText } from '../../../constants/language'
 
 import {
   Modal,
@@ -24,8 +24,10 @@ import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
-import DownloadTableView from './DownloadTableView'
+import ExportTableView from './ExportTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
+import { IconInfo } from '../../../assets/icons'
+import { LeftFooter } from '../../generic/Modal'
 
 const ModalBody = styled.div`
   padding-left: 2rem;
@@ -60,7 +62,16 @@ const WiderFormControl = styled(FormControl)`
   width: 30rem;
 `
 
-const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
+const StyledWarningText = styled.div`
+  height: 40px;
+  display: flex;
+  background: lightgrey;
+  align-items: center;
+  padding: 0px 10px;
+  gap: 5px;
+`
+
+const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
   const {
     displayedProjects,
     filteredSurveys,
@@ -75,6 +86,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [modalMode, setModalMode] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
+  const [projectWithoutSurveyCount, setProjectWithoutSurveyCount] = useState(0)
 
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
@@ -120,6 +132,10 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
       }
     })
 
+    const projectsWithoutSurveyData =
+      formattedTableData.filter((data) => data.surveyCount === 0) ?? 0
+
+    setProjectWithoutSurveyCount(projectsWithoutSurveyData.length)
     setTableData(formattedTableData)
   }, [
     displayedProjects,
@@ -131,12 +147,12 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
 
   const title = useMemo(() => {
     const titles = {
-      'no data': downloadModal.noDataTitle,
-      success: downloadModal.successTitle,
-      failure: downloadModal.failureTitle,
+      'no data': exportModal.noDataTitle,
+      success: exportModal.successTitle,
+      failure: exportModal.failureTitle,
     }
 
-    return titles[modalMode] || downloadModal.downloadTitle
+    return titles[modalMode] || exportModal.downloadTitle
   }, [modalMode])
 
   const handleSendEmailWithLinkSubmit = async () => {
@@ -236,7 +252,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
           Find out how your data are shared
         </ButtonThatLooksLikeLinkUnderlined>
       </StyledDownloadContentWrapper>
-      <DownloadTableView tableData={tableData} />
+      <ExportTableView tableData={tableData} />
       <DataSharingInfoModal
         isOpen={isDataSharingModalOpen}
         onDismiss={() => setIsDataSharingModalOpen(false)}
@@ -252,7 +268,7 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   )
 
   const MODAL_CONTENT_BY_MODE = {
-    'no data': <p>{downloadModal.noDataContent}</p>,
+    'no data': <p>{exportModal.noDataContent}</p>,
     download: downloadContent,
     success: successContent,
   }
@@ -260,12 +276,32 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
 
   const footerContent = (
-    <RightFooter>
-      <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
+    <>
       {modalMode === 'download' && (
-        <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>Send Email With Link</ButtonPrimary>
+        <LeftFooter>
+          <StyledWarningText>
+            <IconInfo />
+            <span>
+              {pluralizeWordWithCount(
+                projectWithoutSurveyCount,
+                'other project does',
+                'other projects do',
+              )}{' '}
+              not have {DOWNLOAD_METHODS[selectedMethod]?.description} data or you don&apos;t have
+              access for the selected data sharing.
+            </span>
+          </StyledWarningText>
+        </LeftFooter>
       )}
-    </RightFooter>
+      <RightFooter>
+        <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
+        {modalMode === 'download' && (
+          <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
+            Send Email With Link
+          </ButtonPrimary>
+        )}
+      </RightFooter>
+    </>
   )
 
   if (!modalMode) {
@@ -284,11 +320,11 @@ const DownloadModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethod
   )
 }
 
-DownloadModal.propTypes = {
+ExportModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onDismiss: PropTypes.func.isRequired,
   selectedMethod: PropTypes.string.isRequired,
   handleSelectedMethodChange: PropTypes.func.isRequired,
 }
 
-export default DownloadModal
+export default ExportModal

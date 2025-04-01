@@ -48,8 +48,8 @@ import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
 import useLocalStorage from '../../hooks/useLocalStorage'
-import DownloadModal from './components/DownloadModal'
-import DownloadGFCRModal from './components/DownloadGFCRModal'
+import ExportModal from './components/ExportModal'
+import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import { IconFilter } from '../../assets/icons'
@@ -96,8 +96,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
-  const [isDownloadModalShowing, setIsDownloadModalShowing] = useState(false)
-  const [isDownloadGFCRModalShowing, setIsDownloadGFCRModalShowing] = useState(false)
+  const [isExportModalShowing, setIsExportModalShowing] = useState(false)
+  const [isExportGFCRModalShowing, setIsExportGFCRModalShowing] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -242,13 +242,13 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
-  const handleShowDownloadModal = () => {
+  const handleShowExportModal = () => {
     setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
-    setIsDownloadModalShowing(true)
+    setIsExportModalShowing(true)
   }
 
-  const handleShowDownloadGFCRModal = () => {
-    setIsDownloadGFCRModalShowing(true)
+  const handleShowExportGFCRModal = () => {
+    setIsExportGFCRModalShowing(true)
   }
 
   const handleZoomToFilteredData = () => {
@@ -305,7 +305,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const renderOverflowDownloadMenu = () => {
     return (
       <DownloadMenu>
-        <ButtonPrimary onClick={handleShowDownloadGFCRModal}>
+        <ButtonPrimary onClick={handleShowExportGFCRModal}>
           <IconTrayDownload /> Download GFCR Data
         </ButtonPrimary>
       </DownloadMenu>
@@ -361,7 +361,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             <FilterDownloadButton
               disabled={!allProjectsFinishedFiltering}
               $isAuthenticated={isAuthenticated}
-              onClick={isAuthenticated ? handleShowDownloadModal : handleLogin}
+              onClick={isAuthenticated ? handleShowExportModal : handleLogin}
             >
               {isAuthenticated ? (
                 <>
@@ -385,15 +385,15 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             )}
           </FilterDownloadWrapper>
         ) : null}
-        <DownloadModal
-          isOpen={isDownloadModalShowing}
-          onDismiss={() => setIsDownloadModalShowing(false)}
+        <ExportModal
+          isOpen={isExportModalShowing}
+          onDismiss={() => setIsExportModalShowing(false)}
           selectedMethod={selectedMethod}
           handleSelectedMethodChange={handleSelectedMethodChange}
         />
-        <DownloadGFCRModal
-          isOpen={isDownloadGFCRModalShowing}
-          onDismiss={() => setIsDownloadGFCRModalShowing(false)}
+        <ExportGFCRModal
+          isOpen={isExportGFCRModalShowing}
+          onDismiss={() => setIsExportGFCRModalShowing(false)}
         />
       </StyledFilterWrapper>
     )
