@@ -14,6 +14,7 @@ import { Construct } from 'constructs'
 export interface StaticSiteProps {
   domainName: string;
   siteSubDomain: string;
+  hostedZoneId: string;
 }
 
 /**
@@ -28,7 +29,10 @@ export class StaticSite extends Construct {
   constructor(parent: Stack, name: string, props: StaticSiteProps) {
     super(parent, name)
 
-    const zone = route53.HostedZone.fromLookup(this, 'Zone', { domainName: props.domainName })
+    const zone = route53.HostedZone.fromHostedZoneAttributes(this, 'Zone', {
+      hostedZoneId: props.hostedZoneId,
+      zoneName: props.domainName
+    })
     const siteDomain = `${props.siteSubDomain}.${props.domainName}`
     const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'CloudfrontOAI', {
       comment: `OAI for ${name}`
@@ -80,7 +84,7 @@ export class StaticSite extends Construct {
     else if (props.siteSubDomain === 'prod') {
       domainNames.push("dashboard3.datamermaid.org")
     }
-    console.log("domain names--->", domainNames)
+
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       certificate,
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
@@ -98,7 +102,9 @@ export class StaticSite extends Construct {
       ],
       defaultBehavior: {
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        origin: new cloudfront_origins.S3Origin(siteBucket, { originAccessIdentity: cloudfrontOAI }),
+        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessIdentity(siteBucket, {
+          originAccessIdentity: cloudfrontOAI,
+        }),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
