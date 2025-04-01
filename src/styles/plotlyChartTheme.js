@@ -62,13 +62,13 @@ const plotlyChartTheme = {
   layout: {
     bargap: 0.1,
     dragmode: false,
-    height: 370,
+    height: 400,
     autosize: true,
     margin: {
       l: 50,
       r: 30,
       b: 40,
-      t: 55,
+      t: 70,
     },
     xaxis: {
       fixedrange: true,
@@ -105,7 +105,7 @@ const plotlyChartTheme = {
     orientation: 'h',
     xanchor: 'center',
     x: 0.4,
-    y: -0.2,
+    y: -0.25,
     font: {
       size: 9,
     },
