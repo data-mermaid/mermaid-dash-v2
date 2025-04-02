@@ -3,7 +3,7 @@ import { EXPORT_METHODS } from '../constants/constants'
 const getMethodSurveyCount = (projectRecords, selectedMethod) =>
   projectRecords.filter((record) => record.protocols?.[selectedMethod]).length
 
-export const formatDownloadProjectDataHelper = (
+export const formatExportProjectDataHelper = (
   project,
   isMemberOfProject,
   selectedMethod,

@@ -21,10 +21,10 @@ export const dataDisclaimer = {
 export const exportModal = {
   noDataTitle: 'No data to export',
   noDataContent: 'Selected projects contain no data to export.',
-  downloadTitle: 'Export data',
+  exportTitle: 'Export data',
   noGFCRDataTitle: 'No GFCR data to export',
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
-  downloadGFCRTitle: 'Export GFCR data',
+  exportGFCRTitle: 'Export GFCR data',
   successTitle: 'Export Request Sent',
   failureTitle: 'Export Failed',
   failureContent: 'Fail to sent email! Please contact MERMAID team.',

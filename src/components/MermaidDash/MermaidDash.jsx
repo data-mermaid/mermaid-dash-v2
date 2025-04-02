@@ -39,7 +39,6 @@ import {
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
-import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
 import { IconDownload, IconFilter } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
@@ -250,8 +249,34 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
-  const handleExpressExport = () => {
-    setIsSuccessExportModalOpen(true)
+  const handleExpressExport = async () => {
+    try {
+      const token = isAuthenticated ? await getAccessTokenSilently() : ''
+
+      if (!token) {
+        throw new Error('Failed request - no token provided')
+      }
+
+      const requestData = {}
+      const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/express-reports/`
+      const response = await fetch(reportEndpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed request - ${response.status}`)
+      }
+
+      setIsSuccessExportModalOpen(true)
+    } catch (error) {
+      console.error(error)
+      toast.error(toastMessageText.sendEmailFailed)
+    }
   }
 
   const handleShowExportModal = () => {

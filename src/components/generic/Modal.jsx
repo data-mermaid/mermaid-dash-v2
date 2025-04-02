@@ -129,7 +129,7 @@ const RightFooter = styled.div`
   align-items: center;
   margin-left: auto;
   justify-content: flex-end;
-  width: 350px;
+  min-width: 250px;
 `
 
 const Modal = ({

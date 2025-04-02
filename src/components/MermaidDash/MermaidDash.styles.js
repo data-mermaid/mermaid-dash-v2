@@ -165,7 +165,6 @@ export const StyledChevronSpan = styled.span`
 
 export const FilterPaneExportButtonWrapper = styled.div`
   display: flex;
-  gap: 1px;
   background: white;
   margin: 10px;
   height: 40px;
@@ -180,6 +179,7 @@ export const FilterPaneExportButton = styled(ButtonPrimary)`
   display: flex;
   align-items: center;
   justify-content: center;
+  gap: 5px;
 `
 
 export const ExportMenuButton = styled.button`
