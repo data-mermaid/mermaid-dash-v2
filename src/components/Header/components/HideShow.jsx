@@ -16,10 +16,16 @@ const DropdownContainer = styled.div`
 `
 const PositionedAncestor = styled.div`
   position: relative;
-  width: max-content;
+  width: ${(props) => props?.width || 'max-content'};
 `
 
-const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
+const HideShow = ({
+  contents,
+  button,
+  closeOnClickWithin = true,
+  customStyleProps = {},
+  onToggle,
+}) => {
   const [showItems, setShowItems] = useState(false)
   const buttonRef = useRef(null)
   const contentsRef = useRef(null)
@@ -27,6 +33,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
 
   const toggleShowItems = () => {
     setShowItems(!showItems)
+    onToggle?.(!showItems)
   }
 
   const _hideItemsIfClickedOutside = useEffect(() => {
@@ -38,6 +45,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
       if (!(currentButtonRef && currentButtonRef.contains(event.target))) {
         if (closeOnClickWithin) {
           setShowItems(false)
+          onToggle?.(false)
         }
 
         if (!closeOnClickWithin) {
@@ -45,6 +53,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
           // Use when contents have other click handlers e.g. bell notifications
           if (currentContentsRef && !currentContentsRef.contains(event.target)) {
             setShowItems(false)
+            onToggle?.(false)
           }
         }
       }
@@ -61,7 +70,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
         handleClick(event)
       })
     }
-  }, [buttonRef, contentsRef, closeOnClickWithin, isMounted])
+  }, [buttonRef, contentsRef, closeOnClickWithin, isMounted, onToggle])
 
   const buttonForRender = React.cloneElement(button, {
     ref: buttonRef,
@@ -69,7 +78,7 @@ const HideShow = ({ contents, button, closeOnClickWithin = true }) => {
   })
 
   return (
-    <PositionedAncestor>
+    <PositionedAncestor {...customStyleProps}>
       {buttonForRender}
       {showItems && <span ref={contentsRef}>{contents}</span>}
     </PositionedAncestor>
@@ -80,6 +89,8 @@ HideShow.propTypes = {
   button: PropTypes.node.isRequired,
   contents: PropTypes.node.isRequired,
   closeOnClickWithin: PropTypes.bool,
+  customStyleProps: PropTypes.object,
+  onToggle: PropTypes.func,
 }
 
 export default HideShow

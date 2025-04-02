@@ -1,15 +1,15 @@
-import { DOWNLOAD_METHODS } from '../constants/constants'
+import { EXPORT_METHODS } from '../constants/constants'
 
 const getMethodSurveyCount = (projectRecords, selectedMethod) =>
   projectRecords.filter((record) => record.protocols?.[selectedMethod]).length
 
-export const formatDownloadProjectDataHelper = (
+export const formatExportProjectDataHelper = (
   project,
   isMemberOfProject,
   selectedMethod,
   selectedDataSharing,
 ) => {
-  const methodDataSharing = DOWNLOAD_METHODS[selectedMethod]?.policy
+  const methodDataSharing = EXPORT_METHODS[selectedMethod]?.policy
   const dataSharingPolicy = project[methodDataSharing]
   const surveyCount = getMethodSurveyCount(project?.records || [], selectedMethod)
 

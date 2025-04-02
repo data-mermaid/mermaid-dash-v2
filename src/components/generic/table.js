@@ -1,6 +1,7 @@
 import styled, { css } from 'styled-components'
 import {
   hoverState,
+  mediaQueryHeightMax960,
   mediaQueryHeightMax680,
   mediaQueryPhoneOnly,
   mediaQueryTabletLandscapeOnly,
@@ -117,6 +118,10 @@ export const ModalTableOverflowWrapper = styled(TableOverflowWrapper)`
 
   ${mediaQueryHeightMax680(css`
     height: 280px;
+  `)}
+
+  ${mediaQueryHeightMax960(css`
+    height: 500px;
   `)}
 `
 
