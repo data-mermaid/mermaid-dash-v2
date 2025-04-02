@@ -18,15 +18,15 @@ export const dataDisclaimer = {
     'Do not assume data are representative. Some projects have survey sites in geographies to address specific questions (e.g., land-based impacts of reefs, recovery rates from cyclone impacts). Summary data may not reflect overall national statistics.',
 }
 
-export const downloadModal = {
-  noDataTitle: 'No data to download',
-  noDataContent: 'Selected projects contain no data to download.',
-  downloadTitle: 'Download data',
-  noGFCRDataTitle: 'No GFCR data to download',
+export const exportModal = {
+  noDataTitle: 'No data to export',
+  noDataContent: 'Selected projects contain no data to export.',
+  downloadTitle: 'Export data',
+  noGFCRDataTitle: 'No GFCR data to export',
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
-  downloadGFCRTitle: 'Download GFCR data',
-  successTitle: 'Download Request Sent',
-  failureTitle: 'Download Failed',
+  downloadGFCRTitle: 'Export GFCR data',
+  successTitle: 'Export Request Sent',
+  failureTitle: 'Export Failed',
   failureContent: 'Fail to sent email! Please contact MERMAID team.',
 }
 

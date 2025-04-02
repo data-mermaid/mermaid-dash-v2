@@ -6,5 +6,8 @@
   "hosted-zone:account=554812291621:domainName=dashboard3.datamermaid.org:region=us-west-2": {
     "Id": "/hostedzone/Z04309691UBJ1O79WWKW4",
     "Name": "dashboard3.datamermaid.org."
-  }
+  },
+  "acknowledged-issue-numbers": [
+    32775
+  ]
 }

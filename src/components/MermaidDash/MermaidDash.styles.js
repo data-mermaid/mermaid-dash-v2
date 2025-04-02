@@ -163,7 +163,7 @@ export const StyledChevronSpan = styled.span`
   gap: 1rem;
 `
 
-export const FilterDownloadWrapper = styled.div`
+export const FilterPaneExportButtonWrapper = styled.div`
   display: flex;
   gap: 1px;
   background: white;
@@ -174,12 +174,15 @@ export const FilterDownloadWrapper = styled.div`
   box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.15);
 `
 
-export const FilterDownloadButton = styled(ButtonPrimary)`
+export const FilterPaneExportButton = styled(ButtonPrimary)`
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
-export const DownloadMenuButton = styled.button`
+export const ExportMenuButton = styled.button`
   border-width: 1px 0px 0px 0px;
   background: none;
   cursor: pointer;
@@ -196,12 +199,12 @@ export const DownloadMenuButton = styled.button`
   }
 `
 
-export const ExpressDownloadMenu = styled.div`
+export const ExpressExportMenu = styled.div`
   display: flex;
   flex-direction: column;
 `
 
-export const ExpressDownloadMenuHeaderItem = styled.div`
+export const ExpressExportMenuHeaderItem = styled.div`
   display: flex;
   justify-content: space-between;
   font-weight: bold;
@@ -209,7 +212,7 @@ export const ExpressDownloadMenuHeaderItem = styled.div`
   padding: 10px;
 `
 
-export const ExpressDownloadMenuItem = styled.button`
+export const ExpressExportMenuItem = styled.button`
   display: flex;
   justify-content: space-between;
   height: 50px;
@@ -228,7 +231,7 @@ export const ExpressDownloadMenuItem = styled.button`
   }
 `
 
-export const DownloadMenu = styled.div`
+export const ExportDataMenu = styled.div`
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -242,13 +245,9 @@ export const DownloadMenu = styled.div`
 export const MediumIconUp = styled(IconUp)`
   width: ${theme.typography.mediumIconSize};
   height: ${theme.typography.mediumIconSize};
-  top: 0.3rem;
-  position: relative;
 `
 
 export const MediumIconDown = styled(IconDown)`
   width: ${theme.typography.mediumIconSize};
   height: ${theme.typography.mediumIconSize};
-  top: 0.5rem;
-  position: relative;
 `

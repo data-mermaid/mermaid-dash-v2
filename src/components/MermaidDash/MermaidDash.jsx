@@ -26,13 +26,13 @@ import {
   StyledMobileZoomToDataButton,
   StyledMobileFilterPill,
   StyledMobileFollowMapButton,
-  FilterDownloadWrapper,
-  FilterDownloadButton,
-  DownloadMenu,
-  DownloadMenuButton,
-  ExpressDownloadMenu,
-  ExpressDownloadMenuItem,
-  ExpressDownloadMenuHeaderItem,
+  FilterPaneExportButtonWrapper,
+  FilterPaneExportButton,
+  ExportDataMenu,
+  ExportMenuButton,
+  ExpressExportMenu,
+  ExpressExportMenuItem,
+  ExpressExportMenuHeaderItem,
   MediumIconUp,
   MediumIconDown,
 } from './MermaidDash.styles'
@@ -40,10 +40,10 @@ import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconTrayDownload } from '../../assets/dashboardOnlyIcons'
-import { IconFilter } from '../../assets/icons'
+import { IconDownload, IconFilter } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
-import { DOWNLOAD_METHODS, URL_PARAMS } from '../../constants/constants'
+import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { Modal } from '../generic'
@@ -54,8 +54,8 @@ import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
 import useLocalStorage from '../../hooks/useLocalStorage'
-import DownloadModal from './components/DownloadModal'
-import DownloadGFCRModal from './components/DownloadGFCRModal'
+import ExportModal from './components/ExportModal'
+import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import SuccessExportModal from './components/SuccessExportModal'
@@ -102,8 +102,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
-  const [isDownloadModalShowing, setIsDownloadModalShowing] = useState(false)
-  const [isDownloadGFCRModalShowing, setIsDownloadGFCRModalShowing] = useState(false)
+  const [isExportModalShowing, setIsExportModalShowing] = useState(false)
+  const [isExportGFCRModalShowing, setIsExportGFCRModalShowing] = useState(false)
   const [view, setView] = useState('mapView')
   const location = useLocation()
   const navigate = useNavigate()
@@ -250,19 +250,17 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
-  const handleShowDownloadModal = () => {
-    const newSelectedMethod = getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount)
-
-    setSelectedMethod(newSelectedMethod)
-    setIsDownloadModalShowing(true)
-  }
-
   const handleExpressExport = () => {
     setIsSuccessExportModalOpen(true)
   }
 
-  const handleShowDownloadGFCRModal = () => {
-    setIsDownloadGFCRModalShowing(true)
+  const handleShowExportModal = () => {
+    setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
+    setIsExportModalShowing(true)
+  }
+
+  const handleShowExportGFCRModal = () => {
+    setIsExportGFCRModalShowing(true)
   }
 
   const handleZoomToFilteredData = () => {
@@ -316,36 +314,32 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     loginWithRedirect({ appState: { returnTo: location.search } })
   }
 
-  const renderOverflowDownloadMenu = () => {
+  const renderOverflowExportDataMenu = () => {
     return (
-      <DownloadMenu>
-        <ExpressDownloadMenu>
-          <ExpressDownloadMenuHeaderItem>
+      <ExportDataMenu>
+        <ExpressExportMenu>
+          <ExpressExportMenuHeaderItem>
             <div>Method</div>
             <div>Number of Surveys</div>
-          </ExpressDownloadMenuHeaderItem>
-          {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
+          </ExpressExportMenuHeaderItem>
+          {Object.entries(EXPORT_METHODS).map(([key, method]) => {
             const count = surveyedMethodCount[key] ?? 0
 
             return (
-              <ExpressDownloadMenuItem
-                key={key}
-                onClick={handleExpressExport}
-                disabled={count === 0}
-              >
+              <ExpressExportMenuItem key={key} onClick={handleExpressExport} disabled={count === 0}>
                 <div>{method.description}</div>
                 <div>{count}</div>
-              </ExpressDownloadMenuItem>
+              </ExpressExportMenuItem>
             )
           })}
-        </ExpressDownloadMenu>
-        <DownloadMenuButton onClick={handleShowDownloadModal} role="button">
+        </ExpressExportMenu>
+        <ExportMenuButton onClick={handleShowExportModal} role="button">
           Advance Export...
-        </DownloadMenuButton>
-        <DownloadMenuButton onClick={handleShowDownloadGFCRModal} role="button">
+        </ExportMenuButton>
+        <ExportMenuButton onClick={handleShowExportGFCRModal} role="button">
           GFCR Data
-        </DownloadMenuButton>
-      </DownloadMenu>
+        </ExportMenuButton>
+      </ExportDataMenu>
     )
   }
 
@@ -394,43 +388,43 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
-          <FilterDownloadWrapper>
+          <FilterPaneExportButtonWrapper>
             {isAuthenticated ? (
               <HideShow
                 button={
-                  <FilterDownloadButton
+                  <FilterPaneExportButton
                     disabled={!allProjectsFinishedFiltering}
                     $isAuthenticated={isAuthenticated}
                   >
-                    <IconTrayDownload /> <span>Export data</span>
+                    <IconDownload /> <span>Export data</span>
                     {isExportMenuOpen ? <MediumIconDown /> : <MediumIconUp />}
-                  </FilterDownloadButton>
+                  </FilterPaneExportButton>
                 }
-                contents={renderOverflowDownloadMenu()}
+                contents={renderOverflowExportDataMenu()}
                 customStyleProps={{ width: '100%' }}
                 onToggle={setIsExportMenuOpen}
               />
             ) : (
-              <FilterDownloadButton
+              <FilterPaneExportButton
                 disabled={!allProjectsFinishedFiltering}
                 $isAuthenticated={isAuthenticated}
                 onClick={handleLogin}
               >
                 <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
-              </FilterDownloadButton>
+              </FilterPaneExportButton>
             )}
-          </FilterDownloadWrapper>
+          </FilterPaneExportButtonWrapper>
         ) : null}
-        <DownloadModal
-          isOpen={isDownloadModalShowing}
-          onDismiss={() => setIsDownloadModalShowing(false)}
+        <ExportModal
+          isOpen={isExportModalShowing}
+          onDismiss={() => setIsExportModalShowing(false)}
           surveyedMethodCount={surveyedMethodCount}
           selectedMethod={selectedMethod}
           handleSelectedMethodChange={handleSelectedMethodChange}
         />
-        <DownloadGFCRModal
-          isOpen={isDownloadGFCRModalShowing}
-          onDismiss={() => setIsDownloadGFCRModalShowing(false)}
+        <ExportGFCRModal
+          isOpen={isExportGFCRModalShowing}
+          onDismiss={() => setIsExportGFCRModalShowing(false)}
         />
       </StyledFilterWrapper>
     )

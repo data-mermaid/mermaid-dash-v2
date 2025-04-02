@@ -7,7 +7,7 @@ import { toast } from 'react-toastify'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
-import { downloadModal, toastMessageText, tooltipText } from '../../../constants/language'
+import { exportModal, toastMessageText, tooltipText } from '../../../constants/language'
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
@@ -33,7 +33,7 @@ const StyledWarningText = styled.div`
   gap: 5px;
 `
 
-const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
+const ExportGFCRModal = ({ isOpen, onDismiss }) => {
   const { displayedProjects, mermaidUserData, userIsMemberOfProject } =
     useContext(FilterProjectsContext)
 
@@ -64,12 +64,12 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
 
   const title = useMemo(() => {
     const titles = {
-      'no data': downloadModal.noGFCRDataTitle,
-      success: downloadModal.successTitle,
-      failure: downloadModal.failureTitle,
+      'no data': exportModal.noGFCRDataTitle,
+      success: exportModal.successTitle,
+      failure: exportModal.failureTitle,
     }
 
-    return titles[modalMode] || downloadModal.downloadGFCRTitle
+    return titles[modalMode] || exportModal.downloadGFCRTitle
   }, [modalMode])
 
   const handleSendEmailWithLinkSubmit = async () => {
@@ -155,7 +155,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
   )
 
   const MODAL_CONTENT_BY_MODE = {
-    'no data': <p>{downloadModal.noGFCRDataContent}</p>,
+    'no data': <p>{exportModal.noGFCRDataContent}</p>,
     download: downloadContent,
     success: successContent,
   }
@@ -200,9 +200,9 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
   )
 }
 
-DownloadGFCRModal.propTypes = {
+ExportGFCRModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onDismiss: PropTypes.func.isRequired,
 }
 
-export default DownloadGFCRModal
+export default ExportGFCRModal

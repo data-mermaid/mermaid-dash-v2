@@ -103,7 +103,16 @@ export const TimeSeriesFishBiomass = () => {
       title: { ...plotlyChartTheme.layout.yaxis.title, text: 'Fish biomass (kg/ha)' },
     },
     showlegend: true,
-    legend: plotlyChartTheme.horizontalLegend,
+    legend: {
+      ...plotlyChartTheme.horizontalLegend,
+      title: {
+        text: 'Management rule:',
+        side: 'top',
+        font: {
+          size: 12,
+        },
+      },
+    },
   }
 
   return (
