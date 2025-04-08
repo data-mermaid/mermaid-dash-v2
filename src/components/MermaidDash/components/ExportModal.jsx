@@ -308,9 +308,9 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
 
   return (
     <Modal
-      title={title}
       isOpen={isOpen}
       onDismiss={onDismiss}
+      title={title}
       mainContent={mainContent}
       toolbarContent={toolbarContent}
       footerContent={footerContent}

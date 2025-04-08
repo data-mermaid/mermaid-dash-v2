@@ -1,21 +1,12 @@
 import PropTypes from 'prop-types'
 import { Modal, RightFooter, ButtonPrimary } from '../../generic'
-import styled from 'styled-components'
 import { errorModal } from '../../../constants/language'
 
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-  z-index: 2;
-`
-
 const ErrorFetchingModal = ({ isOpen, onDismiss }) => {
-  const content = (
-    <ModalBody>
-      <p>
-        {errorModal.content} <a href="mailto:support@datamermaid.org">support@datamermaid.org</a>
-      </p>
-    </ModalBody>
+  const mainContent = (
+    <p>
+      {errorModal.content} <a href="mailto:support@datamermaid.org">support@datamermaid.org</a>
+    </p>
   )
 
   const footerContent = (
@@ -29,7 +20,7 @@ const ErrorFetchingModal = ({ isOpen, onDismiss }) => {
       isOpen={isOpen}
       onDismiss={onDismiss}
       title={errorModal.title}
-      mainContent={content}
+      mainContent={mainContent}
       footerContent={footerContent}
       hideCloseIcon={true}
     />

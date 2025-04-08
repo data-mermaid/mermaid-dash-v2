@@ -7,12 +7,6 @@ import { Modal, RightFooter, ButtonPrimary, ButtonSecondary, Input } from '../..
 import { IconCopy, IconSharing } from '../../../assets/icons'
 import useResponsive from '../../../hooks/useResponsive'
 
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-  z-index: 2;
-`
-
 const ModalCopyContainer = styled.div`
   flex-direction: row;
   display: flex;
@@ -43,9 +37,8 @@ const ShareViewModal = () => {
     setTimeout(() => setButtonText('Copy'), 2000)
   }
 
-  const modalTitle = shareView.modalHeader
-  const modalContent = (
-    <ModalBody>
+  const mainContent = (
+    <>
       <ModalCopyContainer>
         <ModalURLContainer>
           <Input value={window.location.href} readOnly></Input>
@@ -54,7 +47,7 @@ const ShareViewModal = () => {
           <IconCopy /> {buttonText}
         </StyledCopyButton>
       </ModalCopyContainer>
-    </ModalBody>
+    </>
   )
 
   const footerContent = (
@@ -71,8 +64,8 @@ const ShareViewModal = () => {
       <Modal
         isOpen={isModalOpen}
         onDismiss={handleCloseModal}
-        title={modalTitle}
-        mainContent={modalContent}
+        title={shareView.modalHeader}
+        mainContent={mainContent}
         footerContent={footerContent}
       />
     </div>

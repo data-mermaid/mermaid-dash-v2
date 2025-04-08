@@ -14,11 +14,6 @@ import { IconInfo } from '../../../assets/icons'
 import { MuiTooltip } from '../../generic/MuiTooltip'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-`
-
 const StyledOverflowList = styled.ul`
   height: 244px;
   overflow-y: auto;
@@ -160,7 +155,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
     success: successContent,
   }
 
-  const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
+  const mainContent = <>{MODAL_CONTENT_BY_MODE[modalMode] || null}</>
 
   const footerContent = (
     <RightFooter>
@@ -189,10 +184,10 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
 
   return (
     <Modal
-      title={title}
-      mainContent={content}
       isOpen={isOpen}
       onDismiss={onDismiss}
+      title={title}
+      mainContent={mainContent}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
       modalCustomHeight={modalCustomHeight}
