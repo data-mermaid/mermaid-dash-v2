@@ -26,21 +26,26 @@ import {
   StyledMobileZoomToDataButton,
   StyledMobileFilterPill,
   StyledMobileFollowMapButton,
-  FilterDownloadWrapper,
-  FilterDownloadButton,
-  DownloadMenu,
-  GFCRDataDownloadButton,
+  FilterPaneExportButtonWrapper,
+  FilterPaneExportButton,
+  ExportDataMenu,
+  ExportMenuButton,
+  ExpressExportMenu,
+  ExpressExportMenuItem,
+  ExpressExportMenuHeaderItem,
+  MediumIconUp,
+  MediumIconDown,
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
-import { IconCaretUp, IconTrayDownload } from '../../assets/dashboardOnlyIcons'
+import { IconDownload, IconFilter } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
-import { URL_PARAMS } from '../../constants/constants'
+import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
-import { ButtonPrimary, Modal } from '../generic'
+import { Modal } from '../generic'
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
 import TableView from '../TableView/TableView'
@@ -52,7 +57,7 @@ import ExportModal from './components/ExportModal'
 import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
-import { IconFilter } from '../../assets/icons'
+import SuccessExportModal from './components/SuccessExportModal'
 
 const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
   const customSortOrder = [
@@ -106,6 +111,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [showLoadingIndicator, setShowLoadingIndicator] = useState(!isApiDataLoaded)
   const [selectedMethod, setSelectedMethod] = useState('')
   const [isErrorModalShowing, setIsErrorModalShowing] = useState(false)
+  const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
+  const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
 
   const mapRef = useRef()
 
@@ -242,6 +249,36 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
+  const handleExpressExport = async () => {
+    try {
+      const token = isAuthenticated ? await getAccessTokenSilently() : ''
+
+      if (!token) {
+        throw new Error('Failed request - no token provided')
+      }
+
+      const requestData = {}
+      const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/express-reports/`
+      const response = await fetch(reportEndpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed request - ${response.status}`)
+      }
+
+      setIsSuccessExportModalOpen(true)
+    } catch (error) {
+      console.error(error)
+      toast.error(toastMessageText.sendEmailFailed)
+    }
+  }
+
   const handleShowExportModal = () => {
     setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
     setIsExportModalShowing(true)
@@ -302,13 +339,32 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     loginWithRedirect({ appState: { returnTo: location.search } })
   }
 
-  const renderOverflowDownloadMenu = () => {
+  const renderOverflowExportDataMenu = () => {
     return (
-      <DownloadMenu>
-        <ButtonPrimary onClick={handleShowExportGFCRModal}>
-          <IconTrayDownload /> Download GFCR Data
-        </ButtonPrimary>
-      </DownloadMenu>
+      <ExportDataMenu>
+        <ExpressExportMenu>
+          <ExpressExportMenuHeaderItem>
+            <div>Method</div>
+            <div>Number of Surveys</div>
+          </ExpressExportMenuHeaderItem>
+          {Object.entries(EXPORT_METHODS).map(([key, method]) => {
+            const count = surveyedMethodCount[key] ?? 0
+
+            return (
+              <ExpressExportMenuItem key={key} onClick={handleExpressExport} disabled={count === 0}>
+                <div>{method.description}</div>
+                <div>{count}</div>
+              </ExpressExportMenuItem>
+            )
+          })}
+        </ExpressExportMenu>
+        <ExportMenuButton onClick={handleShowExportModal} role="button">
+          Advance Export...
+        </ExportMenuButton>
+        <ExportMenuButton onClick={handleShowExportGFCRModal} role="button">
+          GFCR Data
+        </ExportMenuButton>
+      </ExportDataMenu>
     )
   }
 
@@ -357,37 +413,37 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           </MuiTooltip>
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
-          <FilterDownloadWrapper>
-            <FilterDownloadButton
-              disabled={!allProjectsFinishedFiltering}
-              $isAuthenticated={isAuthenticated}
-              onClick={isAuthenticated ? handleShowExportModal : handleLogin}
-            >
-              {isAuthenticated ? (
-                <>
-                  <IconTrayDownload /> <span>Download</span>
-                </>
-              ) : (
-                <>
-                  <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
-                </>
-              )}
-            </FilterDownloadButton>
-            {isAuthenticated && (
+          <FilterPaneExportButtonWrapper>
+            {isAuthenticated ? (
               <HideShow
                 button={
-                  <GFCRDataDownloadButton disabled={!allProjectsFinishedFiltering}>
-                    <IconCaretUp />
-                  </GFCRDataDownloadButton>
+                  <FilterPaneExportButton
+                    disabled={!allProjectsFinishedFiltering}
+                    $isAuthenticated={isAuthenticated}
+                  >
+                    <IconDownload /> <span>Export data</span>
+                    {isExportMenuOpen ? <MediumIconDown /> : <MediumIconUp />}
+                  </FilterPaneExportButton>
                 }
-                contents={renderOverflowDownloadMenu()}
+                contents={renderOverflowExportDataMenu()}
+                customStyleProps={{ width: '100%' }}
+                onToggle={setIsExportMenuOpen}
               />
+            ) : (
+              <FilterPaneExportButton
+                disabled={!allProjectsFinishedFiltering}
+                $isAuthenticated={isAuthenticated}
+                onClick={handleLogin}
+              >
+                <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
+              </FilterPaneExportButton>
             )}
-          </FilterDownloadWrapper>
+          </FilterPaneExportButtonWrapper>
         ) : null}
         <ExportModal
           isOpen={isExportModalShowing}
           onDismiss={() => setIsExportModalShowing(false)}
+          surveyedMethodCount={surveyedMethodCount}
           selectedMethod={selectedMethod}
           handleSelectedMethodChange={handleSelectedMethodChange}
         />
@@ -456,6 +512,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       <ErrorFetchingModal
         isOpen={isErrorModalShowing}
         onDismiss={() => setIsErrorModalShowing(false)}
+      />
+      <SuccessExportModal
+        isOpen={isSuccessExportModalOpen}
+        onDismiss={() => setIsSuccessExportModalOpen(false)}
       />
     </StyledDashboardContainer>
   )
