@@ -29,16 +29,8 @@ import DataSharingInfoModal from './DataSharingInfoModal'
 import { IconInfo } from '../../../assets/icons'
 import { LeftFooter } from '../../generic/Modal'
 
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-`
-
 const StyledDownloadContentWrapper = styled.div`
   display: flex;
-  align-items: end;
-  padding-top: 0;
-  padding-bottom: 30px;
   gap: 5px;
 `
 
@@ -63,12 +55,13 @@ const WiderFormControl = styled(FormControl)`
 `
 
 const StyledWarningText = styled.div`
-  height: 40px;
+  height: 36px;
   display: flex;
-  background: lightgrey;
+  background-color: ${theme.color.white2};
   align-items: center;
   padding: 0px 10px;
   gap: 5px;
+  font-size: ${theme.typography.smallFontSize};
 `
 
 const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
@@ -86,7 +79,7 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
   const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [modalMode, setModalMode] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
-  const [projectWithoutSurveyCount, setProjectWithoutSurveyCount] = useState(0)
+  const [invalidProjectsCount, setInvalidProjectsCount] = useState(0)
 
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
@@ -132,10 +125,12 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
       }
     })
 
-    const projectsWithoutSurveyData =
-      formattedTableData.filter((data) => data.surveyCount === 0) ?? 0
+    const invalidProjects = formattedTableData.filter(
+      ({ surveyCount, metaData, observationData, surveyData }) =>
+        surveyCount === 0 || (!metaData && !observationData && !surveyData),
+    )
 
-    setProjectWithoutSurveyCount(projectsWithoutSurveyData.length)
+    setInvalidProjectsCount(invalidProjects.length)
     setTableData(formattedTableData)
   }, [
     displayedProjects,
@@ -201,57 +196,60 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
     setSelectedDataSharing(e.target.value)
   }
 
+  const toolbarContent = modalMode === 'download' && (
+    <StyledDownloadContentWrapper>
+      <WiderFormControl>
+        <StyledHeader>Method</StyledHeader>
+        <MermaidSelect
+          input={<MermaidOutlinedInput />}
+          value={selectedMethod}
+          onChange={handleSelectedMethodChange}
+        >
+          {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
+            return (
+              <MermaidMenuItem key={key} value={key}>
+                {method.description}{' '}
+                {`(${pluralizeWordWithCount(surveyedMethodCount[key] ?? 0, 'Survey')})`}
+              </MermaidMenuItem>
+            )
+          })}
+        </MermaidSelect>
+      </WiderFormControl>
+      <StyledDataSharingWrapper>
+        <StyledHeader>Project Data Sharing</StyledHeader>
+        <StyledDataSharingTabs>
+          <StyledDataSharingButton
+            value={'private'}
+            isActive={selectedDataSharing === 'private'}
+            onClick={handleDataSharingChange}
+          >
+            Private
+          </StyledDataSharingButton>
+          <StyledDataSharingButton
+            value={'public summary'}
+            customWidth={'150px'}
+            isActive={selectedDataSharing === 'public summary'}
+            onClick={handleDataSharingChange}
+          >
+            Public Summary
+          </StyledDataSharingButton>
+          <StyledDataSharingButton
+            value={'public'}
+            isActive={selectedDataSharing === 'public'}
+            onClick={handleDataSharingChange}
+          >
+            Public
+          </StyledDataSharingButton>
+        </StyledDataSharingTabs>
+      </StyledDataSharingWrapper>
+      <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
+        Find out how your data are shared
+      </ButtonThatLooksLikeLinkUnderlined>
+    </StyledDownloadContentWrapper>
+  )
+
   const downloadContent = (
     <>
-      <StyledDownloadContentWrapper>
-        <WiderFormControl>
-          <StyledHeader>Method</StyledHeader>
-          <MermaidSelect
-            input={<MermaidOutlinedInput />}
-            value={selectedMethod}
-            onChange={handleSelectedMethodChange}
-          >
-            {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
-              return (
-                <MermaidMenuItem key={key} value={key}>
-                  {method.description}{' '}
-                  {`(${pluralizeWordWithCount(surveyedMethodCount[key] ?? 0, 'Survey')})`}
-                </MermaidMenuItem>
-              )
-            })}
-          </MermaidSelect>
-        </WiderFormControl>
-        <StyledDataSharingWrapper>
-          <StyledHeader>Project Data Sharing</StyledHeader>
-          <StyledDataSharingTabs>
-            <StyledDataSharingButton
-              value={'private'}
-              isActive={selectedDataSharing === 'private'}
-              onClick={handleDataSharingChange}
-            >
-              Private
-            </StyledDataSharingButton>
-            <StyledDataSharingButton
-              value={'public summary'}
-              customWidth={'150px'}
-              isActive={selectedDataSharing === 'public summary'}
-              onClick={handleDataSharingChange}
-            >
-              Public Summary
-            </StyledDataSharingButton>
-            <StyledDataSharingButton
-              value={'public'}
-              isActive={selectedDataSharing === 'public'}
-              onClick={handleDataSharingChange}
-            >
-              Public
-            </StyledDataSharingButton>
-          </StyledDataSharingTabs>
-        </StyledDataSharingWrapper>
-        <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
-          Find out how your data are shared
-        </ButtonThatLooksLikeLinkUnderlined>
-      </StyledDownloadContentWrapper>
       <ExportTableView tableData={tableData} />
       <DataSharingInfoModal
         isOpen={isDataSharingModalOpen}
@@ -273,17 +271,17 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
     success: successContent,
   }
 
-  const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
+  const mainContent = <>{MODAL_CONTENT_BY_MODE[modalMode] || null}</>
 
   const footerContent = (
     <>
-      {modalMode === 'download' && (
+      {modalMode === 'download' && invalidProjectsCount > 0 && (
         <LeftFooter>
           <StyledWarningText>
             <IconInfo />
             <span>
               {pluralizeWordWithCount(
-                projectWithoutSurveyCount,
+                invalidProjectsCount,
                 'other project does',
                 'other projects do',
               )}{' '}
@@ -310,10 +308,11 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
 
   return (
     <Modal
-      title={title}
-      mainContent={content}
       isOpen={isOpen}
       onDismiss={onDismiss}
+      title={title}
+      mainContent={mainContent}
+      toolbarContent={toolbarContent}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
     />

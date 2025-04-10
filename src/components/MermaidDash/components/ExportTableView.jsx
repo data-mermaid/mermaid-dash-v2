@@ -75,7 +75,10 @@ const ExportTableView = ({ tableData }) => {
   const tableCellData = useMemo(
     () =>
       tableData
-        .filter(({ surveyCount }) => surveyCount > 0)
+        .filter(
+          ({ surveyCount, metaData, observationData, surveyData }) =>
+            surveyCount > 0 && (metaData || observationData || surveyData),
+        )
         .map(
           ({
             projectId,

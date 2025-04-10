@@ -8,6 +8,7 @@ const caution = colorHelper('#BB1600')
 const warning = colorHelper('#FEDD2F')
 const ignore = colorHelper('#D6DDE6')
 const white = colorHelper('#fff')
+const white2 = colorHelper('#F9F9FB')
 const black = primary.mix(colorHelper('black'), 0.95)
 const grey0 = colorHelper.hsl(248, 13, 55)
 const grey1 = colorHelper.hsl(248, 13, 88)
@@ -30,6 +31,7 @@ const xlarge = '2rem'
 const color = {
   textColor,
   white,
+  white2,
   grey0,
   grey1,
   grey2,

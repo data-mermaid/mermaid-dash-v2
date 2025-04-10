@@ -39,7 +39,8 @@ const ModalTitle = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 3rem ${theme.spacing.medium} 0 3rem;
+  padding: ${theme.spacing.medium};
+  padding-bottom: 0;
   color: ${theme.color.textColor};
   text-transform: capitalize;
   h2 {
@@ -57,7 +58,7 @@ const ModalTitle = styled.div`
 `
 
 const ModalToolbar = styled.div`
-  padding: 0 ${theme.spacing.medium};
+  padding: ${theme.spacing.medium};
 `
 const ModalContent = styled.div`
   ${(props) =>
@@ -65,7 +66,8 @@ const ModalContent = styled.div`
     css`
       overflow: auto;
     `}
-  padding: 0 ${theme.spacing.medium} 3rem ${theme.spacing.medium};
+  padding: ${theme.spacing.medium};
+  padding-top: 0;
   flex-grow: 1;
   ${mediaQueryPhoneOnly(css`
     padding: 0rem;
@@ -170,7 +172,7 @@ const Modal = ({
           $modalCustomWidth={modalCustomWidth}
           $modalCustomHeight={modalCustomHeight}
         >
-          {title ? (
+          {title && (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
               {!hideCloseIcon && (
@@ -179,8 +181,8 @@ const Modal = ({
                 </CloseButton>
               )}
             </ModalTitle>
-          ) : null}
-          <ModalToolbar>{toolbarContent}</ModalToolbar>
+          )}
+          {toolbarContent && <ModalToolbar>{toolbarContent}</ModalToolbar>}
           <ModalContent id="modal-content" $contentOverflowIsVisible={contentOverflowIsVisible}>
             {mainContent}
           </ModalContent>
