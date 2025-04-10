@@ -114,14 +114,14 @@ export const StickyTableOverflowWrapper = styled(TableOverflowWrapper)`
 
 export const ModalTableOverflowWrapper = styled(TableOverflowWrapper)`
   overflow: auto;
-  height: ${(props) => props.$tableCustomHeight || '400px'};
-
-  ${mediaQueryHeightMax680(css`
-    height: 280px;
-  `)}
+  height: ${(props) => props.$tableCustomHeight || '450px'};
 
   ${mediaQueryHeightMax960(css`
-    height: 500px;
+    height: 400px;
+  `)}
+
+  ${mediaQueryHeightMax680(css`
+    height: 350px;
   `)}
 `
 
