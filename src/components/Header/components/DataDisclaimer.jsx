@@ -5,10 +5,7 @@ import styled from 'styled-components'
 import { dataDisclaimer } from '../../../constants/language'
 import theme from '../../../styles/theme'
 
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-  z-index: 2;
+const ContentText = styled.p`
   color: ${theme.color.black};
 `
 
@@ -27,11 +24,7 @@ const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {
     }
   }, [handleCloseDisclaimer])
 
-  const content = (
-    <ModalBody>
-      <p>{dataDisclaimer.content}</p>
-    </ModalBody>
-  )
+  const mainContent = <ContentText>{dataDisclaimer.content}</ContentText>
 
   const footerContent = (
     <RightFooter>
@@ -40,10 +33,10 @@ const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {
   )
   return (
     <Modal
-      title={dataDisclaimer.title}
-      mainContent={content}
       isOpen={showDisclaimer}
       onDismiss={handleCloseDisclaimer}
+      title={dataDisclaimer.title}
+      mainContent={mainContent}
       footerContent={footerContent}
     />
   )

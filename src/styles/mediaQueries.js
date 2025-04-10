@@ -11,7 +11,7 @@ const mediaQueryForTabletPortraitUp = (content) => css`
   }
 `
 const mediaQueryTabletLandscapeOnly = (content) => css`
-  @media (max-width: 960px) {
+  @media (max-width: 1080px) {
     ${content};
   }
 `
@@ -22,8 +22,8 @@ const mediaQueryWidthMax1280 = (content) => css`
   }
 `
 
-const mediaQuery960To1200 = (content) => css`
-  @media (min-width: 960px) and (max-width: 1300px) {
+const mediaQuery1081To1300 = (content) => css`
+  @media (min-width: 1081px) and (max-width: 1300px) {
     ${content};
   }
 `
@@ -75,7 +75,7 @@ export {
   mediaQueryForBigDesktopUp,
   mediaQueryForTabletLandscapeUp,
   mediaQueryWidthMax1280,
-  mediaQuery960To1200,
+  mediaQuery1081To1300,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
   mediaQueryForDesktopUp,

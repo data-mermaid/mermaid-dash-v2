@@ -4,8 +4,6 @@ import { mediaQueryHeightMax680, mediaQueryWidthMax1280 } from '../../../styles/
 import { Modal, RightFooter, ButtonSecondary } from '../../generic'
 
 const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
   height: 500px;
 
   ${mediaQueryWidthMax1280(css`
@@ -17,8 +15,7 @@ const ModalBody = styled.div`
 `
 
 const HardCoralInfoModal = ({ isModalOpen, handleCloseModal }) => {
-  const modalTitle = 'Hard Coral Cover'
-  const modalContent = (
+  const mainContent = (
     <ModalBody>
       <p>
         Live coral cover maintains coral reef growth through carbonate production. Studies have
@@ -86,8 +83,8 @@ const HardCoralInfoModal = ({ isModalOpen, handleCloseModal }) => {
       <Modal
         isOpen={isModalOpen}
         onDismiss={handleCloseModal}
-        title={modalTitle}
-        mainContent={modalContent}
+        title={'Hard Coral Cover'}
+        mainContent={mainContent}
         footerContent={footerContent}
       />
     </>
