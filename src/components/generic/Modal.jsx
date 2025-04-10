@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { IconClose } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { CloseButton } from './buttons'
-import { mediaQuery960To1200, mediaQueryPhoneOnly } from '../../styles/mediaQueries'
+import { mediaQuery1081To1300, mediaQueryPhoneOnly } from '../../styles/mediaQueries'
 
 const StyledDialogOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -28,7 +28,7 @@ const StyledDialog = styled.div`
   ${(props) => props.$modalCustomHeight && `height: ${props.$modalCustomHeight};`}
   display: flex;
   flex-direction: column;
-  ${mediaQuery960To1200(css`
+  ${mediaQuery1081To1300(css`
     width: 850px;
   `)}
   ${mediaQueryPhoneOnly(css`
