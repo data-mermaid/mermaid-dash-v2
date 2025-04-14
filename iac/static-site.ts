@@ -63,7 +63,7 @@ export class StaticSite extends Construct {
     // TLS certificate
     // NOTE: This depends on the cert already created (manually)
     const certificate = acm.Certificate.fromCertificateArn(this, 'DefaultSSLCert',
-      `arn:aws:acm:us-east-1:${parent.account}:certificate/4b8a5332-5cc7-4216-af81-726233d9ba28`
+      `arn:aws:acm:us-east-1:${parent.account}:certificate/56d5e8a3-9f40-446f-a4e7-876f5e630193`
     )
 
     // CloudFront distribution
