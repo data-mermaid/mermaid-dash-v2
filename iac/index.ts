@@ -11,8 +11,9 @@ const tags = {
   "Owner": "sysadmin@datamermaid.org",
 }
 
-const subdomain = app.node.tryGetContext('subdomain') || 'dev'
-const domain = app.node.tryGetContext('domain') || 'explore.datamermaid.org'
+
+const subdomain = process.env.SUBDOMAIN || 'dev'
+const domain = process.env.DOMAIN || 'explore.datamermaid.org'
 
 const cdkEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
