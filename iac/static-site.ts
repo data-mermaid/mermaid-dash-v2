@@ -71,7 +71,7 @@ export class StaticSite extends Construct {
 
     // allow the prod/preview domains into the cloudfront distribution
     if (props.siteSubDomain === 'dev') {
-      domainNames.push("dev.explore.datamermaid.org")
+      domainNames.push("dev-explore.datamermaid.org")
     }
     else if (props.siteSubDomain === 'prod') {
       domainNames.push("explore.datamermaid.org")
