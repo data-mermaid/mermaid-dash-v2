@@ -13,7 +13,7 @@ const tags = {
 
 
 const subdomain = process.env.SUBDOMAIN || 'dev'
-const domain = process.env.DOMAIN || 'explore.datamermaid.org'
+const domain = process.env.DOMAIN || 'dev-explore.datamermaid.org'
 
 const cdkEnv = {
   account: process.env.CDK_DEFAULT_ACCOUNT,
