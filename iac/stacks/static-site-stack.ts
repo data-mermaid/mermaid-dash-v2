@@ -12,7 +12,7 @@ import { StaticSite } from '../static-site'
 
 interface StaticSiteStackProps extends cdk.StackProps {
   domainName: string;
-  siteSubDomain: string;
+  environment: string;
 }
 
 export class StaticSiteStack extends cdk.Stack {
@@ -21,7 +21,7 @@ export class StaticSiteStack extends cdk.Stack {
 
         const site = new StaticSite(this, 'StaticSite', {
             domainName: props.domainName,
-            siteSubDomain: props.siteSubDomain
+            environment: props.environment
         })
     }
 }

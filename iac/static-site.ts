@@ -11,7 +11,7 @@ import { Construct } from 'constructs'
 
 export interface StaticSiteProps {
   domainName: string;
-  siteSubDomain: string;
+  environment: string;
 }
 
 /**
@@ -25,31 +25,30 @@ export class StaticSite extends Construct {
   constructor(parent: Stack, name: string, props: StaticSiteProps) {
     super(parent, name)
 
-    const siteDomain = `${props.siteSubDomain}.${props.domainName}`
     const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'CloudfrontOAI', {
       comment: `OAI for ${name}`
     })
 
-    new CfnOutput(this, 'Site', { value: `https://${siteDomain}` })
+    new CfnOutput(this, 'Site', { value: `https://${props.domainName}` })
 
     // Content bucket
     const siteBucket = new s3.Bucket(this, 'Bucket', {
       publicReadAccess: false,
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
-      bucketName: siteDomain,
+      bucketName: props.domainName,
 
       /**
        * The default removal policy is RETAIN, which means that cdk destroy will not attempt to delete
        * the new bucket, and it will remain in your account until manually deleted. By setting the policy to
        * DESTROY, cdk destroy will attempt to delete the bucket, but will error if the bucket is not empty.
        */
-      removalPolicy: props.siteSubDomain === 'dev' ? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
+      removalPolicy: props.environment === 'dev' ? RemovalPolicy.DESTROY : RemovalPolicy.RETAIN,
 
       /**
        * For sample purposes only, if you create an S3 bucket then populate it, stack destruction fails.  This
        * setting will enable full cleanup.
        */
-      autoDeleteObjects: props.siteSubDomain === 'dev',
+      autoDeleteObjects: props.environment === 'dev',
     })
 
     // Grant access to cloudfront
@@ -68,14 +67,7 @@ export class StaticSite extends Construct {
 
     // CloudFront distribution
     const domainNames = []
-
-    // allow the prod/preview domains into the cloudfront distribution
-    if (props.siteSubDomain === 'dev') {
-      domainNames.push("dev-explore.datamermaid.org")
-    }
-    else if (props.siteSubDomain === 'prod') {
-      domainNames.push("explore.datamermaid.org")
-    }
+    domainNames.push(props.domainName)
 
     // Function to rewrite root requests to index.html
     const rewriteFunction = new cloudfront.Function(this, 'RewriteToIndex', {

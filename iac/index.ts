@@ -12,7 +12,7 @@ const tags = {
 }
 
 
-const subdomain = process.env.SUBDOMAIN || 'dev'
+const environment = process.env.ENV || 'dev'
 const domain = process.env.DOMAIN || 'dev-explore.datamermaid.org'
 
 const cdkEnv = {
@@ -20,11 +20,11 @@ const cdkEnv = {
   region: process.env.CDK_DEFAULT_REGION || 'us-east-1',
 }
 
-new StaticSiteStack(app, `${subdomain}-explore`, {
+new StaticSiteStack(app, `${environment}-explore`, {
     env: cdkEnv,
     tags,
     domainName: domain,
-    siteSubDomain: subdomain
+    environment: environment
 })
 
 app.synth()
