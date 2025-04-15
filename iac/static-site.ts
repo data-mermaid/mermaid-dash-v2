@@ -77,6 +77,19 @@ export class StaticSite extends Construct {
       domainNames.push("explore.datamermaid.org")
     }
 
+    // Function to rewrite root requests to index.html
+    const rewriteFunction = new cloudfront.Function(this, 'RewriteToIndex', {
+      code: cloudfront.FunctionCode.fromInline(`
+        function handler(event) {
+          var request = event.request;
+          if (request.uri === "/") {
+            request.uri = "/index.html";
+          }
+          return request;
+        }
+      `),
+    })
+
     const distribution = new cloudfront.Distribution(this, 'Distribution', {
       certificate,
       priceClass: cloudfront.PriceClass.PRICE_CLASS_100,
@@ -100,6 +113,11 @@ export class StaticSite extends Construct {
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+        // Rewrite root path to index.html using a lightweight CloudFront Function
+        functionAssociations: [{
+          function: rewriteFunction,
+          eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+        }],
       }
     })
 
