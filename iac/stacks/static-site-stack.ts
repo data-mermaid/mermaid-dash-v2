@@ -7,7 +7,7 @@ import { StaticSite } from '../static-site'
 
 /**
  * This stack relies on getting the domain name from CDK context.
- * Use 'cdk [--profile mermaid] synth -c domain=explore.datamermaid.org -c subdomain=dev'
+ * Use 'cdk [--profile mermaid] synth -c domain=dev-explore.datamermaid.org -c environment=dev'
 **/
 
 interface StaticSiteStackProps extends cdk.StackProps {

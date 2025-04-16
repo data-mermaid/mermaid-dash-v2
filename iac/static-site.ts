@@ -104,7 +104,7 @@ export class StaticSite extends Construct {
         }),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
-        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.HTTPS_ONLY,
+        viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS, // make sure Cloudflare isn't proxying
         // Rewrite root path to index.html using a lightweight CloudFront Function
         functionAssociations: [{
           function: rewriteFunction,
