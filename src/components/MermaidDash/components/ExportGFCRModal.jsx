@@ -7,17 +7,13 @@ import { toast } from 'react-toastify'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
-import { downloadModal, toastMessageText, tooltipText } from '../../../constants/language'
+import { exportModal, toastMessageText, tooltipText } from '../../../constants/language'
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
 import { MuiTooltip } from '../../generic/MuiTooltip'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-
-const ModalBody = styled.div`
-  padding-left: 2rem;
-  padding-right: 2rem;
-`
+import { LeftFooter } from '../../generic/Modal'
 
 const StyledOverflowList = styled.ul`
   height: 244px;
@@ -25,15 +21,16 @@ const StyledOverflowList = styled.ul`
 `
 
 const StyledWarningText = styled.div`
-  height: 40px;
+  height: 36px;
   display: flex;
-  background: lightgrey;
+  background-color: ${theme.color.white2};
   align-items: center;
-  padding-left: 20px;
+  padding: 0px 10px;
   gap: 5px;
+  font-size: ${theme.typography.smallFontSize};
 `
 
-const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
+const ExportGFCRModal = ({ isOpen, onDismiss }) => {
   const { displayedProjects, mermaidUserData, userIsMemberOfProject } =
     useContext(FilterProjectsContext)
 
@@ -64,12 +61,12 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
 
   const title = useMemo(() => {
     const titles = {
-      'no data': downloadModal.noGFCRDataTitle,
-      success: downloadModal.successTitle,
-      failure: downloadModal.failureTitle,
+      'no data': exportModal.noGFCRDataTitle,
+      success: exportModal.successTitle,
+      failure: exportModal.failureTitle,
     }
 
-    return titles[modalMode] || downloadModal.downloadGFCRTitle
+    return titles[modalMode] || exportModal.downloadGFCRTitle
   }, [modalMode])
 
   const handleSendEmailWithLinkSubmit = async () => {
@@ -128,24 +125,7 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
     )
   })
 
-  const downloadContent = (
-    <>
-      <StyledOverflowList>{projectListWithGFCRData}</StyledOverflowList>
-      {projectsWithoutGFCRDataCount > 0 && (
-        <StyledWarningText>
-          <IconInfo />{' '}
-          <span>
-            {pluralizeWordWithCount(
-              projectsWithoutGFCRDataCount,
-              'other filtered project does',
-              'other filtered projects do',
-            )}{' '}
-            not have GFCR indicators
-          </span>
-        </StyledWarningText>
-      )}
-    </>
-  )
+  const downloadContent = <StyledOverflowList>{projectListWithGFCRData}</StyledOverflowList>
 
   const successContent = (
     <>
@@ -155,33 +135,42 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
   )
 
   const MODAL_CONTENT_BY_MODE = {
-    'no data': <p>{downloadModal.noGFCRDataContent}</p>,
+    'no data': <p>{exportModal.noGFCRDataContent}</p>,
     download: downloadContent,
     success: successContent,
   }
 
-  const content = <ModalBody>{MODAL_CONTENT_BY_MODE[modalMode] || null}</ModalBody>
+  const mainContent = <>{MODAL_CONTENT_BY_MODE[modalMode] || null}</>
 
   const footerContent = (
-    <RightFooter>
-      <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
-      {modalMode === 'download' && (
-        <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>Send Email With Link</ButtonPrimary>
+    <>
+      {modalMode === 'download' && projectsWithoutGFCRDataCount > 0 && (
+        <LeftFooter>
+          <StyledWarningText>
+            <IconInfo />{' '}
+            <span>
+              {pluralizeWordWithCount(
+                projectsWithoutGFCRDataCount,
+                'other filtered project does',
+                'other filtered projects do',
+              )}{' '}
+              not have GFCR indicators
+            </span>
+          </StyledWarningText>
+        </LeftFooter>
       )}
-    </RightFooter>
+      <RightFooter>
+        <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
+        {modalMode === 'download' && (
+          <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
+            Send Email With Link
+          </ButtonPrimary>
+        )}
+      </RightFooter>
+    </>
   )
 
-  const modalCustomHeight = useMemo(() => {
-    if (modalMode === 'download' && projectsWithoutGFCRDataCount > 0) {
-      return '420px'
-    }
-
-    if (modalMode === 'download' && projectsWithoutGFCRDataCount === 0) {
-      return '400px'
-    }
-
-    return '200px'
-  }, [modalMode, projectsWithoutGFCRDataCount])
+  const modalCustomHeight = modalMode === 'download' ? '340px' : '200px'
 
   if (!modalMode) {
     return null
@@ -189,10 +178,10 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
 
   return (
     <Modal
-      title={title}
-      mainContent={content}
       isOpen={isOpen}
       onDismiss={onDismiss}
+      title={title}
+      mainContent={mainContent}
       footerContent={footerContent}
       contentOverflowIsVisible={true}
       modalCustomHeight={modalCustomHeight}
@@ -200,9 +189,9 @@ const DownloadGFCRModal = ({ isOpen, onDismiss }) => {
   )
 }
 
-DownloadGFCRModal.propTypes = {
+ExportGFCRModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onDismiss: PropTypes.func.isRequired,
 }
 
-export default DownloadGFCRModal
+export default ExportGFCRModal

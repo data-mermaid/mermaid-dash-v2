@@ -3,17 +3,16 @@
 /* eslint-disable import/extensions */
 /* eslint-disable no-new */
 import * as cdk from 'aws-cdk-lib'
-import * as iam from 'aws-cdk-lib/aws-iam'
 import { StaticSite } from '../static-site'
 
 /**
  * This stack relies on getting the domain name from CDK context.
- * Use 'cdk [--profile mermaid] synth -c domain=app2.datamermaid.org -c subdomain=dev'
+ * Use 'cdk [--profile mermaid] synth -c domain=dev-explore.datamermaid.org -c environment=dev'
 **/
 
 interface StaticSiteStackProps extends cdk.StackProps {
   domainName: string;
-  siteSubDomain: string;
+  environment: string;
 }
 
 export class StaticSiteStack extends cdk.Stack {
@@ -22,7 +21,7 @@ export class StaticSiteStack extends cdk.Stack {
 
         const site = new StaticSite(this, 'StaticSite', {
             domainName: props.domainName,
-            siteSubDomain: props.siteSubDomain,
+            environment: props.environment
         })
     }
 }

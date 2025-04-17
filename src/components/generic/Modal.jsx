@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { IconClose } from '../../assets/icons'
 import theme from '../../styles/theme'
 import { CloseButton } from './buttons'
-import { mediaQueryPhoneOnly } from '../../styles/mediaQueries'
+import { mediaQuery1081To1300, mediaQueryPhoneOnly } from '../../styles/mediaQueries'
 
 const StyledDialogOverlay = styled.div`
   background: rgba(0, 0, 0, 0.5);
@@ -21,13 +21,16 @@ const StyledDialogOverlay = styled.div`
 const StyledDialog = styled.div`
   padding: 0;
   margin: 0;
-  min-width: 30rem;
-  width: ${(props) => props.$modalCustomWidth};
-  max-width: 114rem;
+  min-width: 60rem;
+  width: ${(props) => props.$modalCustomWidth || 'auto'};
+  max-width: 110rem;
   background: ${theme.color.tableRowEven};
   ${(props) => props.$modalCustomHeight && `height: ${props.$modalCustomHeight};`}
   display: flex;
   flex-direction: column;
+  ${mediaQuery1081To1300(css`
+    width: 850px;
+  `)}
   ${mediaQueryPhoneOnly(css`
     min-width: 35rem;
   `)}
@@ -36,7 +39,8 @@ const ModalTitle = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 3rem ${theme.spacing.medium} 0 3rem;
+  padding: ${theme.spacing.medium};
+  padding-bottom: 0;
   color: ${theme.color.textColor};
   text-transform: capitalize;
   h2 {
@@ -54,7 +58,7 @@ const ModalTitle = styled.div`
 `
 
 const ModalToolbar = styled.div`
-  padding: 0 ${theme.spacing.medium};
+  padding: ${theme.spacing.medium};
 `
 const ModalContent = styled.div`
   ${(props) =>
@@ -62,7 +66,8 @@ const ModalContent = styled.div`
     css`
       overflow: auto;
     `}
-  padding: 0 ${theme.spacing.medium} 3rem ${theme.spacing.medium};
+  padding: ${theme.spacing.medium};
+  padding-top: 0;
   flex-grow: 1;
   ${mediaQueryPhoneOnly(css`
     padding: 0rem;
@@ -70,9 +75,10 @@ const ModalContent = styled.div`
 `
 const ModalFooter = styled.div`
   padding: ${theme.spacing.medium};
-  display: grid;
-  grid-auto-columns: auto auto;
+  display: flex;
+  justify-content: space-between;
   background: ${theme.color.white};
+  gap: 5px;
   ${mediaQueryPhoneOnly(css`
     > * {
       display: block;
@@ -115,11 +121,17 @@ const ModalLoadingIndicatorWrapper = styled.div`
   }
 `
 const LeftFooter = styled.div`
-  justify-self: start;
-`
-const RightFooter = styled.div`
-  justify-self: end;
   display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
+const RightFooter = styled.div`
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+  justify-content: flex-end;
+  width: 350px;
 `
 
 const Modal = ({
@@ -130,7 +142,7 @@ const Modal = ({
   footerContent,
   contentOverflowIsVisible = false,
   toolbarContent = undefined,
-  modalCustomWidth = '50vw',
+  modalCustomWidth = '',
   modalCustomHeight = '',
   hideCloseIcon = false,
 }) => {
@@ -160,7 +172,7 @@ const Modal = ({
           $modalCustomWidth={modalCustomWidth}
           $modalCustomHeight={modalCustomHeight}
         >
-          {title ? (
+          {title && (
             <ModalTitle>
               <h2 id="modal-title">{title}</h2>
               {!hideCloseIcon && (
@@ -169,8 +181,8 @@ const Modal = ({
                 </CloseButton>
               )}
             </ModalTitle>
-          ) : null}
-          <ModalToolbar>{toolbarContent}</ModalToolbar>
+          )}
+          {toolbarContent && <ModalToolbar>{toolbarContent}</ModalToolbar>}
           <ModalContent id="modal-content" $contentOverflowIsVisible={contentOverflowIsVisible}>
             {mainContent}
           </ModalContent>

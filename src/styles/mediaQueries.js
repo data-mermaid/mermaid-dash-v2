@@ -11,10 +11,23 @@ const mediaQueryForTabletPortraitUp = (content) => css`
   }
 `
 const mediaQueryTabletLandscapeOnly = (content) => css`
-  @media (max-width: 960px) {
+  @media (max-width: 1080px) {
     ${content};
   }
 `
+
+const mediaQueryWidthMax1280 = (content) => css`
+  @media (max-width: 1280px) {
+    ${content};
+  }
+`
+
+const mediaQuery1081To1300 = (content) => css`
+  @media (min-width: 1081px) and (max-width: 1300px) {
+    ${content};
+  }
+`
+
 const mediaQueryForTabletLandscapeUp = (content) => css`
   @media (min-width: 900px) {
     ${content};
@@ -36,6 +49,12 @@ const mediaQueryForBigDesktopUp = (content) => css`
     ${content};
   }
 `
+
+const mediaQueryHeightMax680 = (content) => css`
+  @media (max-height: 680px) {
+    ${content};
+  }
+`
 const hoverState = (content) => css`
   @media (hover: hover) {
     &:hover:not([disabled]) {
@@ -48,9 +67,12 @@ export {
   mediaQueryPhoneOnly,
   mediaQueryForBigDesktopUp,
   mediaQueryForTabletLandscapeUp,
+  mediaQueryWidthMax1280,
+  mediaQuery1081To1300,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
   mediaQueryForDesktopUp,
   mediaQueryForMediumDesktop,
+  mediaQueryHeightMax680,
   hoverState,
 }

@@ -145,16 +145,14 @@ export const StyledMobileFollowMapButton = styled(ButtonSecondary)`
 `
 
 export const MobileCloseFilterPaneButton = styled(ButtonSecondary)`
-  display: block;
   cursor: pointer;
-  width: calc(100% - 2rem);
-  margin: 1rem;
+  width: 100%;
 `
 
 export const MobileFooterContainer = styled.div`
-  background-color: ${theme.color.grey1};
-  margin: -1rem;
-  padding-left: 2rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 `
 
 export const StyledChevronSpan = styled.span`
