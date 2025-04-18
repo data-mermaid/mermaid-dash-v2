@@ -55,6 +55,13 @@ const mediaQueryHeightMax680 = (content) => css`
     ${content};
   }
 `
+
+const mediaQueryHeightMax960 = (content) => css`
+  @media (max-height: 960px) {
+    ${content};
+  }
+`
+
 const hoverState = (content) => css`
   @media (hover: hover) {
     &:hover:not([disabled]) {
@@ -74,5 +81,6 @@ export {
   mediaQueryForDesktopUp,
   mediaQueryForMediumDesktop,
   mediaQueryHeightMax680,
+  mediaQueryHeightMax960,
   hoverState,
 }

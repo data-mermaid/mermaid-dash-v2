@@ -49,7 +49,7 @@ export const COLLECTION_METHODS = {
   },
 }
 
-export const DOWNLOAD_METHODS = {
+export const EXPORT_METHODS = {
   beltfish: {
     description: 'Fish Belt',
     protocol: 'fishbelt',

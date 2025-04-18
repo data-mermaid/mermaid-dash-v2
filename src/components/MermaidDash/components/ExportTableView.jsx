@@ -8,7 +8,7 @@ import theme from '../../../styles/theme'
 import { Tr, Th, Td, reactTableNaturalSort, IconButton } from '../../generic'
 import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
-import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
+import { IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
 import { MuiTooltip } from '../../generic/MuiTooltip'
 import { tooltipText } from '../../../constants/language'
@@ -24,7 +24,7 @@ const StyledTr = styled(Tr)`
     `}
 `
 
-const ExportTableView = ({ tableData }) => {
+const ExportTableView = ({ exportTableData }) => {
   const tableColumns = useMemo(
     () => [
       {
@@ -34,39 +34,18 @@ const ExportTableView = ({ tableData }) => {
         width: 360,
       },
       {
-        Header: 'Surveys',
+        Header: 'Number of Surveys',
         accessor: 'surveyCount',
         sortType: reactTableNaturalSort,
         align: 'right',
-        width: 110,
-      },
-      {
-        Header: 'Data sharing',
-        accessor: 'dataSharingPolicy',
-        sortType: reactTableNaturalSort,
-        align: 'left',
-        width: 130,
-      },
-      {
-        Header: 'Metadata',
-        accessor: 'metaData',
-        sortType: reactTableNaturalSort,
-        align: 'center',
-        width: 110,
-      },
-      {
-        Header: 'Survey Data',
-        accessor: 'surveyData',
-        sortType: reactTableNaturalSort,
-        align: 'center',
         width: 140,
       },
       {
-        Header: 'Observation Data',
-        accessor: 'observationData',
+        Header: 'Access Level',
+        accessor: 'accessLevel',
         sortType: reactTableNaturalSort,
-        align: 'center',
-        width: 180,
+        align: 'right',
+        width: 150,
       },
     ],
     [],
@@ -74,35 +53,26 @@ const ExportTableView = ({ tableData }) => {
 
   const tableCellData = useMemo(
     () =>
-      tableData
-        .filter(
-          ({ surveyCount, metaData, observationData, surveyData }) =>
-            surveyCount > 0 && (metaData || observationData || surveyData),
-        )
-        .map(
-          ({
-            projectId,
-            projectName,
-            surveyCount,
-            dataSharingPolicy,
-            metaData,
-            surveyData,
-            observationData,
-            isMemberOfProject,
-            rawProjectData,
-          }) => ({
-            projectId,
-            projectName,
-            surveyCount,
-            dataSharingPolicy,
-            metaData,
-            surveyData,
-            observationData,
-            isMemberOfProject,
-            rawProjectData,
-          }),
-        ),
-    [tableData],
+      exportTableData.map(
+        ({
+          projectId,
+          projectName,
+          surveyCount,
+          accessLevel,
+          dataSharingPolicy,
+          isMemberOfProject,
+          rawProjectData,
+        }) => ({
+          projectId,
+          projectName,
+          surveyCount,
+          dataSharingPolicy,
+          isMemberOfProject,
+          rawProjectData,
+          accessLevel,
+        }),
+      ),
+    [exportTableData],
   )
 
   const { getTableBodyProps, getTableProps, headerGroups, prepareRow, rows } = useTable(
@@ -154,70 +124,68 @@ const ExportTableView = ({ tableData }) => {
         </thead>
 
         <tbody {...getTableBodyProps()}>
-          {rows.map((row) => {
-            prepareRow(row)
-            const { key, ...restRowProps } = row.getRowProps()
-            const { projectId, metaData, surveyData, observationData, isMemberOfProject } =
-              row.original
-            const isExcluded = !metaData && !surveyData && !observationData
+          {rows.length > 0 ? (
+            rows.map((row) => {
+              prepareRow(row)
+              const { key, ...restRowProps } = row.getRowProps()
+              const { projectId, isMemberOfProject } = row.original
 
-            return (
-              <StyledTr key={key} {...restRowProps} $isExcluded={isExcluded}>
-                {row.cells.map((cell) => {
-                  const { key: cellKey, ...restCellProps } = cell.getCellProps()
-                  let view = cell.render('Cell')
+              return (
+                <StyledTr key={key} {...restRowProps}>
+                  {row.cells.map((cell) => {
+                    const { key: cellKey, ...restCellProps } = cell.getCellProps()
+                    let view = cell.render('Cell')
 
-                  if (['metaData', 'surveyData', 'observationData'].includes(cell.column.id)) {
-                    view = cell.value ? (
-                      <IconCheck style={{ color: 'green' }} />
-                    ) : (
-                      <IconClose style={{ color: 'red' }} />
-                    )
-                  }
-
-                  return (
-                    <Td
-                      key={cellKey}
-                      {...restCellProps}
-                      align={cell.column.align}
-                      textTransform={'capitalize'}
-                      style={{ width: cell.column.width }}
-                    >
-                      {view}{' '}
-                      {cell.column.Header === 'Project Name' &&
-                        (isMemberOfProject ? (
-                          <MuiTooltip
-                            title={tooltipText.yourProject}
-                            placement="top"
-                            bgColor={theme.color.primaryColor}
-                            tooltipTextColor={theme.color.white}
-                          >
-                            <IconButton>
-                              <IconUserCircle />
-                            </IconButton>
-                          </MuiTooltip>
-                        ) : (
-                          <MuiTooltip
-                            title={tooltipText.contactAdmins}
-                            placement="top"
-                            bgColor={theme.color.primaryColor}
-                            tooltipTextColor={theme.color.white}
-                          >
-                            <a
-                              href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
+                    return (
+                      <Td
+                        key={cellKey}
+                        {...restCellProps}
+                        align={cell.column.align}
+                        textTransform={'capitalize'}
+                        style={{ width: cell.column.width }}
+                      >
+                        {view}{' '}
+                        {cell.column.Header === 'Project Name' &&
+                          (isMemberOfProject ? (
+                            <MuiTooltip
+                              title={tooltipText.yourProject}
+                              placement="top"
+                              bgColor={theme.color.primaryColor}
+                              tooltipTextColor={theme.color.white}
                             >
-                              <IconContact />
-                            </a>
-                          </MuiTooltip>
-                        ))}
-                    </Td>
-                  )
-                })}
-              </StyledTr>
-            )
-          })}
+                              <IconButton>
+                                <IconUserCircle />
+                              </IconButton>
+                            </MuiTooltip>
+                          ) : (
+                            <MuiTooltip
+                              title={tooltipText.contactAdmins}
+                              placement="top"
+                              bgColor={theme.color.primaryColor}
+                              tooltipTextColor={theme.color.white}
+                            >
+                              <a
+                                href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
+                                <IconContact />
+                              </a>
+                            </MuiTooltip>
+                          ))}
+                      </Td>
+                    )
+                  })}
+                </StyledTr>
+              )
+            })
+          ) : (
+            <StyledTr>
+              <Td colSpan={tableColumns.length} align="center">
+                No data available
+              </Td>
+            </StyledTr>
+          )}
         </tbody>
       </ModalStickyTable>
     </ModalTableOverflowWrapper>
@@ -225,7 +193,7 @@ const ExportTableView = ({ tableData }) => {
 }
 
 ExportTableView.propTypes = {
-  tableData: PropTypes.array.isRequired,
+  exportTableData: PropTypes.array.isRequired,
 }
 
 export default ExportTableView
