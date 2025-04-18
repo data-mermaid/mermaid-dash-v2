@@ -33,13 +33,15 @@ import {
   ExpressExportMenu,
   ExpressExportMenuItem,
   ExpressExportMenuHeaderItem,
+  ExpressExportMenuRow,
+  ExportMoreInfoButton,
   MediumIconUp,
   MediumIconDown,
 } from './MermaidDash.styles'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
-import { IconDownload, IconFilter } from '../../assets/icons'
+import { IconDownload, IconFilter, IconInfo } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
 import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
@@ -58,28 +60,7 @@ import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import SuccessExportModal from './components/SuccessExportModal'
-
-const getSurveyedMethodBasedOnSurveyCount = (surveyCount) => {
-  const customSortOrder = [
-    'colonies_bleached',
-    'benthicpit',
-    'benthiclit',
-    'benthicpqt',
-    'habitatcomplexity',
-    'quadrat_benthic_percent',
-  ]
-
-  if (surveyCount.beltfish > 0) {
-    return 'beltfish'
-  }
-
-  return (
-    Object.entries(surveyCount)
-      .filter(([, value]) => value > 0)
-      .sort((a, b) => customSortOrder.indexOf(a[0]) - customSortOrder.indexOf(b[0]))
-      .map(([key]) => key)[0] || 'beltfish'
-  )
-}
+import { formatExportProjectDataHelper } from '../../helperFunctions/formatExportProjectDataHelper'
 
 const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const {
@@ -96,6 +77,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     getActiveProjectCount,
     clearAllFilters,
     isAnyActiveFilters,
+    userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
 
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
@@ -249,16 +231,31 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
-  const handleExpressExport = async () => {
+  const handleExpressExport = async (methodProtocol) => {
     try {
+      const exportedProjects = displayedProjects
+        .map((project) => {
+          const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
+          return formatExportProjectDataHelper(project, isMemberOfProject, methodProtocol)
+        })
+        .filter(({ surveyCount }) => surveyCount > 0)
+
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
         throw new Error('Failed request - no token provided')
       }
 
-      const requestData = {}
-      const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/express-reports/`
+      const selectedMethodProtocol = EXPORT_METHODS[methodProtocol]?.protocol
+      const projectIds = exportedProjects.map(({ projectId }) => projectId)
+
+      const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
+      const requestData = {
+        report_type: 'summary_sample_unit_method',
+        project_ids: projectIds,
+        protocol: selectedMethodProtocol,
+      }
+
       const response = await fetch(reportEndpoint, {
         method: 'POST',
         headers: {
@@ -279,8 +276,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     }
   }
 
-  const handleShowExportModal = () => {
-    setSelectedMethod(getSurveyedMethodBasedOnSurveyCount(surveyedMethodCount))
+  const handleShowExportModal = (exportMethod) => {
+    setSelectedMethod(exportMethod)
     setIsExportModalShowing(true)
   }
 
@@ -333,8 +330,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     toast.info(followScreenToastMessage)
   }
 
-  const handleSelectedMethodChange = (e) => setSelectedMethod(e.target.value)
-
   const handleLogin = () => {
     loginWithRedirect({ appState: { returnTo: location.search } })
   }
@@ -351,16 +346,27 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             const count = surveyedMethodCount[key] ?? 0
 
             return (
-              <ExpressExportMenuItem key={key} onClick={handleExpressExport} disabled={count === 0}>
-                <div>{method.description}</div>
-                <div>{count}</div>
-              </ExpressExportMenuItem>
+              <ExpressExportMenuRow key={key}>
+                <ExpressExportMenuItem
+                  onClick={() => handleExpressExport(key)}
+                  disabled={count === 0}
+                >
+                  <div>{method.description}</div>
+                  <div>{count}</div>
+                </ExpressExportMenuItem>
+                <ExportMoreInfoButton
+                  type="button"
+                  disabled={count === 0}
+                  onClick={() => {
+                    handleShowExportModal(key)
+                  }}
+                >
+                  <IconInfo />
+                </ExportMoreInfoButton>
+              </ExpressExportMenuRow>
             )
           })}
         </ExpressExportMenu>
-        <ExportMenuButton onClick={handleShowExportModal} role="button">
-          Advance Export...
-        </ExportMenuButton>
         <ExportMenuButton onClick={handleShowExportGFCRModal} role="button">
           GFCR Data
         </ExportMenuButton>
@@ -443,9 +449,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         <ExportModal
           isOpen={isExportModalShowing}
           onDismiss={() => setIsExportModalShowing(false)}
-          surveyedMethodCount={surveyedMethodCount}
           selectedMethod={selectedMethod}
-          handleSelectedMethodChange={handleSelectedMethodChange}
+          surveyedMethodCount={surveyedMethodCount}
         />
         <ExportGFCRModal
           isOpen={isExportGFCRModalShowing}

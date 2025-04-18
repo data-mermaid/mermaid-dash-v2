@@ -21,7 +21,7 @@ export const dataDisclaimer = {
 export const exportModal = {
   noDataTitle: 'No data to export',
   noDataContent: 'Selected projects contain no data to export.',
-  exportTitle: 'Export data',
+  exportTitle: (selectedMethod) => `Export ${selectedMethod} Data`,
   noGFCRDataTitle: 'No GFCR data to export',
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
   exportGFCRTitle: 'Export GFCR data',

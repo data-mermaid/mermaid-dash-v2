@@ -8,7 +8,7 @@ import theme from '../../../styles/theme'
 import { Tr, Th, Td, reactTableNaturalSort, IconButton } from '../../generic'
 import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
-import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
+import { IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
 import { MuiTooltip } from '../../generic/MuiTooltip'
 import { tooltipText } from '../../../constants/language'
@@ -24,7 +24,7 @@ const StyledTr = styled(Tr)`
     `}
 `
 
-const ExportTableView = ({ tableData }) => {
+const ExportTableView = ({ exportTableData }) => {
   const tableColumns = useMemo(
     () => [
       {
@@ -34,39 +34,18 @@ const ExportTableView = ({ tableData }) => {
         width: 360,
       },
       {
-        Header: 'Surveys',
+        Header: 'Number of Surveys',
         accessor: 'surveyCount',
         sortType: reactTableNaturalSort,
         align: 'right',
-        width: 110,
-      },
-      {
-        Header: 'Data sharing',
-        accessor: 'dataSharingPolicy',
-        sortType: reactTableNaturalSort,
-        align: 'left',
-        width: 130,
-      },
-      {
-        Header: 'Metadata',
-        accessor: 'metaData',
-        sortType: reactTableNaturalSort,
-        align: 'center',
-        width: 110,
-      },
-      {
-        Header: 'Survey Data',
-        accessor: 'surveyData',
-        sortType: reactTableNaturalSort,
-        align: 'center',
         width: 140,
       },
       {
-        Header: 'Observation Data',
-        accessor: 'observationData',
+        Header: 'Access Level',
+        accessor: 'accessLevel',
         sortType: reactTableNaturalSort,
-        align: 'center',
-        width: 180,
+        align: 'right',
+        width: 150,
       },
     ],
     [],
@@ -74,35 +53,26 @@ const ExportTableView = ({ tableData }) => {
 
   const tableCellData = useMemo(
     () =>
-      tableData
-        .filter(
-          ({ surveyCount, metaData, observationData, surveyData }) =>
-            surveyCount > 0 && (metaData || observationData || surveyData),
-        )
-        .map(
-          ({
-            projectId,
-            projectName,
-            surveyCount,
-            dataSharingPolicy,
-            metaData,
-            surveyData,
-            observationData,
-            isMemberOfProject,
-            rawProjectData,
-          }) => ({
-            projectId,
-            projectName,
-            surveyCount,
-            dataSharingPolicy,
-            metaData,
-            surveyData,
-            observationData,
-            isMemberOfProject,
-            rawProjectData,
-          }),
-        ),
-    [tableData],
+      exportTableData.map(
+        ({
+          projectId,
+          projectName,
+          surveyCount,
+          accessLevel,
+          dataSharingPolicy,
+          isMemberOfProject,
+          rawProjectData,
+        }) => ({
+          projectId,
+          projectName,
+          surveyCount,
+          dataSharingPolicy,
+          isMemberOfProject,
+          rawProjectData,
+          accessLevel,
+        }),
+      ),
+    [exportTableData],
   )
 
   const { getTableBodyProps, getTableProps, headerGroups, prepareRow, rows } = useTable(
@@ -158,23 +128,13 @@ const ExportTableView = ({ tableData }) => {
             rows.map((row) => {
               prepareRow(row)
               const { key, ...restRowProps } = row.getRowProps()
-              const { projectId, metaData, surveyData, observationData, isMemberOfProject } =
-                row.original
-              const isExcluded = !metaData && !surveyData && !observationData
+              const { projectId, isMemberOfProject } = row.original
 
               return (
-                <StyledTr key={key} {...restRowProps} $isExcluded={isExcluded}>
+                <StyledTr key={key} {...restRowProps}>
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...restCellProps } = cell.getCellProps()
                     let view = cell.render('Cell')
-
-                    if (['metaData', 'surveyData', 'observationData'].includes(cell.column.id)) {
-                      view = cell.value ? (
-                        <IconCheck style={{ color: 'green' }} />
-                      ) : (
-                        <IconClose style={{ color: 'red' }} />
-                      )
-                    }
 
                     return (
                       <Td
@@ -233,7 +193,7 @@ const ExportTableView = ({ tableData }) => {
 }
 
 ExportTableView.propTypes = {
-  tableData: PropTypes.array.isRequired,
+  exportTableData: PropTypes.array.isRequired,
 }
 
 export default ExportTableView

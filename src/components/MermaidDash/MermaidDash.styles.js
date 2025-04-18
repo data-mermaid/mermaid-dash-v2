@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components'
 import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { IconDown, IconFilter, IconUp } from '../../assets/icons'
-import { ButtonPrimary, ButtonSecondary } from '../generic'
+import { ButtonPrimary, ButtonSecondary, IconButton } from '../generic'
 
 export const StyledDashboardContainer = styled.div`
   display: flex;
@@ -210,14 +210,33 @@ export const ExpressExportMenuHeaderItem = styled.div`
   padding: 10px;
 `
 
+export const ExpressExportMenuRow = styled.div`
+  display: flex;
+`
+
+export const ExportMoreInfoButton = styled(IconButton)`
+  padding: 0 10px;
+  cursor: pointer;
+  ${hoverState(css`
+    background-color: ${theme.color.secondaryColor};
+  `)}
+
+  &:disabled {
+    background-color: ${theme.color.grey1};
+    cursor: not-allowed;
+  }
+`
+
 export const ExpressExportMenuItem = styled.button`
   display: flex;
   justify-content: space-between;
+  align-items: center;
   height: 50px;
-  padding: 10px;
+  padding-left: 10px;
   background: none;
   border: none;
   cursor: pointer;
+  flex-grow: 1;
 
   ${hoverState(css`
     background-color: ${theme.color.tableRowHover};

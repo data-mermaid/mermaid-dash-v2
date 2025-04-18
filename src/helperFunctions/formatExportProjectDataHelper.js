@@ -3,57 +3,31 @@ import { EXPORT_METHODS } from '../constants/constants'
 const getMethodSurveyCount = (projectRecords, selectedMethod) =>
   projectRecords.filter((record) => record.protocols?.[selectedMethod]).length
 
-export const formatExportProjectDataHelper = (
-  project,
-  isMemberOfProject,
-  selectedMethod,
-  selectedDataSharing,
-) => {
+const getAccessLevelType = (dataSharingPolicy, isMemberOfProject) => {
+  const accessLevelTypes = {
+    private: 'metadata',
+    'public summary': 'survey',
+    public: 'observation',
+  }
+
+  if (isMemberOfProject) {
+    return 'observation'
+  }
+
+  return accessLevelTypes[dataSharingPolicy] || ''
+}
+
+export const formatExportProjectDataHelper = (project, isMemberOfProject, selectedMethod) => {
   const methodDataSharing = EXPORT_METHODS[selectedMethod]?.policy
   const dataSharingPolicy = project[methodDataSharing]
   const surveyCount = getMethodSurveyCount(project?.records || [], selectedMethod)
-
-  if (isMemberOfProject) {
-    return {
-      projectId: project.project_id,
-      projectName: project.project_name,
-      surveyCount,
-      metaData: true,
-      surveyData: true,
-      observationData: true,
-      dataSharingPolicy,
-    }
-  }
-
-  const isRestricted =
-    surveyCount === 0 ||
-    (selectedDataSharing === 'public' &&
-      (dataSharingPolicy === 'public summary' || dataSharingPolicy === 'private')) ||
-    (selectedDataSharing === 'public summary' && dataSharingPolicy === 'private')
-
-  if (isRestricted) {
-    return {
-      projectId: project.project_id,
-      projectName: project.project_name,
-      surveyCount,
-      metaData: false,
-      surveyData: false,
-      observationData: false,
-      dataSharingPolicy,
-    }
-  }
-
-  const sharingPermissions = {
-    private: { metaData: true, surveyData: false, observationData: false },
-    'public summary': { metaData: true, surveyData: true, observationData: false },
-    public: { metaData: true, surveyData: true, observationData: true },
-  }
+  const accessLevel = getAccessLevelType(dataSharingPolicy, isMemberOfProject)
 
   return {
     projectId: project.project_id,
     projectName: project.project_name,
     surveyCount,
-    ...sharingPermissions[selectedDataSharing],
+    accessLevel,
     dataSharingPolicy,
   }
 }
