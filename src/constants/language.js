@@ -37,7 +37,7 @@ export const errorModal = {
 }
 
 export const successExportModal = {
-  title: 'Export data',
+  title: 'Export Successful',
   content: (email) => {
     return `An email has been sent to ${email}. This can sometimes take up to 15 minutes.`
   },
