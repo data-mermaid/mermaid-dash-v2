@@ -48,7 +48,6 @@ const CitationContainer = styled.div`
 `
 
 const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount }) => {
-  console.log('surveyedMethodCount ', surveyedMethodCount)
   const { getActiveProjectCount, mermaidUserData, userIsMemberOfProject, displayedProjects } =
     useContext(FilterProjectsContext)
 
@@ -146,7 +145,10 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
   const toolbarContent = modalMode === 'export' && (
     <StyledExportContentWrapper>
       <div>
-        Export will contain 3 XSLX files. <a>Learn more.</a>
+        Export will contain 3 XSLX files.{' '}
+        <a target="_blank" href="https://www.icriforum.org/post2020/" rel="noopener noreferrer">
+          Learn More.
+        </a>
       </div>
       <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
         Find out how your data are shared
