@@ -88,10 +88,10 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
       }
     })
 
-    const invalidProjects = formattedTableData.filter(({ surveyCount }) => surveyCount === 0)
+    const invalidProjects = formattedTableData.filter(({ transectCount }) => transectCount === 0)
 
     setInvalidProjectsCount(invalidProjects.length)
-    setExportTableData(formattedTableData.filter(({ surveyCount }) => surveyCount > 0))
+    setExportTableData(formattedTableData.filter(({ transectCount }) => transectCount > 0))
   }, [displayedProjects, selectedMethod, mermaidUserData, userIsMemberOfProject])
 
   const title = useMemo(() => {
@@ -145,13 +145,17 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
   const toolbarContent = modalMode === 'export' && (
     <StyledExportContentWrapper>
       <div>
-        Export will contain 3 XSLX files.{' '}
-        <a target="_blank" href="https://www.icriforum.org/post2020/" rel="noopener noreferrer">
+        All exports will contain metadata for all projects.{' '}
+        <a
+          target="_blank"
+          href="https://datamermaid.org/documentation/explore-app"
+          rel="noopener noreferrer"
+        >
           Learn More.
         </a>
       </div>
       <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
-        Find out how your data are shared
+        Learn more about how your data are shared...
       </ButtonThatLooksLikeLinkUnderlined>
     </StyledExportContentWrapper>
   )
@@ -191,7 +195,7 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
           <StyledWarningText>
             <div>
               Total exported projects: {exportTableData.length}. {'   '}Total surveys:{' '}
-              {surveyedMethodCount[selectedMethod]}
+              {surveyedMethodCount[selectedMethod] ?? 0}
             </div>
             {invalidProjectsCount > 0 && (
               <span>

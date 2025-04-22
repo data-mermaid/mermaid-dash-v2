@@ -8,7 +8,7 @@ import theme from '../../../styles/theme'
 import { Tr, Th, Td, reactTableNaturalSort, IconButton } from '../../generic'
 import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
-import { IconContact } from '../../../assets/icons'
+import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
 import { MuiTooltip } from '../../generic/MuiTooltip'
 import { tooltipText } from '../../../constants/language'
@@ -34,18 +34,32 @@ const ExportTableView = ({ exportTableData }) => {
         width: 360,
       },
       {
-        Header: 'Number of Surveys',
-        accessor: 'surveyCount',
+        Header: 'Transects',
+        accessor: 'transectCount',
         sortType: reactTableNaturalSort,
         align: 'right',
-        width: 140,
+        width: 110,
       },
       {
-        Header: 'Access Level',
-        accessor: 'accessLevel',
+        Header: 'Data Sharing',
+        accessor: 'dataSharingPolicy',
         sortType: reactTableNaturalSort,
-        align: 'right',
+        align: 'left',
         width: 150,
+      },
+      {
+        Header: 'Summary Data',
+        accessor: 'summaryData',
+        sortType: reactTableNaturalSort,
+        align: 'center',
+        width: 150,
+      },
+      {
+        Header: 'Observation Data',
+        accessor: 'observationData',
+        sortType: reactTableNaturalSort,
+        align: 'center',
+        width: 180,
       },
     ],
     [],
@@ -57,19 +71,21 @@ const ExportTableView = ({ exportTableData }) => {
         ({
           projectId,
           projectName,
-          surveyCount,
-          accessLevel,
+          transectCount,
           dataSharingPolicy,
+          summaryData,
+          observationData,
           isMemberOfProject,
           rawProjectData,
         }) => ({
           projectId,
           projectName,
-          surveyCount,
+          transectCount,
           dataSharingPolicy,
+          summaryData,
+          observationData,
           isMemberOfProject,
           rawProjectData,
-          accessLevel,
         }),
       ),
     [exportTableData],
@@ -135,6 +151,14 @@ const ExportTableView = ({ exportTableData }) => {
                   {row.cells.map((cell) => {
                     const { key: cellKey, ...restCellProps } = cell.getCellProps()
                     let view = cell.render('Cell')
+
+                    if (['summaryData', 'observationData'].includes(cell.column.id)) {
+                      view = cell.value ? (
+                        <IconCheck style={{ color: 'green' }} />
+                      ) : (
+                        <IconClose style={{ color: 'red' }} />
+                      )
+                    }
 
                     return (
                       <Td

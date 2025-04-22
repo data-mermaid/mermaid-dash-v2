@@ -238,7 +238,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
           return formatExportProjectDataHelper(project, isMemberOfProject, methodProtocol)
         })
-        .filter(({ surveyCount }) => surveyCount > 0)
+        .filter(({ transectCount }) => transectCount > 0)
 
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 

@@ -1,33 +1,36 @@
 import { EXPORT_METHODS } from '../constants/constants'
 
-const getMethodSurveyCount = (projectRecords, selectedMethod) =>
+const getMethodTransectCount = (projectRecords, selectedMethod) =>
   projectRecords.filter((record) => record.protocols?.[selectedMethod]).length
 
-const getAccessLevelType = (dataSharingPolicy, isMemberOfProject) => {
-  const accessLevelTypes = {
-    private: 'metadata',
-    'public summary': 'survey',
-    public: 'observation',
-  }
-
+const getSummaryAndObservationDataPermission = (dataSharingPolicy, isMemberOfProject) => {
   if (isMemberOfProject) {
-    return 'observation'
+    return { summaryData: true, observationData: true }
   }
 
-  return accessLevelTypes[dataSharingPolicy] || ''
+  const dataPermission = {
+    private: { summaryData: false, observationData: false },
+    'public summary': { summaryData: true, observationData: false },
+    public: { summaryData: true, observationData: true },
+  }
+
+  return dataPermission[dataSharingPolicy] || { summaryData: false, observationData: false }
 }
 
 export const formatExportProjectDataHelper = (project, isMemberOfProject, selectedMethod) => {
   const methodDataSharing = EXPORT_METHODS[selectedMethod]?.policy
   const dataSharingPolicy = project[methodDataSharing]
-  const surveyCount = getMethodSurveyCount(project?.records || [], selectedMethod)
-  const accessLevel = getAccessLevelType(dataSharingPolicy, isMemberOfProject)
+  const transectCount = getMethodTransectCount(project?.records || [], selectedMethod)
+  const summaryAndObservationData = getSummaryAndObservationDataPermission(
+    dataSharingPolicy,
+    isMemberOfProject,
+  )
 
   return {
     projectId: project.project_id,
     projectName: project.project_name,
-    surveyCount,
-    accessLevel,
+    transectCount,
     dataSharingPolicy,
+    ...summaryAndObservationData,
   }
 }
