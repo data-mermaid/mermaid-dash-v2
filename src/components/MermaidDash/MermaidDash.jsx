@@ -93,7 +93,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     isAnyActiveFilters,
   } = useContext(FilterProjectsContext)
 
-  const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage('isFilterPaneShowing', true)
+  const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage(
+    'isFilterPaneShowing',
+    false,
+  )
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
   const [isExportModalShowing, setIsExportModalShowing] = useState(false)
@@ -287,9 +290,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       : toastMessageText.followMapEnabled
 
     if (newState) {
-      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
-    } else {
       queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
+    } else {
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'false')
     }
 
     updateURLParams(queryParams)
