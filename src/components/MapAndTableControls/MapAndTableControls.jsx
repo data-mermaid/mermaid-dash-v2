@@ -60,6 +60,7 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
     getActiveProjectCount,
     projectData,
     clearAllFilters,
+    setSelectedProject,
   } = useContext(FilterProjectsContext)
   const { isDesktopWidth } = useResponsive()
   const location = useLocation()
@@ -68,13 +69,16 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
 
   const handleMapView = () => {
     setView('mapView')
+    setSelectedProject(null)
     queryParams.delete(URL_PARAMS.VIEW)
+    queryParams.delete(URL_PARAMS.PROJECT_ID)
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
   const handleTableView = () => {
     setView('tableView')
     queryParams.set(URL_PARAMS.VIEW, 'tableView')
+    queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
 
