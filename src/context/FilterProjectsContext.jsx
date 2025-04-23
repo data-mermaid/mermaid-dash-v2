@@ -130,6 +130,12 @@ export const FilterProjectsProvider = ({ children }) => {
       }
     }
 
+    const setShowYourProjectsOnly = () => {
+      if (queryParams.has(URL_PARAMS.YOUR_PROJECTS_ONLY)) {
+        setShowYourData(true)
+      }
+    }
+
     handleSelectInputFilter([URL_PARAMS.COUNTRY, URL_PARAMS.COUNTRIES], setSelectedCountries)
     handleSelectInputFilter(
       [URL_PARAMS.ORGANIZATION, URL_PARAMS.ORGANIZATIONS],
@@ -141,6 +147,7 @@ export const FilterProjectsProvider = ({ children }) => {
     handleMethodDataSharingFilter()
     setFollowScreen()
     setShowProjectsWithNoData()
+    setShowYourProjectsOnly()
   }, [getURLParams, updateURLParams])
 
   const doesSelectedSampleEventPassFilters = useCallback(
@@ -616,9 +623,19 @@ export const FilterProjectsProvider = ({ children }) => {
     updateURLParams(queryParams)
   }
 
-  const handleYourDataFilter = (event) => {
-    const { checked } = event.target
-    setShowYourData(checked)
+  const handleYourDataFilter = () => {
+    setShowYourData((prevState) => !prevState)
+
+    const newState = !showYourData
+    const queryParams = getURLParams()
+
+    if (newState) {
+      queryParams.set(URL_PARAMS.YOUR_PROJECTS_ONLY, 'true')
+    } else {
+      queryParams.delete(URL_PARAMS.YOUR_PROJECTS_ONLY)
+    }
+
+    updateURLParams(queryParams)
   }
 
   const getActiveProjectCount = () => {
