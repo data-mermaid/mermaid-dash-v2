@@ -225,7 +225,6 @@ export const StyledHeader = styled.h2`
   font-size: ${theme.typography.defaultFontSize};
   font-weight: bold;
   margin: 0 0 0.5rem 0;
-  flex-grow: 1;
 `
 
 export const StyledChevronSpan = styled.span`

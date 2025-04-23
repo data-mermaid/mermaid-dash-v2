@@ -1,17 +1,22 @@
 import { useContext, useState } from 'react'
 import PropTypes from 'prop-types'
+import { toast } from 'react-toastify'
+import { useAuth0 } from '@auth0/auth0-react'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import useResponsive from '../../hooks/useResponsive'
 
-import { URL_PARAMS } from '../../constants/constants'
+import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
+import { toastMessageText } from '../../constants/language'
 
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
+import { IconDownload } from '../../assets/icons'
 
 import { getSurverysAtSimilarSites } from '../../helperFunctions/getSurveysAtSimilarSites'
 import { getMermaidLocaleDateString } from '../../helperFunctions/getMermaidLocaleDateString'
+import { getProtocolSurveyCounts } from '../../helperFunctions/getProtocolSurveyCounts'
 
 import { ChartsWrapper, StyledHeader } from './MetricsPane.styles'
 import {
@@ -38,15 +43,23 @@ import {
   TabButtonContainer,
   TabContent,
   SelectedSiteContainer,
+  SelectedSiteHeaderWrapper,
+  SiteExportDataMenu,
 } from './SelectedSiteMetrics.styles'
+import {
+  ExpressExportMenu,
+  ExpressExportMenuHeaderItem,
+  ExpressExportMenuItem,
+  ExpressExportMenuRow,
+} from '../MermaidDash/MermaidDash.styles'
 
 import {
   ButtonPrimary,
   ButtonSecondary,
   ButtonThatLooksLikeLinkUnderlined,
   CloseButton,
+  IconButton,
 } from '../generic'
-
 import {
   MermaidFormContainer,
   MermaidFormControl,
@@ -61,6 +74,8 @@ import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
 import { SampleEventBleachingSeverityPlot } from './charts/SampleEventBleachingSeverityPlot'
 import { SampleEventHabitatComplexityPlot } from './charts/SampleEventHabitatComplexityPlot'
 import ContactOrUserIcon from './ContactOrUserIcon'
+import HideShow from '../Header/components/HideShow'
+import SuccessExportModal from '../MermaidDash/components/SuccessExportModal'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -76,7 +91,9 @@ export const SelectedSiteMetrics = ({
     updateURLParams,
     updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
-  const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
+  const { isDesktopWidth } = useResponsive()
+  const { isAuthenticated, getAccessTokenSilently } = useAuth0()
+
   const {
     sample_event_id: sampleEventId,
     site_notes: siteNotes,
@@ -98,6 +115,8 @@ export const SelectedSiteMetrics = ({
     protocols,
   } = selectedSampleEvent
 
+  const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
+  const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
   const isInitialSiteNotesTruncated = siteNotes?.length > 250
   const [isSiteNotesTruncated, setIsSiteNotesTruncated] = useState(isInitialSiteNotesTruncated)
 
@@ -124,14 +143,16 @@ export const SelectedSiteMetrics = ({
     </ButtonThatLooksLikeLinkUnderlined>
   )
 
-  const { isDesktopWidth } = useResponsive()
   const sampleEventAdmins = projectAdmins
     .filter((admin) => admin.name !== ' ')
     .map((admin) => admin.name)
     .join(', ')
   const sampleEventOrganizations = organizations?.map((tag) => tag.name).join(', ')
   const project = displayedProjects?.find((project) => project.project_id === projectId)
-  const projectRecordsForSite = project?.records?.filter((record) => record.site_id === siteId)
+  const projectRecords = project?.records ?? []
+  const projectRecordsForSite = projectRecords?.filter((record) => record.site_id === siteId)
+
+  const protocolSurveyCounts = getProtocolSurveyCounts(projectRecords)
 
   const handleClearSelectedSampleEvent = () => {
     setSelectedSampleEvent(null)
@@ -239,15 +260,93 @@ export const SelectedSiteMetrics = ({
       )
     })
 
+  const handleExpressExport = async (method) => {
+    try {
+      const token = isAuthenticated ? await getAccessTokenSilently() : ''
+
+      if (!token) {
+        throw new Error('Failed request - no token provided')
+      }
+
+      const selectedMethodProtocol = EXPORT_METHODS[method]?.protocol
+
+      const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
+      const requestData = {
+        report_type: 'summary_sample_unit_method',
+        project_ids: [projectId],
+        protocol: selectedMethodProtocol,
+      }
+
+      const response = await fetch(reportEndpoint, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestData),
+      })
+
+      if (!response.ok) {
+        throw new Error(`Failed request - ${response.status}`)
+      }
+
+      setIsSuccessExportModalOpen(true)
+    } catch (error) {
+      console.error(error)
+      toast.error(toastMessageText.sendEmailFailed)
+    }
+  }
+
+  const renderOverflowExportDataMenu = () => {
+    return (
+      <SiteExportDataMenu>
+        <ExpressExportMenu>
+          <ExpressExportMenuHeaderItem>
+            <div>Method</div>
+            <div>Number of Surveys</div>
+          </ExpressExportMenuHeaderItem>
+          {Object.entries(EXPORT_METHODS).map(([method, methodInfo]) => {
+            const count = protocolSurveyCounts[method] ?? 0
+
+            return (
+              <ExpressExportMenuRow key={method}>
+                <ExpressExportMenuItem
+                  onClick={() => {
+                    handleExpressExport(method)
+                  }}
+                  disabled={count === 0}
+                >
+                  <div>{methodInfo.description}</div>
+                  <div>{count}</div>
+                </ExpressExportMenuItem>
+              </ExpressExportMenuRow>
+            )
+          })}
+        </ExpressExportMenu>
+      </SiteExportDataMenu>
+    )
+  }
+
   const selectedSiteBody =
     showMobileExpandedMetricsPane || isDesktopWidth ? (
       <>
         <SelectedSiteMetricsCardContainer>
           <BiggerIconTextBoxMultiple />
           <SelectedSiteContentContainer>
-            <StyledHeader>
-              Project <ContactOrUserIcon projectId={projectId} />
-            </StyledHeader>
+            <SelectedSiteHeaderWrapper>
+              <StyledHeader>Project</StyledHeader>
+              <ContactOrUserIcon projectId={projectId} />
+              {isAuthenticated && (
+                <HideShow
+                  button={
+                    <IconButton>
+                      <IconDownload />
+                    </IconButton>
+                  }
+                  contents={renderOverflowExportDataMenu()}
+                />
+              )}
+            </SelectedSiteHeaderWrapper>
             <span>{projectName} </span>
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
@@ -443,6 +542,10 @@ export const SelectedSiteMetrics = ({
     <SelectedSiteContainer>
       {selectedSiteHeader}
       {selectedSiteBody}
+      <SuccessExportModal
+        isOpen={isSuccessExportModalOpen}
+        onDismiss={() => setIsSuccessExportModalOpen(false)}
+      />
     </SelectedSiteContainer>
   )
 }

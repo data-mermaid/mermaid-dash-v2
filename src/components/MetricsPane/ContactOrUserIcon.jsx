@@ -11,8 +11,9 @@ import { IconContact } from '../../assets/icons'
 import { IconButton } from '../generic'
 import { MuiTooltip } from '../generic/MuiTooltip'
 
-const ContactOrUserIcon = ({ projectId }) => {
+const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
   const { userIsMemberOfProject, mermaidUserData } = useContext(FilterProjectsContext)
+  const iconMarginTop = customStyles?.iconMarginTop || '0px'
 
   return userIsMemberOfProject(projectId, mermaidUserData) ? (
     <MuiTooltip
@@ -21,7 +22,7 @@ const ContactOrUserIcon = ({ projectId }) => {
       bgColor={theme.color.primaryColor}
       tooltipTextColor={theme.color.white}
     >
-      <IconButton>
+      <IconButton style={{ marginTop: iconMarginTop }}>
         <IconUserCircle />
       </IconButton>
     </MuiTooltip>
@@ -36,6 +37,7 @@ const ContactOrUserIcon = ({ projectId }) => {
         href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
         target="_blank"
         rel="noopener noreferrer"
+        style={{ marginTop: iconMarginTop }}
       >
         <IconContact />
       </a>
@@ -45,6 +47,9 @@ const ContactOrUserIcon = ({ projectId }) => {
 
 ContactOrUserIcon.propTypes = {
   projectId: PropTypes.string.isRequired,
+  customStyles: PropTypes.shape({
+    iconMarginTop: PropTypes.string,
+  }),
 }
 
 export default ContactOrUserIcon

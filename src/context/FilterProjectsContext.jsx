@@ -209,7 +209,7 @@ export const FilterProjectsProvider = ({ children }) => {
 
   const isRecordWithinMapBounds = useCallback((record, mapBbox) => {
     const isWithinLatitude =
-      record.latitude >= mapBbox['_sw'].lat && record.latitude <= mapBbox['_ne'].lat
+      record.latitude >= mapBbox['_sw']?.lat && record.latitude <= mapBbox['_ne']?.lat
 
     const normalizeLng = (lng) => {
       // Use modulo to handle any number of rotations around the globe
@@ -222,8 +222,8 @@ export const FilterProjectsProvider = ({ children }) => {
       return lng - 180
     }
 
-    const swLng = normalizeLng(mapBbox['_sw'].lng)
-    const neLng = normalizeLng(mapBbox['_ne'].lng)
+    const swLng = normalizeLng(mapBbox['_sw']?.lng)
+    const neLng = normalizeLng(mapBbox['_ne']?.lng)
 
     const isWithinLongitude =
       swLng <= neLng

@@ -234,12 +234,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     setIsFilterModalShowing(!isFilterModalShowing)
   }
 
-  const handleExpressExport = async (methodProtocol) => {
+  const handleExpressExport = async (method) => {
     try {
       const exportedProjects = displayedProjects
         .map((project) => {
           const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-          return formatExportProjectDataHelper(project, isMemberOfProject, methodProtocol)
+          return formatExportProjectDataHelper(project, isMemberOfProject, method)
         })
         .filter(({ transectCount }) => transectCount > 0)
 
@@ -249,7 +249,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         throw new Error('Failed request - no token provided')
       }
 
-      const selectedMethodProtocol = EXPORT_METHODS[methodProtocol]?.protocol
+      const selectedMethodProtocol = EXPORT_METHODS[method]?.protocol
       const projectIds = exportedProjects.map(({ projectId }) => projectId)
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
@@ -345,23 +345,23 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             <div>Method</div>
             <div>Number of Surveys</div>
           </ExpressExportMenuHeaderItem>
-          {Object.entries(EXPORT_METHODS).map(([key, method]) => {
-            const count = surveyedMethodCount[key] ?? 0
+          {Object.entries(EXPORT_METHODS).map(([method, methodInfo]) => {
+            const count = surveyedMethodCount[method] ?? 0
 
             return (
-              <ExpressExportMenuRow key={key}>
+              <ExpressExportMenuRow key={method}>
                 <ExpressExportMenuItem
-                  onClick={() => handleExpressExport(key)}
+                  onClick={() => handleExpressExport(method)}
                   disabled={count === 0}
                 >
-                  <div>{method.description}</div>
+                  <div>{methodInfo.description}</div>
                   <div>{count}</div>
                 </ExpressExportMenuItem>
                 <ExportMoreInfoButton
                   type="button"
                   disabled={count === 0}
                   onClick={() => {
-                    handleShowExportModal(key)
+                    handleShowExportModal(method)
                   }}
                 >
                   <IconInfo />
@@ -426,10 +426,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             {isAuthenticated ? (
               <HideShow
                 button={
-                  <FilterPaneExportButton
-                    disabled={!allProjectsFinishedFiltering}
-                    $isAuthenticated={isAuthenticated}
-                  >
+                  <FilterPaneExportButton disabled={!allProjectsFinishedFiltering}>
                     <IconDownload /> <span>Export data</span>
                     {isExportMenuOpen ? <MediumIconDown /> : <MediumIconUp />}
                   </FilterPaneExportButton>
@@ -441,7 +438,6 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
             ) : (
               <FilterPaneExportButton
                 disabled={!allProjectsFinishedFiltering}
-                $isAuthenticated={isAuthenticated}
                 onClick={handleLogin}
               >
                 <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to export data</span>
