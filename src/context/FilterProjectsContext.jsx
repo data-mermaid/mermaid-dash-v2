@@ -32,7 +32,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [remainingDisplayedProjectNames, setRemainingDisplayedProjectNames] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
   const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(true)
-  const [enableFollowScreen, setEnableFollowScreen] = useState(false)
+  const [enableFollowScreen, setEnableFollowScreen] = useState(true)
   const [mapBbox, setMapBbox] = useState({})
 
   const filteredSurveys = displayedProjects.flatMap((project) => project.records)
@@ -120,7 +120,7 @@ export const FilterProjectsProvider = ({ children }) => {
 
     const setFollowScreen = () => {
       if (queryParams.has(URL_PARAMS.FOLLOW_SCREEN)) {
-        setEnableFollowScreen(true)
+        setEnableFollowScreen(false)
       }
     }
 

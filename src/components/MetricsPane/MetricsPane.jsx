@@ -288,9 +288,9 @@ const MetricsPane = ({
     const queryParams = getURLParams()
 
     if (newState) {
-      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
-    } else {
       queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
+    } else {
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'false')
     }
 
     updateURLParams(queryParams)
