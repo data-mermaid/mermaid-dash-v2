@@ -3,13 +3,12 @@ import { useAuth0 } from '@auth0/auth0-react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
-import { FormControl } from '@mui/material'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
-import { DOWNLOAD_METHODS } from '../../../constants/constants'
-import { exportModal, toastMessageText } from '../../../constants/language'
+import { EXPORT_METHODS } from '../../../constants/constants'
+import { exportModal, successExportModal, toastMessageText } from '../../../constants/language'
 
 import {
   Modal,
@@ -18,86 +17,51 @@ import {
   ButtonPrimary,
   ButtonThatLooksLikeLinkUnderlined,
 } from '../../generic'
-import { MermaidMenuItem, MermaidOutlinedInput, MermaidSelect } from '../../generic/MermaidMui'
-import { StyledHeader } from '../../MetricsPane/MetricsPane.styles'
 
-import { formatDownloadProjectDataHelper } from '../../../helperFunctions/formatDownloadProjectDataHelper'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 import ExportTableView from './ExportTableView'
 import DataSharingInfoModal from './DataSharingInfoModal'
 import { IconInfo } from '../../../assets/icons'
 import { LeftFooter } from '../../generic/Modal'
+import { formatExportProjectDataHelper } from '../../../helperFunctions/formatExportProjectDataHelper'
 
-const StyledDownloadContentWrapper = styled.div`
+const StyledExportContentWrapper = styled.div`
   display: flex;
-  gap: 5px;
-`
-
-const StyledDataSharingWrapper = styled.div`
-  flex-grow: 1;
-`
-
-const StyledDataSharingTabs = styled.div`
-  display: flex;
-  align-items: center;
-`
-
-const StyledDataSharingButton = styled(ButtonPrimary)`
-  border: 1px solid ${theme.color.secondaryBorder};
-  width: ${({ customWidth = 'auto' }) => customWidth};
-  background-color: ${({ isActive }) => (isActive ? theme.color.primaryColor : theme.color.white)};
-  color: ${({ isActive }) => (isActive ? theme.color.white : theme.color.black)};
-`
-
-const WiderFormControl = styled(FormControl)`
-  width: 30rem;
+  justify-content: space-between;
 `
 
 const StyledWarningText = styled.div`
   height: 36px;
   display: flex;
+  flex-direction: column;
   background-color: ${theme.color.white2};
-  align-items: center;
   padding: 0px 10px;
   gap: 5px;
   font-size: ${theme.typography.smallFontSize};
+  justify-content: center;
 `
 
-const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodChange }) => {
-  const {
-    displayedProjects,
-    filteredSurveys,
-    getActiveProjectCount,
-    userIsMemberOfProject,
-    mermaidUserData,
-  } = useContext(FilterProjectsContext)
+const CitationContainer = styled.div`
+  background-color: ${theme.color.grey1};
+  padding: 0.1rem 2rem;
+`
+
+const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount }) => {
+  const { getActiveProjectCount, mermaidUserData, userIsMemberOfProject, displayedProjects } =
+    useContext(FilterProjectsContext)
 
   const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
-  const [tableData, setTableData] = useState([])
-  const [selectedDataSharing, setSelectedDataSharing] = useState('public')
   const [modalMode, setModalMode] = useState(null)
   const [isDataSharingModalOpen, setIsDataSharingModalOpen] = useState(false)
+  const [exportTableData, setExportTableData] = useState([])
   const [invalidProjectsCount, setInvalidProjectsCount] = useState(0)
-
-  const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
-    const protocols = record.protocols || {}
-
-    Object.keys(protocols).forEach((protocol) => {
-      if (acc[protocol]) {
-        acc[protocol] += 1
-      } else {
-        acc[protocol] = 1
-      }
-    })
-
-    return acc
-  }, {})
+  const exportMethodTitle = EXPORT_METHODS[selectedMethod]?.description
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
-      setModalMode(activeProjectCount === 0 ? 'no data' : 'download')
+      setModalMode(activeProjectCount === 0 ? 'no data' : 'export')
     } else {
       setModalMode(null)
     }
@@ -108,37 +72,27 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
       return
     }
 
-    const formattedTableData = displayedProjects.map((project, i) => {
+    const formattedTableData = displayedProjects.map((project, index) => {
       const isMemberOfProject = userIsMemberOfProject(project.project_id, mermaidUserData)
-      const formattedData = formatDownloadProjectDataHelper(
+      const formattedData = formatExportProjectDataHelper(
         project,
         isMemberOfProject,
         selectedMethod,
-        selectedDataSharing,
       )
 
       return {
-        id: i,
+        id: index,
         ...formattedData,
         isMemberOfProject,
         rawProjectData: project,
       }
     })
 
-    const invalidProjects = formattedTableData.filter(
-      ({ surveyCount, metaData, observationData, surveyData }) =>
-        surveyCount === 0 || (!metaData && !observationData && !surveyData),
-    )
+    const invalidProjects = formattedTableData.filter(({ transectCount }) => transectCount === 0)
 
     setInvalidProjectsCount(invalidProjects.length)
-    setTableData(formattedTableData)
-  }, [
-    displayedProjects,
-    selectedMethod,
-    selectedDataSharing,
-    mermaidUserData,
-    userIsMemberOfProject,
-  ])
+    setExportTableData(formattedTableData.filter(({ transectCount }) => transectCount > 0))
+  }, [displayedProjects, selectedMethod, mermaidUserData, userIsMemberOfProject])
 
   const title = useMemo(() => {
     const titles = {
@@ -147,8 +101,8 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
       failure: exportModal.failureTitle,
     }
 
-    return titles[modalMode] || exportModal.downloadTitle
-  }, [modalMode])
+    return titles[modalMode] || exportModal.exportTitle(exportMethodTitle)
+  }, [modalMode, exportMethodTitle])
 
   const handleSendEmailWithLinkSubmit = async () => {
     try {
@@ -158,17 +112,13 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
         throw new Error('Failed request - No token provided')
       }
 
-      const selectedMethodProtocol = DOWNLOAD_METHODS[selectedMethod]?.protocol
-      const projectsToEmail = tableData
-        .filter(
-          ({ metaData, surveyData, observationData }) => metaData || surveyData || observationData,
-        )
-        .map(({ projectId }) => projectId)
+      const selectedMethodProtocol = EXPORT_METHODS[selectedMethod]?.protocol
+      const projectIds = exportTableData.map(({ projectId }) => projectId)
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
         report_type: 'summary_sample_unit_method',
-        project_ids: projectsToEmail,
+        project_ids: projectIds,
         protocol: selectedMethodProtocol,
       }
 
@@ -192,65 +142,27 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
     }
   }
 
-  const handleDataSharingChange = (e) => {
-    setSelectedDataSharing(e.target.value)
-  }
-
-  const toolbarContent = modalMode === 'download' && (
-    <StyledDownloadContentWrapper>
-      <WiderFormControl>
-        <StyledHeader>Method</StyledHeader>
-        <MermaidSelect
-          input={<MermaidOutlinedInput />}
-          value={selectedMethod}
-          onChange={handleSelectedMethodChange}
+  const toolbarContent = modalMode === 'export' && (
+    <StyledExportContentWrapper>
+      <div>
+        All exports will contain metadata for all projects.{' '}
+        <a
+          target="_blank"
+          href="https://datamermaid.org/documentation/explore-app"
+          rel="noopener noreferrer"
         >
-          {Object.entries(DOWNLOAD_METHODS).map(([key, method]) => {
-            return (
-              <MermaidMenuItem key={key} value={key}>
-                {method.description}{' '}
-                {`(${pluralizeWordWithCount(surveyedMethodCount[key] ?? 0, 'Survey')})`}
-              </MermaidMenuItem>
-            )
-          })}
-        </MermaidSelect>
-      </WiderFormControl>
-      <StyledDataSharingWrapper>
-        <StyledHeader>Project Data Sharing</StyledHeader>
-        <StyledDataSharingTabs>
-          <StyledDataSharingButton
-            value={'private'}
-            isActive={selectedDataSharing === 'private'}
-            onClick={handleDataSharingChange}
-          >
-            Private
-          </StyledDataSharingButton>
-          <StyledDataSharingButton
-            value={'public summary'}
-            customWidth={'150px'}
-            isActive={selectedDataSharing === 'public summary'}
-            onClick={handleDataSharingChange}
-          >
-            Public Summary
-          </StyledDataSharingButton>
-          <StyledDataSharingButton
-            value={'public'}
-            isActive={selectedDataSharing === 'public'}
-            onClick={handleDataSharingChange}
-          >
-            Public
-          </StyledDataSharingButton>
-        </StyledDataSharingTabs>
-      </StyledDataSharingWrapper>
+          Learn More.
+        </a>
+      </div>
       <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
-        Find out how your data are shared
+        Learn more about how your data are shared...
       </ButtonThatLooksLikeLinkUnderlined>
-    </StyledDownloadContentWrapper>
+    </StyledExportContentWrapper>
   )
 
-  const downloadContent = (
+  const exportContent = (
     <>
-      <ExportTableView tableData={tableData} />
+      <ExportTableView exportTableData={exportTableData} />
       <DataSharingInfoModal
         isOpen={isDataSharingModalOpen}
         onDismiss={() => setIsDataSharingModalOpen(false)}
@@ -260,14 +172,17 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
 
   const successContent = (
     <>
-      <p>An email has been sent to {mermaidUserData.email}</p>
-      <p>This can sometimes take up to 15 minutes</p>
+      <p>{successExportModal.content(mermaidUserData.email)} </p>
+      <CitationContainer>
+        <h4>{successExportModal.citationHeader}</h4>
+        <p>{successExportModal.citationContent} </p>
+      </CitationContainer>
     </>
   )
 
   const MODAL_CONTENT_BY_MODE = {
     'no data': <p>{exportModal.noDataContent}</p>,
-    download: downloadContent,
+    export: exportContent,
     success: successContent,
   }
 
@@ -275,25 +190,32 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, handleSelectedMethodCh
 
   const footerContent = (
     <>
-      {modalMode === 'download' && invalidProjectsCount > 0 && (
+      {modalMode === 'export' && (
         <LeftFooter>
           <StyledWarningText>
-            <IconInfo />
-            <span>
-              {pluralizeWordWithCount(
-                invalidProjectsCount,
-                'other project does',
-                'other projects do',
-              )}{' '}
-              not have {DOWNLOAD_METHODS[selectedMethod]?.description} data or you don&apos;t have
-              access for the selected data sharing.
-            </span>
+            <div>
+              Total exported projects: {exportTableData.length}. {'   '}Total surveys:{' '}
+              {surveyedMethodCount[selectedMethod] ?? 0}
+            </div>
+            {invalidProjectsCount > 0 && (
+              <span>
+                <IconInfo />{' '}
+                {pluralizeWordWithCount(
+                  invalidProjectsCount,
+                  'other project does',
+                  'other projects do',
+                )}{' '}
+                not have {exportMethodTitle} data.
+              </span>
+            )}
           </StyledWarningText>
         </LeftFooter>
       )}
       <RightFooter>
-        <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
-        {modalMode === 'download' && (
+        <ButtonSecondary onClick={onDismiss}>
+          {modalMode === 'success' ? 'Done' : 'Close'}
+        </ButtonSecondary>
+        {modalMode === 'export' && (
           <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
             Send Email With Link
           </ButtonPrimary>
@@ -323,7 +245,15 @@ ExportModal.propTypes = {
   isOpen: PropTypes.bool.isRequired,
   onDismiss: PropTypes.func.isRequired,
   selectedMethod: PropTypes.string.isRequired,
-  handleSelectedMethodChange: PropTypes.func.isRequired,
+  surveyedMethodCount: PropTypes.shape({
+    beltfish: PropTypes.number,
+    benthiclit: PropTypes.number,
+    benthicpit: PropTypes.number,
+    benthicpqt: PropTypes.number,
+    colonies_bleached: PropTypes.number,
+    habitatcomplexity: PropTypes.number,
+    quadrat_benthic_percent: PropTypes.number,
+  }).isRequired,
 }
 
 export default ExportModal

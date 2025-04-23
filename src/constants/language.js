@@ -21,10 +21,10 @@ export const dataDisclaimer = {
 export const exportModal = {
   noDataTitle: 'No data to export',
   noDataContent: 'Selected projects contain no data to export.',
-  downloadTitle: 'Export data',
+  exportTitle: (selectedMethod) => `Export ${selectedMethod} Data`,
   noGFCRDataTitle: 'No GFCR data to export',
   noGFCRDataContent: 'No filtered projects have GFCR indicators.',
-  downloadGFCRTitle: 'Export GFCR data',
+  exportGFCRTitle: 'Export GFCR data',
   successTitle: 'Export Request Sent',
   failureTitle: 'Export Failed',
   failureContent: 'Fail to sent email! Please contact MERMAID team.',
@@ -34,6 +34,17 @@ export const errorModal = {
   title: 'Error fetching data',
   content:
     'There was an issue getting data for the Dashboard. If this problem persists, please contact',
+}
+
+export const successExportModal = {
+  title: 'Export Successful',
+  content: (email) => {
+    return `An email has been sent to ${email}. This can sometimes take up to 15 minutes.`
+  },
+  citationHeader: 'Please credit the data owners.',
+  citationContent:
+    'Suggested citations can be found in all tabs of xlsx files you are exporting. Please ensure you cite the data you have exported in any publications to properly credit the data owners.',
+  footerButton: 'Done',
 }
 
 export const pages = {
