@@ -441,7 +441,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
                 $isAuthenticated={isAuthenticated}
                 onClick={handleLogin}
               >
-                <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to download</span>
+                <img src={loginOnlyIcon} alt="Login required" /> <span>Log in to export data</span>
               </FilterPaneExportButton>
             )}
           </FilterPaneExportButtonWrapper>
