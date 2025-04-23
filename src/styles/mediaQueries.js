@@ -22,12 +22,6 @@ const mediaQueryWidthMax1280 = (content) => css`
   }
 `
 
-const mediaQuery1081To1300 = (content) => css`
-  @media (min-width: 1081px) and (max-width: 1300px) {
-    ${content};
-  }
-`
-
 const mediaQueryForTabletLandscapeUp = (content) => css`
   @media (min-width: 900px) {
     ${content};
@@ -75,7 +69,6 @@ export {
   mediaQueryForBigDesktopUp,
   mediaQueryForTabletLandscapeUp,
   mediaQueryWidthMax1280,
-  mediaQuery1081To1300,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
   mediaQueryForDesktopUp,

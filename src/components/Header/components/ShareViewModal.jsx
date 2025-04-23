@@ -38,16 +38,14 @@ const ShareViewModal = () => {
   }
 
   const mainContent = (
-    <>
-      <ModalCopyContainer>
-        <ModalURLContainer>
-          <Input value={window.location.href} readOnly></Input>
-        </ModalURLContainer>
-        <StyledCopyButton onClick={handleCopyURL}>
-          <IconCopy /> {buttonText}
-        </StyledCopyButton>
-      </ModalCopyContainer>
-    </>
+    <ModalCopyContainer>
+      <ModalURLContainer>
+        <Input value={window.location.href} readOnly></Input>
+      </ModalURLContainer>
+      <StyledCopyButton onClick={handleCopyURL}>
+        <IconCopy /> {buttonText}
+      </StyledCopyButton>
+    </ModalCopyContainer>
   )
 
   const footerContent = (
