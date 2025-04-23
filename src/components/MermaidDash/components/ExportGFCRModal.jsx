@@ -53,7 +53,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
 
   const _resetModalModeWhenModalOpenOrClose = useEffect(() => {
     if (isOpen) {
-      setModalMode(projectsWithGFCRData.length === 0 ? 'no data' : 'download')
+      setModalMode(projectsWithGFCRData.length === 0 ? 'no data' : 'export')
     } else {
       setModalMode(null)
     }
@@ -66,7 +66,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
       failure: exportModal.failureTitle,
     }
 
-    return titles[modalMode] || exportModal.downloadGFCRTitle
+    return titles[modalMode] || exportModal.exportGFCRTitle
   }, [modalMode])
 
   const handleSendEmailWithLinkSubmit = async () => {
@@ -125,7 +125,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
     )
   })
 
-  const downloadContent = <StyledOverflowList>{projectListWithGFCRData}</StyledOverflowList>
+  const exportContent = <StyledOverflowList>{projectListWithGFCRData}</StyledOverflowList>
 
   const successContent = (
     <>
@@ -136,7 +136,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
 
   const MODAL_CONTENT_BY_MODE = {
     'no data': <p>{exportModal.noGFCRDataContent}</p>,
-    download: downloadContent,
+    export: exportContent,
     success: successContent,
   }
 
@@ -144,7 +144,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
 
   const footerContent = (
     <>
-      {modalMode === 'download' && projectsWithoutGFCRDataCount > 0 && (
+      {modalMode === 'export' && projectsWithoutGFCRDataCount > 0 && (
         <LeftFooter>
           <StyledWarningText>
             <IconInfo />{' '}
@@ -161,7 +161,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
       )}
       <RightFooter>
         <ButtonSecondary onClick={onDismiss}>Close</ButtonSecondary>
-        {modalMode === 'download' && (
+        {modalMode === 'export' && (
           <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
             Send Email With Link
           </ButtonPrimary>
@@ -170,7 +170,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
     </>
   )
 
-  const modalCustomHeight = modalMode === 'download' ? '340px' : '200px'
+  const modalCustomHeight = modalMode === 'export' ? '340px' : '200px'
 
   if (!modalMode) {
     return null
