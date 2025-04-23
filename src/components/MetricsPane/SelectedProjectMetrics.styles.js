@@ -37,10 +37,6 @@ export const CardTitle = styled.span`
   font-weight: bold;
 `
 
-export const ContactLink = styled.a`
-  color: ${theme.color.primaryColor};
-`
-
 export const DataSharingGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(2, 1fr);
