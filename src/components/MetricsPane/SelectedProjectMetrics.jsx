@@ -6,12 +6,10 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { URL_PARAMS } from '../../constants/constants'
 
 import { ButtonThatLooksLikeLinkUnderlined, CloseButton } from '../generic'
-
 import { BiggerIconClose } from './SelectedSiteMetrics.styles'
 import {
   AdminIcon,
   CardTitle,
-  ContactLink,
   DataSharingGrid,
   DataSharingIcon,
   HeaderIcon,
@@ -23,6 +21,7 @@ import {
   ProjectNotesIcon,
   ProjectTitle,
 } from './SelectedProjectMetrics.styles'
+import ContactOrUserIcon from './ContactOrUserIcon'
 
 const MAX_NOTES_LENGTH = 250
 
@@ -71,14 +70,9 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
           <AdminIcon />
           <ProjectCardContent>
             <ProjectCardHeader>
-              <CardTitle>Admins</CardTitle>
-              <ContactLink
-                href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                Contact
-              </ContactLink>
+              <CardTitle>
+                Admins <ContactOrUserIcon projectId={projectId} />
+              </CardTitle>
             </ProjectCardHeader>
             {projectAdmins?.map(({ name }) => name).join(', ')}
           </ProjectCardContent>

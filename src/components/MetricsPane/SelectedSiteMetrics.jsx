@@ -7,7 +7,6 @@ import useResponsive from '../../hooks/useResponsive'
 
 import { URL_PARAMS } from '../../constants/constants'
 
-import { IconPersonCircle } from '../../assets/dashboardOnlyIcons'
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
 
@@ -61,6 +60,7 @@ import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
 import { SampleEventBleachingSeverityPlot } from './charts/SampleEventBleachingSeverityPlot'
 import { SampleEventHabitatComplexityPlot } from './charts/SampleEventHabitatComplexityPlot'
+import ContactOrUserIcon from './ContactOrUserIcon'
 
 const TAB_NAMES = { summary: 'summary', metadata: 'metadata' }
 
@@ -72,10 +72,8 @@ export const SelectedSiteMetrics = ({
   const {
     displayedProjects,
     getURLParams,
-    mermaidUserData,
     setSelectedMarkerId,
     updateURLParams,
-    userIsMemberOfProject,
     updateCurrentSampleEvent,
   } = useContext(FilterProjectsContext)
   const [metricsView, setMetricsView] = useState(TAB_NAMES.summary)
@@ -247,11 +245,10 @@ export const SelectedSiteMetrics = ({
         <SelectedSiteMetricsCardContainer>
           <BiggerIconTextBoxMultiple />
           <SelectedSiteContentContainer>
-            <StyledHeader>Project</StyledHeader>
-            <span>
-              {projectName}{' '}
-              {userIsMemberOfProject(projectId, mermaidUserData) ? <IconPersonCircle /> : null}
-            </span>
+            <StyledHeader>
+              Project <ContactOrUserIcon projectId={projectId} />
+            </StyledHeader>
+            <span>{projectName} </span>
           </SelectedSiteContentContainer>
         </SelectedSiteMetricsCardContainer>
         <SelectedSiteMetricsCardContainer>
@@ -351,7 +348,9 @@ export const SelectedSiteMetrics = ({
               <SelectedSiteMetricsCardContainer>
                 <BiggerIconUser />
                 <SelectedSiteContentContainer>
-                  <StyledHeader>Admins</StyledHeader>
+                  <StyledHeader>
+                    Admins <ContactOrUserIcon projectId={projectId} />
+                  </StyledHeader>
                   <span>{sampleEventAdmins}</span>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
