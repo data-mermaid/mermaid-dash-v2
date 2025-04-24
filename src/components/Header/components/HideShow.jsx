@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react'
 import PropTypes from 'prop-types'
+import theme from '../../../styles/theme'
 import styled from 'styled-components'
 import useIsMounted from '../../../hooks/useIsMounted'
+import { MuiTooltip } from '../../generic/MuiTooltip'
 
 /**
  * Button that shows content in drop down on click
@@ -25,6 +27,7 @@ const HideShow = ({
   closeOnClickWithin = true,
   customStyleProps = {},
   onToggle,
+  tooltipText = '',
 }) => {
   const [showItems, setShowItems] = useState(false)
   const buttonRef = useRef(null)
@@ -79,7 +82,18 @@ const HideShow = ({
 
   return (
     <PositionedAncestor {...customStyleProps}>
-      {buttonForRender}
+      {tooltipText !== '' ? (
+        <MuiTooltip
+          title={tooltipText}
+          placement="top"
+          bgColor={theme.color.primaryColor}
+          tooltipTextColor={theme.color.white}
+        >
+          {buttonForRender}
+        </MuiTooltip>
+      ) : (
+        buttonForRender
+      )}
       {showItems && <span ref={contentsRef}>{contents}</span>}
     </PositionedAncestor>
   )
@@ -91,6 +105,7 @@ HideShow.propTypes = {
   closeOnClickWithin: PropTypes.bool,
   customStyleProps: PropTypes.object,
   onToggle: PropTypes.func,
+  tooltipText: PropTypes.string,
 }
 
 export default HideShow
