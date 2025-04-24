@@ -324,9 +324,9 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       : toastMessageText.followMapEnabled
 
     if (newState) {
-      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
+      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
     } else {
-      queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'false')
+      queryParams.delete(URL_PARAMS.FOLLOW_SCREEN)
     }
 
     updateURLParams(queryParams)

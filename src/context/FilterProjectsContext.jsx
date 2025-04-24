@@ -120,7 +120,7 @@ export const FilterProjectsProvider = ({ children }) => {
 
     const setFollowScreen = () => {
       if (queryParams.has(URL_PARAMS.FOLLOW_SCREEN)) {
-        setEnableFollowScreen(false)
+        setEnableFollowScreen(true)
       }
     }
 
