@@ -6,7 +6,7 @@ import { useAuth0 } from '@auth0/auth0-react'
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 
 import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
-import { toastMessageText } from '../../constants/language'
+import { toastMessageText, tooltipText } from '../../constants/language'
 
 import { ButtonThatLooksLikeLinkUnderlined, CloseButton, IconButton } from '../generic'
 import HideShow from '../Header/components/HideShow'
@@ -158,6 +158,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
                 </IconButton>
               }
               contents={renderOverflowExportDataMenu()}
+              tooltipText={tooltipText.exportProjectData}
             />
           )}
         </ProjectTitleWrapper>

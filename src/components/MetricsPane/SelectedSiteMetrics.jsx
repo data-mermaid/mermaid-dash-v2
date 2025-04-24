@@ -8,7 +8,7 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
 
 import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
-import { toastMessageText } from '../../constants/language'
+import { toastMessageText, tooltipText } from '../../constants/language'
 
 import coralReefSvg from '../../assets/coral_reef.svg'
 import mapPin from '../../assets/map-pin.png'
@@ -344,6 +344,7 @@ export const SelectedSiteMetrics = ({
                     </IconButton>
                   }
                   contents={renderOverflowExportDataMenu()}
+                  tooltipText={tooltipText.exportProjectData}
                 />
               )}
             </SelectedSiteHeaderWrapper>
