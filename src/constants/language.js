@@ -1,5 +1,5 @@
 export const headerText = {
-  redirectDashboard: 'Launch MERMAID',
+  redirectDashboard: 'MERMAID Collect',
 }
 
 export const shareView = {
