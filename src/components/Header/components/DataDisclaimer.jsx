@@ -7,6 +7,7 @@ import theme from '../../../styles/theme'
 
 const ContentText = styled.p`
   color: ${theme.color.black};
+  max-width: 800px;
 `
 
 const DataDisclaimer = ({ showDisclaimer, handleCloseDisclaimer }) => {

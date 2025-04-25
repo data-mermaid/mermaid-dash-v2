@@ -22,12 +22,6 @@ const mediaQueryWidthMax1280 = (content) => css`
   }
 `
 
-const mediaQuery1081To1300 = (content) => css`
-  @media (min-width: 1081px) and (max-width: 1300px) {
-    ${content};
-  }
-`
-
 const mediaQueryForTabletLandscapeUp = (content) => css`
   @media (min-width: 900px) {
     ${content};
@@ -55,6 +49,13 @@ const mediaQueryHeightMax680 = (content) => css`
     ${content};
   }
 `
+
+const mediaQueryHeightMax960 = (content) => css`
+  @media (max-height: 960px) {
+    ${content};
+  }
+`
+
 const hoverState = (content) => css`
   @media (hover: hover) {
     &:hover:not([disabled]) {
@@ -68,11 +69,11 @@ export {
   mediaQueryForBigDesktopUp,
   mediaQueryForTabletLandscapeUp,
   mediaQueryWidthMax1280,
-  mediaQuery1081To1300,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
   mediaQueryForDesktopUp,
   mediaQueryForMediumDesktop,
   mediaQueryHeightMax680,
+  mediaQueryHeightMax960,
   hoverState,
 }

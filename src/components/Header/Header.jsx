@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import MermaidLogo from '../../assets/mermaid-dashboard-logo.svg'
+import MermaidExploreLogo from '../../assets/mermaid-explore-logo.svg'
 import { useAuth0 } from '@auth0/auth0-react'
 import useResponsive from '../../hooks/useResponsive'
 import { LoginIcon } from '../../assets/dashboardOnlyIcons'
@@ -133,7 +133,7 @@ const Header = () => {
 
   return (
     <StyledHeader>
-      <LogoImg src={MermaidLogo} alt="MERMAID Logo" />
+      <LogoImg src={MermaidExploreLogo} alt="MERMAID Explore Logo" />
       <GlobalNav>
         <GlobalLinks />
         <HideShow

@@ -112,7 +112,7 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
     ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
-  const defaultMapZoom = isShorterWindowHeight ? 1.2 : 1.7
+  const defaultMapZoom = isShorterWindowHeight ? 1.2 : 2.5
   const initialMapZoom = isValidZoom(initialQueryParamsZoom)
     ? initialQueryParamsZoom
     : defaultMapZoom

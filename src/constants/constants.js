@@ -12,6 +12,7 @@ export const URL_PARAMS = {
   OMITTED_METHOD_DATA_SHARING: 'omitted_method_data_sharing',
   FOLLOW_SCREEN: 'follow_screen',
   SHOW_NO_DATA_PROJECTS: 'show_no_data_projects',
+  YOUR_PROJECTS_ONLY: 'your_projects_only',
   FISH_BIOMASS: 'fish_biomass',
   BENTHIC_COVER: 'benthic_cover',
   HABITAT_COMPLEXITY: 'habitat_complexity',
@@ -49,7 +50,7 @@ export const COLLECTION_METHODS = {
   },
 }
 
-export const DOWNLOAD_METHODS = {
+export const EXPORT_METHODS = {
   beltfish: {
     description: 'Fish Belt',
     protocol: 'fishbelt',

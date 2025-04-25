@@ -11,11 +11,16 @@ export const ProjectCard = styled.div`
   background-color: ${theme.color.white};
 `
 
+export const ProjectTitleWrapper = styled.div`
+  display: flex;
+  flex-grow: 1;
+  gap: 1rem;
+  align-items: flex-start;
+`
 export const ProjectTitle = styled.h2`
   margin: 0;
-  width: 30rem;
+  max-width: 200px;
   overflow-wrap: break-word;
-  flex-grow: 1;
 `
 
 export const ProjectCardContent = styled.div`
@@ -35,10 +40,6 @@ export const ProjectCardHeader = styled.div`
 
 export const CardTitle = styled.span`
   font-weight: bold;
-`
-
-export const ContactLink = styled.a`
-  color: ${theme.color.primaryColor};
 `
 
 export const DataSharingGrid = styled.div`
@@ -76,4 +77,15 @@ export const ProjectNotesIcon = styled(IconNotes)`
 
 export const DataSharingIcon = styled(IconSharing)`
   ${iconSize};
+`
+
+export const ProjectExportDataMenu = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  right: 0px;
+  width: 260px;
+  border: 1px solid ${theme.color.grey0};
+  z-index: 2;
 `

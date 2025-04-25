@@ -166,3 +166,20 @@ export const SelectedSiteContainer = styled.div`
   flex-direction: column;
   gap: 0.5rem;
 `
+
+export const SelectedSiteHeaderWrapper = styled.div`
+  display: flex;
+  gap: 5px;
+  align-items: flex-start;
+`
+
+export const SiteExportDataMenu = styled.div`
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  left: 0px;
+  width: 260px;
+  border: 1px solid ${theme.color.grey0};
+  z-index: 2;
+`

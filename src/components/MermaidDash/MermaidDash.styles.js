@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
-import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
+import { hoverState, mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
-import { IconFilter } from '../../assets/icons'
-import { ButtonPrimary, ButtonSecondary } from '../generic'
+import { IconDown, IconFilter, IconUp } from '../../assets/icons'
+import { ButtonPrimary, ButtonSecondary, IconButton } from '../generic'
 
 export const StyledDashboardContainer = styled.div`
   display: flex;
@@ -161,9 +161,8 @@ export const StyledChevronSpan = styled.span`
   gap: 1rem;
 `
 
-export const FilterDownloadWrapper = styled.div`
+export const FilterPaneExportButtonWrapper = styled.div`
   display: flex;
-  gap: 1px;
   background: white;
   margin: 10px;
   height: 40px;
@@ -172,23 +171,100 @@ export const FilterDownloadWrapper = styled.div`
   box-shadow: 0px -4px 10px rgba(0, 0, 0, 0.15);
 `
 
-export const FilterDownloadButton = styled(ButtonPrimary)`
-  width: ${(props) => (props.$isAuthenticated ? '90%' : '100%')};
+export const FilterPaneExportButton = styled(ButtonPrimary)`
+  width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+`
+
+export const ExportMenuButton = styled.button`
+  border-width: 1px 0px 0px 0px;
+  background: none;
+  cursor: pointer;
+  height: 50px;
+  text-align: left;
+  padding: 10px;
+  ${hoverState(css`
+    background-color: ${theme.color.tableRowHover};
+  `)}
+
+  &:disabled {
+    background-color: ${theme.color.grey1};
+    cursor: not-allowed;
+  }
+`
+
+export const ExpressExportMenu = styled.div`
+  display: flex;
+  flex-direction: column;
+`
+
+export const ExpressExportMenuHeaderItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  height: 50px;
+  padding: 10px;
+`
+
+export const ExpressExportMenuRow = styled.div`
+  display: flex;
+`
+
+export const ExportMoreInfoButton = styled(IconButton)`
+  padding: 0 10px;
+  cursor: pointer;
+  ${hoverState(css`
+    background-color: ${theme.color.secondaryColor};
+  `)}
+
+  &:disabled {
+    background-color: ${theme.color.grey1};
+    cursor: not-allowed;
+  }
+`
+
+export const ExpressExportMenuItem = styled.button`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  padding-left: 10px;
+  background: none;
+  border: none;
+  cursor: pointer;
   flex-grow: 1;
+
+  ${hoverState(css`
+    background-color: ${theme.color.tableRowHover};
+  `)}
+
+  &:disabled {
+    background-color: ${theme.color.grey1};
+    cursor: not-allowed;
+  }
 `
 
-export const GFCRDataDownloadButton = styled(ButtonPrimary)`
-  height: 100%;
-`
-
-export const DownloadMenu = styled.div`
+export const ExportDataMenu = styled.div`
   position: absolute;
   display: flex;
-  color: ${theme.color.white};
   flex-direction: column;
-  align-items: flex-end;
   bottom: 38px;
-  width: 220px;
-  left: -183px;
+  background-color: white;
+  right: 0;
+  width: 100%;
+  border: 1px solid ${theme.color.grey0};
+`
+
+export const MediumIconUp = styled(IconUp)`
+  width: ${theme.typography.mediumIconSize};
+  height: ${theme.typography.mediumIconSize};
+`
+
+export const MediumIconDown = styled(IconDown)`
+  width: ${theme.typography.mediumIconSize};
+  height: ${theme.typography.mediumIconSize};
 `
