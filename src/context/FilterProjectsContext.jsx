@@ -215,29 +215,46 @@ export const FilterProjectsProvider = ({ children }) => {
   ])
 
   const isRecordWithinMapBounds = useCallback((record, mapBbox) => {
-    const isWithinLatitude =
-      record.latitude >= mapBbox['_sw']?.lat && record.latitude <= mapBbox['_ne']?.lat
+    const normalizeLongitude = (lon) => {
+      let lng = lon
 
-    const normalizeLng = (lng) => {
-      // Use modulo to handle any number of rotations around the globe
-      lng = (lng + 180) % 360
-      // Adjust the result to be in the range [-180, 180)
-      if (lng < 0) {
+      while (lng < -180) {
         lng += 360
       }
+      while (lng > 180) {
+        lng -= 360
+      }
 
-      return lng - 180
+      return lng
     }
 
-    const swLng = normalizeLng(mapBbox['_sw']?.lng)
-    const neLng = normalizeLng(mapBbox['_ne']?.lng)
+    const { _sw, _ne } = mapBbox
+    const x1 = _sw.lng,
+      x2 = _ne.lng
+    const y1 = _sw.lat,
+      y2 = _ne.lat
 
-    const isWithinLongitude =
-      swLng <= neLng
-        ? record.longitude >= swLng && record.longitude <= neLng
-        : record.longitude >= swLng || record.longitude <= neLng
+    const searchBoxes = []
 
-    return isWithinLatitude && isWithinLongitude
+    if (x1 < -180 && x2 > 180) {
+      searchBoxes.push([-180, y1, 180, y2])
+    } else if (x1 >= -180 && x2 > 180) {
+      searchBoxes.push([x1, y1, 180, y2])
+      searchBoxes.push([-180, y1, normalizeLongitude(x2), y2])
+    } else if (x1 < -180 && x2 <= 180) {
+      searchBoxes.push([-180, y1, x2, y2])
+      searchBoxes.push([normalizeLongitude(x1), y1, 180, y2])
+    } else {
+      searchBoxes.push([x1, y1, x2, y2])
+    }
+
+    return searchBoxes.some(
+      ([minX, minY, maxX, maxY]) =>
+        record.longitude >= minX &&
+        record.longitude <= maxX &&
+        record.latitude >= minY &&
+        record.latitude <= maxY,
+    )
   }, [])
 
   const noDataProjects = useMemo(
