@@ -80,7 +80,7 @@ const isValidLatLng = (lat, lng) => {
 }
 
 const isValidZoom = (zoom) => {
-  return zoom >= 1.75 && zoom <= 20 && zoom !== null
+  return zoom >= 0 && zoom <= 20 && zoom !== null
 }
 
 const sitesSource = {
@@ -91,7 +91,7 @@ const sitesSource = {
 }
 
 const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
-  const { isDesktopWidth } = useResponsive()
+  const { isDesktopWidth, isShorterWindowHeight } = useResponsive()
   const {
     displayedProjects,
     enableFollowScreen,
@@ -112,7 +112,7 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
     ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
-  const defaultMapZoom = 1.75
+  const defaultMapZoom = isShorterWindowHeight ? 1.2 : 2.5
   const initialMapZoom = isValidZoom(initialQueryParamsZoom)
     ? initialQueryParamsZoom
     : defaultMapZoom
@@ -282,7 +282,6 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
           longitude: initialMapCenter?.[1] ?? defaultLon,
           latitude: initialMapCenter?.[0] ?? defaultLat,
           zoom: initialMapZoom ?? defaultMapZoom,
-          minZoom: 1.75,
         }}
         mapStyle={`https://api.maptiler.com/maps/satellite/style.json?key=${import.meta.env.VITE_REACT_APP_MAP_TILER_API_KEY}`}
         onLoad={handleMapLoad}
