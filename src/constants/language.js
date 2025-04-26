@@ -4,7 +4,7 @@ export const headerText = {
 
 export const shareView = {
   headerButton: 'Share this view',
-  modalHeader: 'Share this view of the dashboard',
+  modalHeader: 'Share this view of MERMAID Explore',
 }
 
 export const filterPane = {
@@ -33,7 +33,7 @@ export const exportModal = {
 export const errorModal = {
   title: 'Error fetching data',
   content:
-    'There was an issue getting data for the Dashboard. If this problem persists, please contact',
+    'There was an issue getting data for MERMAID Explore. If this problem persists, please contact',
 }
 
 export const successExportModal = {
