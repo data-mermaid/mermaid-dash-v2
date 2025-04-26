@@ -32,7 +32,7 @@ export const FilterProjectsProvider = ({ children }) => {
   const [remainingDisplayedProjectNames, setRemainingDisplayedProjectNames] = useState([])
   const [allProjectsFinishedFiltering, setAllProjectsFinishedFiltering] = useState(false)
   const [showProjectsWithNoRecords, setShowProjectsWithNoRecords] = useState(true)
-  const [enableFollowScreen, setEnableFollowScreen] = useState(true)
+  const [enableFollowScreen, setEnableFollowScreen] = useState(false)
   const [mapBbox, setMapBbox] = useState({})
 
   const filteredSurveys = displayedProjects.flatMap((project) => project.records)
