@@ -352,9 +352,7 @@ const FilterPane = () => {
           <StyledHeader>Your Data</StyledHeader>
           {isAuthenticated ? (
             <StyledCategoryContainer>
-              <StyledClickableArea
-                onClick={() => handleYourDataFilter({ target: { checked: !showYourData } })}
-              >
+              <StyledClickableArea>
                 <input
                   type="checkbox"
                   name="yourData"
