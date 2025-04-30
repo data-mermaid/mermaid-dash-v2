@@ -62,7 +62,6 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     data_policy_benthiclit: dataSharingBenthiclit,
     data_policy_bleachingqc: dataSharingBleachingqc,
   } = selectedProject
-  console.log('selectedProject', selectedProject)
   const protocolSurveyCounts = getProtocolSurveyCounts(selectedProject?.records)
 
   const handleClearProject = () => {
