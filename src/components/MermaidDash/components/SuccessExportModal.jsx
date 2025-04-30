@@ -63,7 +63,7 @@ const SuccessExportModal = ({
             <li>{successExportModal.metadataExport}</li>
             <li>
               {successExportModal.sampleEventLevelExport(selectedExportDataSharingPolicy)}{' '}
-              {sampleEventLevelContactAdminOrSurveyCount}
+              {sampleEventLevelContactAdminOrSurveyCount}{' '}
               {selectedExportDataSharingPolicy === 'private' && <>{contactAdminsLink})</>}
             </li>
             <li>
