@@ -41,6 +41,22 @@ export const successExportModal = {
   content: (email) => {
     return `An email has been sent to ${email}. This can sometimes take up to 15 minutes.`
   },
+  exportDataInfoHeader: 'Included in this export',
+  metadataExport: 'Metadata for this project',
+  sampleEventLevelExport: (dataSharing) => {
+    if (dataSharing === 'private') {
+      return 'No sample event level data'
+    }
+
+    return 'Sample event level data'
+  },
+  observationLevelExport: (dataSharing) => {
+    if (dataSharing !== 'public') {
+      return 'No observation level data'
+    }
+
+    return 'Observation level data'
+  },
   citationHeader: 'Please credit the data owners.',
   citationContent:
     'Suggested citations can be found in all tabs of xlsx files you are exporting. Please ensure you cite the data you have exported in any publications to properly credit the data owners.',
