@@ -21,7 +21,8 @@ const SuccessExportModal = ({
   projectId = null,
 }) => {
   const { mermaidUserData } = useContext(FilterProjectsContext)
-  const contactAdminsLink = (
+
+  const contactAdminsLink = projectId && (
     <a
       href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
       target="_blank"
@@ -31,27 +32,38 @@ const SuccessExportModal = ({
     </a>
   )
 
-  const sampleEventContactAdminOrSurveyCount =
-    selectedExportDataSharingPolicy === 'private'
-      ? `(This method is set to private.`
-      : `(${pluralizeWordWithCount(selectedExportSurveyCount, 'survey')})`
+  const getContactAdminOrSurveyCount = (policy, count, isObservationLevel = false) => {
+    if (policy === 'private' && !isObservationLevel) {
+      return `(This method is set to private.`
+    }
+    if (policy !== 'public' && isObservationLevel) {
+      return `(This method is set to ${policy}.`
+    }
+    return `(${pluralizeWordWithCount(count, 'survey')})`
+  }
 
-  const observationLevelContactAdminOrSurveyCount =
-    selectedExportDataSharingPolicy !== 'public'
-      ? `(This method is set to ${selectedExportDataSharingPolicy}.`
-      : `(${pluralizeWordWithCount(selectedExportSurveyCount, 'survey')})`
+  const sampleEventLevelContactAdminOrSurveyCount = getContactAdminOrSurveyCount(
+    selectedExportDataSharingPolicy,
+    selectedExportSurveyCount,
+  )
+
+  const observationLevelContactAdminOrSurveyCount = getContactAdminOrSurveyCount(
+    selectedExportDataSharingPolicy,
+    selectedExportSurveyCount,
+    true,
+  )
 
   const modalContent = (
     <>
-      <p>{successExportModal.content(mermaidUserData.email)} </p>
-      {projectId !== null && (
+      <p>{successExportModal.content(mermaidUserData.email)}</p>
+      {projectId && (
         <CitationContainer>
           <h4>{successExportModal.exportDataInfoHeader}</h4>
           <ul>
             <li>{successExportModal.metadataExport}</li>
             <li>
               {successExportModal.sampleEventLevelExport(selectedExportDataSharingPolicy)}{' '}
-              {sampleEventContactAdminOrSurveyCount}
+              {sampleEventLevelContactAdminOrSurveyCount}
               {selectedExportDataSharingPolicy === 'private' && <>{contactAdminsLink})</>}
             </li>
             <li>
