@@ -2,7 +2,7 @@ import { useContext } from 'react'
 import PropTypes from 'prop-types'
 import theme from '../../../styles/theme'
 import styled from 'styled-components'
-import { successExportModal } from '../../../constants/language'
+import { buttonOrLinkText, successExportModal } from '../../../constants/language'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import { Modal, RightFooter, ButtonSecondary } from '../../generic'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
@@ -28,9 +28,25 @@ const SuccessExportModal = ({
       target="_blank"
       rel="noopener noreferrer"
     >
-      Contact admins
+      {buttonOrLinkText.contactAdmins}
     </a>
   )
+
+  const getSampleEventLevelExportText = (dataSharing) => {
+    if (dataSharing === 'private') {
+      return successExportModal.noSampleEventLevelData
+    }
+
+    return successExportModal.sampleEventLevelExport
+  }
+
+  const getObservationLevelExportText = (dataSharing) => {
+    if (dataSharing !== 'public') {
+      return successExportModal.noObservationLevelData
+    }
+
+    return successExportModal.observationLevelExport
+  }
 
   const getContactAdminOrSurveyCount = (policy, count, isObservationLevel = false) => {
     if (policy === 'private' && !isObservationLevel) {
@@ -62,12 +78,12 @@ const SuccessExportModal = ({
           <ul>
             <li>{successExportModal.metadataExport}</li>
             <li>
-              {successExportModal.sampleEventLevelExport(selectedExportDataSharingPolicy)}{' '}
+              {getSampleEventLevelExportText(selectedExportDataSharingPolicy)}{' '}
               {sampleEventLevelContactAdminOrSurveyCount}{' '}
               {selectedExportDataSharingPolicy === 'private' && <>{contactAdminsLink})</>}
             </li>
             <li>
-              {successExportModal.observationLevelExport(selectedExportDataSharingPolicy)}{' '}
+              {getObservationLevelExportText(selectedExportDataSharingPolicy)}{' '}
               {observationLevelContactAdminOrSurveyCount}{' '}
               {selectedExportDataSharingPolicy !== 'public' && <>{contactAdminsLink})</>}
             </li>
