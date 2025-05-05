@@ -110,7 +110,6 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const initialQueryParamsLng = initialQueryParams.get('lng')
   const initialQueryParamsZoom = initialQueryParams.get('zoom')
   const queryParamsBbox = initialQueryParams.get('bbox')
-  // console.log('queryParamsBbox', queryParamsBbox)
   const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
     ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
@@ -283,7 +282,9 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   }
 
   const handleMapLoad = () => {
-    if (!mapRef.current) {return}
+    if (!mapRef.current) {
+      return
+    }
 
     const map = mapRef.current.getMap()
 
