@@ -92,7 +92,6 @@ export const TimeSeriesFishBiomass = () => {
   const allSingleYear = plotlyDataConfiguration.every((data) => {
     const uniqueYears = new Set(data.x)
     return uniqueYears.size === 1
-    return uniqueYears.length === 1
   })
 
   const plotlyLayoutConfiguration = {
