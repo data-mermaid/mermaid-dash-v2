@@ -122,5 +122,9 @@ export const noDataText = {
   noChartsOnCurrentFilters: ['No data to show visualizations.', 'Try refining your filters.'],
 }
 
+export const imgIconAltText = {
+  zoomToFilteredData: 'Zoom to filtered data',
+}
+
 export const mapAttributeText =
   'Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'

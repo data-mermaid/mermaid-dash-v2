@@ -234,8 +234,14 @@ export const StyledChevronSpan = styled.span`
 export const FollowToggleContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: ${({ $mapWidth, $enableFollowScreen }) =>
-    $mapWidth < 810 ? '-9rem' : $enableFollowScreen ? '-25.3rem' : '-19.7rem'};
+  left: ${({ $mapWidth, $enableFollowScreen }) => {
+    if ($mapWidth < 830) {return '-9rem'}
+
+    // follow button sizes are different between enabled and disabled
+    // -25.3rem is the left position of the follow button when it's disabled
+    // -19.7rem is the left position of the follow button when it's enabled
+    return $enableFollowScreen ? '-25.3rem' : '-19.7rem'
+  }};
   height: 4rem;
   z-index: 100;
   display: flex;

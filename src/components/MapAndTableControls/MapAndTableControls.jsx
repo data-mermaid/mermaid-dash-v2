@@ -11,7 +11,7 @@ import useResponsive from '../../hooks/useResponsive'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
-import { mapControlButtonText, tooltipText } from '../../constants/language'
+import { imgIconAltText, mapControlButtonText, tooltipText } from '../../constants/language'
 import { URL_PARAMS } from '../../constants/constants'
 
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
@@ -141,12 +141,12 @@ const MapAndTableControls = ({
                   title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
                 >
                   <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
-                    <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
+                    <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
                   </StyledZoomToFilterIconButton>
                 </MuiTooltip>
               ) : (
                 <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
-                  <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
+                  <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
                   <span>
                     {isAnyActiveFilters()
                       ? mapControlButtonText.zoomToData

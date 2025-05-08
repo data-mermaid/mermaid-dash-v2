@@ -332,7 +332,7 @@ const MetricsPane = ({
         ) : null}
         {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
           <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
-            {mapWidth < 810 ? (
+            {mapWidth < 830 ? (
               <MuiTooltip
                 title={
                   enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
