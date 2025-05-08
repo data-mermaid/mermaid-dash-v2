@@ -22,13 +22,20 @@ const useMapRef = () => {
   }
 
   useEffect(() => {
+    let attempts = 0
+    const maxAttempts = 50
+
     const intervalId = setInterval(() => {
+      attempts++
       const mapInstance = mapRef.current?.getMap()
       const mapContainer = mapInstance?.getContainer()
 
       if (mapContainer) {
         clearInterval(intervalId)
         observeMapContainer()
+      } else if (attempts >= maxAttempts) {
+        clearInterval(intervalId)
+        console.warn('Map container not found after maximum attempts')
       }
     }, 100)
 
