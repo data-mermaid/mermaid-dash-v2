@@ -98,6 +98,13 @@ export const toastMessageText = {
   sendEmailFailed: 'Failed to send email. Please try again',
 }
 
+export const mapControlButtonText = {
+  filterMapEnabled: 'Filter to map',
+  filterMapDisabled: 'Disable filter to map',
+  zoomToData: 'Zoom to filtered data',
+  showAllData: 'Show all data',
+}
+
 export const autocompleteGroupNames = {
   countriesBasedOnCurrentFilters: 'Countries based on current filters',
   otherCountries: 'Other countries',
