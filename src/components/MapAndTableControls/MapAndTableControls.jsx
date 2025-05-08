@@ -63,7 +63,7 @@ const StyledZoomToFilterButton = styled(ButtonSecondary)`
 
 const MapAndTableControls = ({
   map = null,
-  mapWidth = null,
+  mapWidth = 0,
   view,
   setView,
   isFilterPaneShowing = false,

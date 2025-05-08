@@ -338,7 +338,7 @@ MaplibreMap.propTypes = {
   mapRef: PropTypes.shape({
     current: PropTypes.object,
   }).isRequired,
-  mapWidth: PropTypes.number.isRequired, // Added PropType for mapWidth
+  mapWidth: PropTypes.number.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool.isRequired,

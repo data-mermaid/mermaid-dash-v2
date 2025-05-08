@@ -234,8 +234,8 @@ export const StyledChevronSpan = styled.span`
 export const FollowToggleContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: ${({ $mapWidth, $buttonEnabled }) =>
-    $mapWidth < 810 ? '-9rem' : $buttonEnabled ? '-25.3rem' : '-19.7rem'};
+  left: ${({ $mapWidth, $enableFollowScreen }) =>
+    $mapWidth < 810 ? '-9rem' : $enableFollowScreen ? '-25.3rem' : '-19.7rem'};
   height: 4rem;
   z-index: 100;
   display: flex;
@@ -247,8 +247,8 @@ export const FollowToggleContainer = styled.div`
 
 export const StyledFollowIconButton = styled(ButtonSecondary)`
   height: 100%;
-  background-color: ${({ enableFollowScreen }) =>
-    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+  background-color: ${({ $enableFollowScreen }) =>
+    $enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
 `
 
 export const StyledFollowButton = styled(ButtonSecondary)`
@@ -256,8 +256,8 @@ export const StyledFollowButton = styled(ButtonSecondary)`
   flex-direction: row;
   align-items: center;
   gap: 1rem;
-  background-color: ${({ enableFollowScreen }) =>
-    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+  background-color: ${({ $enableFollowScreen }) =>
+    $enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
 `
 
 export const StyledLabel = styled.label`

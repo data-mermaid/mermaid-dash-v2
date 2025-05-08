@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const useMapRef = () => {
   const mapRef = useRef(null)
-  const [mapWidth, setMapWidth] = useState(null)
+  const [mapWidth, setMapWidth] = useState(0)
   const resizeObserverRef = useRef(null)
 
   const observeMapContainer = () => {

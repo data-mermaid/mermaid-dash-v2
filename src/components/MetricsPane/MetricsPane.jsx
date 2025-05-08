@@ -331,7 +331,7 @@ const MetricsPane = ({
           />
         ) : null}
         {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
-          <FollowToggleContainer $mapWidth={mapWidth} $buttonEnabled={enableFollowScreen}>
+          <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
             {mapWidth < 810 ? (
               <MuiTooltip
                 title={
@@ -340,7 +340,7 @@ const MetricsPane = ({
               >
                 <StyledFollowIconButton
                   onClick={handleFollowScreen}
-                  enableFollowScreen={enableFollowScreen}
+                  $enableFollowScreen={enableFollowScreen}
                 >
                   <img src={zoomToMap} alt="Update metrics based on map view" />
                 </StyledFollowIconButton>
@@ -348,7 +348,7 @@ const MetricsPane = ({
             ) : (
               <StyledFollowButton
                 onClick={handleFollowScreen}
-                enableFollowScreen={enableFollowScreen}
+                $enableFollowScreen={enableFollowScreen}
               >
                 <img src={zoomToMap} alt="Update metrics based on map view" />
                 <span>
