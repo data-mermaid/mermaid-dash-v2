@@ -30,6 +30,7 @@ import {
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import {
+  imgIconAltText,
   mapAttributeText,
   mapControlButtonText,
   noDataText,
@@ -342,7 +343,7 @@ const MetricsPane = ({
                   onClick={handleFollowScreen}
                   $enableFollowScreen={enableFollowScreen}
                 >
-                  <img src={zoomToMap} alt="Update metrics based on map view" />
+                  <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
                 </StyledFollowIconButton>
               </MuiTooltip>
             ) : (
@@ -350,7 +351,7 @@ const MetricsPane = ({
                 onClick={handleFollowScreen}
                 $enableFollowScreen={enableFollowScreen}
               >
-                <img src={zoomToMap} alt="Update metrics based on map view" />
+                <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
                 <span>
                   {enableFollowScreen
                     ? mapControlButtonText.filterMapDisabled

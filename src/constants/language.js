@@ -124,6 +124,7 @@ export const noDataText = {
 
 export const imgIconAltText = {
   zoomToFilteredData: 'Zoom to filtered data',
+  zoomToMapExtent: 'Zoom to map extent',
 }
 
 export const mapAttributeText =
