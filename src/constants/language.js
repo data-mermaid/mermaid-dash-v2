@@ -98,6 +98,13 @@ export const toastMessageText = {
   sendEmailFailed: 'Failed to send email. Please try again',
 }
 
+export const mapControlButtonText = {
+  filterMapEnabled: 'Filter to map',
+  filterMapDisabled: 'Disable filter to map',
+  zoomToData: 'Zoom to filtered data',
+  showAllData: 'Show all data',
+}
+
 export const autocompleteGroupNames = {
   countriesBasedOnCurrentFilters: 'Countries based on current filters',
   otherCountries: 'Other countries',
@@ -113,6 +120,11 @@ export const noDataText = {
   noTableData: 'No project data',
   noProjectsOnCurrentFilters: 'No projects match current filters',
   noChartsOnCurrentFilters: ['No data to show visualizations.', 'Try refining your filters.'],
+}
+
+export const imgIconAltText = {
+  zoomToFilteredData: 'Zoom to filtered data',
+  zoomToMapExtent: 'Zoom to map extent',
 }
 
 export const mapAttributeText =

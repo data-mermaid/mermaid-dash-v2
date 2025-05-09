@@ -90,7 +90,7 @@ const sitesSource = {
   clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
-const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
+const MaplibreMap = ({ mapRef, mapWidth, view, setView, isFilterPaneShowing }) => {
   const { isDesktopWidth, isShorterWindowHeight } = useResponsive()
   const {
     displayedProjects,
@@ -229,9 +229,10 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
     }
   }
 
-  const viewAndZoomControlsWrapper = mapRef.current ? (
+  const viewAndZoomControlsWrapper = mapRef.current?.getMap() ? (
     <MapAndTableControls
       map={mapRef.current.getMap()}
+      mapWidth={mapWidth}
       view={view}
       setView={setView}
       isFilterPaneShowing={isFilterPaneShowing}
@@ -337,6 +338,7 @@ MaplibreMap.propTypes = {
   mapRef: PropTypes.shape({
     current: PropTypes.object,
   }).isRequired,
+  mapWidth: PropTypes.number.isRequired,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool.isRequired,
