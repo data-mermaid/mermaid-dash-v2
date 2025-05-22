@@ -22,13 +22,20 @@ import {
   DisplayedProjectsMetricsWrapper,
   ChartsWrapper,
   FollowToggleContainer,
-  FollowButton,
   MapAttributeRow,
   CircleLoader,
+  StyledFollowIconButton,
+  StyledFollowButton,
 } from './MetricsPane.styles'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import { mapAttributeText, noDataText, tooltipText } from '../../constants/language'
+import {
+  imgIconAltText,
+  mapAttributeText,
+  mapControlButtonText,
+  noDataText,
+  tooltipText,
+} from '../../constants/language'
 import { URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
@@ -53,6 +60,7 @@ const MetricsPane = ({
   showLoadingIndicator,
   isMetricsPaneShowing,
   view,
+  mapWidth,
 }) => {
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
@@ -324,16 +332,33 @@ const MetricsPane = ({
           />
         ) : null}
         {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
-          <FollowToggleContainer>
-            <MuiTooltip
-              title={
-                enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
-              }
-            >
-              <FollowButton onClick={handleFollowScreen} enableFollowScreen={enableFollowScreen}>
-                <img src={zoomToMap} alt="Update metrics based on map view" />
-              </FollowButton>
-            </MuiTooltip>
+          <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
+            {mapWidth < 830 ? (
+              <MuiTooltip
+                title={
+                  enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
+                }
+              >
+                <StyledFollowIconButton
+                  onClick={handleFollowScreen}
+                  $enableFollowScreen={enableFollowScreen}
+                >
+                  <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
+                </StyledFollowIconButton>
+              </MuiTooltip>
+            ) : (
+              <StyledFollowButton
+                onClick={handleFollowScreen}
+                $enableFollowScreen={enableFollowScreen}
+              >
+                <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
+                <span>
+                  {enableFollowScreen
+                    ? mapControlButtonText.filterMapDisabled
+                    : mapControlButtonText.filterMapEnabled}
+                </span>
+              </StyledFollowButton>
+            )}
           </FollowToggleContainer>
         ) : null}
         {isDesktopWidth ? (
@@ -361,6 +386,7 @@ MetricsPane.propTypes = {
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
+  mapWidth: PropTypes.number.isRequired,
 }
 
 export default MetricsPane

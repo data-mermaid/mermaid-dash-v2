@@ -69,7 +69,7 @@ const Header = () => {
       <>
         {isDesktopWidth && (
           <StyledNavLink
-            href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK}
+            href={import.meta.env.VITE_REACT_APP_MERMAID_COLLECT_LINK}
             target="_blank"
           >
             {headerText.redirectDashboard}
@@ -84,7 +84,7 @@ const Header = () => {
     return (
       <UserMenu>
         {isMobileWidth && (
-          <MenuLink href={import.meta.env.VITE_REACT_APP_MERMAID_DASHBOARD_LINK} target="_blank">
+          <MenuLink href={import.meta.env.VITE_REACT_APP_MERMAID_COLLECT_LINK} target="_blank">
             {headerText.redirectDashboard}
           </MenuLink>
         )}
