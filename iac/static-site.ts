@@ -5,7 +5,7 @@ import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment'
 import * as cloudfront_origins from 'aws-cdk-lib/aws-cloudfront-origins'
-import { CfnOutput, RemovalPolicy, Stack } from 'aws-cdk-lib'
+import { CfnOutput, RemovalPolicy, Stack, Size } from 'aws-cdk-lib'
 import * as iam from 'aws-cdk-lib/aws-iam'
 import { Construct } from 'constructs'
 
@@ -122,6 +122,8 @@ export class StaticSite extends Construct {
       destinationBucket: siteBucket,
       distribution,
       distributionPaths: ['/*'],
+      memoryLimit: 1024,
+      ephemeralStorageSize: Size.mebibytes(2048),
     })
 
     // export
