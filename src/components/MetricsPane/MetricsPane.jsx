@@ -30,7 +30,7 @@ import {
 } from './MetricsPane.styles'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import { URL_PARAMS } from '../../constants/constants'
+import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
@@ -81,7 +81,7 @@ const MetricsPane = ({
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const noDataYearRangeText = t('no_data_year_range')
-  const isMapView = view === 'mapView'
+  const isMapView = view === MAP_VIEW
   const displayedProjectCount = displayedProjects?.length || 0
 
   const calculateMetrics = useMemo(() => {
@@ -431,7 +431,7 @@ const MetricsPane = ({
 MetricsPane.propTypes = {
   isMetricsPaneShowing: PropTypes.bool.isRequired,
   setIsMetricsPaneShowing: PropTypes.func.isRequired,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
   mapWidth: PropTypes.number.isRequired,

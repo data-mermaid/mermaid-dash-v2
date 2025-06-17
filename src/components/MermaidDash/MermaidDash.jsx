@@ -46,7 +46,7 @@ import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconDownload, IconFilter, IconInfo } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
-import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
+import { EXPORT_METHODS, MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { Modal } from '../generic'
@@ -86,7 +86,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
   const [isExportModalShowing, setIsExportModalShowing] = useState(false)
   const [isExportGFCRModalShowing, setIsExportGFCRModalShowing] = useState(false)
-  const [view, setView] = useState('mapView')
+  const [view, setView] = useState(MAP_VIEW)
   const location = useLocation()
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
@@ -205,11 +205,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get(URL_PARAMS.VIEW) === 'tableView' && isDesktopWidth) {
-      setView('tableView')
+    if (queryParams.get(URL_PARAMS.VIEW) === TABLE_VIEW && isDesktopWidth) {
+      setView(TABLE_VIEW)
       return
     }
-    setView('mapView')
+    setView(MAP_VIEW)
     queryParams.delete(URL_PARAMS.VIEW)
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
@@ -217,7 +217,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const _switchToMapViewIfResizedToMobileWidth = useEffect(() => {
     const handleResize = () => {
       if (isMobileWidth) {
-        setView('mapView')
+        setView(MAP_VIEW)
       }
     }
     window.addEventListener('resize', handleResize)
@@ -225,7 +225,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   }, [isMobileWidth])
 
   const _restartObserverWhenSwitchToMapView = useEffect(() => {
-    if (view === 'mapView' && mapWidth === 0) {
+    if (view === MAP_VIEW && mapWidth === 0) {
       restartObserver()
     }
   }, [view, mapWidth, restartObserver])
@@ -507,7 +507,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       </StyledMobileFollowMapButton>
       <StyledContentContainer>
         {renderFilter(isFilterModalShowing)}
-        {isMobileWidth || view === 'mapView' ? map : table}
+        {isMobileWidth || view === MAP_VIEW ? map : table}
         <MetricsPane
           isMetricsPaneShowing={isMetricsPaneShowing}
           setIsMetricsPaneShowing={setIsMetricsPaneShowing}
