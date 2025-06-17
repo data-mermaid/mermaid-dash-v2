@@ -81,6 +81,8 @@ const MetricsPane = ({
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
   const noDataYearRangeText = t('no_data_year_range')
+  const isMapView = view === 'mapView'
+  const displayedProjectCount = displayedProjects?.length || 0
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
@@ -109,7 +111,7 @@ const MetricsPane = ({
       })
     })
 
-    const projectWithDataCount = displayedProjects.length - projectWithoutDataCount
+    const projectWithDataCount = displayedProjects?.length - projectWithoutDataCount
     const sortedYears = Array.from(years).sort()
     const yearRange =
       sortedYears.length === 0 ? (
@@ -181,19 +183,34 @@ const MetricsPane = ({
         <MetricCardH3>{t('transect', { count: numTransects })}</MetricCardH3>
       </MetricsCard>
       <MetricsCard>
-        <MetricCardPMedium>{numProjectsWithData.toLocaleString()} </MetricCardPMedium>
+        <MetricCardPMedium>
+          {isMapView
+            ? numProjectsWithData.toLocaleString()
+            : displayedProjectCount.toLocaleString()}
+        </MetricCardPMedium>
         <MetricCardH3>
           {t('project', { count: numProjectsWithData })}
-          {numProjectsWithoutData > 0 && (
+          {isMapView && numProjectsWithoutData > 0 && (
             <MuiTooltip
-              title={t('project_no_data_count', {
-                count: numProjectsWithoutData,
-              })}
+              title={
+                <>
+                  <div>
+                    {t('project_with_data_count', {
+                      count: numProjectsWithData,
+                    })}
+                  </div>
+                  <div>
+                    {t('project_without_data_count', {
+                      count: numProjectsWithoutData,
+                    })}
+                  </div>
+                </>
+              }
               placement="bottom"
               bgColor={theme.color.primaryColor}
               tooltipTextColor={theme.color.white}
             >
-              <IconButton type="button">
+              <IconButton type="button" aria-label={t('project_count_information')}>
                 <IconInfo />
               </IconButton>
             </MuiTooltip>
@@ -368,7 +385,7 @@ const MetricsPane = ({
             isRelativelyPositioned={true}
           />
         ) : null}
-        {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
+        {isDesktopWidth && isMapView && isMetricsPaneShowing && !selectedMarkerId ? (
           <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
             {mapWidth < 830 ? (
               <MuiTooltip

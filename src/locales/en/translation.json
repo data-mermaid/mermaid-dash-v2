@@ -3,8 +3,10 @@
     "transect_other": "transects",
     "project_one": "project",
     "project_other": "projects",
-    "project_no_data_count_one": "{{count}} project with no data",
-    "project_no_data_count_other": "{{count}} projects with no data",
+    "project_with_data_count_one": "{{count}} Project with data",
+    "project_with_data_count_other": "{{count}} Projects with data",
+    "project_without_data_count_one": "{{count}} Project without data",
+    "project_without_data_count_other": "{{count}} Projects without data",
     "no_data_year_range": "No data to obtain year range",
     "no_data_visualization": "No data to show visualizations.",
     "refine_filters": "Try refining your filters.",
@@ -16,5 +18,6 @@
     "hide_metrics": "Hide metrics",
     "map_attribute_source": "Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
     "zoom_to_filtered_data": "Zoom to filtered data",
-    "zoom_to_map_extent": "Zoom to map extent"
+    "zoom_to_map_extent": "Zoom to map extent",
+    "project_count_information": "project count information"
 }
