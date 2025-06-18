@@ -51,6 +51,8 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
 
   const [truncateNotes, setTruncateNotes] = useState(true)
   const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
+  const [selectedExportDataSharingPolicy, setSelectedExportDataSharingPolicy] = useState(null)
+  const [selectedExportSurveyCount, setSelectedExportSurveyCount] = useState(0)
   const {
     project_name: projectName,
     project_id: projectId,
@@ -76,8 +78,9 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     setTruncateNotes(projectNotes?.length > MAX_NOTES_LENGTH)
   }, [selectedProject, projectNotes])
 
-  const handleExpressExport = async (method) => {
+  const handleExpressExport = async (method, surveyCount) => {
     try {
+      setSelectedExportSurveyCount(surveyCount)
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
@@ -85,6 +88,8 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       }
 
       const selectedMethodProtocol = EXPORT_METHODS[method]?.protocol
+      const selectedMethodPolicy = EXPORT_METHODS[method]?.policy
+      const exportDataSharingPolicy = selectedProject[selectedMethodPolicy]
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
@@ -106,6 +111,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         throw new Error(`Failed request - ${response.status}`)
       }
 
+      setSelectedExportDataSharingPolicy(exportDataSharingPolicy)
       setIsSuccessExportModalOpen(true)
     } catch (error) {
       console.error(error)
@@ -128,7 +134,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
               <ExpressExportMenuRow key={method}>
                 <ExpressExportMenuItem
                   onClick={() => {
-                    handleExpressExport(method)
+                    handleExpressExport(method, count)
                   }}
                   disabled={count === 0}
                 >
@@ -220,6 +226,9 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
       <SuccessExportModal
         isOpen={isSuccessExportModalOpen}
         onDismiss={() => setIsSuccessExportModalOpen(false)}
+        selectedExportDataSharingPolicy={selectedExportDataSharingPolicy}
+        selectedExportSurveyCount={selectedExportSurveyCount}
+        projectId={projectId}
       />
     </>
   )

@@ -124,6 +124,8 @@ export const SelectedSiteMetrics = ({
   const [isSuggestedCitationTruncated, setIsSuggestedCitationTruncated] = useState(
     isInitialSuggestedCitationTruncated,
   )
+  const [selectedExportDataSharingPolicy, setSelectedExportDataSharingPolicy] = useState(null)
+  const [selectedExportSurveyCount, setSelectedExportSurveyCount] = useState(0)
 
   const truncatedSiteNotes = <>{siteNotes.slice(0, 249)}... </>
   const toggleSiteNotesTruncatedButton = isInitialSiteNotesTruncated ? (
@@ -260,8 +262,9 @@ export const SelectedSiteMetrics = ({
       )
     })
 
-  const handleExpressExport = async (method) => {
+  const handleExpressExport = async (method, surveyCount) => {
     try {
+      setSelectedExportSurveyCount(surveyCount)
       const token = isAuthenticated ? await getAccessTokenSilently() : ''
 
       if (!token) {
@@ -269,6 +272,8 @@ export const SelectedSiteMetrics = ({
       }
 
       const selectedMethodProtocol = EXPORT_METHODS[method]?.protocol
+      const selectedMethodPolicy = EXPORT_METHODS[method]?.policy
+      const exportDataSharingPolicy = selectedSampleEvent[selectedMethodPolicy]
 
       const reportEndpoint = `${import.meta.env.VITE_REACT_APP_AUTH0_AUDIENCE}/v1/reports/`
       const requestData = {
@@ -290,6 +295,7 @@ export const SelectedSiteMetrics = ({
         throw new Error(`Failed request - ${response.status}`)
       }
 
+      setSelectedExportDataSharingPolicy(exportDataSharingPolicy)
       setIsSuccessExportModalOpen(true)
     } catch (error) {
       console.error(error)
@@ -312,7 +318,7 @@ export const SelectedSiteMetrics = ({
               <ExpressExportMenuRow key={method}>
                 <ExpressExportMenuItem
                   onClick={() => {
-                    handleExpressExport(method)
+                    handleExpressExport(method, count)
                   }}
                   disabled={count === 0}
                 >
@@ -546,6 +552,9 @@ export const SelectedSiteMetrics = ({
       <SuccessExportModal
         isOpen={isSuccessExportModalOpen}
         onDismiss={() => setIsSuccessExportModalOpen(false)}
+        selectedExportDataSharingPolicy={selectedExportDataSharingPolicy}
+        selectedExportSurveyCount={selectedExportSurveyCount}
+        projectId={projectId}
       />
     </SelectedSiteContainer>
   )

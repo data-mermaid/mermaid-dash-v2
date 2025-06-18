@@ -11,7 +11,7 @@ import useResponsive from '../../hooks/useResponsive'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
-import { tooltipText } from '../../constants/language'
+import { imgIconAltText, mapControlButtonText, tooltipText } from '../../constants/language'
 import { URL_PARAMS } from '../../constants/constants'
 
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
@@ -27,7 +27,7 @@ const ControlContainer = styled.div`
   top: 1.3rem;
   left: 7rem;
   height: 4rem;
-  z-index: 10;
+  z-index: 2;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -42,7 +42,7 @@ const StyledViewToggleContainer = styled.div`
   flex-direction: row;
 `
 
-const StyledViewToggleSecondaryButton = styled(ButtonSecondary)`
+const StyledZoomToFilterIconButton = styled(ButtonSecondary)`
   height: 100%;
   margin: 0rem 1rem;
 `
@@ -53,7 +53,21 @@ const StyledDataViewButton = styled(ButtonSecondary)`
     isActive ? theme.color.secondaryColor : theme.color.white};
 `
 
-const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = false }) => {
+const StyledZoomToFilterButton = styled(ButtonSecondary)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin: 0rem 1rem;
+`
+
+const MapAndTableControls = ({
+  map = null,
+  mapWidth = 0,
+  view,
+  setView,
+  isFilterPaneShowing = false,
+}) => {
   const {
     displayedProjects,
     isAnyActiveFilters,
@@ -122,13 +136,24 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
           </MuiTooltip>
           {view === 'mapView' ? (
             <>
-              <MuiTooltip
-                title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
-              >
-                <StyledViewToggleSecondaryButton onClick={handleZoomToFilteredData}>
-                  <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
-                </StyledViewToggleSecondaryButton>
-              </MuiTooltip>
+              {mapWidth < 500 ? (
+                <MuiTooltip
+                  title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
+                >
+                  <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
+                    <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
+                  </StyledZoomToFilterIconButton>
+                </MuiTooltip>
+              ) : (
+                <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
+                  <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
+                  <span>
+                    {isAnyActiveFilters()
+                      ? mapControlButtonText.zoomToData
+                      : mapControlButtonText.showAllData}
+                  </span>
+                </StyledZoomToFilterButton>
+              )}
               {!isFilterPaneShowing &&
               isAnyActiveFilters() &&
               getActiveProjectCount() < projectData?.count ? (
@@ -150,6 +175,7 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
 
 MapAndTableControls.propTypes = {
   map: PropTypes.object,
+  mapWidth: PropTypes.number,
   view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool,

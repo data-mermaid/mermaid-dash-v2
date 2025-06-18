@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext, useRef } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -9,6 +9,8 @@ import { toast } from 'react-toastify'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
+import useFilterPaneControl from '../../hooks/useFilterPaneControl'
+import useMapRef from '../../hooks/useMapRef'
 
 import {
   StyledDashboardContainer,
@@ -54,7 +56,6 @@ import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
-import useLocalStorage from '../../hooks/useLocalStorage'
 import ExportModal from './components/ExportModal'
 import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
@@ -80,10 +81,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
 
-  const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage(
-    'isFilterPaneShowing',
-    false,
-  )
+  const [isFilterPaneShowing, setIsFilterPaneShowing] = useFilterPaneControl('showFilterPane')
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
   const [isExportModalShowing, setIsExportModalShowing] = useState(false)
@@ -99,7 +97,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
   const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
 
-  const mapRef = useRef()
+  const { mapRef, mapWidth, restartObserver } = useMapRef()
 
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
@@ -225,6 +223,12 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [isMobileWidth])
+
+  const _restartObserverWhenSwitchToMapView = useEffect(() => {
+    if (view === 'mapView' && mapWidth === 0) {
+      restartObserver()
+    }
+  }, [view, mapWidth, restartObserver])
 
   const handleShowFilterPane = () => {
     setIsFilterPaneShowing(!isFilterPaneShowing)
@@ -463,11 +467,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     <StyledMapContainer>
       <MaplibreMap
         mapRef={mapRef}
-        isFilterPaneShowing={isFilterPaneShowing}
-        isMetricsPaneShowing={isMetricsPaneShowing}
+        mapWidth={mapWidth}
         view={view}
         setView={setView}
-        projectDataCount={projectData?.count ?? 0}
+        isFilterPaneShowing={isFilterPaneShowing}
       />
     </StyledMapContainer>
   )
@@ -511,6 +514,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
           view={view}
           showLoadingIndicator={showLoadingIndicator}
           setShowLoadingIndicator={setShowLoadingIndicator}
+          mapWidth={mapWidth}
         />
       </StyledContentContainer>
       <ErrorFetchingModal
