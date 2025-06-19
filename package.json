@@ -30,6 +30,8 @@
     "dayjs": "^1.11.11",
     "eslint-plugin-jsx-a11y": "^6.8.0",
     "eslint-plugin-testing-library": "^6.2.2",
+    "i18next": "^25.2.1",
+    "i18next-resources-to-backend": "^1.2.1",
     "leaflet": "^1.9.4",
     "leaflet-minimap": "^3.6.1",
     "leaflet.markercluster": "^1.5.3",
@@ -39,6 +41,7 @@
     "react": "^18.2.0",
     "react-csv": "^2.2.2",
     "react-dom": "^18.2.0",
+    "react-i18next": "^15.5.3",
     "react-leaflet": "^4.2.1",
     "react-leaflet-cluster": "^2.1.0",
     "react-map-gl": "^7.1.7",
@@ -47,7 +50,8 @@
     "react-table": "^7.8.0",
     "react-toastify": "^10.0.5",
     "styled-components": "5",
-    "vite-plugin-babel-macros": "^1.0.6"
+    "vite-plugin-babel-macros": "^1.0.6",
+    "vite-plugin-i18next-loader": "^3.1.2"
   },
   "devDependencies": {
     "@babel/preset-react": "^7.24.1",
