@@ -1,14 +1,14 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
 import { EXPORT_METHODS } from '../../../constants/constants'
-import { exportModal, successExportModal, toastMessageText } from '../../../constants/language'
 
 import {
   Modal,
@@ -50,6 +50,7 @@ const CitationContainer = styled.div`
 const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount }) => {
   const { getActiveProjectCount, mermaidUserData, userIsMemberOfProject, displayedProjects } =
     useContext(FilterProjectsContext)
+  const { t } = useTranslation()
 
   const activeProjectCount = getActiveProjectCount()
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
@@ -94,15 +95,15 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
     setExportTableData(formattedTableData.filter(({ transectCount }) => transectCount > 0))
   }, [displayedProjects, selectedMethod, mermaidUserData, userIsMemberOfProject])
 
-  const title = useMemo(() => {
+  const titleByMode = (() => {
     const titles = {
-      'no data': exportModal.noDataTitle,
-      success: exportModal.successTitle,
-      failure: exportModal.failureTitle,
+      'no data': t('no_gfcr_data_export'),
+      success: t('export_request_sent'),
+      failure: t('export_request_failed'),
     }
 
-    return titles[modalMode] || exportModal.exportTitle(exportMethodTitle)
-  }, [modalMode, exportMethodTitle])
+    return titles[modalMode] || t('export_method_data', { method: exportMethodTitle })
+  })()
 
   const handleSendEmailWithLinkSubmit = async () => {
     try {
@@ -138,7 +139,7 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
       setModalMode('success')
     } catch (error) {
       console.error(error)
-      toast.error(toastMessageText.sendEmailFailed)
+      toast.error(t('errors.send_email_failed'))
     }
   }
 
@@ -172,16 +173,16 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
 
   const successContent = (
     <>
-      <p>{successExportModal.content(mermaidUserData.email)} </p>
+      <p>{t('email_confirmation', { email: mermaidUserData.email })} </p>
       <CitationContainer>
-        <h4>{successExportModal.citationHeader}</h4>
-        <p>{successExportModal.citationContent} </p>
+        <h4>{t('credit_data_owner')}</h4>
+        <p>{t('suggested_citation')} </p>
       </CitationContainer>
     </>
   )
 
   const MODAL_CONTENT_BY_MODE = {
-    'no data': <p>{exportModal.noDataContent}</p>,
+    'no data': <p>{t('no_projects_data')}</p>,
     export: exportContent,
     success: successContent,
   }
@@ -232,7 +233,7 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      title={title}
+      title={titleByMode}
       mainContent={mainContent}
       toolbarContent={toolbarContent}
       footerContent={footerContent}

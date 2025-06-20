@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useSortBy, useTable } from 'react-table'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
@@ -11,7 +12,6 @@ import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
 import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
-import { tooltipText } from '../../../constants/language'
 
 const StyledTr = styled(Tr)`
   & > td:first-of-type {
@@ -25,6 +25,8 @@ const StyledTr = styled(Tr)`
 `
 
 const ExportTableView = ({ exportTableData }) => {
+  const { t } = useTranslation()
+
   const tableColumns = useMemo(
     () => [
       {
@@ -172,7 +174,7 @@ const ExportTableView = ({ exportTableData }) => {
                         {cell.column.Header === 'Project Name' &&
                           (isMemberOfProject ? (
                             <ResponsiveTooltip
-                              title={tooltipText.yourProject}
+                              title={t('your_projects')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
                               tooltipTextColor={theme.color.white}
@@ -183,7 +185,7 @@ const ExportTableView = ({ exportTableData }) => {
                             </ResponsiveTooltip>
                           ) : (
                             <ResponsiveTooltip
-                              title={tooltipText.contactAdmins}
+                              title={t('contact_admins')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
                               tooltipTextColor={theme.color.white}

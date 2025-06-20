@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { bbox } from '@turf/bbox'
 import { points } from '@turf/helpers'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
@@ -11,7 +12,6 @@ import useResponsive from '../../hooks/useResponsive'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
-import { imgIconAltText, mapControlButtonText, tooltipText } from '../../constants/language'
 import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
@@ -79,6 +79,7 @@ const MapAndTableControls = ({
   const { isDesktopWidth } = useResponsive()
   const location = useLocation()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const queryParams = new URLSearchParams(location.search)
 
   const handleMapView = () => {
@@ -124,12 +125,12 @@ const MapAndTableControls = ({
     <ControlContainer>
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
-          <ResponsiveTooltip title={tooltipText.mapView}>
+          <ResponsiveTooltip title={t('map_view')}>
             <StyledDataViewButton isActive={view === MAP_VIEW} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
           </ResponsiveTooltip>
-          <ResponsiveTooltip title={tooltipText.tableView}>
+          <ResponsiveTooltip title={t('table_view')}>
             <StyledDataViewButton isActive={view === TABLE_VIEW} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
@@ -138,19 +139,17 @@ const MapAndTableControls = ({
             <>
               {mapWidth < 500 ? (
                 <ResponsiveTooltip
-                  title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
+                  title={isAnyActiveFilters() ? t('zoom_to_filtered_data') : t('show_all_data')}
                 >
                   <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
-                    <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
+                    <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />
                   </StyledZoomToFilterIconButton>
                 </ResponsiveTooltip>
               ) : (
                 <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
-                  <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
+                  <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />
                   <span>
-                    {isAnyActiveFilters()
-                      ? mapControlButtonText.zoomToData
-                      : mapControlButtonText.showAllData}
+                    {isAnyActiveFilters() ? t('zoom_to_filtered_data') : t('show_all_data')}
                   </span>
                 </StyledZoomToFilterButton>
               )}

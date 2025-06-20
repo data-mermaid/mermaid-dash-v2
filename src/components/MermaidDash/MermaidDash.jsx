@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import bbox from '@turf/bbox'
 import { points } from '@turf/helpers'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
@@ -45,7 +46,6 @@ import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconDownload, IconFilter, IconInfo } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import { toastMessageText, tooltipText } from '../../constants/language'
 import { EXPORT_METHODS, MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
@@ -80,6 +80,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     isAnyActiveFilters,
     userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
+  const { t } = useTranslation()
 
   const [isFilterPaneShowing, setIsFilterPaneShowing] = useFilterPaneControl('showFilterPane')
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
@@ -279,7 +280,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       setIsSuccessExportModalOpen(true)
     } catch (error) {
       console.error(error)
-      toast.error(toastMessageText.sendEmailFailed)
+      toast.error(t('errors.send_email_failed'))
     }
   }
 
@@ -324,8 +325,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     const newState = !enableFollowScreen
     const queryParams = getURLParams()
     const followScreenToastMessage = enableFollowScreen
-      ? toastMessageText.followMapDisabled
-      : toastMessageText.followMapEnabled
+      ? t('map_view_metrics_disabled')
+      : t('map_view_metrics_enabled')
 
     if (newState) {
       queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
@@ -411,9 +412,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          <ResponsiveTooltip
-            title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
-          >
+          <ResponsiveTooltip title={isFilterPaneShowing ? t('hide_filters') : t('show_filters')}>
             {isFilterPaneShowing ? (
               <StyledChevronSpan>
                 {ARROW_LEFT} <IconFilter />
