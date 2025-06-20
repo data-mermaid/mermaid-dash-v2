@@ -50,7 +50,7 @@ import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
 import theme from '../../styles/theme'
-import MobileIconButtonTooltip from '../generic/MobileIconButtonTooltip'
+import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -188,31 +188,6 @@ const MetricsPane = ({
     </>
   )
 
-  const projectCountInfoIcon = isDesktopWidth ? (
-    <MuiTooltip
-      title={projectCountTooltipTitle}
-      placement="bottom"
-      bgColor={theme.color.primaryColor}
-      tooltipTextColor={theme.color.white}
-    >
-      <IconButton
-        type="button"
-        aria-label={t('project_count_information')}
-        style={{
-          display: 'flex',
-        }}
-      >
-        <IconInfo />
-      </IconButton>
-    </MuiTooltip>
-  ) : (
-    <MobileIconButtonTooltip
-      title={projectCountTooltipTitle}
-      placement="top"
-      ariaLabel={t('project_count_information')}
-    />
-  )
-
   const transectAndProjectCountCards = (
     <>
       <MetricsCard>
@@ -227,7 +202,24 @@ const MetricsPane = ({
         </MetricCardPMedium>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <MetricCardH3>{t('project', { count: numProjectsWithData })}</MetricCardH3>
-          {isMapView && numProjectsWithoutData > 0 && projectCountInfoIcon}
+          {isMapView && numProjectsWithoutData > 0 && (
+            <ResponsiveTooltip
+              title={projectCountTooltipTitle}
+              bgColor={theme.color.primaryColor}
+              tooltipTextColor={theme.color.white}
+              isMobileWidth={isMobileWidth}
+            >
+              <IconButton
+                type="button"
+                aria-label={t('project_count_information')}
+                style={{
+                  display: 'flex',
+                }}
+              >
+                <IconInfo />
+              </IconButton>
+            </ResponsiveTooltip>
+          )}
         </div>
       </MetricsCard>
     </>
