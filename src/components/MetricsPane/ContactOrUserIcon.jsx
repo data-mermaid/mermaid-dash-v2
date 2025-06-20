@@ -1,23 +1,24 @@
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
-import { tooltipText } from '../../constants/language'
 import theme from '../../styles/theme'
 
 import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { IconContact } from '../../assets/icons'
 
 import { IconButton } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
+import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
 
 const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
   const { userIsMemberOfProject, mermaidUserData } = useContext(FilterProjectsContext)
+  const { t } = useTranslation()
   const iconMarginTop = customStyles?.iconMarginTop || '0px'
 
   return userIsMemberOfProject(projectId, mermaidUserData) ? (
-    <MuiTooltip
-      title={tooltipText.yourProject}
+    <ResponsiveTooltip
+      title={t('your_projects')}
       placement="top"
       bgColor={theme.color.primaryColor}
       tooltipTextColor={theme.color.white}
@@ -25,10 +26,10 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
       <IconButton style={{ marginTop: iconMarginTop }}>
         <IconUserCircle />
       </IconButton>
-    </MuiTooltip>
+    </ResponsiveTooltip>
   ) : (
-    <MuiTooltip
-      title={tooltipText.contactAdmins}
+    <ResponsiveTooltip
+      title={t('contact_admins')}
       placement="top"
       bgColor={theme.color.primaryColor}
       tooltipTextColor={theme.color.white}
@@ -41,7 +42,7 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
       >
         <IconContact />
       </a>
-    </MuiTooltip>
+    </ResponsiveTooltip>
   )
 }
 

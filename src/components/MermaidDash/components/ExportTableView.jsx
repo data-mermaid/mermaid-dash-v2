@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
 import { useSortBy, useTable } from 'react-table'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import styled, { css } from 'styled-components'
 import theme from '../../../styles/theme'
@@ -10,8 +11,7 @@ import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
-import { MuiTooltip } from '../../generic/MuiTooltip'
-import { tooltipText } from '../../../constants/language'
+import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
 
 const StyledTr = styled(Tr)`
   & > td:first-of-type {
@@ -25,6 +25,8 @@ const StyledTr = styled(Tr)`
 `
 
 const ExportTableView = ({ exportTableData }) => {
+  const { t } = useTranslation()
+
   const tableColumns = useMemo(
     () => [
       {
@@ -171,8 +173,8 @@ const ExportTableView = ({ exportTableData }) => {
                         {view}{' '}
                         {cell.column.Header === 'Project Name' &&
                           (isMemberOfProject ? (
-                            <MuiTooltip
-                              title={tooltipText.yourProject}
+                            <ResponsiveTooltip
+                              title={t('your_projects')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
                               tooltipTextColor={theme.color.white}
@@ -180,10 +182,10 @@ const ExportTableView = ({ exportTableData }) => {
                               <IconButton>
                                 <IconUserCircle />
                               </IconButton>
-                            </MuiTooltip>
+                            </ResponsiveTooltip>
                           ) : (
-                            <MuiTooltip
-                              title={tooltipText.contactAdmins}
+                            <ResponsiveTooltip
+                              title={t('contact_admins')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
                               tooltipTextColor={theme.color.white}
@@ -195,7 +197,7 @@ const ExportTableView = ({ exportTableData }) => {
                               >
                                 <IconContact />
                               </a>
-                            </MuiTooltip>
+                            </ResponsiveTooltip>
                           ))}
                       </Td>
                     )

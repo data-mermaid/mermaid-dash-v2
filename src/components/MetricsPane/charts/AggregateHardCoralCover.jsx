@@ -1,5 +1,6 @@
 import { useContext, useState } from 'react'
 import Plot from 'react-plotly.js'
+import { useTranslation } from 'react-i18next'
 
 import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Charts.styles'
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
@@ -11,9 +12,8 @@ import { IconHelpCircle } from '../../../assets/icons'
 import { IconButton } from '../../generic'
 import HardCoralInfoModal from './HardCoralInfoModal'
 import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { MuiTooltip } from '../../generic/MuiTooltip'
+import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
 import theme from '../../../styles/theme'
-import { tooltipText } from '../../../constants/language'
 
 const BIN_SIZE = 2
 const START_BIN = 0
@@ -21,6 +21,7 @@ const END_BIN = 100
 
 export const AggregateHardCoralCover = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
+  const { t } = useTranslation()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const privateBenthicFilters = ['bl_3', 'bp_3', 'qbp_3']
   const otherBenthicFilters = ['bl_1', 'bl_2', 'bp_1', 'bp_2', 'qbp_1', 'qbp_2']
@@ -133,9 +134,8 @@ export const AggregateHardCoralCover = () => {
         <TitlesWrapper>
           <MetricCardH3>
             Hard Coral Cover
-            <MuiTooltip
-              title={tooltipText.hardCoralCoverInfo}
-              placement="bottom"
+            <ResponsiveTooltip
+              title={t('more_info_references')}
               bgColor={theme.color.primaryColor}
               tooltipTextColor={theme.color.white}
             >
@@ -147,7 +147,7 @@ export const AggregateHardCoralCover = () => {
               >
                 <IconHelpCircle />
               </IconButton>
-            </MuiTooltip>
+            </ResponsiveTooltip>
           </MetricCardH3>
           {!privateBenthicToggleOn && (
             <ChartSubtitle>

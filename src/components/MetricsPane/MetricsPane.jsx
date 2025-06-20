@@ -32,7 +32,6 @@ import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
-import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
 import LoadingBar from '../MermaidDash/components/LoadingBar'
 import { SelectedSiteMetrics } from './SelectedSiteMetrics'
@@ -50,6 +49,7 @@ import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
 import theme from '../../styles/theme'
+import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -172,9 +172,20 @@ const MetricsPane = ({
     setShowMobileExpandedMetricsPane((prevState) => !prevState)
   }
 
-  const toggleMobileMetricsPane = () => {
-    handleShowMobileExpandedMetricsPane()
-  }
+  const projectCountTooltipTitle = (
+    <>
+      <div>
+        {t('project_with_data_count', {
+          count: numProjectsWithData,
+        })}
+      </div>
+      <div>
+        {t('project_without_data_count', {
+          count: numProjectsWithoutData,
+        })}
+      </div>
+    </>
+  )
 
   const transectAndProjectCountCards = (
     <>
@@ -188,34 +199,27 @@ const MetricsPane = ({
             ? numProjectsWithData.toLocaleString()
             : displayedProjectCount.toLocaleString()}
         </MetricCardPMedium>
-        <MetricCardH3>
-          {t('project', { count: numProjectsWithData })}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <MetricCardH3>{t('project', { count: numProjectsWithData })}</MetricCardH3>
           {isMapView && numProjectsWithoutData > 0 && (
-            <MuiTooltip
-              title={
-                <>
-                  <div>
-                    {t('project_with_data_count', {
-                      count: numProjectsWithData,
-                    })}
-                  </div>
-                  <div>
-                    {t('project_without_data_count', {
-                      count: numProjectsWithoutData,
-                    })}
-                  </div>
-                </>
-              }
-              placement="bottom"
+            <ResponsiveTooltip
+              title={projectCountTooltipTitle}
               bgColor={theme.color.primaryColor}
               tooltipTextColor={theme.color.white}
+              isMobileWidth={isMobileWidth}
             >
-              <IconButton type="button" aria-label={t('project_count_information')}>
+              <IconButton
+                type="button"
+                aria-label={t('project_count_information')}
+                style={{
+                  display: 'flex',
+                }}
+              >
                 <IconInfo />
               </IconButton>
-            </MuiTooltip>
+            </ResponsiveTooltip>
           )}
-        </MetricCardH3>
+        </div>
       </MetricsCard>
     </>
   )
@@ -237,7 +241,6 @@ const MetricsPane = ({
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
-        onClick={toggleMobileMetricsPane}
         $isDesktopWidth={isDesktopWidth}
         $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
         $showLoadingIndicator={showLoadingIndicator}
@@ -388,7 +391,7 @@ const MetricsPane = ({
         {isDesktopWidth && isMapView && isMetricsPaneShowing && !selectedMarkerId ? (
           <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
             {mapWidth < 830 ? (
-              <MuiTooltip
+              <ResponsiveTooltip
                 title={
                   enableFollowScreen ? t('disable_map_view_metrics') : t('enable_map_view_metrics')
                 }
@@ -399,7 +402,7 @@ const MetricsPane = ({
                 >
                   <img src={zoomToMap} alt={t('zoom_to_filtered_data')} />
                 </StyledFollowIconButton>
-              </MuiTooltip>
+              </ResponsiveTooltip>
             ) : (
               <StyledFollowButton
                 onClick={handleFollowScreen}
@@ -416,11 +419,11 @@ const MetricsPane = ({
             onClick={handleShowMetricsPane}
             $isMetricsPaneShowing={isMetricsPaneShowing}
           >
-            <MuiTooltip title={isMetricsPaneShowing ? t('hide_metrics') : t('show_metrics')}>
+            <ResponsiveTooltip title={isMetricsPaneShowing ? t('hide_metrics') : t('show_metrics')}>
               <StyledChevronSpan>
                 {isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}
               </StyledChevronSpan>
-            </MuiTooltip>
+            </ResponsiveTooltip>
           </DesktopToggleMetricsPaneButton>
         ) : null}
       </StyledMetricsWrapper>
