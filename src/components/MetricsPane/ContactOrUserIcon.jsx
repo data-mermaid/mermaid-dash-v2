@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import theme from '../../styles/theme'
@@ -9,11 +10,10 @@ import { IconContact } from '../../assets/icons'
 
 import { IconButton } from '../generic'
 import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
-import { useTranslation } from 'react-i18next'
 
 const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
   const { userIsMemberOfProject, mermaidUserData } = useContext(FilterProjectsContext)
-  const { t } = useTranslation
+  const { t } = useTranslation()
   const iconMarginTop = customStyles?.iconMarginTop || '0px'
 
   return userIsMemberOfProject(projectId, mermaidUserData) ? (
