@@ -172,10 +172,6 @@ const MetricsPane = ({
     setShowMobileExpandedMetricsPane((prevState) => !prevState)
   }
 
-  const toggleMobileMetricsPane = () => {
-    handleShowMobileExpandedMetricsPane()
-  }
-
   const transectAndProjectCountCards = (
     <>
       <MetricsCard>
@@ -188,8 +184,8 @@ const MetricsPane = ({
             ? numProjectsWithData.toLocaleString()
             : displayedProjectCount.toLocaleString()}
         </MetricCardPMedium>
-        <MetricCardH3>
-          {t('project', { count: numProjectsWithData })}
+        <div style={{ display: 'flex', alignItems: 'center' }}>
+          <MetricCardH3>{t('project', { count: numProjectsWithData })}</MetricCardH3>
           {isMapView && numProjectsWithoutData > 0 && (
             <MuiTooltip
               title={
@@ -210,12 +206,18 @@ const MetricsPane = ({
               bgColor={theme.color.primaryColor}
               tooltipTextColor={theme.color.white}
             >
-              <IconButton type="button" aria-label={t('project_count_information')}>
+              <IconButton
+                type="button"
+                aria-label={t('project_count_information')}
+                style={{
+                  display: 'flex',
+                }}
+              >
                 <IconInfo />
               </IconButton>
             </MuiTooltip>
           )}
-        </MetricCardH3>
+        </div>
       </MetricsCard>
     </>
   )
@@ -237,7 +239,6 @@ const MetricsPane = ({
   const displayedProjectsMetrics = (
     <DisplayedProjectsMetricsWrapper>
       <SummarizedMetrics
-        onClick={toggleMobileMetricsPane}
         $isDesktopWidth={isDesktopWidth}
         $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}
         $showLoadingIndicator={showLoadingIndicator}
