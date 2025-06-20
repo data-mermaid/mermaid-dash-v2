@@ -48,7 +48,7 @@ import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
 import { toastMessageText, tooltipText } from '../../constants/language'
 import { EXPORT_METHODS, MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
-import { MuiTooltip } from '../generic/MuiTooltip'
+import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
 import { Modal } from '../generic'
 import Header from '../Header/Header'
 import FilterPane from '../FilterPane/FilterPane'
@@ -411,7 +411,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          <MuiTooltip
+          <ResponsiveTooltip
             title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
           >
             {isFilterPaneShowing ? (
@@ -423,7 +423,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
                 <IconFilter /> {ARROW_RIGHT}
               </StyledChevronSpan>
             )}
-          </MuiTooltip>
+          </ResponsiveTooltip>
         </DesktopToggleFilterPaneButton>
         {isFilterPaneShowing ? (
           <FilterPaneExportButtonWrapper>

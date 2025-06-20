@@ -11,7 +11,7 @@ import { exportModal, toastMessageText, tooltipText } from '../../../constants/l
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
-import { MuiTooltip } from '../../generic/MuiTooltip'
+import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 import { LeftFooter } from '../../generic/Modal'
 
@@ -110,7 +110,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
       <li key={project.project_id}>
         {project.project_name}{' '}
         {userIsMemberOfProject(project.project_id, mermaidUserData) && (
-          <MuiTooltip
+          <ResponsiveTooltip
             title={tooltipText.yourProject}
             placement="top"
             bgColor={theme.color.primaryColor}
@@ -119,7 +119,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
             <IconButton>
               <IconUserCircle />
             </IconButton>
-          </MuiTooltip>
+          </ResponsiveTooltip>
         )}
       </li>
     )

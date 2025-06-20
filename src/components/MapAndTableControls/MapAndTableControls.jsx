@@ -17,7 +17,7 @@ import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 
 import { ButtonSecondary } from '../generic'
-import { MuiTooltip } from '../generic/MuiTooltip'
+import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import { BiggerIconMapOutline, BiggerIconTable } from '../MetricsPane/SelectedSiteMetrics.styles'
 import ProjectTableDownload from '../ProjectTableDownload/ProjectTableDownload'
@@ -124,26 +124,26 @@ const MapAndTableControls = ({
     <ControlContainer>
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
-          <MuiTooltip title={tooltipText.mapView}>
+          <ResponsiveTooltip title={tooltipText.mapView}>
             <StyledDataViewButton isActive={view === MAP_VIEW} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
-          </MuiTooltip>
-          <MuiTooltip title={tooltipText.tableView}>
+          </ResponsiveTooltip>
+          <ResponsiveTooltip title={tooltipText.tableView}>
             <StyledDataViewButton isActive={view === TABLE_VIEW} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
-          </MuiTooltip>
+          </ResponsiveTooltip>
           {view === MAP_VIEW ? (
             <>
               {mapWidth < 500 ? (
-                <MuiTooltip
+                <ResponsiveTooltip
                   title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
                 >
                   <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
                     <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
                   </StyledZoomToFilterIconButton>
-                </MuiTooltip>
+                </ResponsiveTooltip>
               ) : (
                 <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
                   <img src={zoomToFiltered} alt={imgIconAltText.zoomToFilteredData} />
