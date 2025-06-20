@@ -50,6 +50,7 @@ import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
 import theme from '../../styles/theme'
+import MobileIconButtonTooltip from '../generic/MobileIconButtonTooltip'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -172,6 +173,46 @@ const MetricsPane = ({
     setShowMobileExpandedMetricsPane((prevState) => !prevState)
   }
 
+  const projectCountTooltipTitle = (
+    <>
+      <div>
+        {t('project_with_data_count', {
+          count: numProjectsWithData,
+        })}
+      </div>
+      <div>
+        {t('project_without_data_count', {
+          count: numProjectsWithoutData,
+        })}
+      </div>
+    </>
+  )
+
+  const projectCountInfoIcon = isDesktopWidth ? (
+    <MuiTooltip
+      title={projectCountTooltipTitle}
+      placement="bottom"
+      bgColor={theme.color.primaryColor}
+      tooltipTextColor={theme.color.white}
+    >
+      <IconButton
+        type="button"
+        aria-label={t('project_count_information')}
+        style={{
+          display: 'flex',
+        }}
+      >
+        <IconInfo />
+      </IconButton>
+    </MuiTooltip>
+  ) : (
+    <MobileIconButtonTooltip
+      title={projectCountTooltipTitle}
+      placement="top"
+      ariaLabel={t('project_count_information')}
+    />
+  )
+
   const transectAndProjectCountCards = (
     <>
       <MetricsCard>
@@ -186,37 +227,7 @@ const MetricsPane = ({
         </MetricCardPMedium>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <MetricCardH3>{t('project', { count: numProjectsWithData })}</MetricCardH3>
-          {isMapView && numProjectsWithoutData > 0 && (
-            <MuiTooltip
-              title={
-                <>
-                  <div>
-                    {t('project_with_data_count', {
-                      count: numProjectsWithData,
-                    })}
-                  </div>
-                  <div>
-                    {t('project_without_data_count', {
-                      count: numProjectsWithoutData,
-                    })}
-                  </div>
-                </>
-              }
-              placement="bottom"
-              bgColor={theme.color.primaryColor}
-              tooltipTextColor={theme.color.white}
-            >
-              <IconButton
-                type="button"
-                aria-label={t('project_count_information')}
-                style={{
-                  display: 'flex',
-                }}
-              >
-                <IconInfo />
-              </IconButton>
-            </MuiTooltip>
-          )}
+          {isMapView && numProjectsWithoutData > 0 && projectCountInfoIcon}
         </div>
       </MetricsCard>
     </>
