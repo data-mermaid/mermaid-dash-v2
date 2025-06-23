@@ -27,6 +27,15 @@ on:
       vite_react_app_map_tiler_api_key:
         required: true
         type: string
+      vite_public_posthog_key:
+        required: false
+        type: string
+      vite_public_posthog_host:
+        required: false
+        type: string
+      vite_environment:
+        required: true
+        type: string
 
 permissions:
   id-token: write # This is required for requesting the JWT
