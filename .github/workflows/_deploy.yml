@@ -69,7 +69,7 @@ jobs:
           VITE_REACT_APP_MERMAID_COLLECT_LINK: ${{ inputs.vite_react_app_mermaid_collect_link }}
           VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
           VITE_REACT_APP_MAP_TILER_API_KEY: ${{ inputs.vite_react_app_map_tiler_api_key }}
-          VITE_ENVIRONMENT: ${{ inputs.environment }}
+          VITE_ENVIRONMENT: ${{ inputs.vite_environment }}
           VITE_PUBLIC_POSTHOG_KEY: ${{ inputs.vite_public_posthog_key }}
           VITE_PUBLIC_POSTHOG_HOST: ${{ inputs.vite_public_posthog_host }}
 
