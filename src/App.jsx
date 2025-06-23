@@ -14,6 +14,7 @@ import mermaidMuiThemeConfig from './styles/mermaidMuiThemeConfig.js'
 
 import MermaidDash from './components/MermaidDash/MermaidDash.jsx'
 import { CustomToastContainer } from './components/generic/toast.js'
+import '../i18n.js'
 
 const App = () => {
   const navigateTo = useNavigate()

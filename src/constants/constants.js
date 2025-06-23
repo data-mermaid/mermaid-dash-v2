@@ -151,3 +151,6 @@ export const POLICY_MAPPINGS = {
     value: 'private',
   },
 }
+
+export const MAP_VIEW = 'map view'
+export const TABLE_VIEW = 'table view'
