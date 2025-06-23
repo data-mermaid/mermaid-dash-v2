@@ -9,7 +9,7 @@ import { IconUserCircle } from '../../assets/dashboardOnlyIcons'
 import { IconContact } from '../../assets/icons'
 
 import { IconButton } from '../generic'
-import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 
 const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
   const { userIsMemberOfProject, mermaidUserData } = useContext(FilterProjectsContext)
@@ -17,7 +17,7 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
   const iconMarginTop = customStyles?.iconMarginTop || '0px'
 
   return userIsMemberOfProject(projectId, mermaidUserData) ? (
-    <ResponsiveTooltip
+    <MuiTooltip
       title={t('your_projects')}
       placement="top"
       bgColor={theme.color.primaryColor}
@@ -26,9 +26,9 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
       <IconButton style={{ marginTop: iconMarginTop }}>
         <IconUserCircle />
       </IconButton>
-    </ResponsiveTooltip>
+    </MuiTooltip>
   ) : (
-    <ResponsiveTooltip
+    <MuiTooltip
       title={t('contact_admins')}
       placement="top"
       bgColor={theme.color.primaryColor}
@@ -42,7 +42,7 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
       >
         <IconContact />
       </a>
-    </ResponsiveTooltip>
+    </MuiTooltip>
   )
 }
 

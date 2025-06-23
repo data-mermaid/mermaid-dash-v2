@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Tooltip, ClickAwayListener } from '@mui/material'
 import theme from '../../styles/theme'
 
-export const ResponsiveTooltip = ({
+export const MuiTooltip = ({
   children,
   title,
   placement = 'bottom',
@@ -70,7 +70,7 @@ export const ResponsiveTooltip = ({
   )
 }
 
-ResponsiveTooltip.propTypes = {
+MuiTooltip.propTypes = {
   children: PropTypes.node.isRequired,
   title: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.element]).isRequired,
   placement: PropTypes.oneOf([

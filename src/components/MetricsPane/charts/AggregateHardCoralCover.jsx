@@ -12,7 +12,7 @@ import { IconHelpCircle } from '../../../assets/icons'
 import { IconButton } from '../../generic'
 import HardCoralInfoModal from './HardCoralInfoModal'
 import { pluralizeWord, pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../../generic/MuiTooltip'
 import theme from '../../../styles/theme'
 
 const BIN_SIZE = 2
@@ -134,10 +134,10 @@ export const AggregateHardCoralCover = () => {
         <TitlesWrapper>
           <MetricCardH3>
             Hard Coral Cover
-            <ResponsiveTooltip
+            <MuiTooltip
               title={t('more_info_references')}
-              bgColor={theme.color.primaryColor}
-              tooltipTextColor={theme.color.white}
+              bgColor={`${theme.color.primaryColor}`}
+              tooltipTextColor={`${theme.color.white}`}
             >
               <IconButton
                 type="button"
@@ -147,7 +147,7 @@ export const AggregateHardCoralCover = () => {
               >
                 <IconHelpCircle />
               </IconButton>
-            </ResponsiveTooltip>
+            </MuiTooltip>
           </MetricCardH3>
           {!privateBenthicToggleOn && (
             <ChartSubtitle>

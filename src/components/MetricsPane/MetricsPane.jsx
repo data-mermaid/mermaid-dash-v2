@@ -49,7 +49,7 @@ import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
 import theme from '../../styles/theme'
-import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -202,10 +202,10 @@ const MetricsPane = ({
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <MetricCardH3>{t('project', { count: numProjectsWithData })}</MetricCardH3>
           {isMapView && numProjectsWithoutData > 0 && (
-            <ResponsiveTooltip
+            <MuiTooltip
               title={projectCountTooltipTitle}
-              bgColor={theme.color.primaryColor}
-              tooltipTextColor={theme.color.white}
+              bgColor={`${theme.color.primaryColor}`}
+              tooltipTextColor={`${theme.color.white}`}
               isMobileWidth={isMobileWidth}
             >
               <IconButton
@@ -217,7 +217,7 @@ const MetricsPane = ({
               >
                 <IconInfo />
               </IconButton>
-            </ResponsiveTooltip>
+            </MuiTooltip>
           )}
         </div>
       </MetricsCard>
@@ -391,7 +391,7 @@ const MetricsPane = ({
         {isDesktopWidth && isMapView && isMetricsPaneShowing && !selectedMarkerId ? (
           <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
             {mapWidth < 830 ? (
-              <ResponsiveTooltip
+              <MuiTooltip
                 title={
                   enableFollowScreen ? t('disable_map_view_metrics') : t('enable_map_view_metrics')
                 }
@@ -402,7 +402,7 @@ const MetricsPane = ({
                 >
                   <img src={zoomToMap} alt={t('zoom_to_filtered_data')} />
                 </StyledFollowIconButton>
-              </ResponsiveTooltip>
+              </MuiTooltip>
             ) : (
               <StyledFollowButton
                 onClick={handleFollowScreen}
@@ -419,11 +419,11 @@ const MetricsPane = ({
             onClick={handleShowMetricsPane}
             $isMetricsPaneShowing={isMetricsPaneShowing}
           >
-            <ResponsiveTooltip title={isMetricsPaneShowing ? t('hide_metrics') : t('show_metrics')}>
+            <MuiTooltip title={isMetricsPaneShowing ? t('hide_metrics') : t('show_metrics')}>
               <StyledChevronSpan>
                 {isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}
               </StyledChevronSpan>
-            </ResponsiveTooltip>
+            </MuiTooltip>
           </DesktopToggleMetricsPaneButton>
         ) : null}
       </StyledMetricsWrapper>

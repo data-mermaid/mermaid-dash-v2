@@ -17,7 +17,7 @@ import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 
 import { ButtonSecondary } from '../generic'
-import { ResponsiveTooltip } from '../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../generic/MuiTooltip'
 import FilterIndicatorPill from '../generic/FilterIndicatorPill'
 import { BiggerIconMapOutline, BiggerIconTable } from '../MetricsPane/SelectedSiteMetrics.styles'
 import ProjectTableDownload from '../ProjectTableDownload/ProjectTableDownload'
@@ -125,26 +125,26 @@ const MapAndTableControls = ({
     <ControlContainer>
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
-          <ResponsiveTooltip title={t('map_view')}>
+          <MuiTooltip title={t('map_view')}>
             <StyledDataViewButton isActive={view === MAP_VIEW} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
-          </ResponsiveTooltip>
-          <ResponsiveTooltip title={t('table_view')}>
+          </MuiTooltip>
+          <MuiTooltip title={t('table_view')}>
             <StyledDataViewButton isActive={view === TABLE_VIEW} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
-          </ResponsiveTooltip>
+          </MuiTooltip>
           {view === MAP_VIEW ? (
             <>
               {mapWidth < 500 ? (
-                <ResponsiveTooltip
+                <MuiTooltip
                   title={isAnyActiveFilters() ? t('zoom_to_filtered_data') : t('show_all_data')}
                 >
                   <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
                     <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />
                   </StyledZoomToFilterIconButton>
-                </ResponsiveTooltip>
+                </MuiTooltip>
               ) : (
                 <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
                   <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />

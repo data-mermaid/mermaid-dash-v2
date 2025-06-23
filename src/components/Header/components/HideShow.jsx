@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import theme from '../../../styles/theme'
 import styled from 'styled-components'
 import useIsMounted from '../../../hooks/useIsMounted'
-import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../../generic/MuiTooltip'
 
 /**
  * Button that shows content in drop down on click
@@ -83,14 +83,14 @@ const HideShow = ({
   return (
     <PositionedAncestor {...customStyleProps}>
       {tooltipText !== '' ? (
-        <ResponsiveTooltip
+        <MuiTooltip
           title={tooltipText}
           placement="top"
           bgColor={theme.color.primaryColor}
           tooltipTextColor={theme.color.white}
         >
           {buttonForRender}
-        </ResponsiveTooltip>
+        </MuiTooltip>
       ) : (
         buttonForRender
       )}

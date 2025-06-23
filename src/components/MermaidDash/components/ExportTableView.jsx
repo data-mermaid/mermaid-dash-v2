@@ -11,7 +11,7 @@ import { ModalStickyTable, ModalTableOverflowWrapper } from '../../generic/table
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconCheck, IconClose, IconContact } from '../../../assets/icons'
 import { getTableColumnHeaderProps } from '../../../helperFunctions'
-import { ResponsiveTooltip } from '../../generic/ResponsiveTooltip'
+import { MuiTooltip } from '../../generic/MuiTooltip'
 
 const StyledTr = styled(Tr)`
   & > td:first-of-type {
@@ -173,7 +173,7 @@ const ExportTableView = ({ exportTableData }) => {
                         {view}{' '}
                         {cell.column.Header === 'Project Name' &&
                           (isMemberOfProject ? (
-                            <ResponsiveTooltip
+                            <MuiTooltip
                               title={t('your_projects')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
@@ -182,9 +182,9 @@ const ExportTableView = ({ exportTableData }) => {
                               <IconButton>
                                 <IconUserCircle />
                               </IconButton>
-                            </ResponsiveTooltip>
+                            </MuiTooltip>
                           ) : (
-                            <ResponsiveTooltip
+                            <MuiTooltip
                               title={t('contact_admins')}
                               placement="top"
                               bgColor={theme.color.primaryColor}
@@ -197,7 +197,7 @@ const ExportTableView = ({ exportTableData }) => {
                               >
                                 <IconContact />
                               </a>
-                            </ResponsiveTooltip>
+                            </MuiTooltip>
                           ))}
                       </Td>
                     )
