@@ -27,6 +27,7 @@ on:
       vite_environment:
         required: true
         type: string
+        options: [local, dev, prod]
 
 permissions:
   id-token: write # This is required for requesting the JWT
