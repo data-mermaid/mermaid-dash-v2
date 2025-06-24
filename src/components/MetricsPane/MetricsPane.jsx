@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo, useContext } from 'react'
 import PropTypes from 'prop-types'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
@@ -29,14 +30,7 @@ import {
 } from './MetricsPane.styles'
 import zoomToMap from '../../assets/zoom-map.svg'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import {
-  imgIconAltText,
-  mapAttributeText,
-  mapControlButtonText,
-  noDataText,
-  tooltipText,
-} from '../../constants/language'
-import { URL_PARAMS } from '../../constants/constants'
+import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import LoadingIndicator from '../MermaidDash/components/LoadingIndicator'
@@ -53,6 +47,9 @@ import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 import { pluralizeWord } from '../../helperFunctions/pluralize'
+import { IconInfo } from '../../assets/icons'
+import { IconButton } from '../generic'
+import theme from '../../styles/theme'
 
 const MetricsPane = ({
   setShowLoadingIndicator,
@@ -62,15 +59,17 @@ const MetricsPane = ({
   view,
   mapWidth,
 }) => {
+  const { t } = useTranslation()
   const [numSurveys, setNumSurveys] = useState(0)
   const [numTransects, setNumTransects] = useState(0)
   const [numUniqueCountries, setNumUniqueCountries] = useState(0)
+  const [numProjectsWithoutData, setNumProjectsWithoutData] = useState(0)
+  const [numProjectsWithData, setNumProjectWithData] = useState(0)
   const [showMobileExpandedMetricsPane, setShowMobileExpandedMetricsPane] = useState(false)
   const { isMobileWidth, isDesktopWidth } = useResponsive()
   const {
     displayedProjects,
     enableFollowScreen,
-    getActiveProjectCount,
     getURLParams,
     projectData,
     selectedMarkerId,
@@ -81,28 +80,42 @@ const MetricsPane = ({
     omittedMethodDataSharingFilters,
   } = useContext(FilterProjectsContext)
   const [selectedSampleEvent, setSelectedSampleEvent] = useState(null)
+  const noDataYearRangeText = t('no_data_year_range')
+  const isMapView = view === MAP_VIEW
+  const displayedProjectCount = displayedProjects?.length || 0
 
   const calculateMetrics = useMemo(() => {
     let surveys = 0
     let transects = 0
     let countries = new Set()
     let years = new Set()
+    let projectWithoutDataCount = 0
 
     displayedProjects.forEach((project) => {
-      project.records.forEach((record) => {
+      const { records = [] } = project
+      const numRecords = records.length
+
+      if (numRecords === 0) {
+        projectWithoutDataCount++
+        return
+      }
+
+      surveys += numRecords
+
+      records.forEach((record) => {
         Object.values(record.protocols).forEach((value) => {
           transects += value.sample_unit_count
         })
         countries.add(record.country_name)
         years.add(record.sample_date.split('-')[0])
       })
-      surveys += project.records.length
     })
 
+    const projectWithDataCount = displayedProjects?.length - projectWithoutDataCount
     const sortedYears = Array.from(years).sort()
     const yearRange =
       sortedYears.length === 0 ? (
-        <InlineOnDesktopMetricWrapper>{noDataText.noYearRange}</InlineOnDesktopMetricWrapper>
+        <InlineOnDesktopMetricWrapper>{noDataYearRangeText}</InlineOnDesktopMetricWrapper>
       ) : sortedYears.length === 1 ? (
         <InlineOnDesktopMetricWrapper>
           <MetricCardH3>Year</MetricCardH3> <span>{sortedYears[0]}</span>
@@ -121,14 +134,24 @@ const MetricsPane = ({
       numTransects: transects,
       numUniqueCountries: countries.size,
       yearRange,
+      numProjectsWithData: projectWithDataCount,
+      numProjectsWithoutData: projectWithoutDataCount,
     }
-  }, [displayedProjects])
+  }, [displayedProjects, noDataYearRangeText])
 
   const _setMetricsAfterCalculating = useEffect(() => {
-    const { numSurveys, numTransects, numUniqueCountries } = calculateMetrics
+    const {
+      numSurveys,
+      numTransects,
+      numUniqueCountries,
+      numProjectsWithData,
+      numProjectsWithoutData,
+    } = calculateMetrics
     setNumSurveys(numSurveys)
     setNumTransects(numTransects)
     setNumUniqueCountries(numUniqueCountries)
+    setNumProjectWithData(numProjectsWithData)
+    setNumProjectsWithoutData(numProjectsWithoutData)
   }, [calculateMetrics])
 
   const _getSelectedSampleEvent = useEffect(() => {
@@ -157,11 +180,42 @@ const MetricsPane = ({
     <>
       <MetricsCard>
         <MetricCardPMedium>{numTransects.toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>{pluralizeWord(numTransects ?? 0, 'Transect')}</MetricCardH3>
+        <MetricCardH3>{t('transect', { count: numTransects })}</MetricCardH3>
       </MetricsCard>
       <MetricsCard>
-        <MetricCardPMedium>{getActiveProjectCount().toLocaleString()}</MetricCardPMedium>
-        <MetricCardH3>{pluralizeWord(getActiveProjectCount() ?? 0, 'Project')}</MetricCardH3>
+        <MetricCardPMedium>
+          {isMapView
+            ? numProjectsWithData.toLocaleString()
+            : displayedProjectCount.toLocaleString()}
+        </MetricCardPMedium>
+        <MetricCardH3>
+          {t('project', { count: numProjectsWithData })}
+          {isMapView && numProjectsWithoutData > 0 && (
+            <MuiTooltip
+              title={
+                <>
+                  <div>
+                    {t('project_with_data_count', {
+                      count: numProjectsWithData,
+                    })}
+                  </div>
+                  <div>
+                    {t('project_without_data_count', {
+                      count: numProjectsWithoutData,
+                    })}
+                  </div>
+                </>
+              }
+              placement="bottom"
+              bgColor={theme.color.primaryColor}
+              tooltipTextColor={theme.color.white}
+            >
+              <IconButton type="button" aria-label={t('project_count_information')}>
+                <IconInfo />
+              </IconButton>
+            </MuiTooltip>
+          )}
+        </MetricCardH3>
       </MetricsCard>
     </>
   )
@@ -175,8 +229,8 @@ const MetricsPane = ({
 
   const noChartsToDisplay = (
     <>
-      <div>{noDataText.noChartsOnCurrentFilters[0]}</div>
-      <div>{noDataText.noChartsOnCurrentFilters[1]}</div>
+      <div>{t('no_data_visualization')}</div>
+      <div>{t('refine_filters')}</div>
     </>
   )
 
@@ -268,7 +322,7 @@ const MetricsPane = ({
         )}
       </ChartsWrapper>
       <MapAttributeRow $showMobileExpandedMetricsPane={showMobileExpandedMetricsPane}>
-        {mapAttributeText}
+        {t('map_attribute_source')}
       </MapAttributeRow>
     </DisplayedProjectsMetricsWrapper>
   )
@@ -331,19 +385,19 @@ const MetricsPane = ({
             isRelativelyPositioned={true}
           />
         ) : null}
-        {isDesktopWidth && view === 'mapView' && isMetricsPaneShowing && !selectedMarkerId ? (
+        {isDesktopWidth && isMapView && isMetricsPaneShowing && !selectedMarkerId ? (
           <FollowToggleContainer $mapWidth={mapWidth} $enableFollowScreen={enableFollowScreen}>
             {mapWidth < 830 ? (
               <MuiTooltip
                 title={
-                  enableFollowScreen ? tooltipText.disableFollowMap : tooltipText.enableFollowMap
+                  enableFollowScreen ? t('disable_map_view_metrics') : t('enable_map_view_metrics')
                 }
               >
                 <StyledFollowIconButton
                   onClick={handleFollowScreen}
                   $enableFollowScreen={enableFollowScreen}
                 >
-                  <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
+                  <img src={zoomToMap} alt={t('zoom_to_filtered_data')} />
                 </StyledFollowIconButton>
               </MuiTooltip>
             ) : (
@@ -351,12 +405,8 @@ const MetricsPane = ({
                 onClick={handleFollowScreen}
                 $enableFollowScreen={enableFollowScreen}
               >
-                <img src={zoomToMap} alt={imgIconAltText.zoomToMapExtent} />
-                <span>
-                  {enableFollowScreen
-                    ? mapControlButtonText.filterMapDisabled
-                    : mapControlButtonText.filterMapEnabled}
-                </span>
+                <img src={zoomToMap} alt={t('zoom_to_map_extent')} />
+                <span>{enableFollowScreen ? t('disable_follow_map') : t('enable_follow_map')}</span>
               </StyledFollowButton>
             )}
           </FollowToggleContainer>
@@ -366,9 +416,7 @@ const MetricsPane = ({
             onClick={handleShowMetricsPane}
             $isMetricsPaneShowing={isMetricsPaneShowing}
           >
-            <MuiTooltip
-              title={isMetricsPaneShowing ? tooltipText.hideMetrics : tooltipText.showMetrics}
-            >
+            <MuiTooltip title={isMetricsPaneShowing ? t('hide_metrics') : t('show_metrics')}>
               <StyledChevronSpan>
                 {isMetricsPaneShowing ? ARROW_RIGHT : ARROW_LEFT}
               </StyledChevronSpan>
@@ -383,7 +431,7 @@ const MetricsPane = ({
 MetricsPane.propTypes = {
   isMetricsPaneShowing: PropTypes.bool.isRequired,
   setIsMetricsPaneShowing: PropTypes.func.isRequired,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   showLoadingIndicator: PropTypes.bool.isRequired,
   setShowLoadingIndicator: PropTypes.func.isRequired,
   mapWidth: PropTypes.number.isRequired,

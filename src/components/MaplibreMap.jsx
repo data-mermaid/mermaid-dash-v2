@@ -11,7 +11,7 @@ import usePrevious from '../hooks/usePrevious'
 import useResponsive from '../hooks/useResponsive'
 
 import customIcon from '../assets/map-pin.png'
-import { MAIN_MAP_ID } from '../constants/constants'
+import { MAIN_MAP_ID, MAP_VIEW, TABLE_VIEW } from '../constants/constants'
 
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
@@ -339,7 +339,7 @@ MaplibreMap.propTypes = {
     current: PropTypes.object,
   }).isRequired,
   mapWidth: PropTypes.number.isRequired,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool.isRequired,
 }

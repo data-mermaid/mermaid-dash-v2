@@ -50,7 +50,7 @@ export const MuiTooltip = ({
 
 MuiTooltip.propTypes = {
   children: PropTypes.node.isRequired,
-  title: PropTypes.string.isRequired,
+  title: PropTypes.oneOfType([PropTypes.string, PropTypes.node, PropTypes.element]).isRequired,
   placement: PropTypes.string,
   bgColor: PropTypes.object,
   tooltipTextColor: PropTypes.object,

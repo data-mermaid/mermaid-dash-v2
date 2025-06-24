@@ -12,7 +12,7 @@ import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
 import { imgIconAltText, mapControlButtonText, tooltipText } from '../../constants/language'
-import { URL_PARAMS } from '../../constants/constants'
+import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 
@@ -82,7 +82,7 @@ const MapAndTableControls = ({
   const queryParams = new URLSearchParams(location.search)
 
   const handleMapView = () => {
-    setView('mapView')
+    setView(MAP_VIEW)
     setSelectedProject(null)
     queryParams.delete(URL_PARAMS.VIEW)
     queryParams.delete(URL_PARAMS.PROJECT_ID)
@@ -90,8 +90,8 @@ const MapAndTableControls = ({
   }
 
   const handleTableView = () => {
-    setView('tableView')
-    queryParams.set(URL_PARAMS.VIEW, 'tableView')
+    setView(TABLE_VIEW)
+    queryParams.set(URL_PARAMS.VIEW, TABLE_VIEW)
     queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
@@ -125,16 +125,16 @@ const MapAndTableControls = ({
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
           <MuiTooltip title={tooltipText.mapView}>
-            <StyledDataViewButton isActive={view === 'mapView'} onClick={handleMapView}>
+            <StyledDataViewButton isActive={view === MAP_VIEW} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
           </MuiTooltip>
           <MuiTooltip title={tooltipText.tableView}>
-            <StyledDataViewButton isActive={view === 'tableView'} onClick={handleTableView}>
+            <StyledDataViewButton isActive={view === TABLE_VIEW} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
           </MuiTooltip>
-          {view === 'mapView' ? (
+          {view === MAP_VIEW ? (
             <>
               {mapWidth < 500 ? (
                 <MuiTooltip
@@ -176,7 +176,7 @@ const MapAndTableControls = ({
 MapAndTableControls.propTypes = {
   map: PropTypes.object,
   mapWidth: PropTypes.number,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool,
 }
