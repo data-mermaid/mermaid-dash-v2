@@ -414,7 +414,7 @@ const MetricsPane = ({
             )}
           </FollowToggleContainer>
         ) : null}
-        {isDesktopWidth ? (
+        {isDesktopWidth && (
           <DesktopToggleMetricsPaneButton
             onClick={handleShowMetricsPane}
             $isMetricsPaneShowing={isMetricsPaneShowing}
@@ -425,7 +425,7 @@ const MetricsPane = ({
               </StyledChevronSpan>
             </MuiTooltip>
           </DesktopToggleMetricsPaneButton>
-        ) : null}
+        )}
       </StyledMetricsWrapper>
     </>
   )

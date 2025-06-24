@@ -42,7 +42,6 @@ export const StyledMetricsWrapper = styled.div`
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
   height: 100%;
-  overflow-y: scroll;
 `
 export const ChartsWrapper = styled.div`
   display: flex;
