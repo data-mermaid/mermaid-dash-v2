@@ -19,5 +19,29 @@
     "map_attribute_source": "Source: Esri, Maxar, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community",
     "zoom_to_filtered_data": "Zoom to filtered data",
     "zoom_to_map_extent": "Zoom to map extent",
-    "project_count_information": "project count information"
+    "project_count_information": "project count information",
+    "show_all_data": "Show all data",
+    "map_view": "Map view",
+    "table_view": "Table view",
+    "map_view_metrics_enabled": "Metrics will now update based on the map view",
+    "map_view_metrics_disabled": "Metrics will no longer update based on the map view",
+    "show_filters": "Show filters",
+    "hide_filters": "Hide filters",
+    "email_confirmation": "An email has been sent to {{email}}. This can sometimes take up to 15 minutes.",
+    "credit_data_owner": "Please credit the data owners.",
+    "suggested_citation": "Suggested citations can be found in all tabs of xlsx files you are exporting. Please ensure you cite the data you have exported in any publications to properly credit the data owners.",
+    "no_data_export": "No data to export",
+    "no_gfcr_data_export": "No GFCR data to export",
+    "no_gfcr_projects": "No filtered projects have GFCR indicators.",
+    "no_projects_data": "Selected projects contain no data to export.",
+    "export_gfcr_data": "Export GFCR data",
+    "export_method_data": "Export {{method}} data",
+    "export_request_sent": "Export request sent",
+    "export_request_failed": "Export failed",
+    "your_projects": "You are part of this project",
+    "contact_admins": "Contact admins",
+    "more_info_references": "More information & references",
+    "errors": {
+        "send_email_failed": "Failed to send email. Please try again."
+    }
 }
