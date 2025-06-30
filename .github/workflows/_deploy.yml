@@ -18,13 +18,13 @@ on:
       vite_react_app_auth0_audience:
         required: true
         type: string
-      vite_react_app_mermaid_dashboard_link:
+      vite_react_app_mermaid_collect_link:
         required: true
         type: string
       vite_react_app_mermaid_api_endcpoint:
         required: true
         type: string
-      vite_react_app_map_tiler_api_key:
+      vite_environment:
         required: true
         type: string
 
@@ -57,9 +57,12 @@ jobs:
           VITE_REACT_APP_AUTH0_DOMAIN: ${{ inputs.vite_react_app_auth0_domain }}
           VITE_REACT_APP_AUTH0_CLIENT_ID: ${{ inputs.vite_react_app_auth0_client_id }}
           VITE_REACT_APP_AUTH0_AUDIENCE: ${{ inputs.vite_react_app_auth0_audience }}
-          VITE_REACT_APP_MERMAID_DASHBOARD_LINK: ${{ inputs.vite_react_app_mermaid_dashboard_link }}
+          VITE_REACT_APP_MERMAID_COLLECT_LINK: ${{ inputs.vite_react_app_mermaid_collect_link }}
           VITE_REACT_APP_MERMAID_API_ENDPOINT: ${{ inputs.vite_react_app_mermaid_api_endcpoint }}
-          VITE_REACT_APP_MAP_TILER_API_KEY: ${{ inputs.vite_react_app_map_tiler_api_key }}
+          VITE_REACT_APP_MAP_TILER_API_KEY: ${{ secrets.MAP_TILER_API_KEY }}
+          VITE_ENVIRONMENT: ${{ inputs.vite_environment }}
+          VITE_PUBLIC_POSTHOG_KEY: ${{ secrets.POST_HOG_KEY }}
+          VITE_PUBLIC_POSTHOG_HOST: https://us.i.posthog.com
 
       - name: Install IaC dependancies
         working-directory: iac

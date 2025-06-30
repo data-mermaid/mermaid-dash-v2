@@ -42,7 +42,6 @@ export const StyledMetricsWrapper = styled.div`
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
   height: 100%;
-  overflow-y: scroll;
 `
 export const ChartsWrapper = styled.div`
   display: flex;
@@ -179,6 +178,7 @@ export const MetricCardH3 = styled.h3`
   letter-spacing: 0.1rem;
   ${mediaQueryTabletLandscapeOnly(css`
     font-size: 13px;
+    letter-spacing: 0rem;
   `)}
 `
 const pStyles = css`
@@ -231,38 +231,41 @@ export const StyledChevronSpan = styled.span`
   padding-left: 0.8rem;
 `
 
-export const DesktopFollowScreenButton = styled(ButtonSecondary)`
-  position: absolute;
-  top: 1.3rem;
-  left: -42rem;
-  height: 6rem;
-  z-index: 5;
-  width: 31rem;
-  border: solid 1px ${theme.color.secondaryBorder}
-  background-color: ${theme.color.grey1};
-  ${mediaQueryTabletLandscapeOnly(css`
-    display: none;
-  `)}
-`
-
 export const FollowToggleContainer = styled.div`
   position: absolute;
   top: 1.3rem;
-  left: -9rem;
+  left: ${({ $mapWidth, $enableFollowScreen }) => {
+    if ($mapWidth < 830) {
+      return '-9rem'
+    }
+
+    // follow button sizes are different between enabled and disabled
+    // -25.3rem is the left position of the follow button when it's disabled
+    // -19.7rem is the left position of the follow button when it's enabled
+    return $enableFollowScreen ? '-25.3rem' : '-19.7rem'
+  }};
   height: 4rem;
   z-index: 100;
   display: flex;
   flex-direction: row;
-  gap: 0.5rem;
   ${mediaQueryTabletLandscapeOnly(css`
     display: none;
   `)}
 `
 
-export const FollowButton = styled(ButtonSecondary)`
+export const StyledFollowIconButton = styled(ButtonSecondary)`
   height: 100%;
-  background-color: ${({ enableFollowScreen }) =>
-    enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+  background-color: ${({ $enableFollowScreen }) =>
+    $enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
+`
+
+export const StyledFollowButton = styled(ButtonSecondary)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  background-color: ${({ $enableFollowScreen }) =>
+    $enableFollowScreen ? theme.color.secondaryColor : theme.color.white};
 `
 
 export const StyledLabel = styled.label`

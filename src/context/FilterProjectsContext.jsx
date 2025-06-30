@@ -641,18 +641,17 @@ export const FilterProjectsProvider = ({ children }) => {
   }
 
   const handleYourDataFilter = () => {
-    setShowYourData((prevState) => !prevState)
+    setShowYourData((prevState) => {
+      const newState = !prevState
+      const queryParams = getURLParams()
 
-    const newState = !showYourData
-    const queryParams = getURLParams()
+      newState
+        ? queryParams.set(URL_PARAMS.YOUR_PROJECTS_ONLY, 'true')
+        : queryParams.delete(URL_PARAMS.YOUR_PROJECTS_ONLY)
 
-    if (newState) {
-      queryParams.set(URL_PARAMS.YOUR_PROJECTS_ONLY, 'true')
-    } else {
-      queryParams.delete(URL_PARAMS.YOUR_PROJECTS_ONLY)
-    }
-
-    updateURLParams(queryParams)
+      updateURLParams(queryParams)
+      return newState
+    })
   }
 
   const getActiveProjectCount = () => {

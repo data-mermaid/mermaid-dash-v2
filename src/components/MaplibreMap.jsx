@@ -11,7 +11,7 @@ import usePrevious from '../hooks/usePrevious'
 import useResponsive from '../hooks/useResponsive'
 
 import customIcon from '../assets/map-pin.png'
-import { MAIN_MAP_ID } from '../constants/constants'
+import { MAIN_MAP_ID, MAP_VIEW, TABLE_VIEW } from '../constants/constants'
 
 import MapAndTableControls from './MapAndTableControls/MapAndTableControls'
 
@@ -90,7 +90,7 @@ const sitesSource = {
   clusterRadius: 50, // Radius of each cluster when clustering points (defaults to 50)
 }
 
-const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
+const MaplibreMap = ({ mapRef, mapWidth, view, setView, isFilterPaneShowing }) => {
   const { isDesktopWidth, isShorterWindowHeight } = useResponsive()
   const {
     displayedProjects,
@@ -109,6 +109,7 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
   const initialQueryParamsLat = initialQueryParams.get('lat')
   const initialQueryParamsLng = initialQueryParams.get('lng')
   const initialQueryParamsZoom = initialQueryParams.get('zoom')
+  const queryParamsBbox = initialQueryParams.get('bbox')
   const initialMapCenter = isValidLatLng(initialQueryParamsLat, initialQueryParamsLng)
     ? [initialQueryParamsLat, initialQueryParamsLng]
     : [defaultLat, defaultLon]
@@ -228,9 +229,10 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
     }
   }
 
-  const viewAndZoomControlsWrapper = mapRef.current ? (
+  const viewAndZoomControlsWrapper = mapRef.current?.getMap() ? (
     <MapAndTableControls
       map={mapRef.current.getMap()}
+      mapWidth={mapWidth}
       view={view}
       setView={setView}
       isFilterPaneShowing={isFilterPaneShowing}
@@ -255,21 +257,44 @@ const MaplibreMap = ({ mapRef, view, setView, isFilterPaneShowing }) => {
     })
   }
 
-  const handleMapLoad = () => {
-    if (mapRef.current) {
-      const map = mapRef.current.getMap()
-      const customImage = new Image()
-      customImage.onload = () => {
-        if (!map.hasImage('custom-icon')) {
-          mapRef.current.addImage('custom-icon', customImage, { sdf: false })
-        }
+  const addCustomIcon = (map) => {
+    const customImage = new Image()
+    customImage.onload = () => {
+      if (!map.hasImage('custom-icon')) {
+        mapRef.current.addImage('custom-icon', customImage, { sdf: false })
       }
-      customImage.src = customIcon
-      hideMapStyleLayers(map)
-
-      const bounds = map.getBounds()
-      setMapBbox(bounds)
     }
+    customImage.src = customIcon
+  }
+
+  const fitMapToInitialBoundingBoxQueryParam = (map) => {
+    if (queryParamsBbox) {
+      const queryParams = new URLSearchParams(location.search)
+      const bboxArray = queryParamsBbox.split(',').map(Number)
+
+      map.fitBounds(bboxArray, {
+        padding: 20,
+        maxZoom: 17,
+      })
+
+      queryParams.delete('bbox')
+      updateURLParams(queryParams)
+    }
+  }
+
+  const handleMapLoad = () => {
+    if (!mapRef.current) {
+      return
+    }
+
+    const map = mapRef.current.getMap()
+
+    addCustomIcon(map)
+    hideMapStyleLayers(map)
+    fitMapToInitialBoundingBoxQueryParam(map)
+
+    const bounds = map.getBounds()
+    setMapBbox(bounds)
   }
 
   return (
@@ -313,7 +338,8 @@ MaplibreMap.propTypes = {
   mapRef: PropTypes.shape({
     current: PropTypes.object,
   }).isRequired,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  mapWidth: PropTypes.number.isRequired,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool.isRequired,
 }

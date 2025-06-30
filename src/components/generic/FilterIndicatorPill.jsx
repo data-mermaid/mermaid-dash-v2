@@ -18,7 +18,6 @@ const FilterIndictorPillContainer = styled.div`
   background-color: ${theme.color.yellow};
   font-size: ${theme.typography.defaultFontSize};
   border: solid 1px ${theme.color.border};
-  border-radius: 5px;
 `
 
 const FilterAmount = styled.span`

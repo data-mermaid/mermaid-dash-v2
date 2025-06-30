@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useContext, useRef } from 'react'
+import { useEffect, useState, useCallback, useContext } from 'react'
 import { useAuth0 } from '@auth0/auth0-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import PropTypes from 'prop-types'
@@ -6,9 +6,12 @@ import PropTypes from 'prop-types'
 import bbox from '@turf/bbox'
 import { points } from '@turf/helpers'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
+import useFilterPaneControl from '../../hooks/useFilterPaneControl'
+import useMapRef from '../../hooks/useMapRef'
 
 import {
   StyledDashboardContainer,
@@ -43,8 +46,7 @@ import zoomToMap from '../../assets/zoom-map.svg'
 import loginOnlyIcon from '../../assets/login-only-icon.svg'
 import { IconDownload, IconFilter, IconInfo } from '../../assets/icons'
 import { ARROW_LEFT, ARROW_RIGHT } from '../../assets/arrowIcons'
-import { toastMessageText, tooltipText } from '../../constants/language'
-import { EXPORT_METHODS, URL_PARAMS } from '../../constants/constants'
+import { EXPORT_METHODS, MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import { MuiTooltip } from '../generic/MuiTooltip'
 import { Modal } from '../generic'
@@ -54,7 +56,6 @@ import TableView from '../TableView/TableView'
 import MetricsPane from '../MetricsPane/MetricsPane'
 import MaplibreMap from '../MaplibreMap'
 import HideShow from '../Header/components/HideShow'
-import useLocalStorage from '../../hooks/useLocalStorage'
 import ExportModal from './components/ExportModal'
 import ExportGFCRModal from './components/ExportGFCRModal'
 import ErrorFetchingModal from './components/ErrorFetchingModal'
@@ -79,16 +80,14 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     isAnyActiveFilters,
     userIsMemberOfProject,
   } = useContext(FilterProjectsContext)
+  const { t } = useTranslation()
 
-  const [isFilterPaneShowing, setIsFilterPaneShowing] = useLocalStorage(
-    'isFilterPaneShowing',
-    false,
-  )
+  const [isFilterPaneShowing, setIsFilterPaneShowing] = useFilterPaneControl('showFilterPane')
   const [isFilterModalShowing, setIsFilterModalShowing] = useState(false)
   const [isMetricsPaneShowing, setIsMetricsPaneShowing] = useState(true)
   const [isExportModalShowing, setIsExportModalShowing] = useState(false)
   const [isExportGFCRModalShowing, setIsExportGFCRModalShowing] = useState(false)
-  const [view, setView] = useState('mapView')
+  const [view, setView] = useState(MAP_VIEW)
   const location = useLocation()
   const navigate = useNavigate()
   const { isMobileWidth, isDesktopWidth } = useResponsive()
@@ -99,7 +98,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const [isExportMenuOpen, setIsExportMenuOpen] = useState(false)
   const [isSuccessExportModalOpen, setIsSuccessExportModalOpen] = useState(false)
 
-  const mapRef = useRef()
+  const { mapRef, mapWidth, restartObserver } = useMapRef()
 
   const surveyedMethodCount = filteredSurveys.reduce((acc, record) => {
     const protocols = record.protocols || {}
@@ -207,11 +206,11 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
 
   const _setViewWhenAppLoads = useEffect(() => {
     const queryParams = new URLSearchParams(location.search)
-    if (queryParams.get(URL_PARAMS.VIEW) === 'tableView' && isDesktopWidth) {
-      setView('tableView')
+    if (queryParams.get(URL_PARAMS.VIEW) === TABLE_VIEW && isDesktopWidth) {
+      setView(TABLE_VIEW)
       return
     }
-    setView('mapView')
+    setView(MAP_VIEW)
     queryParams.delete(URL_PARAMS.VIEW)
     updateURLParams(queryParams)
   }, [location.search, updateURLParams, isDesktopWidth])
@@ -219,12 +218,18 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
   const _switchToMapViewIfResizedToMobileWidth = useEffect(() => {
     const handleResize = () => {
       if (isMobileWidth) {
-        setView('mapView')
+        setView(MAP_VIEW)
       }
     }
     window.addEventListener('resize', handleResize)
     return () => window.removeEventListener('resize', handleResize)
   }, [isMobileWidth])
+
+  const _restartObserverWhenSwitchToMapView = useEffect(() => {
+    if (view === MAP_VIEW && mapWidth === 0) {
+      restartObserver()
+    }
+  }, [view, mapWidth, restartObserver])
 
   const handleShowFilterPane = () => {
     setIsFilterPaneShowing(!isFilterPaneShowing)
@@ -275,7 +280,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       setIsSuccessExportModalOpen(true)
     } catch (error) {
       console.error(error)
-      toast.error(toastMessageText.sendEmailFailed)
+      toast.error(t('errors.send_email_failed'))
     }
   }
 
@@ -320,8 +325,8 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     const newState = !enableFollowScreen
     const queryParams = getURLParams()
     const followScreenToastMessage = enableFollowScreen
-      ? toastMessageText.followMapDisabled
-      : toastMessageText.followMapEnabled
+      ? t('map_view_metrics_disabled')
+      : t('map_view_metrics_enabled')
 
     if (newState) {
       queryParams.set(URL_PARAMS.FOLLOW_SCREEN, 'true')
@@ -407,9 +412,7 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
         ) : null}
 
         <DesktopToggleFilterPaneButton onClick={handleShowFilterPane}>
-          <MuiTooltip
-            title={isFilterPaneShowing ? tooltipText.hideFilters : tooltipText.showFilters}
-          >
+          <MuiTooltip title={isFilterPaneShowing ? t('hide_filters') : t('show_filters')}>
             {isFilterPaneShowing ? (
               <StyledChevronSpan>
                 {ARROW_LEFT} <IconFilter />
@@ -463,11 +466,10 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
     <StyledMapContainer>
       <MaplibreMap
         mapRef={mapRef}
-        isFilterPaneShowing={isFilterPaneShowing}
-        isMetricsPaneShowing={isMetricsPaneShowing}
+        mapWidth={mapWidth}
         view={view}
         setView={setView}
-        projectDataCount={projectData?.count ?? 0}
+        isFilterPaneShowing={isFilterPaneShowing}
       />
     </StyledMapContainer>
   )
@@ -504,13 +506,14 @@ const MermaidDash = ({ isApiDataLoaded, setIsApiDataLoaded }) => {
       </StyledMobileFollowMapButton>
       <StyledContentContainer>
         {renderFilter(isFilterModalShowing)}
-        {isMobileWidth || view === 'mapView' ? map : table}
+        {isMobileWidth || view === MAP_VIEW ? map : table}
         <MetricsPane
           isMetricsPaneShowing={isMetricsPaneShowing}
           setIsMetricsPaneShowing={setIsMetricsPaneShowing}
           view={view}
           showLoadingIndicator={showLoadingIndicator}
           setShowLoadingIndicator={setShowLoadingIndicator}
+          mapWidth={mapWidth}
         />
       </StyledContentContainer>
       <ErrorFetchingModal

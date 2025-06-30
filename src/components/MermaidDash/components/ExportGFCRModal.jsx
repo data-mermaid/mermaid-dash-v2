@@ -3,11 +3,11 @@ import { useAuth0 } from '@auth0/auth0-react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../../context/FilterProjectsContext'
 import theme from '../../../styles/theme'
 
-import { exportModal, toastMessageText, tooltipText } from '../../../constants/language'
 import { Modal, RightFooter, ButtonSecondary, ButtonPrimary, IconButton } from '../../generic'
 import { IconUserCircle } from '../../../assets/dashboardOnlyIcons'
 import { IconInfo } from '../../../assets/icons'
@@ -33,6 +33,7 @@ const StyledWarningText = styled.div`
 const ExportGFCRModal = ({ isOpen, onDismiss }) => {
   const { displayedProjects, mermaidUserData, userIsMemberOfProject } =
     useContext(FilterProjectsContext)
+  const { t } = useTranslation()
 
   const { isAuthenticated, getAccessTokenSilently } = useAuth0()
   const [modalMode, setModalMode] = useState(null)
@@ -59,15 +60,15 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
     }
   }, [isOpen, projectsWithGFCRData])
 
-  const title = useMemo(() => {
+  const titleByMode = (() => {
     const titles = {
-      'no data': exportModal.noGFCRDataTitle,
-      success: exportModal.successTitle,
-      failure: exportModal.failureTitle,
+      'no data': t('no_gfcr_data_export'),
+      success: t('export_request_sent'),
+      failure: t('export_request_failed'),
     }
 
-    return titles[modalMode] || exportModal.exportGFCRTitle
-  }, [modalMode])
+    return titles[modalMode] || t('export_gfcr_data')
+  })()
 
   const handleSendEmailWithLinkSubmit = async () => {
     try {
@@ -101,7 +102,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
       setModalMode('success')
     } catch (error) {
       console.error(error)
-      toast.error(toastMessageText.sendEmailFailed)
+      toast.error(t('errors.send_email_failed'))
     }
   }
 
@@ -111,7 +112,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
         {project.project_name}{' '}
         {userIsMemberOfProject(project.project_id, mermaidUserData) && (
           <MuiTooltip
-            title={tooltipText.yourProject}
+            title={t('your_projects')}
             placement="top"
             bgColor={theme.color.primaryColor}
             tooltipTextColor={theme.color.white}
@@ -129,13 +130,12 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
 
   const successContent = (
     <>
-      <p>An email has been sent to {mermaidUserData.email}</p>
-      <p>This can sometimes take up to 15 minutes</p>
+      <p>{t('email_confirmation', { email: mermaidUserData.email })} </p>
     </>
   )
 
   const MODAL_CONTENT_BY_MODE = {
-    'no data': <p>{exportModal.noGFCRDataContent}</p>,
+    'no data': <p>{t('no_gfcr_projects')}</p>,
     export: exportContent,
     success: successContent,
   }
@@ -180,7 +180,7 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
     <Modal
       isOpen={isOpen}
       onDismiss={onDismiss}
-      title={title}
+      title={titleByMode}
       mainContent={mainContent}
       footerContent={footerContent}
       contentOverflowIsVisible={true}

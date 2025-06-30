@@ -18,6 +18,10 @@ export const dataDisclaimer = {
     'Do not assume data are representative. Some projects have survey sites in geographies to address specific questions (e.g., land-based impacts of reefs, recovery rates from cyclone impacts). Summary data may not reflect overall national statistics.',
 }
 
+export const buttonOrLinkText = {
+  contactAdmins: 'Contact admins',
+}
+
 export const exportModal = {
   noDataTitle: 'No data to export',
   noDataContent: 'Selected projects contain no data to export.',
@@ -41,6 +45,12 @@ export const successExportModal = {
   content: (email) => {
     return `An email has been sent to ${email}. This can sometimes take up to 15 minutes.`
   },
+  exportDataInfoHeader: 'Included in this export',
+  metadataExport: 'Metadata for this project',
+  sampleEventLevelExport: 'Sample event level data',
+  noSampleEventLevelData: 'No sample event level data',
+  observationLevelExport: 'Observation level data',
+  noObservationLevelData: 'No observation level data',
   citationHeader: 'Please credit the data owners.',
   citationContent:
     'Suggested citations can be found in all tabs of xlsx files you are exporting. Please ensure you cite the data you have exported in any publications to properly credit the data owners.',
@@ -78,13 +88,10 @@ export const tooltipText = {
   downloadData: 'Download data',
   yourProject: 'You are part of this project',
   contactAdmins: 'Contact admins',
-  hardCoralCoverInfo: 'More information & references',
   exportProjectData: 'Export project data',
 }
 
 export const toastMessageText = {
-  followMapEnabled: 'Metrics will now update based on the map view',
-  followMapDisabled: 'Metrics will no longer update based on the map view',
   sendEmailFailed: 'Failed to send email. Please try again',
 }
 

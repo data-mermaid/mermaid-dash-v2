@@ -7,6 +7,7 @@ import dayjs from 'dayjs'
 import { DatePicker } from '@mui/x-date-pickers'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
+import useFilterPaneControl from '../../hooks/useFilterPaneControl'
 
 import { URL_PARAMS, COLLECTION_METHODS } from '../../constants/constants'
 import { filterPane, autocompleteGroupNames, noDataText } from '../../constants/language'
@@ -42,9 +43,9 @@ const DATA_SHARING_LABELS = ['Public', 'Public Summary', 'Private']
 
 const FilterPane = () => {
   const todayDate = dayjs()
-  const [showMoreFilters, setShowMoreFilters] = useState(false)
   const navigate = useNavigate()
   const location = useLocation()
+  const [showMoreFilters, setShowMoreFilters] = useFilterPaneControl('showMoreFilters')
   const { isAuthenticated, loginWithRedirect } = useAuth0()
   const {
     countriesSelectOnOpen,
@@ -352,9 +353,7 @@ const FilterPane = () => {
           <StyledHeader>Your Data</StyledHeader>
           {isAuthenticated ? (
             <StyledCategoryContainer>
-              <StyledClickableArea
-                onClick={() => handleYourDataFilter({ target: { checked: !showYourData } })}
-              >
+              <StyledClickableArea>
                 <input
                   type="checkbox"
                   name="yourData"

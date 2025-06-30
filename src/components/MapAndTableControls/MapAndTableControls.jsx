@@ -4,6 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import styled, { css } from 'styled-components'
 import { bbox } from '@turf/bbox'
 import { points } from '@turf/helpers'
+import { useTranslation } from 'react-i18next'
 
 import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import useResponsive from '../../hooks/useResponsive'
@@ -11,8 +12,7 @@ import useResponsive from '../../hooks/useResponsive'
 import { mediaQueryTabletLandscapeOnly } from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 
-import { tooltipText } from '../../constants/language'
-import { URL_PARAMS } from '../../constants/constants'
+import { MAP_VIEW, TABLE_VIEW, URL_PARAMS } from '../../constants/constants'
 
 import zoomToFiltered from '../../assets/zoom_to_filtered.svg'
 
@@ -27,7 +27,7 @@ const ControlContainer = styled.div`
   top: 1.3rem;
   left: 7rem;
   height: 4rem;
-  z-index: 10;
+  z-index: 2;
   display: flex;
   flex-direction: row;
   gap: 0.5rem;
@@ -42,7 +42,7 @@ const StyledViewToggleContainer = styled.div`
   flex-direction: row;
 `
 
-const StyledViewToggleSecondaryButton = styled(ButtonSecondary)`
+const StyledZoomToFilterIconButton = styled(ButtonSecondary)`
   height: 100%;
   margin: 0rem 1rem;
 `
@@ -53,7 +53,21 @@ const StyledDataViewButton = styled(ButtonSecondary)`
     isActive ? theme.color.secondaryColor : theme.color.white};
 `
 
-const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = false }) => {
+const StyledZoomToFilterButton = styled(ButtonSecondary)`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 1rem;
+  margin: 0rem 1rem;
+`
+
+const MapAndTableControls = ({
+  map = null,
+  mapWidth = 0,
+  view,
+  setView,
+  isFilterPaneShowing = false,
+}) => {
   const {
     displayedProjects,
     isAnyActiveFilters,
@@ -65,10 +79,11 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
   const { isDesktopWidth } = useResponsive()
   const location = useLocation()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const queryParams = new URLSearchParams(location.search)
 
   const handleMapView = () => {
-    setView('mapView')
+    setView(MAP_VIEW)
     setSelectedProject(null)
     queryParams.delete(URL_PARAMS.VIEW)
     queryParams.delete(URL_PARAMS.PROJECT_ID)
@@ -76,8 +91,8 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
   }
 
   const handleTableView = () => {
-    setView('tableView')
-    queryParams.set(URL_PARAMS.VIEW, 'tableView')
+    setView(TABLE_VIEW)
+    queryParams.set(URL_PARAMS.VIEW, TABLE_VIEW)
     queryParams.delete(URL_PARAMS.SAMPLE_EVENT_ID)
     navigate(`${location.pathname}?${queryParams.toString()}`, { replace: true })
   }
@@ -110,25 +125,34 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
     <ControlContainer>
       {isDesktopWidth && (
         <StyledViewToggleContainer view={view}>
-          <MuiTooltip title={tooltipText.mapView}>
-            <StyledDataViewButton isActive={view === 'mapView'} onClick={handleMapView}>
+          <MuiTooltip title={t('map_view')}>
+            <StyledDataViewButton isActive={view === MAP_VIEW} onClick={handleMapView}>
               <BiggerIconMapOutline />
             </StyledDataViewButton>
           </MuiTooltip>
-          <MuiTooltip title={tooltipText.tableView}>
-            <StyledDataViewButton isActive={view === 'tableView'} onClick={handleTableView}>
+          <MuiTooltip title={t('table_view')}>
+            <StyledDataViewButton isActive={view === TABLE_VIEW} onClick={handleTableView}>
               <BiggerIconTable />
             </StyledDataViewButton>
           </MuiTooltip>
-          {view === 'mapView' ? (
+          {view === MAP_VIEW ? (
             <>
-              <MuiTooltip
-                title={isAnyActiveFilters() ? tooltipText.zoomToData : tooltipText.showAllData}
-              >
-                <StyledViewToggleSecondaryButton onClick={handleZoomToFilteredData}>
-                  <img src={zoomToFiltered} alt="Zoom to filtered data icon" />
-                </StyledViewToggleSecondaryButton>
-              </MuiTooltip>
+              {mapWidth < 500 ? (
+                <MuiTooltip
+                  title={isAnyActiveFilters() ? t('zoom_to_filtered_data') : t('show_all_data')}
+                >
+                  <StyledZoomToFilterIconButton onClick={handleZoomToFilteredData}>
+                    <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />
+                  </StyledZoomToFilterIconButton>
+                </MuiTooltip>
+              ) : (
+                <StyledZoomToFilterButton onClick={handleZoomToFilteredData}>
+                  <img src={zoomToFiltered} alt={t('zoom_to_filtered_data')} />
+                  <span>
+                    {isAnyActiveFilters() ? t('zoom_to_filtered_data') : t('show_all_data')}
+                  </span>
+                </StyledZoomToFilterButton>
+              )}
               {!isFilterPaneShowing &&
               isAnyActiveFilters() &&
               getActiveProjectCount() < projectData?.count ? (
@@ -150,7 +174,8 @@ const MapAndTableControls = ({ map = null, view, setView, isFilterPaneShowing = 
 
 MapAndTableControls.propTypes = {
   map: PropTypes.object,
-  view: PropTypes.oneOf(['mapView', 'tableView']).isRequired,
+  mapWidth: PropTypes.number,
+  view: PropTypes.oneOf([MAP_VIEW, TABLE_VIEW]).isRequired,
   setView: PropTypes.func.isRequired,
   isFilterPaneShowing: PropTypes.bool,
 }
