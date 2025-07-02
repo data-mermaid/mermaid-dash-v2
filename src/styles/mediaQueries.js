@@ -15,6 +15,11 @@ const mediaQueryTabletLandscapeOnly = (content) => css`
     ${content};
   }
 `
+const mediaQueryTabletLandscapeUp = (content) => css`
+  @media (min-width: 1080px) {
+    ${content};
+  }
+`
 
 const mediaQueryWidthMax1280 = (content) => css`
   @media (max-width: 1280px) {

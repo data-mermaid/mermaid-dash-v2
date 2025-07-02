@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components'
-import { mediaQueryTabletLandscapeOnly, hoverState } from '../../styles/mediaQueries'
+import {
+  mediaQueryTabletLandscapeOnly,
+  hoverState,
+  mediaQueryTabletLandscapeUp,
+} from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { ButtonSecondary } from '../generic'
 import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
@@ -42,6 +46,10 @@ export const StyledMetricsWrapper = styled.div`
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
   height: 100%;
+  overflow-y: visible;
+  ${mediaQueryTabletLandscapeUp(css`
+    overflow-y: scroll;
+  `)}
 `
 export const ChartsWrapper = styled.div`
   display: flex;
