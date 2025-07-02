@@ -27,11 +27,6 @@ const mediaQueryWidthMax1280 = (content) => css`
   }
 `
 
-const mediaQueryForTabletLandscapeUp = (content) => css`
-  @media (min-width: 900px) {
-    ${content};
-  }
-`
 const mediaQueryForDesktopUp = (content) => css`
   @media (min-width: 1300px) {
     ${content};
@@ -72,7 +67,7 @@ const hoverState = (content) => css`
 export {
   mediaQueryPhoneOnly,
   mediaQueryForBigDesktopUp,
-  mediaQueryForTabletLandscapeUp,
+  mediaQueryTabletLandscapeUp,
   mediaQueryWidthMax1280,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
