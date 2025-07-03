@@ -16,7 +16,7 @@ const mediaQueryTabletLandscapeOnly = (content) => css`
   }
 `
 const mediaQueryTabletLandscapeUp = (content) => css`
-  @media (min-width: 1080px) {
+  @media (min-width: 1081px) {
     ${content};
   }
 `
