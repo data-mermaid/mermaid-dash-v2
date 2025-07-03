@@ -15,6 +15,11 @@ const mediaQueryTabletLandscapeOnly = (content) => css`
     ${content};
   }
 `
+const mediaQueryTabletLandscapeUp = (content) => css`
+  @media (min-width: 1081px) {
+    ${content};
+  }
+`
 
 const mediaQueryWidthMax1280 = (content) => css`
   @media (max-width: 1280px) {
@@ -22,11 +27,6 @@ const mediaQueryWidthMax1280 = (content) => css`
   }
 `
 
-const mediaQueryForTabletLandscapeUp = (content) => css`
-  @media (min-width: 900px) {
-    ${content};
-  }
-`
 const mediaQueryForDesktopUp = (content) => css`
   @media (min-width: 1300px) {
     ${content};
@@ -67,7 +67,7 @@ const hoverState = (content) => css`
 export {
   mediaQueryPhoneOnly,
   mediaQueryForBigDesktopUp,
-  mediaQueryForTabletLandscapeUp,
+  mediaQueryTabletLandscapeUp,
   mediaQueryWidthMax1280,
   mediaQueryTabletLandscapeOnly,
   mediaQueryForTabletPortraitUp,
