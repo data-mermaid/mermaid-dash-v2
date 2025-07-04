@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components'
-import { mediaQueryTabletLandscapeOnly, hoverState } from '../../styles/mediaQueries'
+import {
+  mediaQueryTabletLandscapeOnly,
+  hoverState,
+  mediaQueryTabletLandscapeUp,
+} from '../../styles/mediaQueries'
 import theme from '../../styles/theme'
 import { ButtonSecondary } from '../generic'
 import { IconCaretUp, IconCaretDown } from '../../assets/dashboardOnlyIcons'
@@ -42,7 +46,10 @@ export const StyledMetricsWrapper = styled.div`
 `
 export const DisplayedProjectsMetricsWrapper = styled.div`
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: visible;
+  ${mediaQueryTabletLandscapeUp(css`
+    overflow-y: scroll;
+  `)}
 `
 export const ChartsWrapper = styled.div`
   display: flex;
@@ -179,6 +186,7 @@ export const MetricCardH3 = styled.h3`
   letter-spacing: 0.1rem;
   ${mediaQueryTabletLandscapeOnly(css`
     font-size: 13px;
+    letter-spacing: 0rem;
   `)}
 `
 const pStyles = css`
@@ -235,7 +243,9 @@ export const FollowToggleContainer = styled.div`
   position: absolute;
   top: 1.3rem;
   left: ${({ $mapWidth, $enableFollowScreen }) => {
-    if ($mapWidth < 830) {return '-9rem'}
+    if ($mapWidth < 830) {
+      return '-9rem'
+    }
 
     // follow button sizes are different between enabled and disabled
     // -25.3rem is the left position of the follow button when it's disabled
