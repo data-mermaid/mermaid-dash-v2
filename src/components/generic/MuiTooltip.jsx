@@ -41,6 +41,7 @@ export const MuiTooltip = ({
           backgroundColor: `${bgColor}`,
           color: `${tooltipTextColor}`,
           fontSize: `${theme.typography.smallFontSize}`,
+          fontFamily: `${theme.typography.fontFamily}`,
         },
       },
       arrow: {
