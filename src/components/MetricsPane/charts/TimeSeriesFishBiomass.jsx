@@ -102,7 +102,7 @@ export const TimeSeriesFishBiomass = () => {
         ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
-      type: allSingleYear ? 'linear' : 'category',
+      type: allSingleYear ? 'category': 'linear',
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
