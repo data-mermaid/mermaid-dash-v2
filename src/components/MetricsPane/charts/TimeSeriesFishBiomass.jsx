@@ -89,9 +89,9 @@ export const TimeSeriesFishBiomass = () => {
     hovertemplate: `${rule}<br>Year: %{x}<br>%{y:.0f} kg/ha<extra></extra>`,
   }))
 
-  const moreThanTwoYears = plotlyDataConfiguration.every((data) => {
+  const allSingleYear = plotlyDataConfiguration.every((data) => {
     const uniqueYears = new Set(data.x)
-    return uniqueYears.size > 2
+    return uniqueYears.size === 1
   })
 
   const plotlyLayoutConfiguration = {
@@ -102,7 +102,7 @@ export const TimeSeriesFishBiomass = () => {
         ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
-      type: moreThanTwoYears ? 'linear' : 'category',
+      type: allSingleYear ? 'linear' : 'category',
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
