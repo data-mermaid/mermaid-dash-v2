@@ -86,6 +86,11 @@ export const TimeSeriesHabitatComplexity = () => {
       hovertemplate: `Complexity score: ${score}<br>Year: %{x}<br>%{y:.1f}% of surveys<extra></extra>`,
     }))
 
+  const allSeriesHaveFewerThanThreeYears = plotlyDataConfiguration.every((data) => {
+    const uniqueYears = new Set(data.x)
+    return uniqueYears.size < 3
+  })
+
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,
     barmode: 'stack',
@@ -95,6 +100,7 @@ export const TimeSeriesHabitatComplexity = () => {
         ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
+      type: allSeriesHaveFewerThanThreeYears ? 'category' : 'linear',
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,

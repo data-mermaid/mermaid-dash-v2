@@ -168,6 +168,11 @@ export const TimeSeriesBleaching = () => {
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
+  const allSeriesHaveFewerThanThreeYears = plotlyDataConfiguration.every((data) => {
+    const uniqueYears = new Set(data.x)
+    return uniqueYears.size < 3
+  })
+
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,
     barmode: 'stack',
@@ -177,6 +182,7 @@ export const TimeSeriesBleaching = () => {
         ...plotlyChartTheme.layout.xaxis.title,
         text: 'Year',
       },
+      type: allSeriesHaveFewerThanThreeYears ? 'category' : 'linear',
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
