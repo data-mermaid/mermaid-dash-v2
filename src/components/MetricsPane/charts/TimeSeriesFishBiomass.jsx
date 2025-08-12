@@ -8,7 +8,7 @@ import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { xAxisUniqueCountLessThanThree } from '../../../helperFunctions/chartHelpers'
+import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
 
 function calculateMedian(values) {
   if (!values.length) {
@@ -90,7 +90,7 @@ export const TimeSeriesFishBiomass = () => {
     hovertemplate: `${rule}<br>Year: %{x}<br>%{y:.0f} kg/ha<extra></extra>`,
   }))
 
-  const allSeriesHaveFewerThanThreeYears = xAxisUniqueCountLessThanThree(plotlyDataConfiguration)
+  const allSeriesHaveFewerThanThreeYears = checkXSeriesYears(plotlyDataConfiguration)
 
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,

@@ -9,7 +9,7 @@ import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { xAxisUniqueCountLessThanThree } from '../../../helperFunctions/chartHelpers'
+import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
@@ -118,7 +118,7 @@ export const TimeSeriesBenthicCover = () => {
     })
     .filter((trace) => trace.y.some((value) => value > 0))
 
-  const allSeriesHaveFewerThanThreeYears = xAxisUniqueCountLessThanThree(plotlyDataConfiguration)
+  const allSeriesHaveFewerThanThreeYears = checkXSeriesYears(plotlyDataConfiguration)
 
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,

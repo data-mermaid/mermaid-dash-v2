@@ -8,7 +8,7 @@ import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { xAxisUniqueCountLessThanThree } from '../../../helperFunctions/chartHelpers'
+import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
 
 const bleachingColor = plotlyChartTheme.chartCategoryType.bleachingColorMap
 
@@ -169,7 +169,7 @@ export const TimeSeriesBleaching = () => {
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
-  const allSeriesHaveFewerThanThreeYears = xAxisUniqueCountLessThanThree(plotlyDataConfiguration)
+  const allSeriesHaveFewerThanThreeYears = checkXSeriesYears(plotlyDataConfiguration)
 
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,

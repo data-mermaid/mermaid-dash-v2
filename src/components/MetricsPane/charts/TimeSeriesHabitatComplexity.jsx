@@ -8,7 +8,7 @@ import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
-import { xAxisUniqueCountLessThanThree } from '../../../helperFunctions/chartHelpers'
+import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
 
 export const TimeSeriesHabitatComplexity = () => {
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
@@ -87,7 +87,7 @@ export const TimeSeriesHabitatComplexity = () => {
       hovertemplate: `Complexity score: ${score}<br>Year: %{x}<br>%{y:.1f}% of surveys<extra></extra>`,
     }))
 
-  const allSeriesHaveFewerThanThreeYears = xAxisUniqueCountLessThanThree(plotlyDataConfiguration)
+  const allSeriesHaveFewerThanThreeYears = checkXSeriesYears(plotlyDataConfiguration)
 
   const plotlyLayoutConfiguration = {
     ...plotlyChartTheme.layout,
