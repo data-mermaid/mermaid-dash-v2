@@ -3,6 +3,8 @@
     "transect_other": "transects",
     "project_one": "project",
     "project_other": "projects",
+    "sample_unit_one": "{{count}} Sample unit",
+    "sample_unit_other": "{{count}} Sample units",
     "project_with_data_count_one": "{{count}} Project with data",
     "project_with_data_count_other": "{{count}} Projects with data",
     "project_without_data_count_one": "{{count}} Project without data",
@@ -43,5 +45,14 @@
     "more_info_references": "More information & references",
     "errors": {
         "send_email_failed": "Failed to send email. Please try again."
-    }
+    },
+    "fish_biomass": "Fish Biomass",
+    "benthic_percent_cover_type": "Benthic % Cover ({{type}})",
+    "bleaching_severity": "Bleaching Severity",
+    "habitat_complexity": "Habitat Complexity",
+    "tropic_group": "Trophic Group",
+    "benthic_cover_percentage": "Benthic Cover (%)",
+    "percent_of_colonies": "% of colonies",
+    "average_habitat_complexity": "{{score}} <br> Average Habitat <br> Complexity",
+    "no_scores_available": "No Scores <br> Available"
 }

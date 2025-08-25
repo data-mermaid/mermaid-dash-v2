@@ -5,11 +5,12 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
 export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
+  const { t } = useTranslation()
   const {
     count_total_avg: countTotalAvg,
     percent_100_avg: percent100,
@@ -106,7 +107,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     yaxis: {
       ...chartTheme.layout.yaxis,
       title: {
-        text: '% of colonies',
+        text: t('percent_of_colonies'),
       },
       range: [0, 100],
       tickvals: Array.from({ length: 11 }, (_, i) => i * 10),
@@ -120,11 +121,9 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Bleaching Severity</MetricCardH3>
+        <MetricCardH3>{t('bleaching_severity')}</MetricCardH3>
         {isBleachingSeverityDataAvailable && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
