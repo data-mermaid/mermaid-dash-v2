@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 const bleachingBenthicCategories = Object.entries(
-  chartTheme.chartCategoryType.bleachingBenthicColorMap,
+  plotlyChartTheme.chartCategoryType.bleachingBenthicColorMap,
 )
 
 export const SampleEventBleachingPlot = ({ bleachingData }) => {
@@ -43,11 +43,11 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
       x: [1],
       y: [bleachingPercentageValues[index]],
       type: 'bar',
-      name: `${category} (${bleachingPercentageValues[index].toFixed(1)}%)`,
+      name: `${t(`chart_category.${category}`)} (${bleachingPercentageValues[index].toFixed(1)}%)`,
       marker: {
         color: color,
       },
-      hovertemplate: `${category}<br>%{y:.1f}%<extra></extra>`,
+      hovertemplate: `${t(`chart_category.${category}`)}<br>%{y:.1f}%<extra></extra>`,
     }))
     .filter((trace) => trace.y.some((value) => value > 0))
 
