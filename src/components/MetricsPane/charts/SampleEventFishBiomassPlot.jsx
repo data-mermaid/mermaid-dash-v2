@@ -5,31 +5,34 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
-const fishTropicGroupKey = {
-  Omnivore: 'omnivore',
-  Piscivore: 'piscivore',
-  Planktivore: 'planktivore',
-  'Invertivore mobile': 'invertivore-mobile',
-  'Invertivore sessile': 'invertivore-sessile',
-  'Herbivore macroalgae': 'herbivore-macroalgae',
-  'Herbivore detritivore': 'herbivore-detritivore',
+const fishTropicGroupApiKey = {
+  omnivore: 'omnivore',
+  piscivore: 'piscivore',
+  planktivore: 'planktivore',
+  invertivore_mobile: 'invertivore-mobile',
+  invertivore_sessile: 'invertivore-sessile',
+  herbivore_macroalgae: 'herbivore-macroalgae',
+  herbivore_detritivore: 'herbivore-detritivore',
 }
 const fishTropicGroupCategories = Object.keys(chartTheme.chartCategoryType.fishTropicGroupColorMap)
 const fishTropicGroupColors = Object.values(chartTheme.chartCategoryType.fishTropicGroupColorMap)
 
 export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
+  const { t } = useTranslation()
   const totalSampleUnits = fishbeltData?.sample_unit_count ?? 0
   const fishBiomassTropicGroupData = fishbeltData?.biomass_kgha_trophic_group_avg
 
-  const fishTropicGroupValues = fishTropicGroupCategories.map((category) => {
-    const categoryKey = fishTropicGroupKey[category]
-    return fishBiomassTropicGroupData?.[categoryKey] ?? 0
-  })
+  const fishTropicGroupLabels = fishTropicGroupCategories.map((category) =>
+    t(`chart_category.${category}`),
+  )
 
-  const fishTropicGroupLabels = fishTropicGroupCategories.map((category) => category)
+  const fishTropicGroupValues = fishTropicGroupCategories.map(
+    (category) => fishBiomassTropicGroupData?.[fishTropicGroupApiKey[category]] ?? 0,
+  )
+
   const formattedFishTropicGroupLabels = fishTropicGroupLabels.map((label) =>
     label.replace(' ', '<br>'),
   )
@@ -62,23 +65,21 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       ticktext: formattedFishTropicGroupLabels,
       title: {
         ...chartTheme.layout.xaxis.title,
-        text: 'Trophic group',
+        text: t('trophic_group'),
       },
     },
     yaxis: {
       ...chartTheme.layout.yaxis,
-      title: { ...chartTheme.layout.yaxis.title, text: 'Fish biomass (kg/ha)' },
+      title: { ...chartTheme.layout.yaxis.title, text: `${t('fish_biomass')} (kg/ha)` },
     },
   }
 
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Fish Biomass</MetricCardH3>
+        <MetricCardH3>{t('fish_biomass')}</MetricCardH3>
         {fishBiomassTropicGroupData && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
