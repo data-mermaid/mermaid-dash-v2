@@ -77,7 +77,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>{t('benthic_percent_cover_type', { type: 'bleaching' })}</MetricCardH3>
+        <MetricCardH3>{t('benthic_percent_cover_type', { type: t('bleaching') })}</MetricCardH3>
         {isBleachingDataAvailable && (
           <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}

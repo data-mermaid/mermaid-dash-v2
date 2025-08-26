@@ -48,6 +48,7 @@
     },
     "fish_biomass": "Fish Biomass",
     "benthic_percent_cover_type": "Benthic % Cover ({{type}})",
+    "bleaching": "bleaching",
     "bleaching_severity": "Bleaching Severity",
     "habitat_complexity": "Habitat Complexity",
     "trophic_group": "Trophic Group",
