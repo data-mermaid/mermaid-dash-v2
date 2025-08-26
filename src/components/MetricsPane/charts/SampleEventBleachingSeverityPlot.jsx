@@ -5,11 +5,12 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 const bleachingColor = chartTheme.chartCategoryType.bleachingColorMap
 export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
+  const { t } = useTranslation()
   const {
     count_total_avg: countTotalAvg,
     percent_100_avg: percent100,
@@ -40,57 +41,57 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
       x: [1],
       y: [percentNormal ?? 0],
       type: 'bar',
-      name: `Normal (${(percentNormal ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.normal')} (${(percentNormal ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Normal'] },
-      hovertemplate: 'Normal<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.normal')}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percentPale ?? 0],
       type: 'bar',
-      name: `Pale (${(percentPale ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.pale')} (${(percentPale ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Pale'] },
-      hovertemplate: 'Pale<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.pale')}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percent20 ?? 0],
       type: 'bar',
-      name: `0-20% bleached (${(percent20 ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.percent_bleached', { percent: '0-20%' })} (${(percent20 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['0-20%'] },
-      hovertemplate: '0-20% bleached<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.percent_bleached', { percent: '0-20%' })}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percent50 ?? 0],
       type: 'bar',
-      name: `20-50% bleached (${(percent50 ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.percent_bleached', { percent: '20-50%' })} (${(percent50 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['20-50%'] },
-      hovertemplate: '20-50% bleached<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.percent_bleached', { percent: '20-50%' })}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percent80 ?? 0],
       type: 'bar',
-      name: `50-80% bleached (${(percent80 ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.percent_bleached', { percent: '50-80%' })} (${(percent80 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['50-80%'] },
-      hovertemplate: '50-80% bleached<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.percent_bleached', { percent: '50-80%' })}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percent100 ?? 0],
       type: 'bar',
-      name: `80-100% bleached (${(percent100 ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.percent_bleached', { percent: '80-100%' })} (${(percent100 ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['80-100%'] },
-      hovertemplate: '80-100% bleached<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.percent_bleached', { percent: '80-100%' })}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
     {
       x: [1],
       y: [percentDead ?? 0],
       type: 'bar',
-      name: `Recently dead (${(percentDead ?? 0).toFixed(1)}%)`,
+      name: `${t('chart_category.recently_dead')} (${(percentDead ?? 0).toFixed(1)}%)`,
       marker: { color: bleachingColor['Dead'] },
-      hovertemplate: 'Recently dead<br>%{y:.1f}% of colonies<extra></extra>',
+      hovertemplate: `${t('chart_category.recently_dead')}<br>%{y:.1f}${t('percent_of_colonies')}<extra></extra>`,
     },
   ].filter((trace) => trace.y.some((value) => value > 0))
 
@@ -106,7 +107,7 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
     yaxis: {
       ...chartTheme.layout.yaxis,
       title: {
-        text: '% of colonies',
+        text: t('percent_of_colonies'),
       },
       range: [0, 100],
       tickvals: Array.from({ length: 11 }, (_, i) => i * 10),
@@ -120,11 +121,9 @@ export const SampleEventBleachingSeverityPlot = ({ coloniesBleachedData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Bleaching Severity</MetricCardH3>
+        <MetricCardH3>{t('bleaching_severity')}</MetricCardH3>
         {isBleachingSeverityDataAvailable && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

@@ -5,34 +5,47 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
-const benthicCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
+const benthicCoverCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
+const benthicCoverApiKey = {
+  hard_coral: 'Hard coral',
+  bare_substrate: 'Bare substrate',
+  crustose_coralline_algae: 'Crustose coralline algae',
+  rubble: 'Rubble',
+  cyanobacteria: 'Cyanobacteria',
+  seagrass: 'Seagrass',
+  sand: 'Sand',
+  macroalgae: 'Macroalgae',
+  turf_algae: 'Turf algae',
+  soft_coral: 'Soft coral',
+  other_invertebrates: 'Other invertebrates',
+}
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
+  const { t } = useTranslation()
   const totalSampleUnits = benthicData?.sample_unit_count ?? 0
   const benthicPercentageData = benthicData?.percent_cover_benthic_category_avg
 
-  const benthicPercentageCover = benthicCategories.map(([category, color]) => {
-    const categoryValue = benthicPercentageData?.[category] ?? 0
-    return {
-      name: category,
-      value: categoryValue,
-      color: color,
-    }
-  })
+  const benthicPercentageCover = benthicCoverCategories.map(([category, color]) => ({
+    label: t(`chart_category.${category}`),
+    value: benthicPercentageData?.[benthicCoverApiKey[category]] ?? 0,
+    color,
+  }))
 
   const plotlyDataConfiguration = benthicPercentageCover
     .filter(({ value }) => value > 0)
-    .map(({ name, value, color }) => ({
-      x: [1],
-      y: [value],
-      type: 'bar',
-      name: `${name} (${(value ?? 0).toFixed(1)}%)`,
-      marker: { color },
-      hovertemplate: `${name}<br>%{y:.1f}% cover<extra></extra>`,
-    }))
+    .map(({ label, value, color }) => {
+      return {
+        x: [1],
+        y: [value],
+        type: 'bar',
+        name: `${label} (${value.toFixed(1)}%)`,
+        marker: { color },
+        hovertemplate: `${label}<br>%{y:.1f}%<extra></extra>`,
+      }
+    })
 
   const plotlyLayoutConfiguration = {
     ...chartTheme.layout,
@@ -46,7 +59,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
     yaxis: {
       ...chartTheme.layout.yaxis,
       title: {
-        text: 'Benthic cover (%)',
+        text: t('benthic_cover_percentage'),
       },
       range: [0, 100],
       tickvals: Array.from({ length: 11 }, (_, i) => i * 10),
@@ -60,11 +73,9 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Benthic % Cover ({benthicType})</MetricCardH3>
+        <MetricCardH3>{t('benthic_percent_cover_type', { type: benthicType })}</MetricCardH3>
         {benthicPercentageData && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

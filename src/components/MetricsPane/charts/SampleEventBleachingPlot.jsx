@@ -5,14 +5,15 @@ import { ChartSubtitle, ChartWrapper, HorizontalLine, TitlesWrapper } from './Ch
 import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 const bleachingBenthicCategories = Object.entries(
-  chartTheme.chartCategoryType.bleachingBenthicColorMap,
+  plotlyChartTheme.chartCategoryType.bleachingBenthicColorMap,
 )
 
 export const SampleEventBleachingPlot = ({ bleachingData }) => {
+  const { t } = useTranslation()
   const {
     percent_hard_avg_avg: percentHard,
     percent_soft_avg_avg: percentSoft,
@@ -42,11 +43,11 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
       x: [1],
       y: [bleachingPercentageValues[index]],
       type: 'bar',
-      name: `${category} (${bleachingPercentageValues[index].toFixed(1)}%)`,
+      name: `${t(`chart_category.${category}`)} (${bleachingPercentageValues[index].toFixed(1)}%)`,
       marker: {
         color: color,
       },
-      hovertemplate: `${category}<br>%{y:.1f}%<extra></extra>`,
+      hovertemplate: `${t(`chart_category.${category}`)}<br>%{y:.1f}%<extra></extra>`,
     }))
     .filter((trace) => trace.y.some((value) => value > 0))
 
@@ -62,7 +63,7 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
     yaxis: {
       ...chartTheme.layout.yaxis,
       title: {
-        text: 'Benthic cover (%)',
+        text: t('benthic_cover_percentage'),
       },
       range: [0, 100],
       tickvals: Array.from({ length: 11 }, (_, i) => i * 10),
@@ -76,11 +77,9 @@ export const SampleEventBleachingPlot = ({ bleachingData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Bleaching % Cover (Bleaching)</MetricCardH3>
+        <MetricCardH3>{t('benthic_percent_cover_type', { type: t('bleaching') })}</MetricCardH3>
         {isBleachingDataAvailable && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />

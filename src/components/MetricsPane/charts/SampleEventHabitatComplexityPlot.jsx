@@ -8,11 +8,12 @@ import mediumHabIcon from '../../../assets/medium-hb-icon.png'
 import highHabIcon from '../../../assets/high-hb-icon.png'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
-import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
+import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 
 export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
+  const { t } = useTranslation()
   const totalSampleUnits = habitatComplexityData?.sample_unit_count ?? 0
   const habitatComplexityScore = habitatComplexityData?.score_avg_avg
 
@@ -114,8 +115,8 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
         x: habitatComplexityScore,
         y: 0.9,
         text: habitatComplexityScore
-          ? `${habitatComplexityScore} <br> Average Habitat <br> Complexity`
-          : `No Scores <br> Available`,
+          ? t('average_habitat_complexity', { score: habitatComplexityScore })
+          : t('no_scores_available'),
         showarrow: false,
         xref: 'x',
         yref: 'y',
@@ -134,11 +135,9 @@ export const SampleEventHabitatComplexityPlot = ({ habitatComplexityData }) => {
   return (
     <ChartWrapper>
       <TitlesWrapper>
-        <MetricCardH3>Habitat Complexity</MetricCardH3>
+        <MetricCardH3>{t('habitat_complexity')}</MetricCardH3>
         {habitatComplexityScore && (
-          <ChartSubtitle>
-            {`${pluralizeWordWithCount(totalSampleUnits ?? 0, 'Sample unit')}`}
-          </ChartSubtitle>
+          <ChartSubtitle>{`${t('sample_unit_other', { count: totalSampleUnits })}`}</ChartSubtitle>
         )}
       </TitlesWrapper>
       <HorizontalLine />
