@@ -13,8 +13,74 @@ import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
+const benthicCoverApiKey = {
+  hard_coral: 'Hard coral',
+  bare_substrate: 'Bare substrate',
+  crustose_coralline_algae: 'Crustose coralline algae',
+  rubble: 'Rubble',
+  cyanobacteria: 'Cyanobacteria',
+  seagrass: 'Seagrass',
+  sand: 'Sand',
+  macroalgae: 'Macroalgae',
+  turf_algae: 'Turf algae',
+  soft_coral: 'Soft coral',
+  other_invertebrates: 'Other invertebrates',
+}
+
 const isValidNumber = (num) => {
   return typeof num === 'number' && !Number.isNaN(num)
+}
+
+const getBenthicProtocolData = (protocols) => {
+  return (
+    protocols?.benthicpit?.percent_cover_benthic_category_avg ||
+    protocols?.benthiclit?.percent_cover_benthic_category_avg ||
+    protocols?.benthicpqt?.percent_cover_benthic_category_avg
+  )
+}
+
+const calculateCategoryAverages = (protocols, categories) => {
+  const benthicCategories = {}
+
+  categories.forEach((category) => {
+    const categoryName = benthicCoverApiKey[category]
+    const avgValues = Object.keys(protocols)
+      .map((protocol) => {
+        const categoryData = protocols[protocol]?.percent_cover_benthic_category_avg
+        return categoryData?.[categoryName] ?? null
+      })
+      .filter((val) => val !== null)
+
+    benthicCategories[categoryName] =
+      avgValues.length > 0 ? avgValues.reduce((sum, val) => sum + val, 0) / avgValues.length : null
+  })
+
+  return benthicCategories
+}
+
+const initializeYearData = (year, categories) => ({
+  year,
+  ...Object.fromEntries(categories.map((category) => [benthicCoverApiKey[category], 0])),
+  count: 0,
+})
+
+const normalizePercentages = (yearData, categories) => {
+  let total = 0
+
+  categories.forEach((category) => {
+    const categoryName = benthicCoverApiKey[category]
+    yearData[categoryName] /= yearData.count
+    total += yearData[categoryName]
+  })
+
+  if (total > 0) {
+    categories.forEach((category) => {
+      const categoryName = benthicCoverApiKey[category]
+      yearData[categoryName] = (yearData[categoryName] / total) * 100
+    })
+  }
+
+  return yearData
 }
 
 export const TimeSeriesBenthicCover = () => {
@@ -34,41 +100,20 @@ export const TimeSeriesBenthicCover = () => {
     (accumulator, { sample_date, protocols }) => {
       const year = new Date(sample_date).getFullYear()
       const recordProtocols = protocols || {}
-      const benthicCategories = {}
-      const surveyedBenthicCount =
-        recordProtocols?.benthicpit?.percent_cover_benthic_category_avg ||
-        recordProtocols?.benthiclit?.percent_cover_benthic_category_avg ||
-        recordProtocols?.benthicpqt?.percent_cover_benthic_category_avg
-          ? 1
-          : 0
+      const hasBenthicData = getBenthicProtocolData(recordProtocols) ? 1 : 0
 
-      categories.forEach((category) => {
-        const avgBenthicCoverValues = Object.keys(recordProtocols)
-          .map((protocol) => {
-            const categoryData = recordProtocols[protocol]?.percent_cover_benthic_category_avg
-            return categoryData?.[category] ?? null
-          })
-          .filter((val) => val !== null)
-
-        benthicCategories[category] =
-          avgBenthicCoverValues.length > 0
-            ? avgBenthicCoverValues.reduce((sum, val) => sum + val, 0) /
-              avgBenthicCoverValues.length
-            : null
-      })
+      const benthicCategories = calculateCategoryAverages(recordProtocols, categories)
 
       if (!accumulator[year]) {
-        accumulator[year] = {
-          year,
-          ...Object.fromEntries(categories.map((category) => [category, 0])),
-          count: 0,
-        }
+        accumulator[year] = initializeYearData(year, categories)
       }
 
-      accumulator[year].count += surveyedBenthicCount
+      accumulator[year].count += hasBenthicData
+
       categories.forEach((category) => {
-        if (benthicCategories[category] !== null) {
-          accumulator[year][category] += benthicCategories[category]
+        const categoryName = benthicCoverApiKey[category]
+        if (benthicCategories[categoryName] !== null) {
+          accumulator[year][categoryName] += benthicCategories[categoryName]
         }
       })
 
@@ -78,42 +123,29 @@ export const TimeSeriesBenthicCover = () => {
   )
 
   const benthicPercentageCoverDistributions = Object.values(groupedBenthicCategoryCountByYear).map(
-    (yearData) => {
-      let total = 0
-
-      categories.forEach((category) => {
-        yearData[category] /= yearData.count
-        total += yearData[category]
-      })
-
-      if (total > 0) {
-        categories.forEach((category) => {
-          yearData[category] = (yearData[category] / total) * 100
-        })
-      }
-
-      return yearData
-    },
+    (yearData) => normalizePercentages(yearData, categories),
   )
+
   const totalSurveys = benthicPercentageCoverDistributions
     .filter((record) => isValidNumber(record['Hard coral']))
     .reduce((sum, { count }) => sum + count, 0)
 
   const plotlyDataConfiguration = categories
     .map((category) => {
+      const categoryName = benthicCoverApiKey[category]
       const validDistributions = benthicPercentageCoverDistributions.filter((distribution) =>
-        isValidNumber(distribution[category]),
+        isValidNumber(distribution[categoryName]),
       )
 
       return {
         x: validDistributions.map((distribution) => distribution.year),
-        y: validDistributions.map((distribution) => distribution[category]),
+        y: validDistributions.map((distribution) => distribution[categoryName]),
         type: 'bar',
-        name: category,
+        name: categoryName,
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: `${category}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
+        hovertemplate: `${categoryName}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))
