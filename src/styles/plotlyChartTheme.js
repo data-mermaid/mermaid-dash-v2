@@ -8,23 +8,25 @@ const plotlyChartTheme = {
       },
     },
   },
+  //The below text strings come from the API and
+  //may break multiple areas when updated to tokens
   chartCategoryType: {
     managementRuleColorMap: {
       'Open Access': '#e69f00',
       Restrictions: '#70aae6',
     },
     benthicCoverColorMap: {
-      hard_coral: '#498fc9',
-      bare_substrate: '#f2f3f3',
-      crustose_coralline_algae: '#fbd7d5',
-      rubble: '#f5f6af',
-      cyanobacteria: '#870e00',
-      seagrass: '#4d4d4d',
-      sand: '#c1b180',
-      macroalgae: '#b2b000',
-      turf_algae: '#d9eea8',
-      soft_coral: '#9ce5fa',
-      other_invertebrates: '#4e4e4e',
+      'Hard coral': '#498fc9',
+      'Bare substrate': '#f2f3f3',
+      'Crustose coralline algae': '#fbd7d5',
+      Rubble: '#f5f6af',
+      Cyanobacteria: '#870e00',
+      Seagrass: '#4d4d4d',
+      Sand: '#c1b180',
+      Macroalgae: '#b2b000',
+      'Turf algae': '#d9eea8',
+      'Soft coral': '#9ce5fa',
+      'Other invertebrates': '#4e4e4e',
     },
     habitatComplexityColorMap: {
       0: '#eff7ff',
