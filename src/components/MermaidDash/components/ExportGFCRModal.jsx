@@ -114,8 +114,8 @@ const ExportGFCRModal = ({ isOpen, onDismiss }) => {
           <MuiTooltip
             title={t('your_projects')}
             placement="top"
-            bgColor={theme.color.primaryColor}
-            tooltipTextColor={theme.color.white}
+            bgColor={`${theme.color.primaryColor}`}
+            tooltipTextColor={`${theme.color.white}`}
           >
             <IconButton>
               <IconUserCircle />
