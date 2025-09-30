@@ -20,8 +20,8 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
     <MuiTooltip
       title={t('your_projects')}
       placement="top"
-      bgColor={theme.color.primaryColor}
-      tooltipTextColor={theme.color.white}
+      bgColor={`${theme.color.primaryColor}`}
+      tooltipTextColor={`${theme.color.white}`}
     >
       <IconButton style={{ marginTop: iconMarginTop }}>
         <IconUserCircle />
@@ -31,8 +31,8 @@ const ContactOrUserIcon = ({ projectId, customStyles = {} }) => {
     <MuiTooltip
       title={t('contact_admins')}
       placement="top"
-      bgColor={theme.color.primaryColor}
-      tooltipTextColor={theme.color.white}
+      bgColor={`${theme.color.primaryColor}`}
+      tooltipTextColor={`${theme.color.white}`}
     >
       <a
         href={`https://datamermaid.org/contact-project?project_id=${projectId}`}

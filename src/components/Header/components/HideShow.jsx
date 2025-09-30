@@ -86,8 +86,8 @@ const HideShow = ({
         <MuiTooltip
           title={tooltipText}
           placement="top"
-          bgColor={theme.color.primaryColor}
-          tooltipTextColor={theme.color.white}
+          bgColor={`${theme.color.primaryColor}`}
+          tooltipTextColor={`${theme.color.white}`}
         >
           {buttonForRender}
         </MuiTooltip>

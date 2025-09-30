@@ -81,5 +81,15 @@
         "percent_bleached": "{{percent}}% bleached",
         "recently_dead": "Recently dead",
         "percent_of_colonies": "% of colonies"
-    }
+    },
+    "total_exported_projects_and_surveys": "Total exported projects: {{projectCount}}. Total surveys: {{surveyCount}}.",
+    "project_name": "Project Name",
+    "surveys": "Surveys",
+    "data_sharing": "Data Sharing",
+    "summary_data": "Summary Data",
+    "observation_data": "Observation Data",
+    "export_metadata_info": "All exports will contain metadata for all projects. ",
+    "learn_more": "Learn more.",
+    "learn_more_about_data_sharing": "Learn more about how your data are shared...",
+    "send_email_link": "Send Email With Link"
 }

@@ -89,10 +89,10 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
       }
     })
 
-    const invalidProjects = formattedTableData.filter(({ transectCount }) => transectCount === 0)
+    const invalidProjects = formattedTableData.filter(({ surveyCount }) => surveyCount === 0)
 
     setInvalidProjectsCount(invalidProjects.length)
-    setExportTableData(formattedTableData.filter(({ transectCount }) => transectCount > 0))
+    setExportTableData(formattedTableData.filter(({ surveyCount }) => surveyCount > 0))
   }, [displayedProjects, selectedMethod, mermaidUserData, userIsMemberOfProject])
 
   const titleByMode = (() => {
@@ -146,17 +146,17 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
   const toolbarContent = modalMode === 'export' && (
     <StyledExportContentWrapper>
       <div>
-        All exports will contain metadata for all projects.{' '}
+        {t('export_metadata_info')}
         <a
           target="_blank"
           href="https://datamermaid.org/documentation/explore-app"
           rel="noopener noreferrer"
         >
-          Learn More.
+          {t('learn_more')}
         </a>
       </div>
       <ButtonThatLooksLikeLinkUnderlined onClick={() => setIsDataSharingModalOpen(true)}>
-        Learn more about how your data are shared...
+        {t('learn_more_about_data_sharing')}
       </ButtonThatLooksLikeLinkUnderlined>
     </StyledExportContentWrapper>
   )
@@ -195,8 +195,10 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
         <LeftFooter>
           <StyledWarningText>
             <div>
-              Total exported projects: {exportTableData.length}. {'   '}Total surveys:{' '}
-              {surveyedMethodCount[selectedMethod] ?? 0}
+              {t('total_exported_projects_and_surveys', {
+                projectCount: exportTableData?.length ?? 0,
+                surveyCount: surveyedMethodCount?.[selectedMethod] ?? 0,
+              })}
             </div>
             {invalidProjectsCount > 0 && (
               <span>
@@ -218,7 +220,7 @@ const ExportModal = ({ isOpen, onDismiss, selectedMethod, surveyedMethodCount })
         </ButtonSecondary>
         {modalMode === 'export' && (
           <ButtonPrimary onClick={handleSendEmailWithLinkSubmit}>
-            Send Email With Link
+            {t('send_email_link')}
           </ButtonPrimary>
         )}
       </RightFooter>
