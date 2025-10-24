@@ -26,45 +26,56 @@ const StyledTr = styled(Tr)`
 
 const ExportTableView = ({ exportTableData }) => {
   const { t } = useTranslation()
+  const projectNameHeaderText = t('project_name')
+  const surveyCountHeaderText = t('surveys')
+  const dataSharingHeaderText = t('data_sharing')
+  const summaryDataHeaderText = t('summary_data')
+  const observationDataHeaderText = t('observation_data')
 
   const tableColumns = useMemo(
     () => [
       {
-        Header: 'Project Name',
+        Header: projectNameHeaderText,
         accessor: 'projectName',
         sortType: reactTableNaturalSort,
         width: 360,
       },
       {
-        Header: 'Transects',
-        accessor: 'transectCount',
+        Header: surveyCountHeaderText,
+        accessor: 'surveyCount',
         sortType: reactTableNaturalSort,
         align: 'right',
         width: 110,
       },
       {
-        Header: 'Data Sharing',
+        Header: dataSharingHeaderText,
         accessor: 'dataSharingPolicy',
         sortType: reactTableNaturalSort,
         align: 'left',
         width: 150,
       },
       {
-        Header: 'Summary Data',
+        Header: summaryDataHeaderText,
         accessor: 'summaryData',
         sortType: reactTableNaturalSort,
         align: 'center',
         width: 150,
       },
       {
-        Header: 'Observation Data',
+        Header: observationDataHeaderText,
         accessor: 'observationData',
         sortType: reactTableNaturalSort,
         align: 'center',
         width: 180,
       },
     ],
-    [],
+    [
+      projectNameHeaderText,
+      surveyCountHeaderText,
+      dataSharingHeaderText,
+      summaryDataHeaderText,
+      observationDataHeaderText,
+    ],
   )
 
   const tableCellData = useMemo(
@@ -73,7 +84,7 @@ const ExportTableView = ({ exportTableData }) => {
         ({
           projectId,
           projectName,
-          transectCount,
+          surveyCount,
           dataSharingPolicy,
           summaryData,
           observationData,
@@ -82,7 +93,7 @@ const ExportTableView = ({ exportTableData }) => {
         }) => ({
           projectId,
           projectName,
-          transectCount,
+          surveyCount,
           dataSharingPolicy,
           summaryData,
           observationData,
@@ -142,7 +153,7 @@ const ExportTableView = ({ exportTableData }) => {
         </thead>
 
         <tbody {...getTableBodyProps()}>
-          {rows.length > 0 ? (
+          {rows.length > 0 &&
             rows.map((row) => {
               prepareRow(row)
               const { key, ...restRowProps } = row.getRowProps()
@@ -176,8 +187,8 @@ const ExportTableView = ({ exportTableData }) => {
                             <MuiTooltip
                               title={t('your_projects')}
                               placement="top"
-                              bgColor={theme.color.primaryColor}
-                              tooltipTextColor={theme.color.white}
+                              bgColor={`${theme.color.primaryColor}`}
+                              tooltipTextColor={`${theme.color.white}`}
                             >
                               <IconButton>
                                 <IconUserCircle />
@@ -187,8 +198,8 @@ const ExportTableView = ({ exportTableData }) => {
                             <MuiTooltip
                               title={t('contact_admins')}
                               placement="top"
-                              bgColor={theme.color.primaryColor}
-                              tooltipTextColor={theme.color.white}
+                              bgColor={`${theme.color.primaryColor}`}
+                              tooltipTextColor={`${theme.color.white}`}
                             >
                               <a
                                 href={`https://datamermaid.org/contact-project?project_id=${projectId}`}
@@ -204,14 +215,7 @@ const ExportTableView = ({ exportTableData }) => {
                   })}
                 </StyledTr>
               )
-            })
-          ) : (
-            <StyledTr>
-              <Td colSpan={tableColumns.length} align="center">
-                No data available
-              </Td>
-            </StyledTr>
-          )}
+            })}
         </tbody>
       </ModalStickyTable>
     </ModalTableOverflowWrapper>
