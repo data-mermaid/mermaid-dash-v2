@@ -7,8 +7,8 @@ export const MuiTooltip = ({
   children,
   title,
   placement = 'bottom',
-  bgColor = theme.color.white,
-  tooltipTextColor = theme.color.black,
+  bgColor = `${theme.color.white}`,
+  tooltipTextColor = `${theme.color.black}`,
   isMobileWidth = false,
 }) => {
   const [open, setOpen] = useState(false)
@@ -38,15 +38,15 @@ export const MuiTooltip = ({
       },
       tooltip: {
         sx: {
-          backgroundColor: `${bgColor}`,
-          color: `${tooltipTextColor}`,
+          backgroundColor: bgColor,
+          color: tooltipTextColor,
           fontSize: `${theme.typography.smallFontSize}`,
           fontFamily: `${theme.typography.fontFamily}`,
         },
       },
       arrow: {
         sx: {
-          color: `${bgColor}`,
+          color: bgColor,
         },
       },
     },
