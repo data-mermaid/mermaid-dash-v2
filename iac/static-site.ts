@@ -5,6 +5,7 @@ import * as acm from 'aws-cdk-lib/aws-certificatemanager'
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront'
 import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment'
 import * as cloudfront_origins from 'aws-cdk-lib/aws-cloudfront-origins'
+import * as wafv2 from 'aws-cdk-lib/aws-wafv2'
 import { CfnOutput, RemovalPolicy, Stack, Size } from 'aws-cdk-lib'
 import * as iam from 'aws-cdk-lib/aws-iam'
 import { Construct } from 'constructs'
@@ -65,6 +66,67 @@ export class StaticSite extends Construct {
       `arn:aws:acm:us-east-1:${parent.account}:certificate/2aba1caf-7215-4cfe-9c0e-2c9871b7ed41`
     )
 
+    // WAFv2 WebACL — all rules start in count mode for safe rollout
+    const webAcl = new wafv2.CfnWebACL(this, 'WebAcl', {
+      defaultAction: { allow: {} },
+      scope: 'CLOUDFRONT',
+      visibilityConfig: {
+        cloudWatchMetricsEnabled: true,
+        metricName: `${name}-waf-metric`,
+        sampledRequestsEnabled: true,
+      },
+      rules: [
+        {
+          name: 'AWSManagedRulesCommonRuleSet',
+          priority: 1,
+          overrideAction: { count: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: 'AWS',
+              name: 'AWSManagedRulesCommonRuleSet',
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: `${name}-common-rules`,
+            sampledRequestsEnabled: true,
+          },
+        },
+        {
+          name: 'AWSManagedRulesBotControlRuleSet',
+          priority: 2,
+          overrideAction: { count: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: 'AWS',
+              name: 'AWSManagedRulesBotControlRuleSet',
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: `${name}-bot-control`,
+            sampledRequestsEnabled: true,
+          },
+        },
+        {
+          name: 'RateLimitPerIP',
+          priority: 3,
+          action: { count: {} },
+          statement: {
+            rateBasedStatement: {
+              limit: 2000,
+              aggregateKeyType: 'IP',
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: `${name}-rate-limit`,
+            sampledRequestsEnabled: true,
+          },
+        },
+      ],
+    })
+
     // CloudFront distribution
     const domainNames = []
     domainNames.push(props.domainName)
@@ -88,6 +150,7 @@ export class StaticSite extends Construct {
       defaultRootObject: "index.html",
       domainNames,
       minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2021,
+      webAclId: webAcl.attrArn,
       // if you do a hard refresh, then the app goes to an error page. We need it to
       // redirect to index.html
       errorResponses: [
