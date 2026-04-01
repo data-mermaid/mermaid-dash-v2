@@ -26,6 +26,11 @@ export class StaticSite extends Construct {
   constructor(parent: Stack, name: string, props: StaticSiteProps) {
     super(parent, name)
 
+    // CLOUDFRONT-scoped WAFv2 WebACLs and ACM certificates must be in us-east-1
+    if (parent.region && !parent.region.startsWith('${') && parent.region !== 'us-east-1') {
+      throw new Error(`Stack must be deployed in us-east-1 for CloudFront WAF and ACM, got: ${parent.region}`)
+    }
+
     const cloudfrontOAI = new cloudfront.OriginAccessIdentity(this, 'CloudfrontOAI', {
       comment: `OAI for ${name}`
     })
@@ -93,18 +98,18 @@ export class StaticSite extends Construct {
           },
         },
         {
-          name: 'AWSManagedRulesBotControlRuleSet',
+          name: 'AWSManagedRulesKnownBadInputsRuleSet',
           priority: 2,
           overrideAction: { count: {} },
           statement: {
             managedRuleGroupStatement: {
               vendorName: 'AWS',
-              name: 'AWSManagedRulesBotControlRuleSet',
+              name: 'AWSManagedRulesKnownBadInputsRuleSet',
             },
           },
           visibilityConfig: {
             cloudWatchMetricsEnabled: true,
-            metricName: `${name}-bot-control`,
+            metricName: `${name}-known-bad-inputs`,
             sampledRequestsEnabled: true,
           },
         },
