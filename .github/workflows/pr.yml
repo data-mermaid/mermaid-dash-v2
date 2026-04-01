@@ -13,9 +13,7 @@ on:
 
 permissions:
   contents: read
-  id-token: write
   issues: write
-  pull-requests: write
 
 jobs:
   build:
@@ -76,9 +74,16 @@ jobs:
           CDK_DEFAULT_ACCOUNT: '000000000000'
           CDK_DEFAULT_REGION: us-east-1
         run: |
-          npx cdk synth --quiet 2>&1 | tee /tmp/cdk-nag.log || true
+          set +e
+          npx cdk synth --quiet 2>&1 | tee /tmp/cdk-nag.log
+          synth_exit=${PIPESTATUS[0]}
+          set -e
+
           if grep -q '^\[Error' /tmp/cdk-nag.log; then
             echo "has_errors=true" >> "$GITHUB_OUTPUT"
+          elif [ "$synth_exit" -ne 0 ]; then
+            echo "::error::cdk synth failed with exit code $synth_exit (not a cdk-nag finding)"
+            exit "$synth_exit"
           else
             echo "has_errors=false" >> "$GITHUB_OUTPUT"
           fi

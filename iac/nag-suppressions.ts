@@ -58,9 +58,11 @@ export function applyNagSuppressions(stack: cdk.Stack): void {
         'Action::s3:List*',
         'Action::s3:Abort*',
         'Action::s3:DeleteObject*',
-        'Resource::<StaticSiteBucket9C756C46.Arn>/*',
         {
-          regex: '/Resource::arn:aws:s3:::cdk-hnb659fds-assets-.*\\/\\*/',
+          regex: '/Resource::<.*Bucket.*.Arn>\/\\*/',
+        },
+        {
+          regex: '/Resource::arn:.*:s3:::cdk-.*-assets-.*\/\\*/',
         },
         'Resource::*',
       ],
