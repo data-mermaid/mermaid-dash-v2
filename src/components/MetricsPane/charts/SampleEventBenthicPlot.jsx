@@ -9,19 +9,6 @@ import { useTranslation } from 'react-i18next'
 
 const chartTheme = plotlyChartTheme
 const benthicCoverCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
-const benthicCoverApiKey = {
-  hard_coral: 'Hard coral',
-  bare_substrate: 'Bare substrate',
-  crustose_coralline_algae: 'Crustose coralline algae',
-  rubble: 'Rubble',
-  cyanobacteria: 'Cyanobacteria',
-  seagrass: 'Seagrass',
-  sand: 'Sand',
-  macroalgae: 'Macroalgae',
-  turf_algae: 'Turf algae',
-  soft_coral: 'Soft coral',
-  other_invertebrates: 'Other invertebrates',
-}
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const { t } = useTranslation()
@@ -29,11 +16,10 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const benthicPercentageData = benthicData?.percent_cover_benthic_category_avg
 
   const benthicPercentageCover = benthicCoverCategories.map(([category, color]) => ({
-    label: t(`chart_category.${category}`),
-    value: benthicPercentageData?.[benthicCoverApiKey[category]] ?? 0,
+    label: category,
+    value: benthicPercentageData?.[category] ?? 0,
     color,
   }))
-
   const plotlyDataConfiguration = benthicPercentageCover
     .filter(({ value }) => value > 0)
     .map(({ label, value, color }) => {
