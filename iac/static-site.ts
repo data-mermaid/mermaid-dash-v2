@@ -73,6 +73,7 @@ export class StaticSite extends Construct {
 
     // WAFv2 WebACL — all rules start in count mode for safe rollout
     const webAcl = new wafv2.CfnWebACL(this, 'WebAcl', {
+      name: `${name}-webacl`,
       defaultAction: { allow: {} },
       scope: 'CLOUDFRONT',
       visibilityConfig: {
