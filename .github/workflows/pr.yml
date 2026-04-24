@@ -92,7 +92,7 @@ jobs:
 
       - name: Post CDK Nag results to PR
         if: always() && steps.cdk-nag.conclusion != 'skipped'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
@@ -161,12 +161,11 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v5.1.1
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
-          DEPLOY_AWS_ROLE: ${{ secrets.DEPLOY_AWS_ROLE }}
+          CDK_DEPLOY_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.DEPLOY_AWS_ROLE }}
+          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
           aws-region: us-east-1
           role-skip-session-tagging: true
-
       - name: Fetch iac node cache
         uses: actions/cache@v5.0.3
         id: iac-cache
@@ -193,7 +192,7 @@ jobs:
 
       - name: Post CDK diff to PR
         if: always() && steps.cdk-diff.conclusion != 'skipped'
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
