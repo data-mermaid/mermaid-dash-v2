@@ -14,6 +14,8 @@ on:
 permissions:
   contents: read
   issues: write
+  pull-requests: write
+  id-token: write
 
 jobs:
   build:
@@ -145,6 +147,7 @@ jobs:
       id-token: write
       contents: read
       issues: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6.0.2
       - uses: actions/setup-node@v6.2.0
