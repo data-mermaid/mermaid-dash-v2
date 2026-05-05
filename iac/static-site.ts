@@ -71,7 +71,7 @@ export class StaticSite extends Construct {
       `arn:aws:acm:us-east-1:${parent.account}:certificate/2aba1caf-7215-4cfe-9c0e-2c9871b7ed41`
     )
 
-    // WAFv2 WebACL — all rules start in count mode for safe rollout
+    // WAFv2 WebACL
     const webAcl = new wafv2.CfnWebACL(this, 'WebAcl', {
       name: `${name}-webacl`,
       defaultAction: { allow: {} },
@@ -85,7 +85,7 @@ export class StaticSite extends Construct {
         {
           name: 'AWSManagedRulesCommonRuleSet',
           priority: 1,
-          overrideAction: { count: {} },
+          overrideAction: { none: {} },
           statement: {
             managedRuleGroupStatement: {
               vendorName: 'AWS',
@@ -101,7 +101,7 @@ export class StaticSite extends Construct {
         {
           name: 'AWSManagedRulesKnownBadInputsRuleSet',
           priority: 2,
-          overrideAction: { count: {} },
+          overrideAction: { none: {} },
           statement: {
             managedRuleGroupStatement: {
               vendorName: 'AWS',
@@ -115,9 +115,25 @@ export class StaticSite extends Construct {
           },
         },
         {
+          name: 'AWSManagedRulesSQLiRuleSet',
+          priority: 4,
+          overrideAction: { none: {} },
+          statement: {
+            managedRuleGroupStatement: {
+              vendorName: 'AWS',
+              name: 'AWSManagedRulesSQLiRuleSet',
+            },
+          },
+          visibilityConfig: {
+            cloudWatchMetricsEnabled: true,
+            metricName: `${name}-sqli-rules`,
+            sampledRequestsEnabled: true,
+          },
+        },
+        {
           name: 'RateLimitPerIP',
           priority: 3,
-          action: { count: {} },
+          action: { block: { customResponse: { responseCode: 429 } } },
           statement: {
             rateBasedStatement: {
               limit: 2000,
