@@ -7,7 +7,6 @@ import * as s3deploy from 'aws-cdk-lib/aws-s3-deployment'
 import * as cloudfront_origins from 'aws-cdk-lib/aws-cloudfront-origins'
 import * as wafv2 from 'aws-cdk-lib/aws-wafv2'
 import { CfnOutput, RemovalPolicy, Stack, Size } from 'aws-cdk-lib'
-import * as iam from 'aws-cdk-lib/aws-iam'
 import { Construct } from 'constructs'
 
 export interface StaticSiteProps {
@@ -57,12 +56,6 @@ export class StaticSite extends Construct {
       autoDeleteObjects: props.environment === 'dev',
     })
 
-    // Grant access to cloudfront
-    siteBucket.addToResourcePolicy(new iam.PolicyStatement({
-      actions: ['s3:GetObject'],
-      resources: [siteBucket.arnForObjects('*')],
-      principals: [new iam.CanonicalUserPrincipal(cloudfrontOAI.cloudFrontOriginAccessIdentityS3CanonicalUserId)]
-    }))
     new CfnOutput(this, 'BucketName', { value: siteBucket.bucketName })
 
     // TLS certificate
@@ -184,9 +177,7 @@ export class StaticSite extends Construct {
       ],
       defaultBehavior: {
         cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
-        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessIdentity(siteBucket, {
-          originAccessIdentity: cloudfrontOAI,
-        }),
+        origin: cloudfront_origins.S3BucketOrigin.withOriginAccessControl(siteBucket),
         compress: true,
         allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
         viewerProtocolPolicy: cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS, // make sure Cloudflare isn't proxying
