@@ -66,12 +66,12 @@ export class StaticSite extends Construct {
 
     // WAFv2 WebACL
     const webAcl = new wafv2.CfnWebACL(this, 'WebAcl', {
-      name: `${name}-webacl`,
+      name: `${props.environment}-${name}-webacl`,
       defaultAction: { allow: {} },
       scope: 'CLOUDFRONT',
       visibilityConfig: {
         cloudWatchMetricsEnabled: true,
-        metricName: `${name}-waf-metric`,
+        metricName: `${props.environment}-${name}-waf-metric`,
         sampledRequestsEnabled: true,
       },
       rules: [
@@ -87,7 +87,7 @@ export class StaticSite extends Construct {
           },
           visibilityConfig: {
             cloudWatchMetricsEnabled: true,
-            metricName: `${name}-common-rules`,
+            metricName: `${props.environment}-${name}-common-rules`,
             sampledRequestsEnabled: true,
           },
         },
@@ -103,7 +103,7 @@ export class StaticSite extends Construct {
           },
           visibilityConfig: {
             cloudWatchMetricsEnabled: true,
-            metricName: `${name}-known-bad-inputs`,
+            metricName: `${props.environment}-${name}-known-bad-inputs`,
             sampledRequestsEnabled: true,
           },
         },
@@ -119,7 +119,7 @@ export class StaticSite extends Construct {
           },
           visibilityConfig: {
             cloudWatchMetricsEnabled: true,
-            metricName: `${name}-sqli-rules`,
+            metricName: `${props.environment}-${name}-sqli-rules`,
             sampledRequestsEnabled: true,
           },
         },
@@ -135,7 +135,7 @@ export class StaticSite extends Construct {
           },
           visibilityConfig: {
             cloudWatchMetricsEnabled: true,
-            metricName: `${name}-rate-limit`,
+            metricName: `${props.environment}-${name}-rate-limit`,
             sampledRequestsEnabled: true,
           },
         },
