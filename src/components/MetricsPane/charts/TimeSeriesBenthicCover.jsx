@@ -110,11 +110,11 @@ export const TimeSeriesBenthicCover = () => {
         x: validDistributions.map((distribution) => distribution.year),
         y: validDistributions.map((distribution) => distribution[category]),
         type: 'bar',
-        name: category,
+        name: BENTHIC_COVER_API_KEY[category],
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: `${category}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
+        hovertemplate: `${BENTHIC_COVER_API_KEY[category]}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))
