@@ -154,3 +154,18 @@ export const POLICY_MAPPINGS = {
 
 export const MAP_VIEW = 'map view'
 export const TABLE_VIEW = 'table view'
+
+// Note: these labels duplicate the chart_category entries in src/locales/en/translation.json — consider consolidating
+export const BENTHIC_COVER_KEY_TO_LABEL = {
+  hard_coral: 'Hard coral',
+  bare_substrate: 'Bare substrate',
+  crustose_coralline_algae: 'Crustose coralline algae',
+  rubble: 'Rubble',
+  cyanobacteria: 'Cyanobacteria',
+  seagrass: 'Seagrass',
+  sand: 'Sand',
+  macroalgae: 'Macroalgae',
+  turf_algae: 'Turf algae',
+  soft_coral: 'Soft coral',
+  other_invertebrates: 'Other invertebrates',
+}

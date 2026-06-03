@@ -6,22 +6,10 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { useTranslation } from 'react-i18next'
+import { BENTHIC_COVER_KEY_TO_LABEL } from '../../../constants/constants'
 
 const chartTheme = plotlyChartTheme
 const benthicCoverCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
-const benthicCoverApiKey = {
-  hard_coral: 'Hard coral',
-  bare_substrate: 'Bare substrate',
-  crustose_coralline_algae: 'Crustose coralline algae',
-  rubble: 'Rubble',
-  cyanobacteria: 'Cyanobacteria',
-  seagrass: 'Seagrass',
-  sand: 'Sand',
-  macroalgae: 'Macroalgae',
-  turf_algae: 'Turf algae',
-  soft_coral: 'Soft coral',
-  other_invertebrates: 'Other invertebrates',
-}
 
 export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
   const { t } = useTranslation()
@@ -30,7 +18,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
 
   const benthicPercentageCover = benthicCoverCategories.map(([category, color]) => ({
     label: t(`chart_category.${category}`),
-    value: benthicPercentageData?.[benthicCoverApiKey[category]] ?? 0,
+    value: benthicPercentageData?.[BENTHIC_COVER_KEY_TO_LABEL[category]] ?? 0,
     color,
   }))
 

@@ -4,3 +4,4 @@ export const checkXSeriesYears = (plotlyData) => {
     return uniqueYears.size < 3
   })
 }
+
