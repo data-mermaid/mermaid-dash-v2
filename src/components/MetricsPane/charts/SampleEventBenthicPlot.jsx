@@ -6,7 +6,7 @@ import { MetricCardH3 } from '../MetricsPane.styles'
 import plotlyChartTheme from '../../../styles/plotlyChartTheme'
 import { PrivateChartView } from './PrivateChartView'
 import { useTranslation } from 'react-i18next'
-import { BENTHIC_COVER_API_KEY } from '../../../constants/constants'
+import { BENTHIC_COVER_KEY_TO_LABEL } from '../../../constants/constants'
 
 const chartTheme = plotlyChartTheme
 const benthicCoverCategories = Object.entries(chartTheme.chartCategoryType.benthicCoverColorMap)
@@ -18,7 +18,7 @@ export const SampleEventBenthicPlot = ({ benthicType, benthicData }) => {
 
   const benthicPercentageCover = benthicCoverCategories.map(([category, color]) => ({
     label: t(`chart_category.${category}`),
-    value: benthicPercentageData?.[BENTHIC_COVER_API_KEY[category]] ?? 0,
+    value: benthicPercentageData?.[BENTHIC_COVER_KEY_TO_LABEL[category]] ?? 0,
     color,
   }))
 

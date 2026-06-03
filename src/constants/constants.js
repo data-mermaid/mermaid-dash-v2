@@ -155,7 +155,8 @@ export const POLICY_MAPPINGS = {
 export const MAP_VIEW = 'map view'
 export const TABLE_VIEW = 'table view'
 
-export const BENTHIC_COVER_API_KEY = {
+// Note: these labels duplicate the chart_category entries in src/locales/en/translation.json — consider consolidating
+export const BENTHIC_COVER_KEY_TO_LABEL = {
   hard_coral: 'Hard coral',
   bare_substrate: 'Bare substrate',
   crustose_coralline_algae: 'Crustose coralline algae',

@@ -10,7 +10,7 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
-import { BENTHIC_COVER_API_KEY } from '../../../constants/constants'
+import { BENTHIC_COVER_KEY_TO_LABEL } from '../../../constants/constants'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
@@ -47,7 +47,7 @@ export const TimeSeriesBenthicCover = () => {
         const avgBenthicCoverValues = Object.keys(recordProtocols)
           .map((protocol) => {
             const categoryData = recordProtocols[protocol]?.percent_cover_benthic_category_avg
-            return categoryData?.[BENTHIC_COVER_API_KEY[category]] ?? null
+            return categoryData?.[BENTHIC_COVER_KEY_TO_LABEL[category]] ?? null
           })
           .filter((val) => val !== null)
 
@@ -110,11 +110,11 @@ export const TimeSeriesBenthicCover = () => {
         x: validDistributions.map((distribution) => distribution.year),
         y: validDistributions.map((distribution) => distribution[category]),
         type: 'bar',
-        name: BENTHIC_COVER_API_KEY[category],
+        name: BENTHIC_COVER_KEY_TO_LABEL[category],
         marker: {
           color: plotlyChartTheme.chartCategoryType.benthicCoverColorMap[category],
         },
-        hovertemplate: `${BENTHIC_COVER_API_KEY[category]}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
+        hovertemplate: `${BENTHIC_COVER_KEY_TO_LABEL[category]}<br>Year: %{x}<br>%{y:.1f}% cover<extra></extra>`,
       }
     })
     .filter((trace) => trace.y.some((value) => value > 0))
