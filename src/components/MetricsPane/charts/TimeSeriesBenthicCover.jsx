@@ -10,6 +10,7 @@ import { PrivateChartView } from './PrivateChartView'
 import { NoDataChartView } from './NoDataChartView'
 import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 import { checkXSeriesYears } from '../../../helperFunctions/chartHelpers'
+import { BENTHIC_COVER_API_KEY } from '../../../constants/constants'
 
 const categories = Object.keys(plotlyChartTheme.chartCategoryType.benthicCoverColorMap)
 
@@ -46,7 +47,7 @@ export const TimeSeriesBenthicCover = () => {
         const avgBenthicCoverValues = Object.keys(recordProtocols)
           .map((protocol) => {
             const categoryData = recordProtocols[protocol]?.percent_cover_benthic_category_avg
-            return categoryData?.[category] ?? null
+            return categoryData?.[BENTHIC_COVER_API_KEY[category]] ?? null
           })
           .filter((val) => val !== null)
 
@@ -96,7 +97,7 @@ export const TimeSeriesBenthicCover = () => {
     },
   )
   const totalSurveys = benthicPercentageCoverDistributions
-    .filter((record) => isValidNumber(record['Hard coral']))
+    .filter((record) => isValidNumber(record['hard_coral']))
     .reduce((sum, { count }) => sum + count, 0)
 
   const plotlyDataConfiguration = categories
