@@ -4,6 +4,8 @@ import svgr from 'vite-plugin-svgr'
 import i18nextLoader from 'vite-plugin-i18next-loader'
 import { sentryVitePlugin } from '@sentry/vite-plugin'
 
+const sentryEnabled = !!process.env.SENTRY_AUTH_TOKEN
+
 // https://vitejs.dev/config/
 export default defineConfig({
   esbuild: {
@@ -15,8 +17,7 @@ export default defineConfig({
     react(),
     svgr(),
     i18nextLoader({ paths: ['./src/locales'] }),
-    // Only upload source maps during CI builds where SENTRY_AUTH_TOKEN is set
-    ...(process.env.SENTRY_AUTH_TOKEN
+    ...(sentryEnabled
       ? [
           sentryVitePlugin({
             org: process.env.SENTRY_ORG,
@@ -27,6 +28,8 @@ export default defineConfig({
       : []),
   ],
   build: {
-    sourcemap: true,
+    // 'hidden' emits .map files for Sentry upload without exposing references in JS bundles;
+    // false skips source maps entirely in local/dev builds
+    sourcemap: sentryEnabled ? 'hidden' : false,
   },
 })
