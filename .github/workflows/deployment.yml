@@ -7,8 +7,12 @@ on:
     tags:
       - 'v*.*.*'
 jobs:
+  call-lint:
+    uses: ./.github/workflows/_lint.yml
+
   deploy_develop:
     if: startsWith(github.ref, 'refs/heads/develop')
+    needs: [call-lint]
     uses: ./.github/workflows/_deploy.yml
     secrets: inherit
     with:
@@ -23,6 +27,7 @@ jobs:
 
   deploy_production:
     if: startsWith(github.ref, 'refs/tags/v')
+    needs: [call-lint]
     uses: ./.github/workflows/_deploy.yml
     secrets: inherit
     with:

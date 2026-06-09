@@ -18,6 +18,10 @@ permissions:
   id-token: write
 
 jobs:
+  lint:
+    if: github.event.pull_request.draft == false
+    uses: ./.github/workflows/_lint.yml
+
   build:
     if: github.event.pull_request.draft == false
     runs-on: ubuntu-latest
