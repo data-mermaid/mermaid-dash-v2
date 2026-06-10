@@ -51,6 +51,7 @@ jobs:
         name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # Must run before Build so VITE_APP_VERSION is available in $GITHUB_ENV when Vite compiles
       - name: Set app version
         env:
           GH_REF: ${{ github.ref }}

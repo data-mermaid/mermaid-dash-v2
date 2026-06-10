@@ -6,6 +6,15 @@ import { sentryVitePlugin } from '@sentry/vite-plugin'
 
 const sentryEnabled = !!process.env.SENTRY_AUTH_TOKEN
 
+if (sentryEnabled) {
+  const missing = ['SENTRY_ORG', 'SENTRY_PROJECT'].filter((k) => !process.env[k])
+  if (missing.length) {
+    throw new Error(
+      `Sentry source map upload is enabled (SENTRY_AUTH_TOKEN is set) but the following required variables are missing: ${missing.join(', ')}`,
+    )
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
   esbuild: {
