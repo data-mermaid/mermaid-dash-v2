@@ -67,6 +67,7 @@ jobs:
       - name: Build
         run: yarn run build
         env:
+          NODE_OPTIONS: '--max-old-space-size=6144'
           VITE_REACT_APP_AUTH0_DOMAIN: ${{ inputs.vite_react_app_auth0_domain }}
           VITE_REACT_APP_AUTH0_CLIENT_ID: ${{ inputs.vite_react_app_auth0_client_id }}
           VITE_REACT_APP_AUTH0_AUDIENCE: ${{ inputs.vite_react_app_auth0_audience }}
