@@ -51,6 +51,19 @@ jobs:
         name: Install dependencies
         run: yarn install --frozen-lockfile
 
+      # Must run before Build so VITE_APP_VERSION is available in $GITHUB_ENV when Vite compiles
+      - name: Set app version
+        env:
+          GH_REF: ${{ github.ref }}
+          GH_REF_NAME: ${{ github.ref_name }}
+          GH_SHA: ${{ github.sha }}
+        run: |
+          if [[ "$GH_REF" == refs/tags/* ]]; then
+            echo "VITE_APP_VERSION=$GH_REF_NAME" >> $GITHUB_ENV
+          else
+            echo "VITE_APP_VERSION=$(git rev-parse --short "$GH_SHA")" >> $GITHUB_ENV
+          fi
+
       - name: Build
         run: yarn run build
         env:
@@ -63,6 +76,11 @@ jobs:
           VITE_ENVIRONMENT: ${{ inputs.vite_environment }}
           VITE_PUBLIC_POSTHOG_KEY: ${{ secrets.POST_HOG_KEY }}
           VITE_PUBLIC_POSTHOG_HOST: https://us.i.posthog.com
+          VITE_APP_VERSION: ${{ env.VITE_APP_VERSION }}
+          VITE_SENTRY_DSN: ${{ secrets.VITE_SENTRY_DSN }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ vars.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ vars.SENTRY_PROJECT }}
 
       - name: Install IaC dependancies
         working-directory: iac
