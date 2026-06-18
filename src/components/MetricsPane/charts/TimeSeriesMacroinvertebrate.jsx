@@ -20,18 +20,19 @@ export const TimeSeriesMacroinvertebrate = () => {
     omittedMethodDataSharingFilters.includes('mi_1')
 
   const surveyedMacroinvertebrateRecords = filteredSurveys
-    .filter(
-      (record) =>
-        record.protocols?.macroinvertebrate?.density_indha_avg !== undefined &&
-        record.protocols?.macroinvertebrate?.density_indha_avg !== null,
-    )
-    .map((record) => ({
-      sampleDate: record.sample_date,
-      avgDensity: Number(record.protocols.macroinvertebrate.density_indha_avg),
-      managementRule: (record.management_rules || []).includes('open access')
-        ? 'Open Access'
-        : 'Restrictions',
-    }))
+    .map((record) => {
+      const avgDensity = Number(record.protocols?.macroinvertebrate?.density_indha_avg)
+      const year = new Date(record.sample_date).getFullYear()
+
+      return {
+        year,
+        avgDensity,
+        managementRule: (record.management_rules || []).includes('open access')
+          ? 'Open Access'
+          : 'Restrictions',
+      }
+    })
+    .filter((record) => Number.isFinite(record.avgDensity) && Number.isFinite(record.year))
 
   /*
     {
@@ -43,8 +44,7 @@ export const TimeSeriesMacroinvertebrate = () => {
   */
   const groupedMacroinvertebrateDensityByYearManagement = surveyedMacroinvertebrateRecords.reduce(
     (accumulator, record) => {
-      const { managementRule, avgDensity, sampleDate } = record
-      const year = new Date(sampleDate).getFullYear()
+      const { managementRule, avgDensity, year } = record
 
       if (!accumulator[year]) {
         accumulator[year] = {}
