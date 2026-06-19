@@ -14,19 +14,9 @@ import { pluralizeWordWithCount } from '../../../helperFunctions/pluralize'
 
 const FullWidthDiv = styled.div`
   width: 100%;
+  background: ${theme.color.white};
   border: ${theme.spacing.borderSmall} solid ${theme.color.border};
 `
-
-const GROUP_COLORS = [
-  '#498fc9',
-  '#f2a104',
-  '#75b97d',
-  '#d16b6b',
-  '#8b7ec8',
-  '#48b2af',
-  '#c27d53',
-  '#7f8c8d',
-]
 
 export const MacroinvertebrateDensityByGroup = () => {
   const { t } = useTranslation()
@@ -64,6 +54,9 @@ export const MacroinvertebrateDensityByGroup = () => {
     }))
     .sort((a, b) => b.avgDensity - a.avgDensity)
 
+  const groupColors = plotlyChartTheme.macroinvertebrate.groupColors
+  const groupColorCount = groupColors.length
+
   const groupOfInterestDataConfiguration = [
     {
       x: averageDensitiesByGroupSorted.map((group) => group.groupName),
@@ -71,7 +64,7 @@ export const MacroinvertebrateDensityByGroup = () => {
       type: 'bar',
       marker: {
         color: averageDensitiesByGroupSorted.map(
-          (_, index) => GROUP_COLORS[index % GROUP_COLORS.length],
+          (_, index) => groupColors[index % groupColorCount],
         ),
       },
       hovertemplate: `${t('macroinvertebrate.group_of_interest_axis')}: %{x}<br>${t('macroinvertebrate.density_axis')}: %{y:,.1f}<extra></extra>`,

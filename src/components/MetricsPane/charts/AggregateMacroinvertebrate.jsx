@@ -16,7 +16,10 @@ const END_BIN = 3000
 export const AggregateMacroinvertebrate = () => {
   const { t } = useTranslation()
   const { filteredSurveys, omittedMethodDataSharingFilters } = useContext(FilterProjectsContext)
-  const privateMacroinvertebrateToggleOn = omittedMethodDataSharingFilters.includes('mi_all')
+  const privateMacroinvertebrateToggleOn =
+    !omittedMethodDataSharingFilters.includes('mi_3') &&
+    omittedMethodDataSharingFilters.includes('mi_2') &&
+    omittedMethodDataSharingFilters.includes('mi_1')
 
   // An array of the avg density values across surveys.
   const macroinvertebrateDensityValues = filteredSurveys
@@ -29,9 +32,7 @@ export const AggregateMacroinvertebrate = () => {
     (_, index) => START_BIN + index * BIN_SIZE,
   )
 
-  const valuesWithinDefaultRange = macroinvertebrateDensityValues.filter(
-    (value) => value <= END_BIN,
-  )
+  const valuesWithinDefaultRange = macroinvertebrateDensityValues.filter((value) => value < END_BIN)
   const valuesAboveDefaultRange = macroinvertebrateDensityValues
     .filter((value) => value >= END_BIN)
     .map(() => END_BIN)
