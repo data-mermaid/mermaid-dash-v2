@@ -16,6 +16,7 @@ const FullWidthDiv = styled.div`
   width: 100%;
   background: ${theme.color.white};
   border: ${theme.spacing.borderSmall} solid ${theme.color.border};
+  padding: ${theme.spacing.small};
 `
 
 export const MacroinvertebrateDensityByGroup = () => {

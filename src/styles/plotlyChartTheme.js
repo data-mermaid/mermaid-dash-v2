@@ -70,7 +70,6 @@ const plotlyChartTheme = {
       macroalgae: '#b6b400',
       other: '#b4b4b4',
     },
-    macroinvertebrateColorMap: {},
   },
   layout: {
     bargap: 0.1,
