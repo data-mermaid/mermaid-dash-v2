@@ -17,7 +17,6 @@ export const URL_PARAMS = {
   BENTHIC_COVER: 'benthic_cover',
   HABITAT_COMPLEXITY: 'habitat_complexity',
   BLEACHING: 'bleaching',
-  MACROINVERTEBRATE: 'macroinvertebrate',
   VIEW: 'view',
   PAGE_INDEX: 'page_index',
   PROJECT_ID: 'project_id',
