@@ -48,10 +48,6 @@ export const COLLECTION_METHODS = {
     description: 'Habitat Complexity',
     dataSharingOptions: ['hc_all', 'hc_1', 'hc_2', 'hc_3'],
   },
-  macroinvertebrate: {
-    description: 'Macroinvertebrate',
-    dataSharingOptions: ['mi_all', 'mi_1', 'mi_2', 'mi_3'],
-  },
 }
 
 export const EXPORT_METHODS = {
@@ -84,11 +80,6 @@ export const EXPORT_METHODS = {
     description: 'Habitat Complexity',
     protocol: 'habitatcomplexity',
     policy: 'data_policy_habitatcomplexity',
-  },
-  macroinvertebrate: {
-    description: 'Macroinvertebrate',
-    protocol: 'macroinvertebrate',
-    policy: 'data_policy_macroinvertebrate',
   },
 }
 
@@ -157,21 +148,6 @@ export const POLICY_MAPPINGS = {
   hc_3: {
     policy: 'data_policy_habitatcomplexity',
     name: 'habitatcomplexity',
-    value: 'private',
-  },
-  mi_1: {
-    policy: 'data_policy_macroinvertebrate',
-    name: 'macroinvertebrate',
-    value: 'public',
-  },
-  mi_2: {
-    policy: 'data_policy_macroinvertebrate',
-    name: 'macroinvertebrate',
-    value: 'public summary',
-  },
-  mi_3: {
-    policy: 'data_policy_macroinvertebrate',
-    name: 'macroinvertebrate',
     value: 'private',
   },
 }
