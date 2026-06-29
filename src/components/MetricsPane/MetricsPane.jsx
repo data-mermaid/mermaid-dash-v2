@@ -47,7 +47,6 @@ import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexit
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
 import { AggregateMacroinvertebrate } from './charts/AggregateMacroinvertebrate'
 import { TimeSeriesMacroinvertebrate } from './charts/TimeSeriesMacroinvertebrate'
-import { MacroinvertebrateDensityByGroup } from './charts/MacroinvertebrateDensityByGroup'
 import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
@@ -332,7 +331,6 @@ const MetricsPane = ({
                   aggregatePanelContent={<AggregateMacroinvertebrate />}
                   timeSeriesPanelContent={<TimeSeriesMacroinvertebrate />}
                 />
-                <MacroinvertebrateDensityByGroup />
               </>
             )}
           </>
