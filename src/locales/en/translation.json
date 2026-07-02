@@ -50,9 +50,10 @@
   "macroinvertebrate": {
     "title": "Macroinvertebrate Density",
     "bin": "Bin",
+    "total_density": "Total density",
     "density_axis": "Macroinvertebrate density (ind/ha)",
     "surveys_axis": "Number of surveys",
-    "group_of_interest_axis": "Group of Interest",
+    "group_of_interest_axis": "Group of interest",
     "year_axis": "Year",
     "management_rule": "Management rule"
   },

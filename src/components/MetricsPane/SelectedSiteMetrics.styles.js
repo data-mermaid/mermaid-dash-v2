@@ -114,14 +114,14 @@ export const StyledReefRow = styled.div`
   width: 100%;
 `
 export const StyledReefItem = styled.p`
-  width: 50%;
+  width: 45%;
   text-transform: capitalize;
   margin: 0;
 `
 
 export const StyledReefItemBold = styled(StyledReefItem)`
   font-weight: bold;
-  width: 50%;
+  width: 55%;
 `
 export const StyledVisibleBackground = styled.div`
   background-color: ${theme.color.grey1};

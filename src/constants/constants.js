@@ -87,7 +87,7 @@ export const EXPORT_METHODS = {
     policy: 'data_policy_habitatcomplexity',
   },
   macroinvertebrate: {
-    description: 'Macroinvertebrate',
+    description: 'Macroinvertebrate Belt',
     protocol: 'macroinvertebrate',
     policy: 'data_policy_macroinvertebrate',
   },

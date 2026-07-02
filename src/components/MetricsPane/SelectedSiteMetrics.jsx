@@ -522,7 +522,7 @@ export const SelectedSiteMetrics = ({
                         <StyledReefItem>{dataPolicyBleachingqc}</StyledReefItem>
                       </StyledReefRow>
                       <StyledReefRow>
-                        <StyledReefItemBold>Macroinvertebrate</StyledReefItemBold>
+                        <StyledReefItemBold>Macroinvertebrate Belt</StyledReefItemBold>
                         <StyledReefItem>{dataPolicyMacroinvertebrate}</StyledReefItem>
                       </StyledReefRow>
                     </StyledReefContainer>
