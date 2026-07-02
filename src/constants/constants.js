@@ -50,7 +50,7 @@ export const COLLECTION_METHODS = {
     dataSharingOptions: ['hc_all', 'hc_1', 'hc_2', 'hc_3'],
   },
   macroinvertebrate: {
-    description: 'Macroinvertebrate',
+    description: 'Macroinvertebrate Belt',
     dataSharingOptions: ['mi_all', 'mi_1', 'mi_2', 'mi_3'],
   },
 }
