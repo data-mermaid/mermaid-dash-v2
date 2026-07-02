@@ -45,8 +45,6 @@ import { AggregateBleaching } from './charts/AggregateBleaching'
 import { AggregateHabitatComplexity } from './charts/AggregateHabitatComplexity'
 import { TimeSeriesHabitatComplexity } from './charts/TimeSeriesHabitatComplexity'
 import { TimeSeriesBleaching } from './charts/TimeSeriesBleaching'
-import { AggregateMacroinvertebrate } from './charts/AggregateMacroinvertebrate'
-import { TimeSeriesMacroinvertebrate } from './charts/TimeSeriesMacroinvertebrate'
 import { pluralizeWord } from '../../helperFunctions/pluralize'
 import { IconInfo } from '../../assets/icons'
 import { IconButton } from '../generic'
@@ -232,7 +230,6 @@ const MetricsPane = ({
   )
   const bleachingFilterToggleOn = !omittedMethodDataSharingFilters.includes('cb_all')
   const habitatComplexityFilterToggleOn = !omittedMethodDataSharingFilters.includes('hc_all')
-  const macroinvertebrateFilterToggleOn = !omittedMethodDataSharingFilters.includes('mi_all')
 
   const noChartsToDisplay = (
     <>
@@ -323,15 +320,6 @@ const MetricsPane = ({
                 aggregatePanelContent={<AggregateHabitatComplexity />}
                 timeSeriesPanelContent={<TimeSeriesHabitatComplexity />}
               />
-            )}
-            {macroinvertebrateFilterToggleOn && (
-              <>
-                <MetricsPaneChartTabs
-                  id="macroinvertebrate"
-                  aggregatePanelContent={<AggregateMacroinvertebrate />}
-                  timeSeriesPanelContent={<TimeSeriesMacroinvertebrate />}
-                />
-              </>
             )}
           </>
         )}

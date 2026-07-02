@@ -73,7 +73,6 @@ import { SampleEventBleachingPlot } from './charts/SampleEventBleachingPlot'
 import { SampleEventBenthicPlot } from './charts/SampleEventBenthicPlot'
 import { SampleEventBleachingSeverityPlot } from './charts/SampleEventBleachingSeverityPlot'
 import { SampleEventHabitatComplexityPlot } from './charts/SampleEventHabitatComplexityPlot'
-import { SampleEventMacroinvertebratePlot } from './charts/SampleEventMacroinvertebratePlot'
 import ContactOrUserIcon from './ContactOrUserIcon'
 import HideShow from '../Header/components/HideShow'
 import SuccessExportModal from '../MermaidDash/components/SuccessExportModal'
@@ -112,7 +111,6 @@ export const SelectedSiteMetrics = ({
     data_policy_beltfish: dataPolicyBeltfish,
     data_policy_benthiclit: dataPolicyBenthiclit,
     data_policy_bleachingqc: dataPolicyBleachingqc,
-    data_policy_macroinvertebrate: dataPolicyMacroinvertebrate,
     suggested_citation: suggestedCitation,
     protocols,
   } = selectedSampleEvent
@@ -443,13 +441,6 @@ export const SelectedSiteMetrics = ({
                   />
                 </SelectedSiteChartWrapper>
               )}
-              {protocols?.macroinvertebrate && (
-                <SelectedSiteChartWrapper>
-                  <SampleEventMacroinvertebratePlot
-                    macroinvertebrateData={protocols?.macroinvertebrate}
-                  />
-                </SelectedSiteChartWrapper>
-              )}
             </ChartsWrapper>
           ) : (
             <>
@@ -500,10 +491,7 @@ export const SelectedSiteMetrics = ({
                   </StyledReefContainer>
                 </SelectedSiteContentContainer>
               </SelectedSiteMetricsCardContainer>
-              {(dataPolicyBeltfish ||
-                dataPolicyBenthiclit ||
-                dataPolicyBleachingqc ||
-                dataPolicyMacroinvertebrate) && (
+              {(dataPolicyBeltfish || dataPolicyBenthiclit || dataPolicyBleachingqc) && (
                 <SelectedSiteMetricsCardContainer>
                   <BiggerIconDataSharing />
                   <SelectedSiteContentContainer>
@@ -520,10 +508,6 @@ export const SelectedSiteMetrics = ({
                       <StyledReefRow>
                         <StyledReefItemBold>Bleaching</StyledReefItemBold>
                         <StyledReefItem>{dataPolicyBleachingqc}</StyledReefItem>
-                      </StyledReefRow>
-                      <StyledReefRow>
-                        <StyledReefItemBold>Macroinvertebrate</StyledReefItemBold>
-                        <StyledReefItem>{dataPolicyMacroinvertebrate}</StyledReefItem>
                       </StyledReefRow>
                     </StyledReefContainer>
                   </SelectedSiteContentContainer>
