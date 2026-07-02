@@ -91,7 +91,6 @@ const FilterPane = () => {
     benthiclit: false,
     quadrat_benthic_percent: false,
     habitatcomplexity: false,
-    macroinvertebrate: false,
   })
 
   const _generateCountryandOrganizationList = useEffect(() => {

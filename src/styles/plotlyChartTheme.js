@@ -1,16 +1,4 @@
 const plotlyChartTheme = {
-  macroinvertebrate: {
-    groupColors: [
-      '#498fc9',
-      '#f2a104',
-      '#75b97d',
-      '#d16b6b',
-      '#8b7ec8',
-      '#48b2af',
-      '#c27d53',
-      '#7f8c8d',
-    ],
-  },
   aggregateCharts: {
     default: { marker: { color: '#769fca' } },
     hardCoralCover: { marker: { low: '#d13823', medium: '#f3a224', high: '#277d1d' } },

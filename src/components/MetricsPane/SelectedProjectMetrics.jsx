@@ -61,7 +61,6 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
     data_policy_beltfish: dataSharingBeltfish,
     data_policy_benthiclit: dataSharingBenthiclit,
     data_policy_bleachingqc: dataSharingBleachingqc,
-    data_policy_macroinvertebrate: dataSharingMacroinvertebrate,
   } = selectedProject
   const protocolSurveyCounts = getProtocolSurveyCounts(selectedProject?.records)
 
@@ -207,10 +206,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
         </ProjectCard>
       )}
 
-      {(dataSharingBeltfish ||
-        dataSharingBenthiclit ||
-        dataSharingBleachingqc ||
-        dataSharingMacroinvertebrate) && (
+      {(dataSharingBeltfish || dataSharingBenthiclit || dataSharingBleachingqc) && (
         <ProjectCard>
           <DataSharingIcon />
           <ProjectCardContent>
@@ -222,8 +218,6 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
               <PolicyValue>{dataSharingBenthiclit}</PolicyValue>
               <PolicyType>Bleaching</PolicyType>
               <PolicyValue>{dataSharingBleachingqc}</PolicyValue>
-              <PolicyType>Macroinvertebrate</PolicyType>
-              <PolicyValue>{dataSharingMacroinvertebrate}</PolicyValue>
             </DataSharingGrid>
           </ProjectCardContent>
         </ProjectCard>

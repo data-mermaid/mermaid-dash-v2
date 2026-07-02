@@ -5,8 +5,7 @@ import { FilterProjectsContext } from '../../context/FilterProjectsContext'
 import { ChartTabsWrapper, Tab, TabList, TabPanel } from './MetricsPaneChartTabs.styles'
 import { URL_PARAMS } from '../../constants/constants'
 
-const { BENTHIC_COVER, FISH_BIOMASS, BLEACHING, HABITAT_COMPLEXITY, MACROINVERTEBRATE } =
-  URL_PARAMS
+const { BENTHIC_COVER, FISH_BIOMASS, BLEACHING, HABITAT_COMPLEXITY } = URL_PARAMS
 
 const TAB_IDS = {
   AGGREGATE: 'aggregate',
@@ -18,7 +17,6 @@ const getChartParamTypeByChartId = {
   'fish-biomass': FISH_BIOMASS,
   bleaching: BLEACHING,
   'habitat-complexity': HABITAT_COMPLEXITY,
-  macroinvertebrate: MACROINVERTEBRATE,
 }
 
 const useTabSelection = (chartQueryParam) => {
