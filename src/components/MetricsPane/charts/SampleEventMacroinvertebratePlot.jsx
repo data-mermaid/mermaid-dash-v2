@@ -14,7 +14,23 @@ export const SampleEventMacroinvertebratePlot = ({ macroinvertebrateData }) => {
   const totalSampleUnits = macroinvertebrateData?.sample_unit_count ?? 0
   const groupDensity = macroinvertebrateData?.density_indha_group_interest_avg ?? {}
   const hasGroupDensityData = groupDensity && Object.keys(groupDensity).length > 0
-  const macroinvertebrateGroupLabels = Object.keys(groupDensity)
+  const sortedMacroinvertebrateGroups = Object.entries(groupDensity)
+    .map(([label, value]) => ({ label, value }))
+    .sort((a, b) => {
+      const isOtherA = a.label.toLowerCase() === 'other invertebrates'
+      const isOtherB = b.label.toLowerCase() === 'other invertebrates'
+
+      if (isOtherA && !isOtherB) {
+        return 1
+      }
+      if (!isOtherA && isOtherB) {
+        return -1
+      }
+
+      return b.value - a.value
+    })
+  const macroinvertebrateGroupLabels = sortedMacroinvertebrateGroups.map((group) => group.label)
+  const macroinvertebrateGroupValues = sortedMacroinvertebrateGroups.map((group) => group.value)
   const formattedMacroinvertebrateGroupLabels = macroinvertebrateGroupLabels.map((label) =>
     label.replace(' ', '<br>'),
   )
@@ -22,10 +38,10 @@ export const SampleEventMacroinvertebratePlot = ({ macroinvertebrateData }) => {
   const plotlyDataConfiguration = [
     {
       x: macroinvertebrateGroupLabels,
-      y: Object.values(groupDensity),
+      y: macroinvertebrateGroupValues,
       type: 'bar',
       marker: {
-        color: Object.values(chartTheme.macroinvertebrate.groupColors),
+        color: chartTheme.macroinvertebrate.groupColors,
         line: { color: 'black', width: 1 },
       },
       xbins: {
