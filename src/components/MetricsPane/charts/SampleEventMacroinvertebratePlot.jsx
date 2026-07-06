@@ -41,6 +41,7 @@ export const SampleEventMacroinvertebratePlot = ({ macroinvertebrateData }) => {
   const totalDensityValue =
     macroinvertebrateData?.density_indha_avg ??
     macroinvertebrateGroupValues.reduce((sum, value) => sum + (Number(value) || 0), 0)
+  const formattedTotalDensityValue = Math.round(totalDensityValue).toLocaleString('en-US')
 
   const plotlyDataConfiguration = [
     {
@@ -89,7 +90,7 @@ export const SampleEventMacroinvertebratePlot = ({ macroinvertebrateData }) => {
         xanchor: 'right',
         yanchor: 'top',
         showarrow: false,
-        text: `<b>${t('macroinvertebrate.total_density')}:</b> ${totalDensityValue.toFixed(1)} ind/ha`,
+        text: `<b>${t('macroinvertebrate.total_density')}:</b> ${formattedTotalDensityValue} ind/ha`,
         font: { size: 12, color: '#404040' },
       },
     ],
