@@ -222,7 +222,7 @@ export const SelectedProjectMetrics = ({ selectedProject, setSelectedProject }) 
               <PolicyValue>{dataSharingBenthiclit}</PolicyValue>
               <PolicyType>Bleaching</PolicyType>
               <PolicyValue>{dataSharingBleachingqc}</PolicyValue>
-              <PolicyType>Macroinvertebrate</PolicyType>
+              <PolicyType>Macroinvertebrate Belt</PolicyType>
               <PolicyValue>{dataSharingMacroinvertebrate}</PolicyValue>
             </DataSharingGrid>
           </ProjectCardContent>

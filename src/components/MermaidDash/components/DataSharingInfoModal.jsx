@@ -116,6 +116,15 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
             {greenIconCheck}
           </Tr>
           <Tr>
+            <StyledTd $alignLeft>
+              Average total macroinvertebrate density (ind/ha) and average macroinvertebrate density
+              per group of interest (ind/ha)
+            </StyledTd>
+            {redIconClose}
+            {greenIconCheck}
+            {greenIconCheck}
+          </Tr>
+          <Tr>
             <Td colSpan="4" $alignLeft>
               <strong>Transect-level observations</strong>
             </Td>
@@ -143,6 +152,15 @@ const DataSharingInfoModal = ({ isOpen, onDismiss }) => {
           </Tr>
           <Tr>
             <StyledTd $alignLeft>Colonies bleached and benthic percent cover</StyledTd>
+            {redIconClose}
+            {redIconClose}
+            {greenIconCheck}
+          </Tr>
+          <Tr>
+            <StyledTd $alignLeft>
+              Reef macroinvertebrate observation, size and count, density (ind/ha) per observation,
+              taxonomy and group of interest
+            </StyledTd>
             {redIconClose}
             {redIconClose}
             {greenIconCheck}
