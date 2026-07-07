@@ -107,6 +107,7 @@ export const TimeSeriesMacroinvertebrate = () => {
         text: t('macroinvertebrate.year_axis'),
       },
       type: allSeriesHaveFewerThanThreeYears ? 'category' : 'linear',
+      automargin: true,
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
@@ -114,6 +115,7 @@ export const TimeSeriesMacroinvertebrate = () => {
         ...plotlyChartTheme.layout.yaxis.title,
         text: t('macroinvertebrate.density_axis'),
       },
+      automargin: true,
     },
     showlegend: true,
     legend: {
