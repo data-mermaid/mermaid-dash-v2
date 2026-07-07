@@ -84,6 +84,7 @@ export const AggregateMacroinvertebrate = () => {
       ticktext: hasValuesAboveDefaultRange
         ? ['0', '500', '1000', '1500', '2000', '2500', '3000+']
         : undefined,
+      automargin: true,
     },
     yaxis: {
       ...plotlyChartTheme.layout.yaxis,
@@ -91,6 +92,7 @@ export const AggregateMacroinvertebrate = () => {
         ...plotlyChartTheme.layout.yaxis.title,
         text: t('macroinvertebrate.surveys_axis'),
       },
+      automargin: true,
     },
   }
 
