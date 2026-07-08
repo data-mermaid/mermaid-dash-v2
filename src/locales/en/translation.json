@@ -47,6 +47,7 @@
     "send_email_failed": "Failed to send email. Please try again."
   },
   "fish_biomass": "Fish Biomass",
+  "total_biomass": "Total biomass",
   "macroinvertebrate": {
     "title": "Macroinvertebrate Density",
     "bin": "Bin",
