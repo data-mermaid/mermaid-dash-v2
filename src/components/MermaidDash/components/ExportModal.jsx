@@ -256,6 +256,7 @@ ExportModal.propTypes = {
     colonies_bleached: PropTypes.number,
     habitatcomplexity: PropTypes.number,
     quadrat_benthic_percent: PropTypes.number,
+    macroinvertebrate: PropTypes.number,
   }).isRequired,
 }
 
