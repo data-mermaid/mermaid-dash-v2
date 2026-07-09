@@ -37,6 +37,11 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
     label.replace(' ', '<br>'),
   )
 
+  const totalBiomassValue =
+    fishbeltData?.biomass_kgha_avg ??
+    fishTropicGroupValues.reduce((sum, value) => sum + (Number(value) || 0), 0)
+  const formattedTotalBiomassValue = Math.round(totalBiomassValue).toLocaleString('en-US')
+
   const plotlyDataConfiguration = [
     {
       x: fishTropicGroupLabels,
@@ -72,6 +77,19 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
       ...chartTheme.layout.yaxis,
       title: { ...chartTheme.layout.yaxis.title, text: `${t('fish_biomass')} (kg/ha)` },
     },
+    annotations: [
+      {
+        x: 1,
+        y: 1.07,
+        xref: 'paper',
+        yref: 'paper',
+        xanchor: 'right',
+        yanchor: 'top',
+        showarrow: false,
+        text: `<b>${t('total_biomass')}:</b> ${formattedTotalBiomassValue} kg/ha`,
+        font: { size: 12, color: '#404040' },
+      },
+    ],
   }
 
   return (
@@ -100,6 +118,7 @@ export const SampleEventFishBiomassPlot = ({ fishbeltData }) => {
 SampleEventFishBiomassPlot.propTypes = {
   fishbeltData: PropTypes.shape({
     sample_unit_count: PropTypes.number,
+    biomass_kgha_avg: PropTypes.number,
     biomass_kgha_trophic_group_avg: PropTypes.shape({
       omnivore: PropTypes.number,
       piscivore: PropTypes.number,
