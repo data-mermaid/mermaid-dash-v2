@@ -27,6 +27,21 @@ on:
       vite_environment:
         required: true
         type: string
+    secrets:
+      MAP_TILER_API_KEY:
+        required: true
+      POST_HOG_KEY:
+        required: false
+      VITE_SENTRY_DSN:
+        required: false
+      SENTRY_AUTH_TOKEN:
+        required: false
+      CDK_DEFAULT_ACCOUNT:
+        required: true
+      CDK_DEPLOY_ROLE:
+        required: true
+      CDK_DEFAULT_REGION:
+        required: true
 
 permissions:
   id-token: write # This is required for requesting the JWT
@@ -36,12 +51,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-node@v6.2.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020
         with:
           node-version-file: '.nvmrc'
 
-      - uses: actions/cache@v5.0.3
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         id: yarn-cache
         with:
           path: node_modules
@@ -59,9 +76,9 @@ jobs:
           GH_SHA: ${{ github.sha }}
         run: |
           if [[ "$GH_REF" == refs/tags/* ]]; then
-            echo "VITE_APP_VERSION=$GH_REF_NAME" >> $GITHUB_ENV
+            echo "VITE_APP_VERSION=$GH_REF_NAME" >> "$GITHUB_ENV"
           else
-            echo "VITE_APP_VERSION=$(git rev-parse --short "$GH_SHA")" >> $GITHUB_ENV
+            echo "VITE_APP_VERSION=$(git rev-parse --short "$GH_SHA")" >> "$GITHUB_ENV"
           fi
 
       - name: Build
@@ -85,10 +102,10 @@ jobs:
 
       - name: Install IaC dependancies
         working-directory: iac
-        run: npm ci && npm install -g aws-cdk
+        run: npm ci
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.1
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
           CDK_DEPLOY_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
@@ -99,9 +116,11 @@ jobs:
 
       - name: Deploy
         run: |
-          echo "Deploying to ${{ inputs.environment }} with domain ${{ inputs.domain }}" && \
-          cd iac && cdk deploy --require-approval never
+          echo "Deploying to $DEPLOY_ENV with domain $DEPLOY_DOMAIN" && \
+          cd iac && npx cdk deploy --require-approval never
         env:
+          DEPLOY_ENV: ${{ inputs.environment }}
+          DEPLOY_DOMAIN: ${{ inputs.domain }}
           AWS_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
