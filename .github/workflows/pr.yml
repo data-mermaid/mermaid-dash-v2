@@ -52,8 +52,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      issues: write
-      pull-requests: write
+    outputs:
+      has_errors: ${{ steps.cdk-nag.outputs.has_errors }}
+      errors: ${{ steps.cdk-nag.outputs.errors }}
+      warnings_count: ${{ steps.cdk-nag.outputs.warnings_count }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -91,24 +93,44 @@ jobs:
           synth_exit=${PIPESTATUS[0]}
           set -e
 
+          errors=$(grep '^\[Error' /tmp/cdk-nag.log || true)
+          warnings_count=$(grep -c '^\[Warning' /tmp/cdk-nag.log || echo 0)
+
+          {
+            echo "errors<<EOF_CDK_NAG_ERRORS"
+            echo "$errors"
+            echo "EOF_CDK_NAG_ERRORS"
+          } >> "$GITHUB_OUTPUT"
+          echo "warnings_count=$warnings_count" >> "$GITHUB_OUTPUT"
+
           if grep -q '^\[Error' /tmp/cdk-nag.log; then
             echo "has_errors=true" >> "$GITHUB_OUTPUT"
           elif [ "$synth_exit" -ne 0 ]; then
             echo "::error::cdk synth failed with exit code $synth_exit (not a cdk-nag finding)"
+            echo "has_errors=true" >> "$GITHUB_OUTPUT"
             exit "$synth_exit"
           else
             echo "has_errors=false" >> "$GITHUB_OUTPUT"
           fi
 
+  # Separate job so PR comment posting (write permissions) is isolated from CDK synth (read-only).
+  cdk-nag-post:
+    if: always() && needs.cdk-nag.result != 'skipped'
+    needs: [cdk-nag]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
       - name: Post CDK Nag results to PR
-        if: always() && steps.cdk-nag.conclusion != 'skipped'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        env:
+          CDK_NAG_ERRORS: ${{ needs.cdk-nag.outputs.errors }}
+          CDK_NAG_WARNINGS_COUNT: ${{ needs.cdk-nag.outputs.warnings_count }}
         with:
           script: |
-            const fs = require('fs');
-            const log = fs.readFileSync('/tmp/cdk-nag.log', 'utf8');
-            const errors = log.split('\n').filter(l => l.startsWith('[Error'));
-            const warnings = log.split('\n').filter(l => l.startsWith('[Warning'));
+            const errors = (process.env.CDK_NAG_ERRORS || '').split('\n').filter(Boolean);
+            const warningsCount = parseInt(process.env.CDK_NAG_WARNINGS_COUNT || '0', 10);
             let body = '## cdk-nag report\n\n';
             if (errors.length === 0) {
               body += ':white_check_mark: **No unsuppressed errors.**\n';
@@ -116,8 +138,8 @@ jobs:
               body += `:x: **${errors.length} unsuppressed error(s):**\n\n`;
               body += '```\n' + errors.join('\n') + '\n```\n';
             }
-            if (warnings.length > 0) {
-              body += `\n:warning: ${warnings.length} warning(s)\n`;
+            if (warningsCount > 0) {
+              body += `\n:warning: ${warningsCount} warning(s)\n`;
             }
             body += '\n---\n*See `iac/nag-suppressions.ts` to add suppressions for accepted risks.*';
             const comments = await github.paginate(github.rest.issues.listComments, {
@@ -144,7 +166,7 @@ jobs:
             }
 
       - name: Fail on CDK Nag errors
-        if: steps.cdk-nag.outputs.has_errors == 'true'
+        if: needs.cdk-nag.outputs.has_errors == 'true' || needs.cdk-nag.result == 'failure'
         run: |
           echo "::error::cdk-nag found unsuppressed errors — see PR comment for details"
           exit 1
@@ -156,8 +178,8 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      issues: write
-      pull-requests: write
+    outputs:
+      diff: ${{ steps.cdk-diff.outputs.diff }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
@@ -178,6 +200,7 @@ jobs:
           role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
           aws-region: us-east-1
           role-skip-session-tagging: true
+
       - name: Fetch iac node cache
         uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9
         id: iac-cache
@@ -199,28 +222,46 @@ jobs:
         run: |
           set +e
           npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | tee /tmp/cdk-diff.log
-          echo "cdk_exit=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
           set -e
 
+          raw=$(cat /tmp/cdk-diff.log)
+          MAX=50000
+          if [ "${#raw}" -gt "$MAX" ]; then
+            raw="${raw:0:$MAX}"$'\n''…(truncated — see full log in Actions)'
+          fi
+          {
+            echo "diff<<EOF_CDK_DIFF"
+            printf '%s\n' "$raw"
+            echo "EOF_CDK_DIFF"
+          } >> "$GITHUB_OUTPUT"
+
+  # Separate job so PR comment posting (write permissions) is isolated from CDK diff (OIDC/read-only).
+  cdk-diff-post:
+    if: always() && needs.cdk-diff.result != 'skipped'
+    needs: [cdk-diff]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
       - name: Post CDK diff to PR
-        if: always() && steps.cdk-diff.conclusion != 'skipped'
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3
+        env:
+          CDK_DIFF: ${{ needs.cdk-diff.outputs.diff }}
+          GH_SHA: ${{ github.sha }}
         with:
           script: |
-            const fs = require('fs');
-            const raw = fs.readFileSync('/tmp/cdk-diff.log', 'utf8').trim();
+            const raw = (process.env.CDK_DIFF || '').trim();
             const noChanges = raw.includes('There were no differences');
-            const MAX = 60000;
-            const diff = raw.length > MAX ? raw.slice(0, MAX) + '\n…(truncated — see full log in Actions)' : raw;
 
             let body = '## cdk diff\n\n';
             if (noChanges) {
               body += ':white_check_mark: **No infrastructure changes.**\n';
             } else {
               body += ':memo: **Infrastructure changes detected:**\n\n';
-              body += '<details>\n<summary>Show diff</summary>\n\n```\n' + diff + '\n```\n</details>\n';
+              body += '<details>\n<summary>Show diff</summary>\n\n```\n' + raw + '\n```\n</details>\n';
             }
-            body += `\n---\n*Updated for commit \`${{ github.sha }}\`*`;
+            body += `\n---\n*Updated for commit \`${process.env.GH_SHA}\`*`;
 
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
