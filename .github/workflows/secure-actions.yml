@@ -58,6 +58,7 @@ jobs:
           allowed-endpoints: >
             agent.api.stepsecurity.io:443
             api.github.com:443
+            ghcr.io:443
             github.com:443
             objects.githubusercontent.com:443
             raw.githubusercontent.com:443
