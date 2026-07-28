@@ -94,7 +94,7 @@ jobs:
           set -e
 
           errors=$(grep '^\[Error' /tmp/cdk-nag.log || true)
-          warnings_count=$(grep -c '^\[Warning' /tmp/cdk-nag.log || echo 0)
+          warnings_count=$(grep '^\[Warning' /tmp/cdk-nag.log | wc -l)
 
           {
             echo "errors<<EOF_CDK_NAG_ERRORS"
