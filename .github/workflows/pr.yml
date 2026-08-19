@@ -99,7 +99,7 @@ jobs:
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
         run: |
           set +e
-          npx cdk synth --quiet 2>&1 | tee /tmp/cdk-nag.log
+          npx cdk synth --quiet 2>&1 | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-nag.log
           synth_exit=${PIPESTATUS[0]}
           set -e
 
@@ -234,7 +234,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
           role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
-          aws-region: us-east-1
+          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
           role-skip-session-tagging: true
 
       - name: CDK Diff
@@ -245,7 +245,7 @@ jobs:
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
         run: |
           set +e
-          npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | tee /tmp/cdk-diff.log
+          npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-diff.log
           set -e
 
           raw=$(cat /tmp/cdk-diff.log)
@@ -288,8 +288,9 @@ jobs:
               body += `:x: **Diff incomplete** — upstream job ended with status \`${diffResult}\`. See workflow logs for details.\n`;
             } else {
               const raw = (process.env.CDK_DIFF || '').trim();
-              const noChanges = raw.includes('There were no differences');
-              if (noChanges) {
+              if (!raw) {
+                body += ':warning: **Diff output unavailable** — output may have been redacted. See workflow logs.\n';
+              } else if (raw.includes('There were no differences')) {
                 body += ':white_check_mark: **No infrastructure changes.**\n';
               } else {
                 body += ':memo: **Infrastructure changes detected:**\n\n';
