@@ -13,9 +13,6 @@ on:
 
 permissions:
   contents: read
-  issues: write
-  pull-requests: write
-  id-token: write
 
 jobs:
   lint:
@@ -27,12 +24,19 @@ jobs:
     needs: [lint]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-node@v6.2.0
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
 
-      - uses: actions/cache@v5.0.3
+      - uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: yarn-cache
         with:
           path: node_modules
@@ -51,9 +55,22 @@ jobs:
     if: github.event.pull_request.draft == false
     needs: [build]
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      has_errors: ${{ steps.cdk-nag.outputs.has_errors }}
+      errors: ${{ steps.cdk-nag.outputs.errors }}
+      warnings_count: ${{ steps.cdk-nag.outputs.warnings_count }}
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-node@v6.2.0
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
 
@@ -63,7 +80,7 @@ jobs:
         run: mkdir -p dist && echo '<!doctype html>' > dist/index.html
 
       - name: Fetch iac node cache
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: iac-cache
         with:
           path: iac/node_modules
@@ -82,37 +99,69 @@ jobs:
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
         run: |
           set +e
-          npx cdk synth --quiet 2>&1 | tee /tmp/cdk-nag.log
+          npx cdk synth --quiet 2>&1 | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-nag.log
           synth_exit=${PIPESTATUS[0]}
           set -e
+
+          errors=$(grep '^\[Error' /tmp/cdk-nag.log || true)
+          warnings_count=$(grep -c '^\[Warning' /tmp/cdk-nag.log || true)
+
+          delim=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+          {
+            echo "errors<<$delim"
+            echo "$errors"
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+          echo "warnings_count=$warnings_count" >> "$GITHUB_OUTPUT"
 
           if grep -q '^\[Error' /tmp/cdk-nag.log; then
             echo "has_errors=true" >> "$GITHUB_OUTPUT"
           elif [ "$synth_exit" -ne 0 ]; then
             echo "::error::cdk synth failed with exit code $synth_exit (not a cdk-nag finding)"
+            echo "has_errors=true" >> "$GITHUB_OUTPUT"
             exit "$synth_exit"
           else
             echo "has_errors=false" >> "$GITHUB_OUTPUT"
           fi
 
+  # Separate job so PR comment posting (write permissions) is isolated from CDK synth (read-only).
+  cdk-nag-post:
+    if: always() && needs.cdk-nag.result != 'skipped'
+    needs: [cdk-nag]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
       - name: Post CDK Nag results to PR
-        if: always() && steps.cdk-nag.conclusion != 'skipped'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CDK_NAG_RESULT: ${{ needs.cdk-nag.result }}
+          CDK_NAG_ERRORS: ${{ needs.cdk-nag.outputs.errors }}
+          CDK_NAG_WARNINGS_COUNT: ${{ needs.cdk-nag.outputs.warnings_count }}
         with:
           script: |
-            const fs = require('fs');
-            const log = fs.readFileSync('/tmp/cdk-nag.log', 'utf8');
-            const errors = log.split('\n').filter(l => l.startsWith('[Error'));
-            const warnings = log.split('\n').filter(l => l.startsWith('[Warning'));
+            const nagResult = process.env.CDK_NAG_RESULT || 'unknown';
             let body = '## cdk-nag report\n\n';
-            if (errors.length === 0) {
-              body += ':white_check_mark: **No unsuppressed errors.**\n';
+            if (nagResult !== 'success') {
+              body += `:x: **Analysis incomplete** — upstream job ended with status \`${nagResult}\`. See workflow logs for details.\n`;
             } else {
-              body += `:x: **${errors.length} unsuppressed error(s):**\n\n`;
-              body += '```\n' + errors.join('\n') + '\n```\n';
-            }
-            if (warnings.length > 0) {
-              body += `\n:warning: ${warnings.length} warning(s)\n`;
+              const errors = (process.env.CDK_NAG_ERRORS || '').split('\n').filter(Boolean);
+              const warningsCount = parseInt(process.env.CDK_NAG_WARNINGS_COUNT || '0', 10);
+              if (errors.length === 0) {
+                body += ':white_check_mark: **No unsuppressed errors.**\n';
+              } else {
+                body += `:x: **${errors.length} unsuppressed error(s):**\n\n`;
+                body += '```\n' + errors.join('\n') + '\n```\n';
+              }
+              if (warningsCount > 0) {
+                body += `\n:warning: ${warningsCount} warning(s)\n`;
+              }
             }
             body += '\n---\n*See `iac/nag-suppressions.ts` to add suppressions for accepted risks.*';
             const comments = await github.paginate(github.rest.issues.listComments, {
@@ -139,7 +188,7 @@ jobs:
             }
 
       - name: Fail on CDK Nag errors
-        if: steps.cdk-nag.outputs.has_errors == 'true'
+        if: needs.cdk-nag.outputs.has_errors == 'true' || needs.cdk-nag.result == 'failure'
         run: |
           echo "::error::cdk-nag found unsuppressed errors — see PR comment for details"
           exit 1
@@ -151,28 +200,26 @@ jobs:
     permissions:
       id-token: write
       contents: read
-      issues: write
-      pull-requests: write
+    outputs:
+      diff: ${{ steps.cdk-diff.outputs.diff }}
     steps:
-      - uses: actions/checkout@v6.0.2
-      - uses: actions/setup-node@v6.2.0
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: '.nvmrc'
 
       - name: Create placeholder dist directory
         run: mkdir -p dist && echo '<!doctype html>' > dist/index.html
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v5.1.1
-        env:
-          CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT }}
-          CDK_DEPLOY_ROLE: ${{ secrets.CDK_DEPLOY_ROLE }}
-        with:
-          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
-          aws-region: us-east-1
-          role-skip-session-tagging: true
       - name: Fetch iac node cache
-        uses: actions/cache@v5.0.3
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
         id: iac-cache
         with:
           path: iac/node_modules
@@ -183,6 +230,13 @@ jobs:
         working-directory: iac
         run: npm ci
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
+        with:
+          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
+          aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
+          role-skip-session-tagging: true
+
       - name: CDK Diff
         id: cdk-diff
         working-directory: iac
@@ -191,29 +245,59 @@ jobs:
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
         run: |
           set +e
-          npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | tee /tmp/cdk-diff.log
-          echo "cdk_exit=${PIPESTATUS[0]}" >> "$GITHUB_OUTPUT"
+          npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-diff.log
           set -e
 
+          raw=$(cat /tmp/cdk-diff.log)
+          MAX=50000
+          if [ "${#raw}" -gt "$MAX" ]; then
+            raw="${raw:0:$MAX}"$'\n''…(truncated — see full log in Actions)'
+          fi
+          delim=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
+          {
+            echo "diff<<$delim"
+            printf '%s\n' "$raw"
+            echo "$delim"
+          } >> "$GITHUB_OUTPUT"
+
+  # Separate job so PR comment posting (write permissions) is isolated from CDK diff (OIDC/read-only).
+  cdk-diff-post:
+    if: always() && needs.cdk-diff.result != 'skipped'
+    needs: [cdk-diff]
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
+    steps:
+      - name: Harden the runner (Audit all outbound calls)
+        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
+        with:
+          egress-policy: audit
+
       - name: Post CDK diff to PR
-        if: always() && steps.cdk-diff.conclusion != 'skipped'
-        uses: actions/github-script@v9
+        uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
+        env:
+          CDK_DIFF_RESULT: ${{ needs.cdk-diff.result }}
+          CDK_DIFF: ${{ needs.cdk-diff.outputs.diff }}
+          GH_SHA: ${{ github.sha }}
         with:
           script: |
-            const fs = require('fs');
-            const raw = fs.readFileSync('/tmp/cdk-diff.log', 'utf8').trim();
-            const noChanges = raw.includes('There were no differences');
-            const MAX = 60000;
-            const diff = raw.length > MAX ? raw.slice(0, MAX) + '\n…(truncated — see full log in Actions)' : raw;
-
+            const diffResult = process.env.CDK_DIFF_RESULT || 'unknown';
             let body = '## cdk diff\n\n';
-            if (noChanges) {
-              body += ':white_check_mark: **No infrastructure changes.**\n';
+            if (diffResult !== 'success') {
+              body += `:x: **Diff incomplete** — upstream job ended with status \`${diffResult}\`. See workflow logs for details.\n`;
             } else {
-              body += ':memo: **Infrastructure changes detected:**\n\n';
-              body += '<details>\n<summary>Show diff</summary>\n\n```\n' + diff + '\n```\n</details>\n';
+              const raw = (process.env.CDK_DIFF || '').trim();
+              if (!raw) {
+                body += ':warning: **Diff output unavailable** — output may have been redacted. See workflow logs.\n';
+              } else if (raw.includes('There were no differences')) {
+                body += ':white_check_mark: **No infrastructure changes.**\n';
+              } else {
+                body += ':memo: **Infrastructure changes detected:**\n\n';
+                body += '<details>\n<summary>Show diff</summary>\n\n```\n' + raw + '\n```\n</details>\n';
+              }
             }
-            body += `\n---\n*Updated for commit \`${{ github.sha }}\`*`;
+            body += `\n---\n*Updated for commit \`${process.env.GH_SHA}\`*`;
 
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
