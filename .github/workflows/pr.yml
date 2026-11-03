@@ -60,7 +60,7 @@ jobs:
     outputs:
       has_errors: ${{ steps.cdk-nag.outputs.has_errors }}
       errors: ${{ steps.cdk-nag.outputs.errors }}
-      warnings_count: ${{ steps.cdk-nag.outputs.warnings_count }}
+      warnings: ${{ steps.cdk-nag.outputs.warnings }}
     steps:
       - name: Harden the runner (Audit all outbound calls)
         uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411  # v2.19.4
@@ -97,24 +97,42 @@ jobs:
         env:
           CDK_DEFAULT_ACCOUNT: ${{ secrets.CDK_DEFAULT_ACCOUNT}}
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
+        # cdk-nag v3 runs as a CDK policy validation plugin: every unacknowledged finding
+        # (error or warning) fails `cdk synth` and is listed in cdk.out/validation-report.json.
+        # Only plugins that concluded "failure" count: CDK's built-in CloudFormation Validate
+        # plugin can add advisory warnings under a "success" conclusion.
         run: |
+          report=cdk.out/validation-report.json
+          rm -f "$report"
           set +e
           npx cdk synth --quiet 2>&1 | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-nag.log
           synth_exit=${PIPESTATUS[0]}
           set -e
 
-          errors=$(grep '^\[Error' /tmp/cdk-nag.log || true)
-          warnings_count=$(grep -c '^\[Warning' /tmp/cdk-nag.log || true)
+          if [ ! -f "$report" ]; then
+            echo "::error::cdk synth failed with exit code $synth_exit before cdk-nag ran (not a cdk-nag finding)"
+            echo "has_errors=true" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          # One "<severity> <rule> <construct path>" line per blocking finding, account/region redacted.
+          findings=$(jq -r '.pluginReports[] | select(.conclusion == "failure") | .violations[]
+              | .severity as $s | .ruleName as $r | .violatingConstructs[] | "\($s) \($r) \(.constructPath)"' "$report" \
+            | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g")
+          errors=$(grep '^error ' <<< "$findings" | cut -d' ' -f2- || true)
+          warnings=$(grep -v '^error ' <<< "$findings" | cut -d' ' -f2- || true)
 
           delim=$(head -c 16 /dev/urandom | base64 | tr -dc 'a-zA-Z0-9' | head -c 16)
           {
             echo "errors<<$delim"
             echo "$errors"
             echo "$delim"
+            echo "warnings<<$delim"
+            echo "$warnings"
+            echo "$delim"
           } >> "$GITHUB_OUTPUT"
-          echo "warnings_count=$warnings_count" >> "$GITHUB_OUTPUT"
 
-          if grep -q '^\[Error' /tmp/cdk-nag.log; then
+          if [ -n "$findings" ]; then
             echo "has_errors=true" >> "$GITHUB_OUTPUT"
           elif [ "$synth_exit" -ne 0 ]; then
             echo "::error::cdk synth failed with exit code $synth_exit (not a cdk-nag finding)"
@@ -143,7 +161,7 @@ jobs:
         env:
           CDK_NAG_RESULT: ${{ needs.cdk-nag.result }}
           CDK_NAG_ERRORS: ${{ needs.cdk-nag.outputs.errors }}
-          CDK_NAG_WARNINGS_COUNT: ${{ needs.cdk-nag.outputs.warnings_count }}
+          CDK_NAG_WARNINGS: ${{ needs.cdk-nag.outputs.warnings }}
         with:
           script: |
             const nagResult = process.env.CDK_NAG_RESULT || 'unknown';
@@ -151,19 +169,22 @@ jobs:
             if (nagResult !== 'success') {
               body += `:x: **Analysis incomplete** — upstream job ended with status \`${nagResult}\`. See workflow logs for details.\n`;
             } else {
+              // Each line is "<rule> <construct path>".
               const errors = (process.env.CDK_NAG_ERRORS || '').split('\n').filter(Boolean);
-              const warningsCount = parseInt(process.env.CDK_NAG_WARNINGS_COUNT || '0', 10);
-              if (errors.length === 0) {
-                body += ':white_check_mark: **No unsuppressed errors.**\n';
-              } else {
-                body += `:x: **${errors.length} unsuppressed error(s):**\n\n`;
+              const warnings = (process.env.CDK_NAG_WARNINGS || '').split('\n').filter(Boolean);
+              if (errors.length === 0 && warnings.length === 0) {
+                body += ':white_check_mark: **No unacknowledged findings.**\n';
+              }
+              if (errors.length > 0) {
+                body += `:x: **${errors.length} unacknowledged error(s):**\n\n`;
                 body += '```\n' + errors.join('\n') + '\n```\n';
               }
-              if (warningsCount > 0) {
-                body += `\n:warning: ${warningsCount} warning(s)\n`;
+              if (warnings.length > 0) {
+                body += `\n:warning: **${warnings.length} unacknowledged warning(s)** (these also fail the job):\n\n`;
+                body += '```\n' + warnings.join('\n') + '\n```\n';
               }
             }
-            body += '\n---\n*See `iac/nag-suppressions.ts` to add suppressions for accepted risks.*';
+            body += '\n---\n*See `iac/nag-suppressions.ts` to acknowledge accepted risks.*';
             const comments = await github.paginate(github.rest.issues.listComments, {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -190,7 +211,7 @@ jobs:
       - name: Fail on CDK Nag errors
         if: needs.cdk-nag.outputs.has_errors == 'true' || needs.cdk-nag.result == 'failure'
         run: |
-          echo "::error::cdk-nag found unsuppressed errors — see PR comment for details"
+          echo "::error::cdk-nag found unacknowledged findings — see the PR comment or the CDK Nag job log"
           exit 1
 
   cdk-diff:
