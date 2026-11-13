@@ -187,11 +187,23 @@ const MaplibreMap = ({ mapRef, mapWidth, view, setView, isFilterPaneShowing }) =
       const clickedFeature = features[0]
       if (clickedFeature.layer.id === 'sites-cluster-layer') {
         const clusterId = clickedFeature.properties.cluster_id
-        const zoom = await mapRef.current
-          .getSource('sites-source')
-          .getClusterExpansionZoom(clusterId)
+        const map = mapRef.current
+        const sitesSource = map.getSource('sites-source')
+        let zoom = map.getZoom()
 
-        mapRef.current.easeTo({
+        // The sites source data can be replaced (e.g. while project data is still loading)
+        // after the tiles were rendered. The cluster_id from the rendered feature may then no
+        // longer exist and MapLibre rejects with "No cluster with the specified id.".
+        // This is an expected race, so fall back to zooming in from the current zoom level.
+        try {
+          if (sitesSource) {
+            zoom = await sitesSource.getClusterExpansionZoom(clusterId)
+          }
+        } catch {
+          zoom = map.getZoom()
+        }
+
+        mapRef.current?.easeTo({
           center: features[0].geometry.coordinates,
           zoom: zoom + 2,
         })
