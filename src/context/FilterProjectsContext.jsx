@@ -228,6 +228,10 @@ export const FilterProjectsProvider = ({ children }) => {
       return lng
     }
 
+    if (!mapBbox?._sw || !mapBbox?._ne) {
+      return true
+    }
+
     const { _sw, _ne } = mapBbox
     const x1 = _sw.lng,
       x2 = _ne.lng
@@ -340,7 +344,8 @@ export const FilterProjectsProvider = ({ children }) => {
         })
         .map((project) => {
           // Filter by map bounding box
-          if (!enableFollowScreen) {
+          // Skip until the map has reported its bounds (mapBbox starts as {})
+          if (!enableFollowScreen || !mapBbox?._sw || !mapBbox?._ne) {
             return project
           }
 
