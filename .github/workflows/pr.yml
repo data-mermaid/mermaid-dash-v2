@@ -254,7 +254,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
         with:
-          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/${{ secrets.CDK_DEPLOY_ROLE }}
+          # PR CI assumes the least-privilege read-only role, not the AdministratorAccess
+          # deploy role (card 2277). Role name is non-secret; account from the repo secret.
+          role-to-assume: arn:aws:iam::${{ secrets.CDK_DEFAULT_ACCOUNT }}:role/github-pr-readonly-role
           aws-region: ${{ secrets.CDK_DEFAULT_REGION }}
           role-skip-session-tagging: true
 
@@ -266,7 +268,7 @@ jobs:
           CDK_DEFAULT_REGION: ${{ secrets.CDK_DEFAULT_REGION }}
         run: |
           set +e
-          npx cdk diff 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-diff.log
+          npx cdk diff --method=template 2>&1 | sed 's/\x1b\[[0-9;]*[mGKHF]//g' | sed "s/${CDK_DEFAULT_ACCOUNT}/<account>/g; s/${CDK_DEFAULT_REGION}/<region>/g" | tee /tmp/cdk-diff.log
           set -e
 
           raw=$(cat /tmp/cdk-diff.log)
