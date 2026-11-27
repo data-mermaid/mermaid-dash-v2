@@ -8,6 +8,26 @@ import { initSentry, Sentry } from './sentry.js'
 
 initSentry()
 
+// Recover from stale/failed chunk loads (e.g. after a deploy or on flaky mobile networks)
+// by reloading the page once. A sessionStorage timestamp prevents reload loops.
+const PRELOAD_RELOAD_KEY = 'vitePreloadErrorReloadedAt'
+const PRELOAD_RELOAD_COOLDOWN_MS = 10000
+
+window.addEventListener('vite:preloadError', (event) => {
+  try {
+    const lastReloadAt = Number(window.sessionStorage.getItem(PRELOAD_RELOAD_KEY))
+    if (lastReloadAt && Date.now() - lastReloadAt < PRELOAD_RELOAD_COOLDOWN_MS) {
+      return
+    }
+    window.sessionStorage.setItem(PRELOAD_RELOAD_KEY, String(Date.now()))
+  } catch {
+    // sessionStorage can throw (private mode/storage restrictions); don't risk a reload loop
+    return
+  }
+  event.preventDefault()
+  window.location.reload()
+})
+
 const options = {
   api_host: import.meta.env.VITE_ENVIRONMENT === 'prod' ? import.meta.env.VITE_PUBLIC_POSTHOG_HOST : null,
 }
