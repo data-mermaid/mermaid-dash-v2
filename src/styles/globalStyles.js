@@ -4,13 +4,12 @@ import { hoverState } from './mediaQueries'
 import '@fontsource/open-sans'
 import '@fontsource/open-sans/700.css'
 
-// Different from webapp - inline import because this app uses vite
-const toastifyCssPromise = import('react-toastify/dist/ReactToastify.css').then(
-  (module) => module.default,
-)
+// Different from webapp - static ?inline import because this app uses vite.
+// A static import keeps the CSS in the main bundle, so no separate chunk has to load at startup.
+import toastifyCss from 'react-toastify/dist/ReactToastify.css?inline'
 
 const GlobalStyle = createGlobalStyle`
-  ${await toastifyCssPromise} // different from Collect - add await
+  ${toastifyCss}
   :root {
       font-size: 62.5%;
   }
